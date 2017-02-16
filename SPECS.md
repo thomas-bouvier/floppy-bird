@@ -7,7 +7,7 @@
 
 Flappy Bird est un jeu à défilement horizontal. L’objectif est de diriger un oiseau, qui se déplace continuellement vers la droite, tout en évitant des obstacles (paires de tuyaux présentant un écartement variable). Le joueur doit toucher l’écran afin de donner une impulsion verticale à l’oiseau, naturellement attiré vers le bas par gravité.
 
-<img src="flappy.png">
+<img src="flappy.jpg" align="center">
 
 Lorsque l'oiseau heurte un tuyau ou le sol, la partie est terminée. Le score de la partie correspond au nombre d’obstacles traversés. La vitesse de défilement de l’écran (et donc, de l’oiseau) augmente avec le score.
 
