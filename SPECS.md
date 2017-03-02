@@ -125,29 +125,33 @@ D’autre part, les parties mécanique et électronique du robot devront être f
 
 ## Version 2
 
-* Génération aléatoire des niveaux
-* IA1 implantée dans le jeu en mode “simplifié”
-* Reconnaissance des formes pour le traitement d’image
+* Contenu supplémentaire pour le jeu en mode simplifié
+* Reconnaissance des formes/couleurs statiques pour le traitement d’image
 
-La version 2 du projet comprendra la génération aléatoire des niveaux, ainsi que l’implémentation de l’intelligence artificielle 1.
+La version 2 du projet comprendra l'ajout de fonctionnalités au mode simplifié du jeu : génération aléatoire des niveaux, son, intégration d'un score, sauvegarde du meilleur score, possibilité de faire pause.
 
-D’autre part, le robot sera en mesure de reconnaître les formes et couleurs du mode “simplifié”. La position de l’oiseau devra également être récupérée.
+D’autre part, le robot sera en mesure de reconnaître les formes et couleurs.
 
 
 ## Version 3
 
-* Menu principal du jeu
 * Mode de jeu “normal”
+* Menu principal
+* IA1 implantée dans le jeu (démo "IA1")
+* Reconnaissance des formes/couleurs dynamiques pour le traitement d'image
 
-La version 3 du projet comprendra l’intégration du mode “normal”, avec l’amélioration des graphismes et l’augmentation de la vitesse de défilement en fonction du score.
+La version 3 du projet comprendra l’intégration du mode “normal”, avec l’introduction de sprites et l’augmentation de la vitesse de défilement en fonction du score.
+
+L'IA1 sera implantée dans le jeu.
 
 Le menu principal devra également être implémenté. Celui-ci permettra de lancer une partie en mode “simplifié” ou “normal”, d’activer le caractère aléatoire des niveaux générés, de lancer une démo “IA1” en mode “normal”.
 
+D'autre part, le robot sera en mesure de reconnaître les formes et couleurs dynamiques, et de récupérer les coordonnées des objets associés.
 
 ## Version 4
 
 * IA1 implantée dans le robot
-* IA2 implantée dans le jeu en mode “normal”
+* IA2 implantée dans le jeu (démo "IA2")
 
 La version 4 du projet comprendra l’intégration de l’IA1 dans le robot. Les informations seront récupérées grâce au traitement d’image, à partir du mode “simplifié”.
 

@@ -10,7 +10,7 @@ Il pourra être intéressant de comparer les deux IA.
 
 Le contenu des versions du projet doit être plus spécifique. Une version équivaut à un projet fonctionnel. Il faudra éviter de travailler sur une version avancée avant d’avoir terminé la version courante.
 
-Il faudra revoir le cahier des charges et ajouter notamment, plus d’informations sur la première IA, un gantt/versioning plus détaillé, les spécifications de l’écran externe, de l’automate externe.
+Il faudra revoir le cahier des charges et ajouter notamment, plus d’informations sur la première IA, un Gantt/versioning plus détaillé, les spécifications de l’écran externe, de l’automate externe.
 
 Prochaine réunion le mardi 07/03/2017 à 15h30.
 
