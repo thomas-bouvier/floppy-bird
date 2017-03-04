@@ -1,6 +1,6 @@
 /*!
 * \file game.h
-* \brief File containing structures and propotypes for the game
+* \brief File containing structures and prototypes for the game
 */
 #ifndef GAME_H
 #define GAME_H
@@ -12,7 +12,7 @@
 typedef struct{
     int x;              /*!< the bird abscissa coordonate */
     int y;              /*!< the bird ordonate coordonate */
-    char sprite;        /*!< the path for the bird sprite */
+    char * sprite;      /*!< the path for the bird sprite */
     int gravity;        /*!< the speed of climb/fall of the bird */
 } Bird;
 
@@ -23,7 +23,7 @@ typedef struct{
 typedef struct{
     int x;              /*!< the pipe abscissa coordonate */
     int y;              /*!< the pipe ordonate coordonate */
-    char sprite;        /*!< the path for the pipe sprite */
+    char * sprite;      /*!< the path for the pipe sprite */
     int speed;          /*!< the speed of scrolling of the pipes */
 }
 
