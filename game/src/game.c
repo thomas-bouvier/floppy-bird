@@ -15,7 +15,7 @@
 * \param[in] bird_gravity the speed of climb/fall of the bird
 * \return Return a bird, NULL if error
 */
-static Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity)
+Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity)
 {
     Bird * new_bird = (Bird*) malloc(sizeof(Bird));
     if(new_bird == NULL)
@@ -38,7 +38,7 @@ static Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravi
 * \param[in] pipe_speed the speed of scrolling of the pipes
 * \return Return a pipe, NULL if error
 */
-static Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
+Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
 {
     Pipe * new_pipe = (Pipe*) malloc(sizeof(Pipe));
     if(new_pipe == NULL)

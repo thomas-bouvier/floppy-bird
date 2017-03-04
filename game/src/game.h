@@ -27,6 +27,8 @@ typedef struct{
     int speed;          /*!< the speed of scrolling of the pipes */
 } Pipe;
 
+Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity);
+Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed);
 void pipeScrolling(Pipe * pipe);
 
 
