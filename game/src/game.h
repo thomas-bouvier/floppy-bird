@@ -27,6 +27,7 @@ typedef struct{
     int speed;          /*!< the speed of scrolling of the pipes */
 } Pipe;
 
+void pipeScrolling(Pipe * pipe);
 
 
 

@@ -53,3 +53,11 @@ static Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed
     return new_pipe;
 }
 
+/*!
+* \brief Allow to scroll the pipe in the left direction
+* \param[out] pipe the pipe to scroll
+*/
+void pipeScrolling(Pipe * pipe)
+{
+    pipe->x -= pipe->speed;
+}
