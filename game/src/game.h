@@ -4,7 +4,6 @@
 */
 #ifndef GAME_H
 #define GAME_H
-
 #include <SDL2/SDL.h>
 
 /*!
@@ -28,10 +27,6 @@ typedef struct{
     SDL_Surface* surface;   /*!< the pipe surface */
 } Pipe;
 
-Bird * newBird(int bird_x, int bird_y, char * bird_path);
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
-
-
 /*!
 *\struct Camera game.h
 *\brief The rectangle that moves with the bird
@@ -42,8 +37,8 @@ typedef struct{
     int speed;          /*!< the speed of scrolling of the camera */
 } Camera;
 
-Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity);
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed);
+Bird * newBird(int bird_x, int bird_y, char * bird_path);
+Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
 Camera * newCamera(int x, int y, int speed);
 void cameraScrolling(Camera * camera);
 
