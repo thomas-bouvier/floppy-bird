@@ -82,6 +82,15 @@ Camera * newCamera(int x, int y, int h, int w, int camera_speed)
     new_camera->speed = camera_speed;
     return new_camera;
 }
+/*!
+*\brief Update the Y coordinate of the bird and the dirY
+*\param[in] bird the bird to be updated
+*/
+void updateBirdY(Bird * bird)
+{
+    bird->y+=bird->dirY;
+    bird->dirY+=GRAVITY;
+}
 
 /*!
 * \brief Allow to scroll the pipe in the left direction
@@ -91,3 +100,5 @@ void cameraScrolling(Camera * camera)
 {
     camera->view->x += camera->speed;
 }
+
+
