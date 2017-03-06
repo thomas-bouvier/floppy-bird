@@ -47,7 +47,7 @@ Bird * newBird();
 Pipe * newPipe(int pipe_x, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
-void updateBirdY(Bird * bird);
+void updateBird(Bird * bird);
 void cameraScrolling(Camera * camera);
 
 #endif // GAME_H

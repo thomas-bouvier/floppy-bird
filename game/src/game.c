@@ -91,12 +91,14 @@ Camera * newCamera(int x, int camera_speed)
     return new_camera;
 }
 /*!
-*\brief Update the ordinate of the bird and the dir_y
+*\brief Update the y coordinate of the bird and the direction of its next move
 *\param[in] bird the bird to be updated
 */
-void updateBirdY(Bird * bird)
+void updateBird(Bird * bird)
 {
-    bird->y += bird->dir_y;
+    bird->coordinates->y += bird->dir_y;
+    if(bird->coordinates->y<0) bird->coordinates->y=0;
+    if(bird->coordinates->y>SCREEN_HEIGHT) bird->coordinates->y=SCREEN_HEIGHT;
     bird->dir_y += GRAVITY;
 }
 
