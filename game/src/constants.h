@@ -11,6 +11,7 @@
 #define SCREEN_HEIGHT 768
 
 #define BIRD_X_OFFSET 100
+#define BIRD_SIDE 10
 
 #define PIPE_WIDTH 10
 #define PIPE_X_OFFSET 100

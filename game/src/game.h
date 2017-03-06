@@ -43,7 +43,7 @@ typedef struct{
     int speed;              /*!< the speed of scrolling of the camera */
 } Camera;
 
-Bird * newBird(int bird_x, int bird_y, char * bird_path);
+Bird * newBird();
 Pipe * newPipe(int pipe_x, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);

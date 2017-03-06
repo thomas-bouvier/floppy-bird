@@ -8,13 +8,10 @@
 #include <stdio.h>
 
 /*!
-*\brief Create a bird
-* \param[in] bird_x the bird abscissa
-* \param[in] bird_y the bird ordinate
-* \param[in] bird_path the path of the bird sprite
+*\brief Create a bird in the middle of the window
 * \return Return the created bird, NULL if error
 */
-Bird * newBird(int bird_x, int bird_y, char * bird_path)
+Bird * newBird()
 {
     Bird * new_bird = (Bird*) malloc(sizeof(Bird));
     if(new_bird == NULL)
@@ -22,14 +19,7 @@ Bird * newBird(int bird_x, int bird_y, char * bird_path)
         fprintf(stderr, "Bird allocation problem");
         return NULL;
     }
-    new_bird->x = bird_x;
-    new_bird->y = bird_y;
-    new_bird->surface = SDL_LoadBMP(bird_path);
-    if(new_bird->surface==NULL)
-    {
-        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
-        return NULL;
-    }
+    new_bird->coordinates = {BIRD_X_OFFSET,SCREEN_HEIGHT/2,BIRD_SIDE,BIRD_SIDE};
     new_bird->dir_y = 0;
     return new_bird;
 }
