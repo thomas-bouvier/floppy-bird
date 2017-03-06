@@ -32,5 +32,21 @@ Bird * newBird(int bird_x, int bird_y, char * bird_path);
 Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
 
 
+/*!
+*\struct Camera game.h
+*\brief The rectangle that moves with the bird
+*/
+typedef struct{
+    int x;              /*!< the camera abscissa coordonate*/
+    int y;              /*!< the camera ordonate coordonate*/
+    int speed;          /*!< the speed of scrolling of the camera */
+} Camera;
+
+Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity);
+Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed);
+Camera * newCamera(int x, int y, int speed);
+void cameraScrolling(Camera * camera);
+
+
 
 #endif // GAME_H
