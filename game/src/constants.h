@@ -12,7 +12,10 @@
 
 #define BIRD_X_OFFSET 100
 
-#define PIPE_X_OFFSET
+#define PIPE_WIDTH 10
+#define PIPE_X_OFFSET 100
+
+
 
 
 #endif // CONSTANTS_H

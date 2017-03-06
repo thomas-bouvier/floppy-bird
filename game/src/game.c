@@ -12,7 +12,7 @@
 * \param[in] bird_x the bird abscissa
 * \param[in] bird_y the bird ordinate
 * \param[in] bird_path the path of the bird sprite
-* \return Return a bird, NULL if error
+* \return Return the created bird, NULL if error
 */
 Bird * newBird(int bird_x, int bird_y, char * bird_path)
 {
@@ -36,12 +36,12 @@ Bird * newBird(int bird_x, int bird_y, char * bird_path)
 
 /*!
 *\brief Create a pipe
-* \param[in] pipe_x the pipe abscissa
+* \param[in] number the pipe number
 * \param[in] pipe_y the pipe ordinate
-* \param[in] pipe_path the path of the pipe sprite
-* \return Return a pipe, NULL if error
+* \param[in] pipe_h the pipe height
+* \return Return the created pipe, NULL if error
 */
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
+Pipe * newPipe(int number, int pipe_y, int pipe_h)
 {
     Pipe * new_pipe = (Pipe*) malloc(sizeof(Pipe));
     if(new_pipe == NULL)
@@ -49,25 +49,45 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
         fprintf(stderr, "Pipe allocation problem");
         return NULL;
     }
-    new_pipe->x = pipe_x;
-    new_pipe->y = pipe_y;
-    new_pipe->surface = SDL_LoadBMP(pipe_path);
-    if(new_pipe->surface==NULL)
-    {
-        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
-        return NULL;
-    }
+    SDL_Rect rect;
+    rect.x = number * PIPE_WIDTH;
+    rect.y = pipe_y;
+    rect.w = PIPE_WIDTH;
+    rect.h = pipe_h;
+    new_pipe->coordinates = &rect;
     return new_pipe;
 }
 
 /*!
-* \brief Create a Camera
-* \param[in] x the camera abscissa
-* \param[in] y the camera ordinate
-* \param[in] camera_speed the camera speed of scrolling
-* \return Return the created Camera, NULL if error
+*\brief Create an obstacle
+* \param[in] number the obstacle number
+* \param[in] height_lower the ordinate of the lower pipe
+* \param[in] gap the gap between two pipes
+* \return Return the created obstacle, NULL if error
 */
-Camera * newCamera(int x, int y, int camera_speed)
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
+{
+    Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
+    if(new_obstacle == NULL)
+    {
+        fprintf(stderr, "Obstacle allocation problem");
+        return NULL;
+    }
+    Pipe * low = newPipe(number, height_lower, height_lower);                           //Lower pipe
+    Pipe * up = newPipe(number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
+    new_obstacle->lower = low;
+    new_obstacle->upper = up;
+    new_obstacle->gap = obstacle_gap;
+    return new_obstacle;
+}
+
+/*!
+* \brief Create a camera
+* \param[in] x the camera abscissa
+* \param[in] camera_speed the camera speed of scrolling
+* \return Return the created camera, NULL if error
+*/
+Camera * newCamera(int x, int camera_speed)
 {
     Camera * new_camera = (Camera*) malloc(sizeof(Camera));
     if(new_camera == NULL)
@@ -75,7 +95,7 @@ Camera * newCamera(int x, int y, int camera_speed)
         fprintf(stderr, "Camera allocation problem");
         return NULL;
     }
-    SDL_Rect rect = {x, y, SCREEN_HEIGHT, SCREEN_WIDTH};
+    SDL_Rect rect = {x, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT};
     new_camera->view = &rect;
     new_camera->speed = camera_speed;
     return new_camera;

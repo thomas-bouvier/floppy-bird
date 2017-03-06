@@ -12,7 +12,7 @@
 * \brief The bird that the player controls by taping on the screen or clicking on the mouse
 */
 typedef struct{
-    SDL_Rect * coordinates      /*!< the bird ordinate */
+    SDL_Rect * coordinates;     /*!< the bird ordinate */
     int dir_y;                  /*!< the speed of climb/fall of the bird */
 } Bird;
 
@@ -29,7 +29,7 @@ typedef struct{
 * \brief An obstacle contains two pipes, and the bird has to pass between them
 */
 typedef struct{
-    Pipe * upper:           /*!< the upper pipe */
+    Pipe * upper;           /*!< the upper pipe */
     Pipe * lower;           /*!< the lower pipe */
     int gap;                /*!< the gap between two pipes */
 } Obstacle;
@@ -44,8 +44,9 @@ typedef struct{
 } Camera;
 
 Bird * newBird(int bird_x, int bird_y, char * bird_path);
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
-Camera * newCamera(int x, int y, int h, int w, int camera_speed);
+Pipe * newPipe(int pipe_x, int pipe_y, int pipe_h);
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
+Camera * newCamera(int x, int camera_speed);
 void updateBirdY(Bird * bird);
 void cameraScrolling(Camera * camera);
 
