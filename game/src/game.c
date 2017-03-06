@@ -11,11 +11,11 @@
 *\brief Create a bird
 * \param[in] bird_x the bird abscissa coordonate
 * \param[in] bird_y the bird ordonate coordonate
-* \param[in] bird_sprite the path of the bird sprite
+* \param[in] bird_path the path of the bird sprite
 * \param[in] bird_gravity the speed of climb/fall of the bird
 * \return Return a bird, NULL if error
 */
-Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity)
+Bird * newBird(int bird_x, int bird_y, char * bird_path)
 {
     Bird * new_bird = (Bird*) malloc(sizeof(Bird));
     if(new_bird == NULL)
@@ -25,8 +25,13 @@ Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity)
     }
     new_bird->x = bird_x;
     new_bird->y = bird_y;
-    new_bird->sprite = bird_sprite;
-    new_bird->gravity = bird_gravity;
+    new_bird->surface = SDL_LoadBMP(bird_path);
+    if(new_bird->surface==NULL)
+    {
+        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
+        return NULL;
+    }
+    new_bird->dirY = 0;
     return new_bird;
 }
 
@@ -34,11 +39,10 @@ Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity)
 *\brief Create a pipe
 * \param[in] pipe_x the pipe abscissa coordonate
 * \param[in] pipe_y the pipe ordonate coordonate
-* \param[in] pipe_sprite the path of the pipe sprite
-* \param[in] pipe_speed the speed of scrolling of the pipes
+* \param[in] pipe_path the path of the pipe sprite
 * \return Return a pipe, NULL if error
 */
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
+Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
 {
     Pipe * new_pipe = (Pipe*) malloc(sizeof(Pipe));
     if(new_pipe == NULL)
@@ -48,16 +52,13 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
     }
     new_pipe->x = pipe_x;
     new_pipe->y = pipe_y;
-    new_pipe->sprite = pipe_sprite;
-    new_pipe->speed = pipe_speed;
+    new_pipe->surface = SDL_LoadBMP(pipe_path);
+    if(new_pipe->surface==NULL)
+    {
+        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
+        return NULL;
+    }
     return new_pipe;
 }
 
-/*!
-* \brief Allow to scroll the pipe in the left direction
-* \param[out] pipe the pipe to scroll
-*/
-void pipeScrolling(Pipe * pipe)
-{
-    pipe->x -= pipe->speed;
-}
+
