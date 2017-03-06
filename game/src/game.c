@@ -49,7 +49,6 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
     new_pipe->x = pipe_x;
     new_pipe->y = pipe_y;
     new_pipe->sprite = pipe_sprite;
-    new_pipe->speed = pipe_speed;
     return new_pipe;
 }
 
@@ -57,7 +56,7 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
 * \brief Allow to scroll the pipe in the left direction
 * \param[out] pipe the pipe to scroll
 */
-void pipeScrolling(Pipe * pipe)
+void cameraScrolling(Camera * camera)
 {
-    pipe->x -= pipe->speed;
+    camera->x += camera->speed;
 }

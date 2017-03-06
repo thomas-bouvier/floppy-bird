@@ -24,12 +24,21 @@ typedef struct{
     int x;              /*!< the pipe abscissa coordonate */
     int y;              /*!< the pipe ordonate coordonate */
     char * sprite;      /*!< the path of the pipe sprite */
-    int speed;          /*!< the speed of scrolling of the pipes */
 } Pipe;
+
+/*!
+*\struct Camera game.h
+*\brief The rectangle that moves with the bird
+*/
+typedef struct{
+    int x;              /*!< the camera abscissa coordonate*/
+    int y;              /*!< the camera ordonate coordonate*/
+    int speed;          /*!< the speed of scrolling of the camera */
+} Camera;
 
 Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity);
 Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed);
-void pipeScrolling(Pipe * pipe);
+void cameraScrolling(Camera * camera);
 
 
 
