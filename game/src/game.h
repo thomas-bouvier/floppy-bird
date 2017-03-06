@@ -38,6 +38,7 @@ typedef struct{
 
 Bird * newBird(int bird_x, int bird_y, char * bird_sprite, int bird_gravity);
 Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed);
+Camera * newCamera(int x, int y, int speed);
 void cameraScrolling(Camera * camera);
 
 

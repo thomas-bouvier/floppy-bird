@@ -52,6 +52,28 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_sprite, int pipe_speed)
     return new_pipe;
 }
 
+
+/*!
+* \brief Create a Camera
+* \param[in] camera_x the camera abscissa coordonate
+* \param[in] camera_y the camera ordonate coordonate
+* \param[in] camera_speed the camera speed of scrolling
+* \return Return the created Camera, NULL if error
+*/
+Camera * newCamera(int camera_x, int camera_y, int camera_speed)
+{
+    Camera * new_camera = (Camera*) malloc(sizeof(Camera));
+    if(new_camera == NULL)
+    {
+        fprintf(stderr, "Camera allocation problem");
+        return NULL;
+    }
+    new_camera->x = camera_x;
+    new_camera->y = camera_y;
+    new_camera->speed = camera_speed;
+    return new_camera;
+}
+
 /*!
 * \brief Allow to scroll the pipe in the left direction
 * \param[out] pipe the pipe to scroll
