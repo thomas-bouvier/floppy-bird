@@ -8,7 +8,7 @@ int main(int argc, char ** argv)
     //SDL initialization
     if (SDL_Init(SDL_INIT_VIDEO != 0))
     {
-        fprintf(stderr, "SDL initialzation failure %s\n", SDL_GetError());
+        fprintf(stderr, "SDL initialzation   failure %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
@@ -27,34 +27,30 @@ int main(int argc, char ** argv)
     }
 
     //Renderer creation
-    SDL_Renderer * pRenderer = SDL_CreateRenderer(pWindow,
-                                                  -1,
-                                                  SDL_RENDERER_ACCELERATED);
+    SDL_Renderer * pRenderer = SDL_CreateRenderer(pWindow,-1,SDL_RENDERER_ACCELERATED);
     /*if (pRenderer == NULL);
     {
         fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }*/
 
-    //Sprite creation
-    SDL_Surface * pSprite = SDL_LoadBMP("C:/Users/Alexis/Documents/INSA 3EII/Info/SDL/Projet_C/floppy-bird-S6-2016/game/res/sprites/simplified pipe.bmp");
-    if (pSprite == NULL)
+
+
+    //Parameters of the rectangle destination for the sprite
+    Pipe * pipe = newPipe(400, 300,"./../../res/sprites/simplified pipe.bmp");
+    if(pipe==NULL)
     {
-        fprintf(stderr, "Sprite creation failure : %s\n", SDL_GetError());
+        fprintf(stderr, "Pipe creation failure : %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-
     //Texture creation
-    SDL_Texture * pTexture = SDL_CreateTextureFromSurface(pRenderer, pSprite);
+    SDL_Texture * pTexture = SDL_CreateTextureFromSurface(pRenderer, pipe->surface);
     if (pTexture == NULL)
     {
         fprintf(stderr, "Texture creation failure : %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-
-    //Parameters of the rectangle destination for the sprite
-    Pipe * pipe = newPipe(800 - pSprite->w, 600-pSprite->h, NULL, 3);
-    SDL_Rect dest = {pipe->x, pipe->y, pSprite->w, pSprite->h};
+    SDL_Rect dest = {pipe->x, pipe->y, pipe->surface->w, pipe->surface->h};
     SDL_RenderCopy(pRenderer, pTexture, NULL, &dest);
     SDL_RenderPresent(pRenderer);
 
@@ -65,17 +61,10 @@ int main(int argc, char ** argv)
     while(end)
     {
         SDL_RenderClear(pRenderer);
-        pipeScrolling(pipe);
         dest.x = pipe->x;
         SDL_RenderCopy(pRenderer, pTexture, NULL, &dest);
         SDL_RenderPresent(pRenderer);
         SDL_Delay(5);
-
-        if(pipe->x == - pSprite->w)
-        {
-            SDL_Delay(100);
-            end = 0;
-        }
     }
 
     SDL_DestroyWindow(pWindow);
