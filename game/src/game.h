@@ -4,6 +4,7 @@
 */
 #ifndef GAME_H
 #define GAME_H
+#include "constants.h"
 #include <SDL2/SDL.h>
 
 /*!
@@ -39,6 +40,7 @@ typedef struct{
 Bird * newBird(int bird_x, int bird_y, char * bird_path);
 Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
 Camera * newCamera(int x, int y, int h, int w, int camera_speed);
+void updateBirdY(Bird * bird);
 void cameraScrolling(Camera * camera);
 
 #endif // GAME_H
