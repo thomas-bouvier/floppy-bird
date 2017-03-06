@@ -42,6 +42,4 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path);
 Camera * newCamera(int x, int y, int speed);
 void cameraScrolling(Camera * camera);
 
-
-
 #endif // GAME_H
