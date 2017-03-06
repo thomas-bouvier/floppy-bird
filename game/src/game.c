@@ -69,7 +69,7 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
 * \param[in] camera_speed the camera speed of scrolling
 * \return Return the created Camera, NULL if error
 */
-Camera * newCamera(int camera_x, int camera_y, int camera_speed)
+Camera * newCamera(int x, int y, int h, int w, int camera_speed)
 {
     Camera * new_camera = (Camera*) malloc(sizeof(Camera));
     if(new_camera == NULL)
@@ -77,8 +77,8 @@ Camera * newCamera(int camera_x, int camera_y, int camera_speed)
         fprintf(stderr, "Camera allocation problem");
         return NULL;
     }
-    new_camera->x = camera_x;
-    new_camera->y = camera_y;
+    SDL_Rect rect = {x, y, h, w};
+    new_camera->view = &rect;
     new_camera->speed = camera_speed;
     return new_camera;
 }
@@ -89,5 +89,5 @@ Camera * newCamera(int camera_x, int camera_y, int camera_speed)
 */
 void cameraScrolling(Camera * camera)
 {
-    camera->x += camera->speed;
+    camera->view->x += camera->speed;
 }
