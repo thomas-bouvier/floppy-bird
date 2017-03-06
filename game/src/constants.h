@@ -7,8 +7,12 @@
 
 #define GRAVITY 10
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
+
+#define BIRD_X_OFFSET 100
+
+#define PIPE_X_OFFSET
 
 
 #endif // CONSTANTS_H

@@ -12,10 +12,8 @@
 * \brief The bird that the player controls by taping on the screen or clicking on the mouse
 */
 typedef struct{
-    int x;                  /*!< the bird abscissa coordonate */
-    int y;                  /*!< the bird ordonate coordonate */
-    SDL_Surface* surface;   /*!< the bird surface */
-    int dirY;               /*!< the speed of climb/fall of the bird */
+    SDL_Rect * coordinates      /*!< the bird ordinate */
+    int dir_y;                  /*!< the speed of climb/fall of the bird */
 } Bird;
 
 /*!
@@ -23,17 +21,25 @@ typedef struct{
 * \brief The pipes that the bird has to avoid
 */
 typedef struct{
-    int x;                  /*!< the pipe abscissa coordonate */
-    int y;                  /*!< the pipe ordonate coordonate */
-    SDL_Surface* surface;   /*!< the pipe surface */
+    SDL_Rect * coordinates;     /*!< the coordinates of the pipe */
 } Pipe;
+
+/*!
+* \struct Obstacle game.h
+* \brief An obstacle contains two pipes, and the bird has to pass between them
+*/
+typedef struct{
+    Pipe * upper:           /*!< the upper pipe */
+    Pipe * lower;           /*!< the lower pipe */
+    int gap;                /*!< the gap between two pipes */
+} Obstacle;
 
 /*!
 *\struct Camera game.h
 *\brief The rectangle that moves with the bird
 */
 typedef struct{
-    SDL_Rect * view;        /*!< the field of view of the camera*/
+    SDL_Rect * view;        /*!< the field of view of the camera */
     int speed;              /*!< the speed of scrolling of the camera */
 } Camera;
 

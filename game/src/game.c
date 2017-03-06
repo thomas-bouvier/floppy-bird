@@ -9,8 +9,8 @@
 
 /*!
 *\brief Create a bird
-* \param[in] bird_x the bird abscissa coordonate
-* \param[in] bird_y the bird ordonate coordonate
+* \param[in] bird_x the bird abscissa
+* \param[in] bird_y the bird ordinate
 * \param[in] bird_path the path of the bird sprite
 * \return Return a bird, NULL if error
 */
@@ -30,14 +30,14 @@ Bird * newBird(int bird_x, int bird_y, char * bird_path)
         fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
         return NULL;
     }
-    new_bird->dirY = 0;
+    new_bird->dir_y = 0;
     return new_bird;
 }
 
 /*!
 *\brief Create a pipe
-* \param[in] pipe_x the pipe abscissa coordonate
-* \param[in] pipe_y the pipe ordonate coordonate
+* \param[in] pipe_x the pipe abscissa
+* \param[in] pipe_y the pipe ordinate
 * \param[in] pipe_path the path of the pipe sprite
 * \return Return a pipe, NULL if error
 */
@@ -60,16 +60,14 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
     return new_pipe;
 }
 
-
-
 /*!
 * \brief Create a Camera
-* \param[in] camera_x the camera abscissa coordonate
-* \param[in] camera_y the camera ordonate coordonate
+* \param[in] x the camera abscissa
+* \param[in] y the camera ordinate
 * \param[in] camera_speed the camera speed of scrolling
 * \return Return the created Camera, NULL if error
 */
-Camera * newCamera(int x, int y, int h, int w, int camera_speed)
+Camera * newCamera(int x, int y, int camera_speed)
 {
     Camera * new_camera = (Camera*) malloc(sizeof(Camera));
     if(new_camera == NULL)
@@ -77,28 +75,26 @@ Camera * newCamera(int x, int y, int h, int w, int camera_speed)
         fprintf(stderr, "Camera allocation problem");
         return NULL;
     }
-    SDL_Rect rect = {x, y, h, w};
+    SDL_Rect rect = {x, y, SCREEN_HEIGHT, SCREEN_WIDTH};
     new_camera->view = &rect;
     new_camera->speed = camera_speed;
     return new_camera;
 }
 /*!
-*\brief Update the Y coordinate of the bird and the dirY
+*\brief Update the ordinate of the bird and the dir_y
 *\param[in] bird the bird to be updated
 */
 void updateBirdY(Bird * bird)
 {
-    bird->y+=bird->dirY;
-    bird->dirY+=GRAVITY;
+    bird->y += bird->dir_y;
+    bird->dir_y += GRAVITY;
 }
 
 /*!
-* \brief Allow to scroll the pipe in the left direction
+* \brief Allow to scroll the camera in the right direction
 * \param[out] pipe the pipe to scroll
 */
 void cameraScrolling(Camera * camera)
 {
     camera->view->x += camera->speed;
 }
-
-
