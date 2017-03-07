@@ -24,12 +24,14 @@ typedef struct {
 
 /*!
 * \struct Genome genome.h
-* \brief A connection gene joins nodes in the genome
+* \brief A genome contains connection genes
 */
 typedef struct {
   ConnectionGene genes[N_MAX_CONNECTION_GENES];   /*!< genes contained in this genome */
 } Genome;
 
 ConnectionGene * newConnectionGene(short int input, short int output, double weight, short int innovation, unsigned char enabled);
+
+Genome * newGenome();
 
 #endif // GENOME_H
