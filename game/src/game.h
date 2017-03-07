@@ -4,22 +4,14 @@
 */
 #ifndef GAME_H
 #define GAME_H
+
 #include "constants.h"
-#include <SDL2/SDL.h>
 #include "bird.h"
 
 
 
 
-/*!
-* \struct Obstacle game.h
-* \brief An obstacle contains two pipes, and the bird has to pass between them
-*/
-typedef struct{
-    Pipe * upper;           /*!< the upper pipe */
-    Pipe * lower;           /*!< the lower pipe */
-    int gap;                /*!< the gap between two pipes */
-} Obstacle;
+
 
 /*!
 *\struct Camera game.h

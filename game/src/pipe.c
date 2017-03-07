@@ -2,6 +2,7 @@
 * \file pipe.c
 * \brief File containing the functions to manage a pipe
 */
+#include "pipe.h"
 
 /*!
 *\brief Create a pipe
