@@ -7,6 +7,8 @@
 
 #include "constants.h"
 #include "pipe.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /*!
 * \struct Obstacle game.h
@@ -20,3 +22,5 @@ typedef struct{
 
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 void freeObstacle(Obstacle * obstacle);
+
+#endif // OBSTACLE_H

@@ -6,6 +6,8 @@
 #define PIPE_H
 
 #include "constants.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /*!
 * \struct Pipe pipe.h

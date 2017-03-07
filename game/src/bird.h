@@ -5,9 +5,9 @@
 #ifndef BIRD_H_INCLUDED
 #define BIRD_H_INCLUDED
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "constants.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /*!
 * \struct Bird game.h

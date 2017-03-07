@@ -4,32 +4,13 @@
 */
 
 #include "game.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 
 
 
 
-/*!
-* \brief Create a camera
-* \param[in] x the camera abscissa
-* \param[in] camera_speed the camera speed of scrolling
-* \return Return the created camera, NULL if error
-*/
-Camera * newCamera(int x, int camera_speed)
-{
-    Camera * new_camera = (Camera*) malloc(sizeof(Camera));
-    if(new_camera == NULL)
-    {
-        fprintf(stderr, "Camera allocation problem");
-        return NULL;
-    }
-    SDL_Rect rect = {x, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT};
-    new_camera->view = &rect;
-    new_camera->speed = camera_speed;
-    return new_camera;
-}
+
+
 
 /*!
 * \brief Allow to scroll the camera in the right direction
@@ -66,13 +47,4 @@ void drawObstacle(SDL_Surface * surface, Obstacle * obstacle)
     drawRectangle(surface, obstacle->upper->coordinates, 0, 255, 0);
 }
 
-/*!
-* \brief Deallocate memory of the obstacle and his pipes
-* \param[out] obstacle the obstacle to deallocate
-*/
-void freeObstacle(Obstacle * obstacle)
-{
-    free(obstacle->lower);
-    free(obstacle->upper);
-    free(obstacle);
-}
+
