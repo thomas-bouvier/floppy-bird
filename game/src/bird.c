@@ -5,6 +5,7 @@
 #include "bird.h"
 
 
+
 /*!
 *\brief Create a bird in the middle of the window
 * \return Return the created bird, NULL if error
