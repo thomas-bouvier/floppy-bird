@@ -1,4 +1,23 @@
-# reports
+﻿# reports
+
+## Compte-rendu réunion n°3 (07/03/2017)
+
+Actuellement le modèle MVC n'est pas respecté dans le jeu. Les structures de données doivent être indépendantes de la SDL ; elles sont donc à refaire, en séparant davantage les fichiers (Bird, Pipe, Camera...).
+
+Toutes les structures de données et prototypes sont à déterminer avant de commencer à coder, afin de pouvoir mettre en place rapidement les tests unitaires.
+
+En mode version, tous les membres d'un groupe sont normalement occupés à préparer la prochaine version. Nous fonctionnerons différemment, puisque le réseau de neurone et le traitement d'image peuvent être développés en parallèle.
+
+Toute trace de travail, de recherche doit figurer dans le git. Dès qu'une source est consultée, une synthèse peut être effectuée et déposée sur le git.
+
+Les documents du robots, à savoir le matériel, sa fabrication, ses fichiers mécaniques, seront également déposés sur git.
+
+Un fichier sera ajouté, décrivant le rôle de chacun dans le projet, puisque ceux-ci ne figurent pas dans le Gantt.
+
+Avant la prochaine réunion, le fichier .cpb de Codeblocks sera déposé sur git, afin de compiler directement le jeu, puisque la V1 sera normalement finie. 
+
+Prochaine réunion le mercredi 22/03/2017 à 16h30.
+
 
 ## Compte-rendu réunion n°2 (16/02/2017)
 
