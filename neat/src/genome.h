@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "conf.h"
+
 /*!
 * \struct ConnectionGene genome.h
 * \brief A connection gene joins nodes in the genome
@@ -19,6 +21,14 @@ typedef struct {
   short int innovation;     /*!< the innovation number of the connection gene, used to track its history */
   unsigned char enabled;    /*!< the enabled/disabled flag of the connection gene */
 } ConnectionGene;
+
+/*!
+* \struct Genome genome.h
+* \brief A connection gene joins nodes in the genome
+*/
+typedef struct {
+  ConnectionGene genes[N_MAX_CONNECTION_GENES];   /*!< genes contained in this genome */
+} Genome;
 
 ConnectionGene * newConnectionGene(short int input, short int output, double weight, short int innovation, unsigned char enabled);
 
