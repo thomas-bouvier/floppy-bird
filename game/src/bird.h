@@ -2,8 +2,8 @@
 * \file bird.h
 * \brief File containing structures and prototypes for the bird
 */
-#ifndef BIRD_H_INCLUDED
-#define BIRD_H_INCLUDED
+#ifndef BIRD_H
+#define BIRD_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,4 +26,4 @@ Bird * newBird();
 
 void updateBird(Bird * bird);
 void freeBird(Bird * bird);
-#endif // BIRD_H_INCLUDED
+#endif // BIRD_H

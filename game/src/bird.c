@@ -1,6 +1,6 @@
 /*!
-* \file game.c
-* \brief File containing the functions to manage the game
+* \file bird.c
+* \brief File containing the functions to control the bird
 */
 #include "bird.h"
 
