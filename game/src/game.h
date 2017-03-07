@@ -43,16 +43,20 @@ typedef struct{
     int speed;              /*!< the speed of scrolling of the camera */
 } Camera;
 
+//Constructors
 Bird * newBird();
 Pipe * newPipe(int number, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
 
+//Model
 void updateBird(Bird * bird);
 void cameraScrolling(Camera * camera, Bird * bird);
 
-void drawRectangle(SDL_Surface * surface, Rect * rect, int r, int g, int b);
+//View
+void drawRectangle(SDL_Surface * surface, SDL_Rect * rect, int r, int g, int b);
+void drawObstacle(SDL_Surface * surface, Obstacle * obstacle);
 
-int freeObstacle(Obstacle * obstacle);
+void freeObstacle(Obstacle * obstacle);
 
 #endif // GAME_H
