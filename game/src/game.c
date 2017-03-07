@@ -8,13 +8,10 @@
 #include <stdio.h>
 
 /*!
-*\brief Create a bird
-* \param[in] bird_x the bird abscissa coordonate
-* \param[in] bird_y the bird ordonate coordonate
-* \param[in] bird_path the path of the bird sprite
-* \return Return a bird, NULL if error
+*\brief Create a bird in the middle of the window
+* \return Return the created bird, NULL if error
 */
-Bird * newBird(int bird_x, int bird_y, char * bird_path)
+Bird * newBird()
 {
     Bird * new_bird = (Bird*) malloc(sizeof(Bird));
     if(new_bird == NULL)
@@ -22,26 +19,24 @@ Bird * newBird(int bird_x, int bird_y, char * bird_path)
         fprintf(stderr, "Bird allocation problem");
         return NULL;
     }
-    new_bird->x = bird_x;
-    new_bird->y = bird_y;
-    new_bird->surface = SDL_LoadBMP(bird_path);
-    if(new_bird->surface==NULL)
-    {
-        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
-        return NULL;
-    }
-    new_bird->dirY = 0;
+    SDL_Rect rect;
+    rect.x = BIRD_X_OFFSET;
+    rect.y = SCREEN_HEIGHT/2;
+    rect.w = BIRD_SIDE;
+    rect.h = BIRD_SIDE;
+    new_bird->coordinates = &rect;
+    new_bird->dir_y = 0;
     return new_bird;
 }
 
 /*!
 *\brief Create a pipe
-* \param[in] pipe_x the pipe abscissa coordonate
-* \param[in] pipe_y the pipe ordonate coordonate
-* \param[in] pipe_path the path of the pipe sprite
-* \return Return a pipe, NULL if error
+* \param[in] number the pipe number
+* \param[in] pipe_y the pipe ordinate
+* \param[in] pipe_h the pipe height
+* \return Return the created pipe, NULL if error
 */
-Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
+Pipe * newPipe(int number, int pipe_y, int pipe_h)
 {
     Pipe * new_pipe = (Pipe*) malloc(sizeof(Pipe));
     if(new_pipe == NULL)
@@ -49,27 +44,45 @@ Pipe * newPipe(int pipe_x, int pipe_y, char * pipe_path)
         fprintf(stderr, "Pipe allocation problem");
         return NULL;
     }
-    new_pipe->x = pipe_x;
-    new_pipe->y = pipe_y;
-    new_pipe->surface = SDL_LoadBMP(pipe_path);
-    if(new_pipe->surface==NULL)
-    {
-        fprintf(stderr, "Sprite loading failure(%s)\n",SDL_GetError());
-        return NULL;
-    }
+    SDL_Rect rect;
+    rect.x = number * PIPE_WIDTH;
+    rect.y = pipe_y;
+    rect.w = PIPE_WIDTH;
+    rect.h = pipe_h;
+    new_pipe->coordinates = &rect;
     return new_pipe;
 }
 
-
+/*!
+*\brief Create an obstacle
+* \param[in] number the obstacle number
+* \param[in] height_lower the ordinate of the lower pipe
+* \param[in] gap the gap between two pipes
+* \return Return the created obstacle, NULL if error
+*/
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
+{
+    Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
+    if(new_obstacle == NULL)
+    {
+        fprintf(stderr, "Obstacle allocation problem");
+        return NULL;
+    }
+    Pipe * low = newPipe(number, height_lower, height_lower);                           //Lower pipe
+    Pipe * up = newPipe(number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
+    new_obstacle->lower = low;
+    new_obstacle->upper = up;
+    new_obstacle->gap = obstacle_gap;
+    return new_obstacle;
+}
 
 /*!
-* \brief Create a Camera
-* \param[in] camera_x the camera abscissa coordonate
-* \param[in] camera_y the camera ordonate coordonate
+* \brief Create a camera
+* \param[in] x the camera abscissa
 * \param[in] camera_speed the camera speed of scrolling
-* \return Return the created Camera, NULL if error
+* \return Return the created camera, NULL if error
 */
-Camera * newCamera(int x, int y, int h, int w, int camera_speed)
+Camera * newCamera(int x, int camera_speed)
 {
     Camera * new_camera = (Camera*) malloc(sizeof(Camera));
     if(new_camera == NULL)
@@ -77,28 +90,68 @@ Camera * newCamera(int x, int y, int h, int w, int camera_speed)
         fprintf(stderr, "Camera allocation problem");
         return NULL;
     }
-    SDL_Rect rect = {x, y, h, w};
+    SDL_Rect rect = {x, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT};
     new_camera->view = &rect;
     new_camera->speed = camera_speed;
     return new_camera;
 }
+
 /*!
-*\brief Update the Y coordinate of the bird and the dirY
-*\param[in] bird the bird to be updated
+*\brief Update the y coordinate of the bird and the direction of its next move
+*\param[out] bird the bird to be updated
 */
-void updateBirdY(Bird * bird)
+void updateBird(Bird * bird)
 {
-    bird->y+=bird->dirY;
-    bird->dirY+=GRAVITY;
+    bird->coordinates->y += bird->dir_y;
+    if(bird->coordinates->y < 0)
+        bird->coordinates->y = 0;
+    if(bird->coordinates->y > SCREEN_HEIGHT)
+        bird->coordinates->y = SCREEN_HEIGHT;
+    bird->dir_y += GRAVITY;
 }
 
 /*!
-* \brief Allow to scroll the pipe in the left direction
+* \brief Allow to scroll the camera in the right direction
 * \param[out] pipe the pipe to scroll
+* \param[out] bird the bird that moves with the camera
 */
-void cameraScrolling(Camera * camera)
+void cameraScrolling(Camera * camera, Bird * bird)
 {
     camera->view->x += camera->speed;
+    bird->coordinates->x += camera->speed;
 }
 
+/*!
+* \brief Color a rectangle
+* \param[out] surface the drawing target
+* \param[in] rect the rectangle to color
+* \param[in] r the red component (integer between 0 and 255)
+* \param[in] g the green component (integer between 0 and 255)
+* \param[in] b the blue component (integer between 0 and 255)
+*/
+void drawRectangle(SDL_Surface * surface, SDL_Rect * rect, int r, int g, int b)
+{
+    SDL_FillRect(surface, rect, SDL_MapRGB(surface->format, r, g, b));
+}
 
+/*!
+* \brief Color the two pipes of an obstacle
+* \param[out] surface the drawing target
+* \param[in] obstacle the two pipes to color
+*/
+void drawObstacle(SDL_Surface * surface, Obstacle * obstacle)
+{
+    drawRectangle(surface, obstacle->lower->coordinates, 255, 0, 0);
+    drawRectangle(surface, obstacle->upper->coordinates, 0, 255, 0);
+}
+
+/*!
+* \brief Deallocate memory of the obstacle and his pipes
+* \param[out] obstacle the obstacle to deallocate
+*/
+void freeObstacle(Obstacle * obstacle)
+{
+    free(obstacle->lower);
+    free(obstacle->upper);
+    free(obstacle);
+}
