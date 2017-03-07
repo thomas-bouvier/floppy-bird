@@ -39,3 +39,12 @@ void updateBird(Bird * bird)
     bird->dir_y += GRAVITY;
     if(bird->dir_y > BIRD_MAX_FALL_SPEED) bird->dir_y=BIRD_MAX_FALL_SPEED;
 }
+
+/*!
+* \brief Deallocate memory of the bird
+* \param[out] bird the bird to deallocate
+*/
+void freeBird(Bird * bird)
+{
+    free(bird);
+}

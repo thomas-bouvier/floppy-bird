@@ -25,5 +25,5 @@ typedef struct{
 Bird * newBird();
 
 void updateBird(Bird * bird);
-
+void freeBird(Bird * bird);
 #endif // BIRD_H_INCLUDED
