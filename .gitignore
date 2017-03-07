@@ -4,6 +4,9 @@ Floppy_Bird/
 Thumbs.db
 Desktop.ini
 
+Makefile
+main
+
 # Code::Blocks
 *.depend
 *.layout
