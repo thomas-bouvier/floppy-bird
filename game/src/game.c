@@ -8,28 +8,6 @@
 #include <stdio.h>
 
 /*!
-*\brief Create a bird in the middle of the window
-* \return Return the created bird, NULL if error
-*/
-Bird * newBird()
-{
-    Bird * new_bird = (Bird*) malloc(sizeof(Bird));
-    if(new_bird == NULL)
-    {
-        fprintf(stderr, "Bird allocation problem");
-        return NULL;
-    }
-    SDL_Rect rect;
-    rect.x = BIRD_X_OFFSET;
-    rect.y = SCREEN_HEIGHT/2;
-    rect.w = BIRD_SIDE;
-    rect.h = BIRD_SIDE;
-    new_bird->coordinates = &rect;
-    new_bird->dir_y = 0;
-    return new_bird;
-}
-
-/*!
 *\brief Create a pipe
 * \param[in] number the pipe number
 * \param[in] pipe_y the pipe ordinate
@@ -97,20 +75,6 @@ Camera * newCamera(int x, int camera_speed)
 }
 
 /*!
-*\brief Update the y coordinate of the bird and the direction of its next move
-*\param[out] bird the bird to be updated
-*/
-void updateBird(Bird * bird)
-{
-    bird->coordinates->y += bird->dir_y;
-    if(bird->coordinates->y < 0)
-        bird->coordinates->y = 0;
-    if(bird->coordinates->y > SCREEN_HEIGHT)
-        bird->coordinates->y = SCREEN_HEIGHT;
-    bird->dir_y += GRAVITY;
-}
-
-/*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] pipe the pipe to scroll
 * \param[out] bird the bird that moves with the camera
@@ -118,7 +82,7 @@ void updateBird(Bird * bird)
 void cameraScrolling(Camera * camera, Bird * bird)
 {
     camera->view->x += camera->speed;
-    bird->coordinates->x += camera->speed;
+    bird->x += camera->speed;
 }
 
 /*!

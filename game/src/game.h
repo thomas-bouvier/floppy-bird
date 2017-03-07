@@ -6,15 +6,8 @@
 #define GAME_H
 #include "constants.h"
 #include <SDL2/SDL.h>
+#include "bird.h"
 
-/*!
-* \struct Bird game.h
-* \brief The bird that the player controls by taping on the screen or clicking on the mouse
-*/
-typedef struct{
-    SDL_Rect * coordinates;     /*!< the bird ordinate */
-    int dir_y;                  /*!< the speed of climb/fall of the bird */
-} Bird;
 
 /*!
 * \struct Pipe game.h
@@ -44,13 +37,11 @@ typedef struct{
 } Camera;
 
 //Constructors
-Bird * newBird();
 Pipe * newPipe(int number, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
 
 //Model
-void updateBird(Bird * bird);
 void cameraScrolling(Camera * camera, Bird * bird);
 
 //View
