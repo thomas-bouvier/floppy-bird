@@ -7,29 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/*!
-*\brief Create a pipe
-* \param[in] number the pipe number
-* \param[in] pipe_y the pipe ordinate
-* \param[in] pipe_h the pipe height
-* \return Return the created pipe, NULL if error
-*/
-Pipe * newPipe(int number, int pipe_y, int pipe_h)
-{
-    Pipe * new_pipe = (Pipe*) malloc(sizeof(Pipe));
-    if(new_pipe == NULL)
-    {
-        fprintf(stderr, "Pipe allocation problem");
-        return NULL;
-    }
-    SDL_Rect rect;
-    rect.x = number * PIPE_WIDTH;
-    rect.y = pipe_y;
-    rect.w = PIPE_WIDTH;
-    rect.h = pipe_h;
-    new_pipe->coordinates = &rect;
-    return new_pipe;
-}
+
 
 /*!
 *\brief Create an obstacle

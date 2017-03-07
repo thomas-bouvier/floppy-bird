@@ -9,13 +9,7 @@
 #include "bird.h"
 
 
-/*!
-* \struct Pipe game.h
-* \brief The pipes that the bird has to avoid
-*/
-typedef struct{
-    SDL_Rect * coordinates;     /*!< the coordinates of the pipe */
-} Pipe;
+
 
 /*!
 * \struct Obstacle game.h
@@ -37,7 +31,7 @@ typedef struct{
 } Camera;
 
 //Constructors
-Pipe * newPipe(int number, int pipe_y, int pipe_h);
+
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
 
