@@ -1,7 +1,7 @@
 #include "genome.h"
 
 /*!
-*\brief Create a connection gene
+* \brief Create a connection gene
 * \param[in] input the input node
 * \param[in] output the output node
 * \param[in] weight the weight
@@ -24,4 +24,19 @@ ConnectionGene * newConnectionGene(short int input, short int output, double wei
   new_connection_gene->enabled = enabled;
 
   return new_connection_gene;
+}
+
+/*!
+* \brief Create a genome
+* \return Return a genome, NULL if error
+*/
+Genome * newGenome() {
+  Genome * new_genome = (Genome *) malloc(sizeof(Genome));
+
+  if (new_genome == (Genome *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Genome\n");
+    return NULL;
+  }
+
+  return new_genome;
 }

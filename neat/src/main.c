@@ -6,7 +6,8 @@
 #include "genome.h"
 
 int main() {
-  ConnectionGene * connection_gene;
+  ConnectionGene * connection_gene = NULL;
+  Genome * genome = NULL;
 
   short int input = 1;
   short int output = 2;
@@ -15,6 +16,7 @@ int main() {
   unsigned char enabled = 1;
 
   connection_gene = newConnectionGene(input, output, weight, innovation, enabled);
+  genome = newGenome();
 
   return 0;
 }
