@@ -92,21 +92,33 @@ Camera * newCamera(int x, int camera_speed)
 }
 /*!
 *\brief Update the y coordinate of the bird and the direction of its next move
-*\param[in] bird the bird to be updated
+*\param[out] bird the bird to be updated
 */
 void updateBird(Bird * bird)
 {
     bird->coordinates->y += bird->dir_y;
-    if(bird->coordinates->y<0) bird->coordinates->y=0;
-    if(bird->coordinates->y>SCREEN_HEIGHT) bird->coordinates->y=SCREEN_HEIGHT;
+    if(bird->coordinates->y < 0)
+        bird->coordinates->y = 0;
+    if(bird->coordinates->y > SCREEN_HEIGHT)
+        bird->coordinates->y = SCREEN_HEIGHT;
     bird->dir_y += GRAVITY;
 }
 
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] pipe the pipe to scroll
+* \param[out] bird the bird that moves with the camera
 */
-void cameraScrolling(Camera * camera)
+void cameraScrolling(Camera * camera, Bird * bird)
 {
     camera->view->x += camera->speed;
+    bird->coordinates->x += camera->speed;
+}
+
+int freeObstacle(Obstacle * obstacle)
+{
+    free(obstacle->lower);
+    free(obstacle->upper);
+    free(obstacle);
+    return EXIT_SUCCESS;
 }

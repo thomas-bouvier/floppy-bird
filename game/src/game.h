@@ -44,10 +44,11 @@ typedef struct{
 } Camera;
 
 Bird * newBird();
-Pipe * newPipe(int pipe_x, int pipe_y, int pipe_h);
+Pipe * newPipe(int number, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
 void updateBird(Bird * bird);
-void cameraScrolling(Camera * camera);
+void cameraScrolling(Camera * camera, Bird * bird);
+int freeObstacle(Obstacle * obstacle);
 
 #endif // GAME_H

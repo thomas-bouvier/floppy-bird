@@ -1,6 +1,6 @@
 /*!
 * \file constants.h
-* \brief File containing structures and prototypes for the game
+* \brief File containing all constants for the game
 */
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
