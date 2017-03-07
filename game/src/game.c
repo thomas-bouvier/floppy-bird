@@ -90,6 +90,7 @@ Camera * newCamera(int x, int camera_speed)
     new_camera->speed = camera_speed;
     return new_camera;
 }
+
 /*!
 *\brief Update the y coordinate of the bird and the direction of its next move
 *\param[out] bird the bird to be updated
@@ -115,10 +116,26 @@ void cameraScrolling(Camera * camera, Bird * bird)
     bird->coordinates->x += camera->speed;
 }
 
-int freeObstacle(Obstacle * obstacle)
+/*!
+* \brief Color a rectangle
+* \param[out] surface the drawing target
+* \param[in] rect the rectangle to color
+* \param[in] r the red component
+* \param[in] g the green component
+* \param[in] b the blue component
+*/
+void drawRectangle(SDL_Surface * surface, Rect * rect, int r, int g, int b)
+{
+    SDL_FillRect(surface, rect, SDL_MapRGB(surface->format, r, g, b));
+}
+
+/*!
+* \brief Deallocate memory of the obstacle and his pipes
+* \param[out] obstacle the obstacle to deallocate
+*/
+void freeObstacle(Obstacle * obstacle)
 {
     free(obstacle->lower);
     free(obstacle->upper);
     free(obstacle);
-    return EXIT_SUCCESS;
 }

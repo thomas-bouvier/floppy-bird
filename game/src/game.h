@@ -47,8 +47,12 @@ Bird * newBird();
 Pipe * newPipe(int number, int pipe_y, int pipe_h);
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
 Camera * newCamera(int x, int camera_speed);
+
 void updateBird(Bird * bird);
 void cameraScrolling(Camera * camera, Bird * bird);
+
+void drawRectangle(SDL_Surface * surface, Rect * rect, int r, int g, int b);
+
 int freeObstacle(Obstacle * obstacle);
 
 #endif // GAME_H
