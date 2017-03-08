@@ -24,7 +24,7 @@ typedef struct {
 
 MatingPool * newMatingPool();
 
-void populateMatingPool(MatingPool * pool);
+void populateMatingPool(MatingPool * mating_pool);
 
 void addGenomeToSpecies(MatingPool * pool, Genome * genome);
 
