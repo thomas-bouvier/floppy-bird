@@ -16,6 +16,6 @@
 
 #define PIPE_WIDTH 10
 #define PIPE_X_OFFSET 100
-#define PIPES_ON_SCREEN 4
+#define PIPES_ON_SCREEN 3
 
 #endif // CONSTANTS_H

@@ -37,7 +37,7 @@ Obstacle * nextObstacle(Obstacle * obstacle, Bird * bird)
     int i;
     for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
     {
-        if ((*(obstacle+i)).lower->y > bird->x)
+        if ((*(obstacle+i)).lower->x + PIPE_WIDTH > bird->x)
             return (Obstacle *) obstacle+i;
     }
     return NULL;
