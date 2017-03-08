@@ -7,6 +7,7 @@
 
 #include "constants.h"
 #include "pipe.h"
+#include "bird.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -21,6 +22,7 @@ typedef struct{
 } Obstacle;
 
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
+Obstacle * nextObstacle(Obstacle obstacle[], Bird * Bird);
 void freeObstacle(Obstacle * obstacle);
 
 #endif // OBSTACLE_H

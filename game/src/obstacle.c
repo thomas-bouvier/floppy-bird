@@ -28,6 +28,22 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
 }
 
 /*!
+* \brief Indicate the next obstacle for the bird
+* \param[in] obstacle[] the table of obstacle that appears on screen
+* \return Return the next obstacle for the bird. If the bird is between between an obstacle, it returns the
+*/
+Obstacle * nextObstacle(Obstacle * obstacle, Bird * bird)
+{
+    int i;
+    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
+    {
+        if ((*(obstacle+i)).lower->y > bird->x)
+            return (Obstacle *) obstacle+i;
+    }
+    return NULL;
+}
+
+/*!
 * \brief Deallocate memory of the obstacle and his pipes
 * \param[out] obstacle the obstacle to deallocate
 */
