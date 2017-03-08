@@ -27,6 +27,42 @@ ConnectionGene * newConnectionGene(short int input, short int output, double wei
 }
 
 /*!
+* \brief Create a neuron
+* \return Return a neuron, NULL if error
+*/
+Neuron * newNeuron() {
+  Neuron * new_neuron = (Neuron *) malloc(sizeof(Neuron));
+
+  if (new_neuron == (Neuron *) NULL) {
+    fprintf(stderr, "Error while allocating memory for Neuron\n");
+    return NULL;
+  }
+
+  new_neuron->nb_connections = 0;
+  new_neuron->value = 0.0;
+
+  return new_neuron;
+}
+
+/*!
+* \brief Create a network element
+* \return Return a newtork element, NULL if error
+*/
+NetworkElement * newNetworkElement(short int id, Neuron * neuron) {
+  NetworkElement * new_network_element = (NetworkElement *) malloc(sizeof(NetworkElement));
+
+  if (new_network_element == (NetworkElement *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new NetworkElement\n");
+    return NULL;
+  }
+
+  new_network_element->id = id;
+  new_network_element->neuron = neuron;
+
+  return new_network_element;
+}
+
+/*!
 * \brief Create a genome
 * \return Return a genome, NULL if error
 */
@@ -39,6 +75,45 @@ Genome * newGenome() {
   }
 
   new_genome->nb_genes = 0;
+  new_genome->nb_network_elements = 0;
 
   return new_genome;
+}
+
+/*!
+* \brief Generate a genome by creating its network elements
+* \param[in] genome the genome to generate
+* \return Return 0 if success, -1 otherwise
+*/
+int generateGenome(Genome * genome) {
+  int i;
+
+  for (i = 0; i < INPUTS; ++i) {
+    if (addToNetwork(genome, newNetworkElement(i, newNeuron())) == -1)
+      return -1;
+  }
+  for (i = 0; i < OUTPUTS; ++i) {
+    if (addToNetwork(genome, newNetworkElement(INPUTS + i, newNeuron())) == -1)
+      return -1;
+  }
+
+  return 0;
+}
+
+/*!
+* \brief Add a network element to a genome
+* \param[in] genome the genome to modify
+* \param[out] network_element the network element to insert
+* \return Return 0 if success, -1 otherwise
+*/
+int addToNetwork(Genome * genome, NetworkElement * network_element) {
+  if (genome->nb_network_elements + 1 == N_MAX_NETWORK) {
+    fprintf(stderr, "Too many network elements in genome\n");
+    return -1;
+  }
+
+  genome->network[genome->nb_network_elements] = *network_element;
+  genome->nb_network_elements++;
+
+  return 0;
 }
