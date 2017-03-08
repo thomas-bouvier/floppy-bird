@@ -60,4 +60,6 @@ Genome * newGenome();
 int generateGenome(Genome * genome);
 int addToNetwork(Genome * genome, NetworkElement * network_element);
 
+int genomeHasNetworkElement(Genome * genome, short int id);
+
 #endif // GENOME_H

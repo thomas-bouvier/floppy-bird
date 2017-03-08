@@ -13,6 +13,8 @@ int main() {
   pool = newMatingPool();
   populateMatingPool(pool);
 
+  /* new level */
+
   for (i = 0; i < pool->nb_species; ++i) {
     for (j = 0; j < pool->species[i].nb_genomes; ++j) {
       generateGenome(&(pool->species[i].genomes[j]));

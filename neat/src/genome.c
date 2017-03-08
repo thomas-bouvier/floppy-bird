@@ -117,3 +117,20 @@ int addToNetwork(Genome * genome, NetworkElement * network_element) {
 
   return 0;
 }
+
+/*!
+* \brief Check if a genome contains the network element with the specified id
+* \param[in] genome the genome to check
+* \param[in] id the id of the network element to check
+* \return Return 1 if found, 0 otherwise
+*/
+int genomeHasNetworkElement(Genome * genome, short int id) {
+  int i;
+
+  for (i = 0; i < genome->nb_network_elements; ++i) {
+    if (genome->network[i].id == id)
+      return 1;
+  }
+
+  return 0;
+}
