@@ -38,5 +38,7 @@ Genome * newGenome() {
     return NULL;
   }
 
+  new_genome->nb_genes = 0;
+
   return new_genome;
 }

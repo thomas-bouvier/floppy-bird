@@ -17,7 +17,8 @@
 */
 typedef struct {
   Genome genomes[N_MAX_GENOMES];    /*!< genomes contained in this species */
-  double max_fitness;               /*!< the maximum score of all genomes in species */
+  short int nb_genomes;             /*!< the number of genomes contained in this species */
+  double max_fitness;               /*!< the maximum score of all genomes in this species */
 } Species;
 
 #endif // SPECIES_H
