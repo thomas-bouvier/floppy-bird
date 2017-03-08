@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 /*!
-* \struct Obstacle game.h
+* \struct Obstacle obstacle.h
 * \brief An obstacle contains two pipes, and the bird has to pass between them
 */
 typedef struct{

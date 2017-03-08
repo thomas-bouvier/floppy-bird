@@ -1,6 +1,6 @@
 /*!
 * \file game.h
-* \brief File containing structures and prototypes for the game
+* \brief File containing the prototypes for the game
 */
 #ifndef GAME_H
 #define GAME_H
@@ -12,21 +12,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
-
-
-
-
-
-
-//Model
+void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[PIPES_ON_SCREEN]);
 void cameraScrolling(Camera * camera, Bird * bird);
-
-/*
-//View
-void drawRectangle(SDL_Surface * surface, SDL_Rect * rect, int r, int g, int b);
-void drawObstacle(SDL_Surface * surface, Obstacle * obstacle);
-*/
-
+int pipeCreation(Camera * camera, Obstacle * ostacle);
+int detectHit(Bird * bird, Obstacle * obstacle);
+int game(Bird * bird, Camera * camera, Obstacle * obstacle[PIPES_ON_SCREEN]);
 
 #endif // GAME_H

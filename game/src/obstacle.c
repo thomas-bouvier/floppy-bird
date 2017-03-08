@@ -8,7 +8,7 @@
 *\brief Create an obstacle
 * \param[in] number the obstacle number
 * \param[in] height_lower the ordinate of the lower pipe
-* \param[in] gap the gap between two pipes
+* \param[in] obstacle_gap the gap between two pipes
 * \return Return the created obstacle, NULL if error
 */
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
@@ -19,7 +19,7 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
         fprintf(stderr, "Obstacle allocation problem");
         return NULL;
     }
-    Pipe * low = newPipe(number, height_lower, height_lower);                           //Lower pipe
+    Pipe * low = newPipe(number, SCREEN_HEIGHT - height_lower, height_lower);            //Lower pipe
     Pipe * up = newPipe(number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
     new_obstacle->lower = low;
     new_obstacle->upper = up;
