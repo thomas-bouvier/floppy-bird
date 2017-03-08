@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "conf.h"
+#include "utils.h"
 
 /*!
 * \struct ConnectionGene genome.h
@@ -61,5 +62,7 @@ int generateGenome(Genome * genome);
 int addToNetwork(Genome * genome, NetworkElement * network_element);
 
 int genomeHasNetworkElement(Genome * genome, short int id);
+
+Neuron * getRandomNeuron(Genome * genome);
 
 #endif // GENOME_H

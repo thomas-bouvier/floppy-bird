@@ -134,3 +134,15 @@ int genomeHasNetworkElement(Genome * genome, short int id) {
 
   return 0;
 }
+
+/*!
+* \brief Return a random neuron from the genome
+* \param[in] genome the genome to choose a neuron from
+* \return Return a random neuron
+*/
+Neuron * getRandomNeuron(Genome * genome) {
+  if (genome->nb_network_elements == 0)
+    return NULL;
+
+  return genome->network[randomAtMost(genome->nb_network_elements - 1)].neuron;
+}
