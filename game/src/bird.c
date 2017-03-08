@@ -31,7 +31,7 @@ Bird * newBird()
 */
 void updateBird(Bird * bird, int t)
 {
-    if( t == 1)
+    if( t == JUMP)
     {
         bird->dir_y=BIRD_JUMP;
     }

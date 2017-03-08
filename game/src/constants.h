@@ -19,4 +19,6 @@
 #define PIPE_X_OFFSET 100
 #define PIPES_ON_SCREEN 3
 
+enum{NOTHING, JUMP, QUIT};
+
 #endif // CONSTANTS_H
