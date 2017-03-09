@@ -10,7 +10,7 @@
 void initAffichage(SDL_Window * window, SDL_Renderer * renderer);
 void drawRectangle(SDL_Surface * surface, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Surface * surface, Bird * bird);
-void drawObstacle(SDL_Surface * surface, Bird * bird);
+void drawObstacle(SDL_Surface * surface, Obstacle * obstacle);
 void afficheGame(Bird * bird, Obstacle * obstacle[], Camera * camera);
 
 #endif // VIEW_H
