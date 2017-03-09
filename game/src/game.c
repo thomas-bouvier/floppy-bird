@@ -38,5 +38,21 @@ int obstacleCreation(Camera * camera, Obstacle * obstacle[], int number, int hei
     return EXIT_SUCCESS;
 }
 
-
+/*!
+* \brief Detect the collisions
+* \param[in] bird the bird to test the collision with
+* \param[in] obstacle the only obstacle that the bird can hit
+* \return 1 if the bird hit something 0 in other cases
+*/
+int detectHit(Bird * bird, Obstacle * obstacle)
+{
+    int h = 0;
+    if(bird->y + bird->h/2 >= SCREEN_HEIGHT) h = 1; //detect the collision with the ground
+    if(bird->x + bird->w/2 >= obstacle->lower->x)
+    {
+        if(bird->y - bird->h/2 <= obstacle->upper->y + obstacle->upper->h) h = 1; //collision with the upper pipe
+        if(bird->y + bird->h/2 >= obstacle->lower->y) h = 1;                      //collision with the lower pipe
+    }
+    return h;
+}
 
