@@ -9,6 +9,8 @@
 #include <stdio.h>
 
 #include "conf.h"
+#include "neuronList.h"
+#include "connectionGeneList.h"
 
 typedef struct ConnectionGene ConnectionGene;
 

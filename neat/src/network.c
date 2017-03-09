@@ -43,6 +43,8 @@ Neuron * newNeuron() {
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
 int addNeuronToNetwork(Network * network, Neuron * neuron) {
+  neuron->id = countNeurons(network);
+
   return addNeuron(network, neuron);
 }
 
@@ -81,7 +83,7 @@ int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, Connect
     return 0;
   }
 
-  if (!addConnectionGene(neuron_src->connections, connection_gene))
+  if (!addConnectionGene(&neuron_src->connections, connection_gene))
     return 0;
 
   connection_gene->neuron = neuron_dst;

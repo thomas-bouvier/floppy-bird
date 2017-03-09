@@ -10,21 +10,24 @@
 
 #include "network.h"
 
-void initConnectionGeneList(ConnectionGeneList * connection_gene_list);
-void deleteConnectionGeneList(ConnectionGeneList * connection_gene_list);
+struct ConnectionGene;
+struct ConnectionGeneList;
 
-int emptyConnectionGeneList(ConnectionGeneList * connection_gene_list);
-int outOfConnectionGeneList(ConnectionGeneList * connection_gene_list);
+void initConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
+void deleteConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 
-void setOnFirstConnectionGene(ConnectionGeneList * connection_gene_list);
-void nextConnectionGene(ConnectionGeneList * connection_gene_list);
+int emptyConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
+int outOfConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 
-ConnectionGene * getCurrentConnectionGene(ConnectionGeneList * connection_gene_list);
+void setOnFirstConnectionGene(struct ConnectionGeneList * connection_gene_list);
+void nextConnectionGene(struct ConnectionGeneList * connection_gene_list);
 
-int addConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene);
-int deleteConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene);
+struct ConnectionGene * getCurrentConnectionGene(struct ConnectionGeneList * connection_gene_list);
 
-int findConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene);
-int countConnectionGenes(ConnectionGeneList * connection_gene_list);
+int addConnectionGene(struct ConnectionGeneList * connection_gene_list, struct ConnectionGene * connection_gene);
+int deleteConnectionGene(struct ConnectionGeneList * connection_gene_list, struct ConnectionGene * connection_gene);
+
+int findConnectionGene(struct ConnectionGeneList * connection_gene_list, struct ConnectionGene * connection_gene);
+int countConnectionGenes(struct ConnectionGeneList * connection_gene_list);
 
 #endif // CONNECTION_GENE_LIST_H

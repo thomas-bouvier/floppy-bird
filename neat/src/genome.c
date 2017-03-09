@@ -18,23 +18,23 @@ Genome * newGenome() {
 }
 
 /*!
-* \brief Generate a genome by creating its network elements
-* \param[in] genome the genome to generate
-* \return Return 0 if success, -1 otherwise
+* \brief Generate a Genome by creating its network elements
+* \param[out] genome the Genome to generate
+* \return Return 1 if the Genome was successfully generated, 0 otherwise
 */
 int generateGenome(Genome * genome) {
   int i;
 
   for (i = 0; i < INPUTS; ++i) {
-    if (addToNetwork(genome, newNetworkElement(i, newNeuron())) == -1)
-      return -1;
+    if (!addNeuronToNetwork(&genome->network, newNeuron()))
+      return 0;
   }
   for (i = 0; i < OUTPUTS; ++i) {
-    if (addToNetwork(genome, newNetworkElement(INPUTS + i, newNeuron())) == -1)
-      return -1;
+    if (!addNeuronToNetwork(&genome->network, newNeuron()))
+      return 0;
   }
 
-  return 0;
+  return 1;
 }
 
 /*!

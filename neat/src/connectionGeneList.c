@@ -152,10 +152,10 @@ static int deleteCurrentConnectionGene(ConnectionGeneList * connection_gene_list
 
   if (!outOfConnectionGeneList(connection_gene_list)) {
     if (connection_gene_list->current == connection_gene_list->first)
-      deleteFirstConnectionGene(connection_gene_list);
+      return deleteFirstConnectionGene(connection_gene_list);
 
     else if (connection_gene_list->current == connection_gene_list->last)
-      deleteLastConnectionGene(connection_gene_list);
+      return deleteLastConnectionGene(connection_gene_list);
 
     else {
       stop = connection_gene_list->current;
@@ -168,8 +168,12 @@ static int deleteCurrentConnectionGene(ConnectionGeneList * connection_gene_list
 
       previous_connection_gene->next = connection_gene_list->current->next;
       freeConnectionGene(connection_gene_list->current);
+
+      return 1;
     }
   }
+
+  return 0;
 }
 
 /*!
@@ -220,7 +224,7 @@ int countConnectionGenes(ConnectionGeneList * connection_gene_list) {
   setOnFirstConnectionGene(connection_gene_list);
   while (!outOfConnectionGeneList(connection_gene_list)) {
     ++count;
-    nextNeuron(connection_gene_list);
+    nextConnectionGene(connection_gene_list);
   }
 
   return count;
