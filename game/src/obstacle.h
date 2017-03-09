@@ -22,7 +22,7 @@ typedef struct{
 } Obstacle;
 
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
-Obstacle * nextObstacle(Obstacle obstacle[], Bird * Bird);
+Obstacle * nextObstacle(Obstacle * obstacle, Bird * Bird);
 void freeObstacle(Obstacle * obstacle);
 
 #endif // OBSTACLE_H
