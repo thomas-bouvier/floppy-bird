@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void initGame(Bird * bird, Camera * camera, Obstacle obstacle[PIPES_ON_SCREEN]);
+void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[]);
 void cameraScrolling(Camera * camera, Bird * bird);
 int obstacleCreation(Camera * camera, Obstacle * ostacle[], int number, int height_lower, int obstacle_gap);
 int detectHit(Bird * bird, Obstacle * obstacle);
