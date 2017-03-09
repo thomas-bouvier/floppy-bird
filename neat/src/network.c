@@ -1,6 +1,22 @@
 #include "network.h"
 
 /*!
+* \brief Init the given Network.
+* \param[out] network the Network to init
+*/
+void initNetwork(Network * network) {
+  initNeuronList(network);
+}
+
+/*!
+* \brief Delete the given Network.
+* \param[out] network the Network to delete
+*/
+void deleteNetwork(Network * network) {
+  deleteNeuronList(network);
+}
+
+/*!
 * \brief Create a neuron
 * \return Return a neuron, NULL if error
 */

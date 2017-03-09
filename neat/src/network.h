@@ -12,7 +12,7 @@
 
 /*!
 * \struct ConnectionGene network.h
-* \brief A ConnectionGene joins nodes in the Genome.
+* \brief A ConnectionGene joins Neuron elements in the Network.
 */
 typedef struct ConnectionGene {
   struct ConnectionGene * next;     /*!< the address of the next ConnectionGene in the list */
@@ -53,6 +53,14 @@ typedef struct {
   Neuron * current;     /*<! the address of the current Neuron in the list */
   Neuron * last;        /*<! the address of the last Neuron of the list */
 } NeuronList;
+
+/*!
+* \brief The Network type is actually a NeuronList.
+*/
+typedef NeuronList Network;
+
+void initNetwork(Network * network);
+void deleteNetwork(Network * network);
 
 Neuron * newNeuron();
 ConnectionGene * newConnectionGene(short int input, short int output, double weight, short int innovation, unsigned char enabled);

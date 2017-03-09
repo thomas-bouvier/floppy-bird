@@ -16,7 +16,7 @@
 * \brief A genome contains connection genes
 */
 typedef struct {
-  /*Network network; */     /*!< the Network attached to this Genome */
+  Network network;    /*!< the Network attached to this Genome */
 } Genome;
 
 Genome * newGenome();
