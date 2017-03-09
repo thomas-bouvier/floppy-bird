@@ -1,72 +1,60 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "game.h"
+#include "view.h"
+#include "control.h"
+#include "file.h"
 #include <SDL2/SDL.h>
 
 int main(int argc, char ** argv)
-{/*
-    //SDL initialization
-    if (SDL_Init(SDL_INIT_VIDEO != 0))
+{
+    SDL_Window * window = NULL;
+    SDL_Renderer * renderer = NULL;
+
+    Bird * bird = NULL;
+    Obstacle * obstacle[PIPES_ON_SCREEN];
+    Camera * camera = NULL;
+
+    SDL_Event * event;
+
+    initGame(bird, camera, obstacle);
+    initDisplay(window, renderer);
+
+
+    int hit = 0;
+    int c = 1;
+
+    FILE * f = NULL;
+    f = fopen("./../res/files/level.txt", "r");
+    if(f==NULL)
     {
-        fprintf(stderr, "SDL initialzation   failure %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
+        fprintf(stderr,"Opening file failure : %d", ferror(f));
+        return EXIT_FAILURE;
     }
 
-    //Creation of the game window
-    SDL_Window * pWindow = NULL;
-    pWindow = SDL_CreateWindow("Floppy Bird",
-                               SDL_WINDOWPOS_CENTERED,
-                               SDL_WINDOWPOS_CENTERED,
-                               800,
-                               600,
-                               SDL_WINDOW_RESIZABLE);
-    if (pWindow == NULL)
+    if(initControl() == 0)
+        c = 0;
+
+    while(c)
     {
-        fprintf(stderr, "Opening window failure : %s\n,", SDL_GetError());
-        exit(EXIT_FAILURE);
+        while(!hit&&c)
+        {
+
+
+            int n = 0;
+            int e = detectTouch(event);
+            if(e == 0)
+                c=0;
+            updateBird(bird, e);
+            obstacleCreation(camera,obstacle,n,readLevel(f,n),100);
+            cameraScrolling(camera, bird);
+            displayGame(bird, obstacle, camera);
+            hit=detectHit(bird, nextObstacle(obstacle, bird));
+            ++n;
+        }
     }
-
-    //Renderer creation
-    SDL_Renderer * pRenderer = SDL_CreateRenderer(pWindow,-1,SDL_RENDERER_ACCELERATED);
-    if (pRenderer == NULL);
-    {
-        fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-
-    //Parameters of the rectangle destination for the sprite
-    Pipe * pipe = newPipe(400, 300,"./../../res/sprites/simplified pipe.bmp");
-    if(pipe==NULL)
-    {
-        fprintf(stderr, "Pipe creation failure : %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-    //Texture creation
-    SDL_Texture * pTexture = SDL_CreateTextureFromSurface(pRenderer, pipe->surface);
-    if (pTexture == NULL)
-    {
-        fprintf(stderr, "Texture creation failure : %s\n", SDL_GetError());
-        exit(EXIT_FAILURE);
-    }
-    SDL_Rect dest = {pipe->x, pipe->y, pipe->surface->w, pipe->surface->h};
-    SDL_RenderCopy(pRenderer, pTexture, NULL, &dest);
-    SDL_RenderPresent(pRenderer);
-
-
-
-    //Game loop
-    int end = 1;
-    while(end)
-    {
-        SDL_RenderClear(pRenderer);
-        dest.x = pipe->x;
-        SDL_RenderCopy(pRenderer, pTexture, NULL, &dest);
-        SDL_RenderPresent(pRenderer);
-        SDL_Delay(5);
-    }
-
-    SDL_DestroyWindow(pWindow);
-    SDL_Quit();
-*/
+    freeAll(bird, obstacle, camera);
+    quitGame(window, renderer);
+    fclose(f);
     return EXIT_SUCCESS;
 }
