@@ -6,23 +6,23 @@
 
 /*!
 * \brief Detect the interesting events for the project
-* \param[out] event the list of event waiting to be treated
 *\return Return return 1 if the event to jump is detected, 2 for the one to quit and 0 in other case
 */
-int detectTouch(SDL_Event * event)
+int detectTouch()
 {
-    while( SDL_PollEvent(event))
+    SDL_Event event;
+    while( SDL_PollEvent(&event))
         {
-            switch (event->type)
+            switch (event.type)
             {
                 case SDL_KEYDOWN:
-                    if(event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                    if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                     {
                         return QUIT;
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    if(event->button.button == SDL_BUTTON_LEFT)
+                    if(event.button.button == SDL_BUTTON_LEFT)
                     {
                         return JUMP;
                     }

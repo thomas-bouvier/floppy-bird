@@ -15,8 +15,6 @@ int main(int argc, char ** argv)
     Obstacle * obstacle[PIPES_ON_SCREEN];
     Camera * camera = NULL;
 
-    SDL_Event * event;
-
     initGame(bird, camera, obstacle);
     initDisplay(window, renderer);
 
@@ -24,6 +22,7 @@ int main(int argc, char ** argv)
     int hit = 0;
     int c = 1;
 
+    /* Open the file which contain the save of the level */
     FILE * f = NULL;
     f = fopen("./../res/files/level.txt", "r");
     if(f==NULL)
@@ -32,8 +31,16 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    if(initControl() == 0)
-        c = 0;
+    /* wait the first jump to start the game*/
+    int init;
+    while(init == NOTHING)
+    {
+        init = detectTouch();
+        if(init == JUMP)
+            bird->dir_y = BIRD_JUMP;
+        if(init == QUIT)
+            c = 0;
+    }
 
     while(c)
     {
@@ -42,10 +49,10 @@ int main(int argc, char ** argv)
 
 
             int n = 0;
-            int e = detectTouch(event);
-            if(e == 0)
-                c=0;
-            updateBird(bird, e);
+            int event = detectTouch();
+            if(event == QUIT)
+                c=QUIT;
+            updateBird(bird, event);
             obstacleCreation(camera,obstacle,n,readLevel(f,n),100);
             cameraScrolling(camera, bird);
             displayGame(bird, obstacle, camera);
