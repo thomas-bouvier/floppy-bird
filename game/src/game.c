@@ -3,7 +3,12 @@
 * \brief File containing the functions to manage the game
 */
 #include "game.h"
-
+/*!
+* \brief Allocate all the object of the game
+* \param[in] bird the bird to allocate
+* \param[in] camera the camera to allocate
+* \param[in] obstacle[] the table that contains the obstacles
+*/
 void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[])
 {
     int i;
