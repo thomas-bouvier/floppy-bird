@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 
 int main(int argc, char ** argv)
-{
+{/*
     //SDL initialization
     if (SDL_Init(SDL_INIT_VIDEO != 0))
     {
@@ -28,13 +28,11 @@ int main(int argc, char ** argv)
 
     //Renderer creation
     SDL_Renderer * pRenderer = SDL_CreateRenderer(pWindow,-1,SDL_RENDERER_ACCELERATED);
-    /*if (pRenderer == NULL);
+    if (pRenderer == NULL);
     {
         fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
-    }*/
-
-
+    }
 
     //Parameters of the rectangle destination for the sprite
     Pipe * pipe = newPipe(400, 300,"./../../res/sprites/simplified pipe.bmp");
@@ -69,6 +67,6 @@ int main(int argc, char ** argv)
 
     SDL_DestroyWindow(pWindow);
     SDL_Quit();
-
+*/
     return EXIT_SUCCESS;
 }
