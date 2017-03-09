@@ -4,6 +4,17 @@
 */
 #include "game.h"
 
+void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[])
+{
+    int i;
+    bird = newBird();
+    camera = newCamera(0,1);
+    for(i=0; i<PIPES_ON_SCREEN; ++i)
+    {
+        obstacle[i]=NULL;
+    }
+}
+
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] pipe the pipe to scroll
