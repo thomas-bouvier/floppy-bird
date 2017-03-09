@@ -71,3 +71,38 @@ Neuron * getRandomNeuron(Genome * genome) {
 
   return NULL;
 }
+
+/*!
+* \brief Write a Network to an output file.
+* \param[in] network the Network to write
+* \param[in] filename the name of the output file
+* \return int 0 if the file was successfully written, -1 otherwise
+*/
+int writeGraphVizNetwork(Network * network, char * filename) {
+  FILE * f = NULL;
+
+  if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
+      fprintf(stderr, "Error while opening %s\n", filename);
+      return -1;
+  }
+
+  fprintf(f, "digraph {\n");
+
+  setOnFirstNeuron(network);
+  while (!outOfNeuronList(network)) {
+      ConnectionGeneList * connection_gene_successors = &(network->current->connections);
+
+      setOnFirstConnectionGene(connection_gene_successors);
+      while (!outOfConnectionGeneList(connection_gene_successors)) {
+          fprintf(f, "\t%d -> %d;\n", &(network->current->id), &(connection_gene_successors->current->neuron->id));
+          nextConnectionGene(connection_gene_successors);
+      }
+
+      nextNeuron(network);
+  }
+
+  fprintf(f, "}");
+  fclose(f);
+
+  return 0;
+}

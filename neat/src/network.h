@@ -21,6 +21,7 @@ typedef struct ConnectionGene {
   double weight;                    /*!< the weight of the connection gene */
   short int innovation;             /*!< the innovation number of the connection gene, used to track its history */
   unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
+  Neuron * neuron;                  /*!< the successor Neuron */
 } ConnectionGene;
 
 /*!
@@ -64,5 +65,7 @@ void deleteNetwork(Network * network);
 
 Neuron * newNeuron();
 ConnectionGene * newConnectionGene(short int input, short int output, double weight, short int innovation, unsigned char enabled);
+
+int writeGraphVizNetwork(Network * network, char * filename);
 
 #endif // NETWORK_H
