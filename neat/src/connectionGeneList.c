@@ -209,3 +209,19 @@ int findConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene
 
   return 0;
 }
+
+/*!
+* \brief Count the number of ConnectionGene elements in the given ConnectionGeneList.
+* \param[in] neuron_list the ConnectionGeneList to scan
+*/
+int countConnectionGenes(ConnectionGeneList * connection_gene_list) {
+  int count = 0;
+
+  setOnFirstConnectionGene(connection_gene_list);
+  while (!outOfConnectionGeneList(connection_gene_list)) {
+    ++count;
+    nextNeuron(connection_gene_list);
+  }
+
+  return count;
+}

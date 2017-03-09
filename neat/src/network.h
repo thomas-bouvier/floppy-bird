@@ -10,50 +10,56 @@
 
 #include "conf.h"
 
+typedef struct ConnectionGene ConnectionGene;
+
+typedef struct ConnectionGeneList ConnectionGeneList;
+
+typedef struct Neuron Neuron;
+
+typedef struct NeuronList NeuronList;
+
 /*!
 * \struct ConnectionGene network.h
 * \brief A ConnectionGene joins Neuron elements in the Network.
 */
-typedef struct ConnectionGene {
+struct ConnectionGene {
   struct ConnectionGene * next;     /*!< the address of the next ConnectionGene in the list */
-  short int input;                  /*!< the input node attached to the connection gene */
-  short int output;                 /*!< the output node attached to the connection gene */
   double weight;                    /*!< the weight of the connection gene */
   short int innovation;             /*!< the innovation number of the connection gene, used to track its history */
   unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
   Neuron * neuron;                  /*!< the successor Neuron */
-} ConnectionGene;
+};
 
 /*!
 * \struct ConnectionGeneList network.h
-*
+* \brief A ConnectionGeneList is a conatiner for ConnectionGene elements.
 */
-typedef struct {
+struct ConnectionGeneList {
   ConnectionGene * first;     /*<! the address of the first ConnectionGene of the list */
   ConnectionGene * current;   /*<! the address of the current ConnectionGene in the list */
   ConnectionGene * last;      /*<! the address of the last ConnectionGene of the list */
-} ConnectionGeneList;
+};
 
 /*!
 * \struct Neuron network.h
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
-typedef struct Neuron {
+struct Neuron {
   ConnectionGeneList connections;     /*!< the successors ConnectionGene linked to this Neuron */
   struct Neuron * next;               /*!< the address of the next Neuron in the list */
   short int id;                       /*!< the id of this Neuron */
   double value;                       /*!< the value attached to this Neuron */
-} Neuron;
+};
 
 /*!
 * \struct NeuronList network.h
-*
+* \brief A NeuronList is a container for Neuron elements.
 */
-typedef struct {
+struct NeuronList {
   Neuron * first;       /*!< the address of the first Neuron of the list */
   Neuron * current;     /*<! the address of the current Neuron in the list */
   Neuron * last;        /*<! the address of the last Neuron of the list */
-} NeuronList;
+};
 
 /*!
 * \brief The Network type is actually a NeuronList.
@@ -64,7 +70,10 @@ void initNetwork(Network * network);
 void deleteNetwork(Network * network);
 
 Neuron * newNeuron();
-ConnectionGene * newConnectionGene(short int input, short int output, double weight, short int innovation, unsigned char enabled);
+int addNeuronToNetwork(Network * network, Neuron * neuron);
+
+ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
+int addConnectionGeneToNeuron(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
 
 int writeGraphVizNetwork(Network * network, char * filename);
 

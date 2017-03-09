@@ -25,5 +25,6 @@ int addNeuron(NeuronList * neuron_list, Neuron * neuron);
 int deleteNeuron(NeuronList * neuron_list, Neuron * neuron);
 
 int findNeuron(NeuronList * neuron_list, Neuron * neuron);
+int countNeurons(NeuronList * neuron_list);
 
 #endif // NEURON_LIST_H

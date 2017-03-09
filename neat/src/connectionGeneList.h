@@ -25,5 +25,6 @@ int addConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene 
 int deleteConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene);
 
 int findConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene);
+int countConnectionGenes(ConnectionGeneList * connection_gene_list);
 
 #endif // CONNECTION_GENE_LIST_H

@@ -209,3 +209,19 @@ int findNeuron(NeuronList * neuron_list, Neuron * neuron) {
 
   return 0;
 }
+
+/*!
+* \brief Count the number of Neuron elements in the given NeuronList
+* \param[in] neuron_list the NeuronList to scan
+*/
+int countNeurons(NeuronList * neuron_list) {
+  int count = 0;
+
+  setOnFirstNeuron(neuron_list);
+  while (!outOfNeuronList(neuron_list)) {
+    ++count;
+    nextNeuron(neuron_list);
+  }
+
+  return count;
+}
