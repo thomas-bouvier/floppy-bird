@@ -25,7 +25,6 @@ Genome * newGenome() {
 int generateGenome(Genome * genome) {
   int i;
 
-  /*
   for (i = 0; i < INPUTS; ++i) {
     if (addToNetwork(genome, newNetworkElement(i, newNeuron())) == -1)
       return -1;
@@ -34,26 +33,6 @@ int generateGenome(Genome * genome) {
     if (addToNetwork(genome, newNetworkElement(INPUTS + i, newNeuron())) == -1)
       return -1;
   }
-  */
-
-  return 0;
-}
-
-/*!
-* \brief Check if a genome contains the network element with the specified id
-* \param[in] genome the genome to check
-* \param[in] id the id of the network element to check
-* \return Return 1 if found, 0 otherwise
-*/
-int genomeHasNetworkElement(Genome * genome, short int id) {
-  /*
-  int i;
-
-  for (i = 0; i < genome->nb_network_elements; ++i) {
-    if (genome->network[i].id == id)
-      return 1;
-  }
-  */
 
   return 0;
 }
