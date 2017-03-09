@@ -1,11 +1,11 @@
 /*!
-* \file game.c
-* \brief File containing the functions to manage the game
+* \file control.c
+* \brief File containing the functions that allow the user to control the game
 */
 #include "control.h"
 
 /*!
-* \brief detect the interesting events for the project
+* \brief Detect the interesting events for the project
 * \param[out] event the list of event waiting to be treated
 *\return Return return 1 if the event to jump is detected, 2 for the one to quit and 0 in other case
 */
@@ -16,20 +16,18 @@ int detectTouch(SDL_Event * event)
             switch (event->type)
             {
                 case SDL_KEYDOWN:
-                    if(event->key.keysym.scancode==SDL_SCANCODE_ESCAPE)
+                    if(event->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
                     {
-                        return 2;
+                        return QUIT;
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    if(event->button.button==SDL_BUTTON_LEFT)
+                    if(event->button.button == SDL_BUTTON_LEFT)
                     {
-                        return 1;
+                        return JUMP;
                     }
                     break;
-                default:
-                    ;
             }
         }
-        return 0;
+        return NOTHING;
 }
