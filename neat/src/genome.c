@@ -26,11 +26,11 @@ int generateGenome(Genome * genome) {
   int i;
 
   for (i = 0; i < INPUTS; ++i) {
-    if (!addNeuronToNetwork(&genome->network, newNeuron()))
+    if (!addNeuronToNetwork(&genome->network, newNeuron(INPUT)))
       return 0;
   }
   for (i = 0; i < OUTPUTS; ++i) {
-    if (!addNeuronToNetwork(&genome->network, newNeuron()))
+    if (!addNeuronToNetwork(&genome->network, newNeuron(OUTPUT)))
       return 0;
   }
 
@@ -66,8 +66,8 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
   setOnFirstNeuron(&genome->network);
   while (!outOfNeuronList(&genome->network)) {
       ConnectionGeneList * connection_gene_successors = &(genome->network.current->connections);
-
       setOnFirstConnectionGene(connection_gene_successors);
+
       if (emptyConnectionGeneList(connection_gene_successors))
         fprintf(f, "\t%d;\n", genome->network.current->id);
 

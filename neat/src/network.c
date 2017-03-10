@@ -18,9 +18,10 @@ void deleteNetwork(Network * network) {
 
 /*!
 * \brief Create a neuron
+* \param[in] type The NeuronType of the Neuron to be created
 * \return Return a neuron, NULL if error
 */
-Neuron * newNeuron() {
+Neuron * newNeuron(NeuronType type) {
   Neuron * new_neuron = (Neuron *) malloc(sizeof(Neuron));
 
   if (new_neuron == (Neuron *) NULL) {
@@ -31,6 +32,7 @@ Neuron * newNeuron() {
   new_neuron->next = NULL;
 
   new_neuron->id = -1;
+  new_neuron->type = type;
   new_neuron->value = 0.0;
 
   return new_neuron;

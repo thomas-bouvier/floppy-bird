@@ -16,6 +16,8 @@ typedef struct ConnectionGene ConnectionGene;
 
 typedef struct ConnectionGeneList ConnectionGeneList;
 
+typedef enum NeuronType NeuronType;
+
 typedef struct Neuron Neuron;
 
 typedef struct NeuronList NeuronList;
@@ -43,6 +45,17 @@ struct ConnectionGeneList {
 };
 
 /*!
+* \enum NeuronType network.h
+* \brief A NeuronType refers to the type of the Neuron.
+*/
+enum NeuronType {
+  UNKNOW,
+  INPUT,
+  OUTPUT,
+  BASIC
+};
+
+/*!
 * \struct Neuron network.h
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
@@ -50,6 +63,7 @@ struct Neuron {
   ConnectionGeneList connections;     /*!< the successors ConnectionGene linked to this Neuron */
   struct Neuron * next;               /*!< the address of the next Neuron in the list */
   short int id;                       /*!< the id of this Neuron */
+  NeuronType type;                    /*!< the type of this Neuron */
   double value;                       /*!< the value attached to this Neuron */
 };
 
@@ -71,7 +85,7 @@ typedef NeuronList Network;
 void initNetwork(Network * network);
 void deleteNetwork(Network * network);
 
-Neuron * newNeuron();
+Neuron * newNeuron(NeuronType type);
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
