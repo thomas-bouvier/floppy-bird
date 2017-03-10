@@ -5,9 +5,9 @@
 #ifndef CONF_H
 #define CONF_H
 
-#define POPULATION                200
+#define POPULATION                50
 
-#define N_MAX_SPECIES             50
+#define N_MAX_SPECIES             8
 #define N_MAX_GENOMES             50
 #define N_MAX_CONNECTION_GENES    50
 #define N_MAX_INPUTS              10

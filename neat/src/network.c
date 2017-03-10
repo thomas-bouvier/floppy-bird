@@ -78,8 +78,9 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
 * \return int 1 if the two Neuron elements were successfully added, 0 otherwise
 */
 int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene) {
-  if (countConnectionGenes(&neuron_src->connections) + 1 >= N_MAX_CONNECTION_GENES) {
-    fprintf(stderr, "Can't add connection gene to neuron : reached limit (%d)\n", N_MAX_CONNECTION_GENES);
+  int count = countConnectionGenes(&neuron_src->connections);
+  if (count == N_MAX_CONNECTION_GENES) {
+    fprintf(stderr, "Can't add connection gene to neuron : reached limit (%d, max=%d)\n", count, N_MAX_CONNECTION_GENES);
     return 0;
   }
 
