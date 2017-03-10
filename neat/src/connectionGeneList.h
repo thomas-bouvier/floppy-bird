@@ -20,6 +20,7 @@ int emptyConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 int outOfConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 
 void setOnFirstConnectionGene(struct ConnectionGeneList * connection_gene_list);
+void setOnConnectionGene(struct ConnectionGeneList * connection_gene_list, int index);
 void nextConnectionGene(struct ConnectionGeneList * connection_gene_list);
 
 struct ConnectionGene * getCurrentConnectionGene(struct ConnectionGeneList * connection_gene_list);

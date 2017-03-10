@@ -54,11 +54,26 @@ int outOfConnectionGeneList(ConnectionGeneList * connection_gene_list) {
 }
 
 /*!
-* \brief Set the current ConnectionGene on the first one.
+* \brief Set the current ConnectionGene on the first one of the ConnectionGeneList.
 * \param[out] connection_gene_list the ConnectionGeneList to be modified
 */
 void setOnFirstConnectionGene(ConnectionGeneList * connection_gene_list) {
   connection_gene_list->current = connection_gene_list->first;
+}
+
+/*!
+* \brief Set the current ConnectionGene on the given index of the ConnectionGeneList.
+* \param[out] connection_gene_list the ConnectionGeneList to be modified
+* \param[in] index the index to set the current ConnectionGene on
+*/
+void setOnConnectionGene(ConnectionGeneList * connection_gene_list, int index) {
+  int i = 0;
+
+  setOnFirstConnectionGene(connection_gene_list);
+  while (!outOfConnectionGeneList(connection_gene_list) && i != index) {
+    nextConnectionGene(connection_gene_list);
+    ++i;
+  }
 }
 
 /*!

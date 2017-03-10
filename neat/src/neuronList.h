@@ -20,6 +20,7 @@ int emptyNeuronList(struct NeuronList * neuron_list);
 int outOfNeuronList(struct NeuronList * neuron_list);
 
 void setOnFirstNeuron(struct NeuronList * neuron_list);
+void setOnNeuron(struct NeuronList * neuron_list, int index);
 void nextNeuron(struct NeuronList * neuron_list);
 
 struct Neuron * getCurrentNeuron(struct NeuronList * neuron_list);

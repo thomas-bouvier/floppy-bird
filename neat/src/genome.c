@@ -38,19 +38,13 @@ int generateGenome(Genome * genome) {
 }
 
 /*!
-* \brief Return a random neuron from the genome
-* \param[in] genome the genome to choose a neuron from
-* \return Return a random neuron
+* \brief Return a random Neuron from the given Genome.
+* \param[in] genome the Genome to choose a Neuron from
+* \return Return a random Neuron
 */
 Neuron * getRandomNeuron(Genome * genome) {
-  /*
-  if (genome->nb_network_elements == 0)
-    return NULL;
-
-  return genome->network[randomAtMost(genome->nb_network_elements - 1)].neuron;
-  */
-
-  return NULL;
+  setOnNeuron(&genome->network, randomAtMost(countNeurons(&genome->network) - 1));
+  return getCurrentNeuron(&genome->network);
 }
 
 /*!

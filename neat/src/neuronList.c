@@ -54,11 +54,26 @@ int outOfNeuronList(NeuronList * neuron_list) {
 }
 
 /*!
-* \brief Set the current NeuronList on the first one.
+* \brief Set the current Neuron on the first one of the NeuronList.
 * \param[out] neuron_list the NeuronList to be modified
 */
 void setOnFirstNeuron(NeuronList * neuron_list) {
   neuron_list->current = neuron_list->first;
+}
+
+/*!
+* \brief Set the current Neuron on the given index of the NeuronList.
+* \param[out] neuron_list the NeuronList to be modified
+* \param[in] index the index to set the current Neuron on
+*/
+void setOnNeuron(NeuronList * neuron_list, int index) {
+  int i = 0;
+
+  setOnFirstNeuron(neuron_list);
+  while (!outOfNeuronList(neuron_list) && i != index) {
+    nextNeuron(neuron_list);
+    ++i;
+  }
 }
 
 /*!
@@ -152,10 +167,10 @@ static int deleteCurrentNeuron(NeuronList * neuron_list) {
 
   if (!outOfNeuronList(neuron_list)) {
     if (neuron_list->current == neuron_list->first)
-      deleteFirstNeuron(neuron_list);
+      return deleteFirstNeuron(neuron_list);
 
     else if (neuron_list->current == neuron_list->last)
-      deleteLastNeuron(neuron_list);
+      return deleteLastNeuron(neuron_list);
 
     else {
       stop = neuron_list->current;
@@ -168,8 +183,12 @@ static int deleteCurrentNeuron(NeuronList * neuron_list) {
 
       previous_neuron->next = neuron_list->current->next;
       freeNeuron(neuron_list->current);
+
+      return 1;
     }
   }
+
+  return 0;
 }
 
 /*!
