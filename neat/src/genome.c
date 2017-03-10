@@ -68,9 +68,14 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
       ConnectionGeneList * connection_gene_successors = &(genome->network.current->connections);
 
       setOnFirstConnectionGene(connection_gene_successors);
-      while (!outOfConnectionGeneList(connection_gene_successors)) {
-          fprintf(f, "\t%d -> %d;\n", genome->network.current->id, connection_gene_successors->current->neuron->id);
-          nextConnectionGene(connection_gene_successors);
+      if (emptyConnectionGeneList(connection_gene_successors))
+        fprintf(f, "\t%d;\n", genome->network.current->id);
+
+      else {
+        while (!outOfConnectionGeneList(connection_gene_successors)) {
+            fprintf(f, "\t%d -> %d;\n", genome->network.current->id, connection_gene_successors->current->neuron->id);
+            nextConnectionGene(connection_gene_successors);
+        }
       }
 
       nextNeuron(&genome->network);
