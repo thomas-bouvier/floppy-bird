@@ -63,6 +63,8 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   fprintf(f, "digraph {\n");
 
+  // nodes
+
   setOnFirstNeuron(&genome->network);
   while (!outOfNeuronList(&genome->network)) {
       ConnectionGeneList * connection_gene_successors = &(genome->network.current->connections);
@@ -79,6 +81,22 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
       }
 
       nextNeuron(&genome->network);
+  }
+
+  // colors
+
+  setOnFirstNeuron(&genome->network);
+  while(!outOfNeuronList(&genome->network)) {
+    if (genome->network.current->type == INPUT)
+      fprintf(f, "\t%d [shape=circle, style=filled, fillcolor=purple];\n", genome->network.current->id);
+
+    else if (genome->network.current->type == OUTPUT)
+      fprintf(f, "\t%d [shape=circle, style=filled, fillcolor=red];\n", genome->network.current->id);
+
+    else
+      fprintf(f, "\t%d [shape=circle];\n", genome->network.current->id);
+
+    nextNeuron(&genome->network);
   }
 
   fprintf(f, "}");
