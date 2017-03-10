@@ -26,4 +26,6 @@ int generateGenome(Genome * genome);
 
 Neuron * getRandomNeuron(Genome * genome);
 
+int writeGraphVizGenome(Genome * genome, char * filename);
+
 #endif // GENOME_H

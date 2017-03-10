@@ -77,6 +77,4 @@ int addNeuronToNetwork(Network * network, Neuron * neuron);
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
 int addConnectionGeneToNeuron(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
 
-int writeGraphVizNetwork(Network * network, char * filename);
-
 #endif // NETWORK_H

@@ -54,12 +54,12 @@ Neuron * getRandomNeuron(Genome * genome) {
 }
 
 /*!
-* \brief Write a Network to an output file, based on graphviz.
-* \param[in] network the Network to write
+* \brief Write a the Network of a Genome to an output file, based on graphviz.
+* \param[in] genome the Genome to write
 * \param[in] filename the name of the output file
 * \return int 1 if the file was successfully written, 0 otherwise
 */
-int writeGraphVizNetwork(Network * network, char * filename) {
+int writeGraphVizGenome(Genome * genome, char * filename) {
   FILE * f = NULL;
 
   if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
@@ -69,17 +69,17 @@ int writeGraphVizNetwork(Network * network, char * filename) {
 
   fprintf(f, "digraph {\n");
 
-  setOnFirstNeuron(network);
-  while (!outOfNeuronList(network)) {
-      ConnectionGeneList * connection_gene_successors = &(network->current->connections);
+  setOnFirstNeuron(&genome->network);
+  while (!outOfNeuronList(&genome->network)) {
+      ConnectionGeneList * connection_gene_successors = &(genome->network.current->connections);
 
       setOnFirstConnectionGene(connection_gene_successors);
       while (!outOfConnectionGeneList(connection_gene_successors)) {
-          fprintf(f, "\t%d -> %d;\n", network->current->id, connection_gene_successors->current->neuron->id);
+          fprintf(f, "\t%d -> %d;\n", genome->network.current->id, connection_gene_successors->current->neuron->id);
           nextConnectionGene(connection_gene_successors);
       }
 
-      nextNeuron(network);
+      nextNeuron(&genome->network);
   }
 
   fprintf(f, "}");
