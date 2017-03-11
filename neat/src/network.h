@@ -52,6 +52,7 @@ enum NeuronType {
   UNKNOW,
   INPUT,
   OUTPUT,
+  BIAS,
   BASIC
 };
 

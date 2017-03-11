@@ -13,7 +13,8 @@
 #define N_MAX_INPUTS              10
 #define N_MAX_NETWORK             50
 
-#define INPUTS                    3
-#define OUTPUTS                   1
+#define N_INPUTS                  3
+#define N_OUTPUTS                 1
+#define N_BIAS                    1
 
 #endif // CONF_H

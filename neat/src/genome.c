@@ -25,12 +25,16 @@ Genome * newGenome() {
 int generateGenome(Genome * genome) {
   int i;
 
-  for (i = 0; i < INPUTS; ++i) {
+  for (i = 0; i < N_INPUTS; ++i) {
     if (!addNeuronToNetwork(&genome->network, newNeuron(INPUT)))
       return 0;
   }
-  for (i = 0; i < OUTPUTS; ++i) {
+  for (i = 0; i < N_OUTPUTS; ++i) {
     if (!addNeuronToNetwork(&genome->network, newNeuron(OUTPUT)))
+      return 0;
+  }
+  for (i = 0; i < N_BIAS; ++i) {
+    if (!addNeuronToNetwork(&genome->network, newNeuron(BIAS)))
       return 0;
   }
 
@@ -88,10 +92,13 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
   setOnFirstNeuron(&genome->network);
   while(!outOfNeuronList(&genome->network)) {
     if (genome->network.current->type == INPUT)
-      fprintf(f, "\t%d [shape=circle, style=filled, fillcolor=purple];\n", genome->network.current->id);
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", genome->network.current->id, genome->network.current->id, genome->network.current->value);
 
     else if (genome->network.current->type == OUTPUT)
-      fprintf(f, "\t%d [shape=circle, style=filled, fillcolor=red];\n", genome->network.current->id);
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", genome->network.current->id, genome->network.current->id, genome->network.current->value);
+
+    else if (genome->network.current->type == BIAS)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=orange];\n", genome->network.current->id, genome->network.current->id, genome->network.current->value);
 
     else
       fprintf(f, "\t%d [shape=circle];\n", genome->network.current->id);
