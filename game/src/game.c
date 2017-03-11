@@ -75,3 +75,13 @@ int detectHit(Bird * bird, Obstacle * obstacle)
     return h;
 }
 
+
+void freeAll(Bird * bird, Obstacle * obstacle[], Camera * camera)
+{
+    int i;
+    freeBird(bird);
+    freeCamera(camera);
+    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
+        freeObstacle(obstacle[i]);
+}
+

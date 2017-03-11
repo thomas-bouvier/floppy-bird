@@ -25,3 +25,12 @@ Camera * newCamera(int x, int camera_speed)
     new_camera->speed = camera_speed;
     return new_camera;
 }
+
+/*!
+* \brief Deallocate memory of the camera
+* \param[out] camera the camera to deallocate
+*/
+void freeCamera(Camera * camera)
+{
+    free(camera);
+}

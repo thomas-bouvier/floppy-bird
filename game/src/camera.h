@@ -22,6 +22,7 @@ typedef struct{
 } Camera;
 
 Camera * newCamera(int x, int camera_speed);
+void freeCamera(Camera * camera);
 
 #endif // CAMERA_H
 
