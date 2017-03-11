@@ -8,7 +8,7 @@
 #include "constants.h"
 #include <SDL2/SDL.h>
 
-int detectTouch(SDL_Event * event);
+int detectTouch();
 
 
 #endif // CONTROL_H
