@@ -1,3 +1,7 @@
+/*!
+* \file view.c
+* \brief File containing the functions relative to the SDL, that display elements on the screen
+*/
 #include "view.h"
 
 /*!

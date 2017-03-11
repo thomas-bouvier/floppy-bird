@@ -1,3 +1,7 @@
+/*!
+* \file view.h
+* \brief File containing the prototypes relative to the SDL, that display elements on the screen
+*/
 #ifndef VIEW_H
 #define VIEW_H
 
