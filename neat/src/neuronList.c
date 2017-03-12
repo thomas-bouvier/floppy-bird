@@ -1,11 +1,20 @@
 #include "neuronList.h"
 
 /*!
-* \brief Free the specified Neuron.
-* \param[out] neuron the Neuron to be freed
+* \brief Create a NeuronList
+* \return Return a new NeuronList, NULL if error
 */
-static void freeNeuron(Neuron * neuron) {
-  free(neuron);
+NeuronList * newNeuronList() {
+  NeuronList * new_neuron_list = (NeuronList *) malloc(sizeof(NeuronList));
+
+  if (new_neuron_list == (NeuronList *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new NeuronList\n");
+    return NULL;
+  }
+
+  initNeuronList(new_neuron_list);
+
+  return new_neuron_list;
 }
 
 /*!
@@ -22,7 +31,7 @@ void initNeuronList(NeuronList * neuron_list) {
 * \brief Suppress all Neuron elements from the NeuronList.
 * \param[out] neuron_list the NeuronList to be emptied
 */
-void deleteNeuronList(NeuronList * neuron_list) {
+void freeNeuronList(NeuronList * neuron_list) {
   Neuron * neuron_to_delete = NULL;
 
   setOnFirstNeuron(neuron_list);
@@ -32,7 +41,7 @@ void deleteNeuronList(NeuronList * neuron_list) {
     freeNeuron(neuron_to_delete);
   }
 
-  neuron_list->first = neuron_list->current = neuron_list->last = NULL;
+  free(neuron_list);
 }
 
 /*!

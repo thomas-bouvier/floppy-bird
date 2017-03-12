@@ -1,22 +1,6 @@
 #include "network.h"
 
 /*!
-* \brief Init the given Network.
-* \param[out] network the Network to init
-*/
-void initNetwork(Network * network) {
-  initNeuronList(network);
-}
-
-/*!
-* \brief Delete the given Network.
-* \param[out] network the Network to delete
-*/
-void deleteNetwork(Network * network) {
-  deleteNeuronList(network);
-}
-
-/*!
 * \brief Create a neuron
 * \param[in] type The NeuronType of the Neuron to be created
 * \return Return a neuron, NULL if error
@@ -43,6 +27,14 @@ Neuron * newNeuron(NeuronType type) {
 }
 
 /*!
+* \brief Delete the specified Neuron.
+* \param[out] neuron the Neuron to be freed
+*/
+void freeNeuron(Neuron * neuron) {
+  free(neuron);
+}
+
+/*!
 * \brief Add a Neuron to the Network.
 * \param[out] network the Network
 * \param[in] neuron the Neuron to add
@@ -55,7 +47,7 @@ int addNeuronToNetwork(Network * network, Neuron * neuron) {
 }
 
 /*!
-* \brief Create a connection gene
+* \brief Create a ConnectionGene.
 * \param[in] weight the weight
 * \param[in] innovation the innovation number
 * \param[in] enabled the enabled/disabled flag
@@ -74,6 +66,14 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
   new_connection_gene->enabled = enabled;
 
   return new_connection_gene;
+}
+
+/*!
+* \brief Delete the specified ConnectionGene.
+* \param[out] connection_gene the ConnectionGene to be freed
+*/
+void freeConnectionGene(ConnectionGene * connection_gene) {
+  free(connection_gene);
 }
 
 /*!

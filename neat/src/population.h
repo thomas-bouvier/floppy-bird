@@ -38,8 +38,9 @@ struct MatingPool {
 };
 
 MatingPool * newMatingPool();
-void populateMatingPool(MatingPool * mating_pool);
+void freeMatingPool(MatingPool * pool);
 
+void populateMatingPool(MatingPool * pool);
 int addSpeciesToMatingPool(MatingPool * pool, Species * species);
 
 Species * newSpecies(MatingPool * pool);

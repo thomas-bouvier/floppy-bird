@@ -1,6 +1,6 @@
 /*!
 * \file genome.h
-* \brief File containing structures and prototypes for the genome
+* \brief File containing structures and prototypes for the Genome.
 */
 #ifndef GENOME_H
 #define GENOME_H
@@ -15,13 +15,15 @@
 
 /*!
 * \struct Genome genome.h
-* \brief A genome contains connection genes
+* \brief A Genome contains a Network element.
 */
 typedef struct {
-  Network network;    /*!< the Network attached to this Genome */
+  Network * network;    /*!< the Network attached to this Genome */
 } Genome;
 
 Genome * newGenome();
+void freeGenome(Genome * genome);
+
 int generateGenome(Genome * genome);
 
 Neuron * getRandomNeuron(Genome * genome);

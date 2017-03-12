@@ -1,6 +1,6 @@
 /*!
 * \file conf.h
-* \brief File containing neural network paramaters
+* \brief File containing neural network parameters.
 */
 #ifndef CONF_H
 #define CONF_H

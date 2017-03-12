@@ -1,11 +1,20 @@
 #include "connectionGeneList.h"
 
 /*!
-* \brief Free the specified ConnectionGene.
-* \param[out] connection_gene the ConnectionGene to be freed
+* \brief Create a ConnectionGeneList.
+* \return Return a new ConnectionGeneList, NULL if error
 */
-static void freeConnectionGene(ConnectionGene * connection_gene) {
-  free(connection_gene);
+ConnectionGeneList * newConnectionGeneList() {
+  ConnectionGeneList * new_connection_gene_list = (ConnectionGeneList *) malloc(sizeof(ConnectionGeneList));
+
+  if (new_connection_gene_list == (ConnectionGeneList *) NULL) {
+    fprintf(stderr, "Error while allocating memory for ConnectionGeneList\n");
+    return NULL;
+  }
+
+  initConnectionGeneList(new_connection_gene_list);
+
+  return new_connection_gene_list;
 }
 
 /*!
@@ -32,7 +41,7 @@ void deleteConnectionGeneList(ConnectionGeneList * connection_gene_list) {
     freeConnectionGene(connection_gene_to_delete);
   }
 
-  connection_gene_list->first = connection_gene_list->current = connection_gene_list->last = NULL;
+  free(connection_gene_list);
 }
 
 /*!

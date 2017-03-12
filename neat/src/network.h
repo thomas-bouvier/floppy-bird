@@ -73,7 +73,7 @@ struct Neuron {
 * \brief A NeuronList is a container for Neuron elements.
 */
 struct NeuronList {
-  Neuron * first;       /*!< the address of the first Neuron of the list */
+  Neuron * first;       /*<! the address of the first Neuron of the list */
   Neuron * current;     /*<! the address of the current Neuron in the list */
   Neuron * last;        /*<! the address of the last Neuron of the list */
 };
@@ -83,13 +83,14 @@ struct NeuronList {
 */
 typedef NeuronList Network;
 
-void initNetwork(Network * network);
-void deleteNetwork(Network * network);
-
 Neuron * newNeuron(NeuronType type);
+void freeNeuron(Neuron * neuron);
+
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
+void freeConnectionGene(ConnectionGene * connection_gene);
+
 int addConnectionGeneToNeuron(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
 
 #endif // NETWORK_H

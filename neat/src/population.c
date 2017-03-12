@@ -19,6 +19,10 @@ MatingPool * newMatingPool() {
   return new_mating_pool;
 }
 
+void freeMatingPool(MatingPool * pool) {
+  free(pool);
+}
+
 /*!
 * \brief Populate a MatinPool with new Genome elements.
 * \param[out] pool the MatingPool to populate with new Genome elements

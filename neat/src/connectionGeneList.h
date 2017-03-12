@@ -13,6 +13,7 @@
 struct ConnectionGene;
 struct ConnectionGeneList;
 
+struct ConnectionGeneList * newConnectionGeneList();
 void initConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 void deleteConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 

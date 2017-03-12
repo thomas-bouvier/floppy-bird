@@ -13,8 +13,9 @@
 struct Neuron;
 struct NeuronList;
 
+struct NeuronList * newNeuronList();
 void initNeuronList(struct NeuronList * neuron_list);
-void deleteNeuronList(struct NeuronList * neuron_list);
+void freeNeuronList(struct NeuronList * neuron_list);
 
 int emptyNeuronList(struct NeuronList * neuron_list);
 int outOfNeuronList(struct NeuronList * neuron_list);
