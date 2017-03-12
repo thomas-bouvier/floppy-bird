@@ -13,6 +13,7 @@ Genome * newGenome() {
   }
 
   new_genome->network = newNeuronList();
+  initNeuronList(new_genome->network);
 
   return new_genome;
 }

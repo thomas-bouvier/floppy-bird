@@ -12,8 +12,6 @@ NeuronList * newNeuronList() {
     return NULL;
   }
 
-  initNeuronList(new_neuron_list);
-
   return new_neuron_list;
 }
 
