@@ -3,6 +3,7 @@
 * \brief File containing the functions relative to the SDL, that display elements on the screen
 */
 #include "view.h"
+#include "camera.h"
 
 /*!
 * \brief Initialization of the SDL
@@ -13,7 +14,7 @@
 int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
 {
     /* SDL initialization */
-    if (SDL_Init(SDL_INIT_VIDEO != 0))
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         fprintf(stderr, "SDL initialization failure");
         return 0;
@@ -36,11 +37,12 @@ int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
     renderer =  SDL_CreateRenderer(window,
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
-    if (renderer == NULL);
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    /*if (renderer == NULL);
     {
         fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
         return 0;
-    }
+    }*/
 
     return 1;
 }
@@ -56,9 +58,9 @@ int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
 * \param[in] g the green component (integer between 0 and 255)
 * \param[in] b the blue component (integer between 0 and 255)
 */
-void drawRectangle(SDL_Renderer * renderer, int x, int y, int w, int h, int r, int g, int b)
+void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b)
 {
-    SDL_Rect rect = {x, y, w, h};
+    SDL_Rect rect = {x - camera->x, y, w, h};
     SDL_SetRenderDrawColor( renderer, r, g, b, 255 );
     SDL_RenderFillRect(renderer, &rect);
 }
@@ -68,9 +70,9 @@ void drawRectangle(SDL_Renderer * renderer, int x, int y, int w, int h, int r, i
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to color
 */
-void drawBird(SDL_Renderer * renderer, Bird * bird)
+void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera)
 {
-    drawRectangle(renderer, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, bird->w, bird->h, 255, 0, 0);
+    drawRectangle(renderer, camera, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, bird->w, bird->h, 255, 0, 0);
 }
 
 /*!
@@ -78,12 +80,12 @@ void drawBird(SDL_Renderer * renderer, Bird * bird)
 * \param[out] renderer the drawing target
 * \param[in] obstacle the two pipes to color
 */
-void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle)
+void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 {
     Pipe * obslow = obstacle->lower;
     Pipe * obsup = obstacle->lower;
-    drawRectangle(renderer, obslow->x, obslow->y, obslow->w, obslow->h, 0, 0, 255);
-    drawRectangle(renderer, obsup->x, obsup->y, obsup->w, obsup->h, 0, 255, 0);
+    drawRectangle(renderer, camera, obslow->x, obslow->y, obslow->w, obslow->h, 0, 0, 255);
+    drawRectangle(renderer, camera, obsup->x, obsup->y, obsup->w, obsup->h, 0, 255, 0);
 }
 
 /*!
@@ -98,9 +100,9 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle * obstacle[], Ca
     int i;
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear(renderer);
-    drawBird(renderer, bird);
+    drawBird(renderer, bird, camera);
     for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
-        drawObstacle(renderer, obstacle[i]);
+        drawObstacle(renderer, obstacle[i], camera);
     SDL_RenderPresent(renderer);
     SDL_Delay(30);
 }

@@ -11,10 +11,11 @@
 #include "camera.h"
 #include <SDL2/SDL.h>
 
-int initDisplay(SDL_Window * window, SDL_Renderer * renderer); //return 1 si tout est bon
-void drawRectangle(SDL_Renderer * renderer, int x, int y, int w, int h, int r, int g, int b);
-void drawBird(SDL_Renderer * renderer, Bird * bird);
-void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle);
+
+int initDisplay(SDL_Window * window, SDL_Renderer * renderer);
+void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
+void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
+void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);
 void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle * obstacle[], Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
 
