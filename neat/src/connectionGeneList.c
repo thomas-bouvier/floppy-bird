@@ -31,7 +31,7 @@ void initConnectionGeneList(ConnectionGeneList * connection_gene_list) {
 * \brief Suppress all ConnectionGene elements from the ConnectionGeneList.
 * \param[out] connection_gene_list the ConnectionGeneList to be emptied
 */
-void deleteConnectionGeneList(ConnectionGeneList * connection_gene_list) {
+void freeConnectionGeneList(ConnectionGeneList * connection_gene_list) {
   ConnectionGene * connection_gene_to_delete = NULL;
 
   setOnFirstConnectionGene(connection_gene_list);
@@ -118,7 +118,7 @@ int addConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene 
   else
     connection_gene_list->last->next = connection_gene;
 
-  connection_gene_list->last = connection_gene;
+  connection_gene_list->current = connection_gene_list->last = connection_gene;
 
   return 1;
 }

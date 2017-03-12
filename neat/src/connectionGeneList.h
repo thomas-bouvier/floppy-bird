@@ -15,7 +15,7 @@ struct ConnectionGeneList;
 
 struct ConnectionGeneList * newConnectionGeneList();
 void initConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
-void deleteConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
+void freeConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 
 int emptyConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
 int outOfConnectionGeneList(struct ConnectionGeneList * connection_gene_list);
