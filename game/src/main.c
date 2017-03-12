@@ -22,7 +22,7 @@ int main(int argc, char ** argv)
     int hit = 0;
     int running = 1;
 
-    /* Open the file which contain the save of the level */
+    /* Open the file that contains the save of the level */
     FILE * f = NULL;
     f = fopen("./../res/files/level.txt", "r");
     if(f==NULL)
@@ -31,7 +31,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    /* wait the first jump to start the game*/
+    /* Wait the first jump to start the game*/
     int init;
     while(init == NOTHING)
     {
@@ -55,8 +55,11 @@ int main(int argc, char ** argv)
             ++number;
         }
     }
+
+    /* Quit the game */
     freeAll(bird, obstacle, camera);
     quitGame(window, renderer);
     fclose(f);
+
     return EXIT_SUCCESS;
 }

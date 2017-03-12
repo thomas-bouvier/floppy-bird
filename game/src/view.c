@@ -4,7 +4,12 @@
 */
 #include "view.h"
 
-
+/*!
+* \brief Initialization of the SDL
+* \param[out] window the window to create
+* \param[out] renderer the renderer to setup
+* \return Return 1 if the window and renderer are well created, 0 if failure
+*/
 int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
 {
     /* SDL initialization */
@@ -14,7 +19,6 @@ int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
         return 0;
     }
 
-
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -22,7 +26,6 @@ int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
                               SCREEN_WIDTH,
                               SCREEN_HEIGHT,
                               SDL_WINDOW_SHOWN);
-
     if (window == NULL)
     {
         fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
@@ -33,13 +36,13 @@ int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
     renderer =  SDL_CreateRenderer(window,
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
-
     if (renderer == NULL);
     {
         fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
         return 0;
     }
 
+    return 1;
 }
 
 /*!
@@ -100,4 +103,16 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle * obstacle[], Ca
         drawObstacle(renderer, obstacle[i]);
     SDL_RenderPresent(renderer);
     SDL_Delay(30);
+}
+
+/*!
+* \brief Quit the SDL and destroy renderer and window
+* \param[out] window the window to destroy
+* \param[out] renderer the renderer to destroy
+*/
+void quitGame(SDL_Window * window, SDL_Renderer * renderer)
+{
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 }

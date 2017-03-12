@@ -4,12 +4,17 @@
 */
 #include "file.h"
 
-
-int readLevel(FILE * f, int number)
+/*!
+* \brief Read the predefined level from a file
+* \param[in] file the file to read
+* \param[in] number the number of the obstacle read
+* \return Return the height of the low pipe of the obstacle
+*/
+int readLevel(FILE * file, int number)
 {
     int heightPipe = 0;
-    fseek(f, number * sizeof(int), SEEK_SET);
-    fscanf(f, "%d", &heightPipe);
+    fseek(file, number * sizeof(int), SEEK_SET);
+    fscanf(file, "%d", &heightPipe);
     return heightPipe;
 }
 
