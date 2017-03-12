@@ -11,7 +11,7 @@
 #include "camera.h"
 #include <SDL2/SDL.h>
 
-void initDisplay(SDL_Window * window, SDL_Renderer * renderer);
+int initDisplay(SDL_Window * window, SDL_Renderer * renderer); //return 1 si tout est bon
 void drawRectangle(SDL_Renderer * renderer, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle);

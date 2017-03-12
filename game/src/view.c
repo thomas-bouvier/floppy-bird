@@ -4,6 +4,44 @@
 */
 #include "view.h"
 
+
+int initDisplay(SDL_Window * window, SDL_Renderer * renderer)
+{
+    /* SDL initialization */
+    if (SDL_Init(SDL_INIT_VIDEO != 0))
+    {
+        fprintf(stderr, "SDL initialization failure");
+        return 0;
+    }
+
+
+    /* Setup window */
+    window = SDL_CreateWindow("Floppy Bird",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SCREEN_WIDTH,
+                              SCREEN_HEIGHT,
+                              SDL_WINDOW_SHOWN);
+
+    if (window == NULL)
+    {
+        fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
+        return 0;
+    }
+
+    /* Setup renderer */
+    renderer =  SDL_CreateRenderer(window,
+                                   -1,
+                                   SDL_RENDERER_ACCELERATED);
+
+    if (renderer == NULL);
+    {
+        fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
+        return 0;
+    }
+
+}
+
 /*!
 * \brief Color a rectangle
 * \param[out] renderer the drawing target

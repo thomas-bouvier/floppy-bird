@@ -16,8 +16,8 @@ int main(int argc, char ** argv)
     Camera * camera = NULL;
 
     initGame(bird, camera, obstacle);
-    initDisplay(window, renderer);
-
+    if (initDisplay(window, renderer) == 0)
+        return EXIT_FAILURE;
 
     int hit = 0;
     int running = 1;
