@@ -9,10 +9,20 @@ Neuron * newNeuron(NeuronType type) {
   Neuron * new_neuron = (Neuron *) malloc(sizeof(Neuron));
 
   if (new_neuron == (Neuron *) NULL) {
-    fprintf(stderr, "Error while allocating memory for Neuron\n");
+    fprintf(stderr, "Error while allocating memory for new Neuron\n");
     return NULL;
   }
 
+  ConnectionGeneList * connection_gene_list = newConnectionGeneList(0.0, 0, 1);
+
+  if (connection_gene_list == (ConnectionGeneList *) NULL) {
+    fprintf(stderr, "Error while creating ConnectionGeneList for new Neuron\n");
+    return NULL;
+  }
+
+  initConnectionGeneList(connection_gene_list);
+
+  new_neuron->connections = connection_gene_list;
   new_neuron->next = NULL;
 
   new_neuron->id = -1;
@@ -31,6 +41,7 @@ Neuron * newNeuron(NeuronType type) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(Neuron * neuron) {
+  freeConnectionGeneList(neuron->connections);
   free(neuron);
 }
 
@@ -84,13 +95,13 @@ void freeConnectionGene(ConnectionGene * connection_gene) {
 * \return int 1 if the two Neuron elements were successfully added, 0 otherwise
 */
 int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene) {
-  int count = countConnectionGenes(&neuron_src->connections);
+  int count = countConnectionGenes(neuron_src->connections);
   if (count == N_MAX_CONNECTION_GENES) {
     fprintf(stderr, "Can't add connection gene to neuron : reached limit (%d, max=%d)\n", count, N_MAX_CONNECTION_GENES);
     return 0;
   }
 
-  if (!addConnectionGene(&neuron_src->connections, connection_gene))
+  if (!addConnectionGene(neuron_src->connections, connection_gene))
     return 0;
 
   connection_gene->neuron = neuron_dst;

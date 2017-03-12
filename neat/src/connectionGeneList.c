@@ -12,8 +12,6 @@ ConnectionGeneList * newConnectionGeneList() {
     return NULL;
   }
 
-  initConnectionGeneList(new_connection_gene_list);
-
   return new_connection_gene_list;
 }
 
