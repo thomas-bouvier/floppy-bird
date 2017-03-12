@@ -21,9 +21,6 @@ typedef struct {
   Network * network;    /*!< the Network attached to this Genome */
 } Genome;
 
-Genome * newGenome();
-void freeGenome(Genome * genome);
-
 int generateGenome(Genome * genome);
 
 Neuron * getRandomNeuron(Genome * genome);
