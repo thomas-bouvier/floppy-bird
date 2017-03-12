@@ -20,7 +20,7 @@ int main(int argc, char ** argv)
 
 
     int hit = 0;
-    int c = 1;
+    int running = 1;
 
     /* Open the file which contain the save of the level */
     FILE * f = NULL;
@@ -39,25 +39,19 @@ int main(int argc, char ** argv)
         if(init == JUMP)
             bird->dir_y = BIRD_JUMP;
         if(init == QUIT)
-            c = 0;
+            running = 0;
     }
 
-    while(c)
+    while(running)
     {
-        while(!hit&&c)
+        int number =0;
+        while(!hit&&running)
         {
-
-
-            int n = 0;
             int event = detectTouch();
             if(event == QUIT)
-                c=QUIT;
-            updateBird(bird, event);
-            obstacleCreation(camera,obstacle,n,readLevel(f,n),100);
-            cameraScrolling(camera, bird);
-            displayGame(bird, obstacle, camera);
-            hit=detectHit(bird, nextObstacle(obstacle, bird));
-            ++n;
+                running=QUIT;
+            hit=game(bird, camera, obstacle, event, readLevel(f, number), number);
+            ++number;
         }
     }
     freeAll(bird, obstacle, camera);

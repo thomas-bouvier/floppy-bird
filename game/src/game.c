@@ -74,6 +74,23 @@ int detectHit(Bird * bird, Obstacle * obstacle)
     }
     return h;
 }
+/*!
+* \brief The function called every frame of the running game to update all objects
+* \param[out] bird the bird linked to the running game
+* \param[out] camera the camera linked to the running game
+* \param[out] obstacle[] the table of obstacles linked to the running game
+* \param[in] event the value that indicate if the bird must jump(1) or not(0 or 2)
+* \param[in] heightPipe the ordinate of the lower pipe of the new obstacle created
+* \param[in] number the obstacle number of the new obstacle
+* \return 1 in case of game over, 0 in the others cases
+*/
+int game(Bird * bird, Camera * camera, Obstacle * obstacle[],int event,int heightPipe, int number)
+{
+    updateBird(bird, event);
+    obstacleCreation(camera,obstacle,number,heightPipe ,100);
+    cameraScrolling(camera, bird);
+    return detectHit(bird, nextObstacle(obstacle, bird));
+}
 
 
 void freeAll(Bird * bird, Obstacle * obstacle[], Camera * camera)
