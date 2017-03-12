@@ -51,6 +51,7 @@ int main(int argc, char ** argv)
             if(event == QUIT)
                 running=QUIT;
             hit=game(bird, camera, obstacle, event, readLevel(f, number), number);
+            displayGame(renderer, bird, obstacle[PIPES_ON_SCREEN], camera);
             ++number;
         }
     }
