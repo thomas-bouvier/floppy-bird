@@ -11,6 +11,12 @@ int main() {
   MatingPool * pool = NULL;
 
   pool = newMatingPool();
+
+  if (pool == (MatingPool *) NULL) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
   populateMatingPool(pool);
 
   /* new level */
@@ -25,8 +31,16 @@ int main() {
   printf("%d\n", pool->species[0].genomes[0].network->last->id);
 
   ConnectionGene * connection_gene = newConnectionGene(34, 2, 1);
-  if (!addConnectionGeneToNeurons(&(pool->species[0].genomes[0].network->first), &(pool->species[0].genomes[0].network->last), connection_gene))
+
+  if (connection_gene == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
+  if (!addConnectionGeneToNeurons(pool->species[0].genomes[0].network->first, pool->species[0].genomes[0].network->last, connection_gene)) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

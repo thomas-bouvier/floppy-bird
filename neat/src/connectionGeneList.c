@@ -117,6 +117,7 @@ int addConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene 
     connection_gene_list->last->next = connection_gene;
 
   connection_gene_list->current = connection_gene_list->last = connection_gene;
+  connection_gene->next = NULL;
 
   return 1;
 }

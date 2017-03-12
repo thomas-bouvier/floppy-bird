@@ -68,6 +68,7 @@ Neuron * getRandomNeuron(Genome * genome) {
 */
 int writeGraphVizGenome(Genome * genome, char * filename) {
   FILE * f = NULL;
+  ConnectionGeneList * connection_gene_successors = NULL;
 
   if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
       fprintf(stderr, "Error while opening %s\n", filename);
@@ -80,7 +81,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   setOnFirstNeuron(genome->network);
   while (!outOfNeuronList(genome->network)) {
-      ConnectionGeneList * connection_gene_successors = genome->network->current->connections;
+      connection_gene_successors = genome->network->current->connections;
       setOnFirstConnectionGene(connection_gene_successors);
 
       if (emptyConnectionGeneList(connection_gene_successors))

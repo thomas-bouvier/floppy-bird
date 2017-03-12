@@ -20,6 +20,15 @@ MatingPool * newMatingPool() {
 }
 
 void freeMatingPool(MatingPool * pool) {
+  int i;
+  int j;
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    for (j = 0; j < pool->species[i].nb_genomes; ++j) {
+      freeGenome(&(pool->species[i].genomes[j]));
+    }
+  }
+
   free(pool);
 }
 
@@ -71,6 +80,8 @@ Species * newSpecies(MatingPool * pool) {
   }
 
   new_species->id = pool->nb_species;
+  new_species->nb_genomes = 0;
+  new_species->max_fitness = 0.0;
 
   return new_species;
 }

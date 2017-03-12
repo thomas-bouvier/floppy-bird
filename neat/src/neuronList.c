@@ -117,6 +117,7 @@ int addNeuron(NeuronList * neuron_list, Neuron * neuron) {
     neuron_list->last->next = neuron;
 
   neuron_list->current = neuron_list->last = neuron;
+  neuron->next = NULL;
 
   return 1;
 }

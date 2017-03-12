@@ -76,6 +76,8 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
   new_connection_gene->innovation = innovation;
   new_connection_gene->enabled = enabled;
 
+  new_connection_gene->neuron = NULL;
+
   return new_connection_gene;
 }
 
