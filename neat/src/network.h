@@ -91,6 +91,6 @@ int addNeuronToNetwork(Network * network, Neuron * neuron);
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
 void freeConnectionGene(ConnectionGene * connection_gene);
 
-int addConnectionGeneToNeuron(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
+int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
 
 #endif // NETWORK_H

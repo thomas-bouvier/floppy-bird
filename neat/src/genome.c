@@ -80,7 +80,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   setOnFirstNeuron(genome->network);
   while (!outOfNeuronList(genome->network)) {
-      ConnectionGeneList * connection_gene_successors = &(genome->network->current->connections);
+      ConnectionGeneList * connection_gene_successors = genome->network->current->connections;
       setOnFirstConnectionGene(connection_gene_successors);
 
       if (emptyConnectionGeneList(connection_gene_successors))
