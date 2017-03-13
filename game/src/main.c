@@ -11,44 +11,50 @@ int main(int argc, char ** argv)
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
 
+    int hit;
+    int running = 1;
+    int init;
+    int number;
+
     Bird bird;
     Obstacle obstacle[PIPES_ON_SCREEN];
     Camera camera;
 
-    initGame(&bird, &camera, obstacle);
-    if (initDisplay(window, renderer) == 0)
-    {
-        fprintf(stderr, "Display initialization failure");
-        return EXIT_FAILURE;
-    }
-    displayGame(renderer, &bird, obstacle, &camera);
-
-    int hit = 0;
-    int running = 1;
-
-    /* Open the file that contains the save of the level */
-    FILE * f = NULL;
-    f = fopen("./../../res/files/level.txt", "r");
-    if(f==NULL)
-    {
-        fprintf(stderr,"Opening file failure : %d", ferror(f));
-        return EXIT_FAILURE;
-    }
-
-    /* Wait the first jump to start the game*/
-    int init = 0;
-    while(init == NOTHING)
-    {
-        init = detectTouch();
-        if(init == JUMP)
-            bird.dir_y = BIRD_JUMP;
-        if(init == QUIT)
-            running = 0;
-    }
-
     while(running)
     {
-        int number = 0;
+
+        initGame(&bird, &camera, obstacle);
+        if (initDisplay(window, renderer) == 0)
+        {
+            fprintf(stderr, "Display initialization failure");
+            return EXIT_FAILURE;
+        }
+        displayGame(renderer, &bird, obstacle, &camera);
+
+
+        /* Open the file that contains the save of the level */
+        FILE * f = NULL;
+        f = fopen("./../../res/files/level.txt", "r");
+        if(f==NULL)
+        {
+            fprintf(stderr,"Opening file failure : %d", ferror(f));
+            return EXIT_FAILURE;
+        }
+
+        /* Wait the first jump to start the game*/
+        init = NOTHING;
+        while(init == NOTHING)
+        {
+            init = detectTouch();
+            if(init == JUMP)
+                bird.dir_y = BIRD_JUMP;
+            if(init == QUIT)
+                running = 0;
+        }
+
+
+        number = 0;
+        hit = 0;
         while(!hit && running)
         {
             int event = detectTouch();
@@ -59,12 +65,12 @@ int main(int argc, char ** argv)
             ++number;
             SDL_Delay(30);
         }
+        fclose(f);
     }
 
     /* Quit the game */
     freeAll(&bird, obstacle, &camera);
     quitGame(window, renderer);
-    fclose(f);
 
     return EXIT_SUCCESS;
 }
