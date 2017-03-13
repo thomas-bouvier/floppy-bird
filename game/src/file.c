@@ -12,10 +12,15 @@
 */
 int readLevel(FILE * file, int number)
 {
-    int heightPipe = 0;
-    fseek(file, number * sizeof(int), SEEK_SET);
-    fscanf(file, "%d", &heightPipe);
+    int heightPipe = 0, i = 0;
+    fseek(file, sizeof(int), SEEK_SET);
+    while (i < number)
+    {
+        fscanf(file, "%d", &heightPipe);
+        ++i;
+    }
     return heightPipe;
+
 }
 
 

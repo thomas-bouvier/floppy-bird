@@ -5,18 +5,18 @@
 #include "game.h"
 /*!
 * \brief Allocate all the object of the game
-* \param[in] bird the bird to allocate
-* \param[in] camera the camera to allocate
-* \param[in] obstacle[] the table that contains the obstacles
+* \param[out] bird the bird to allocate
+* \param[out] camera the camera to allocate
+* \param[out] obstacle[] the table that contains the obstacles
 */
-void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[])
+void initGame(Bird * bird, Camera * camera, Obstacle obstacle[])
 {
     int i;
     bird = newBird();
     camera = newCamera(0,1);
     for(i=0; i<PIPES_ON_SCREEN; ++i)
     {
-        obstacle[i]=NULL;
+        obstacle[i] = *(newObstacle(0, 0, 0));
     }
 }
 
@@ -39,17 +39,17 @@ void cameraScrolling(Camera * camera, Bird * bird)
 * \param[in] height_lower the ordinate of the lower pipe of the new obstacle
 * \param[in] obstacle_gap the gap between two pipes of the new obstacle
 */
-int obstacleCreation(Camera * camera, Obstacle * obstacle[], int number, int height_lower, int obstacle_gap)
+int obstacleCreation(Camera * camera, Obstacle obstacle[], int number, int height_lower, int obstacle_gap)
 {
-    if ((obstacle[0]->lower->x + PIPE_WIDTH) < camera->x)
+    if ((obstacle[0].lower->x + PIPE_WIDTH) < camera->x)
     {
-        freeObstacle(obstacle[0]);
+        freeObstacle(&obstacle[0]);
         int i;
         for (i=0 ; i<PIPES_ON_SCREEN - 1 ; ++i)
         {
             obstacle[i] = obstacle[i + 1];
         }
-        obstacle[PIPES_ON_SCREEN - 1] = newObstacle(number, height_lower, obstacle_gap);
+        obstacle[PIPES_ON_SCREEN - 1] = *(newObstacle(number, height_lower, obstacle_gap));
     }
     return 1;
 }
@@ -84,7 +84,7 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 * \param[in] number the obstacle number of the new obstacle
 * \return 1 in case of game over, 0 in the others cases
 */
-int game(Bird * bird, Camera * camera, Obstacle * obstacle[],int event,int heightPipe, int number)
+int game(Bird * bird, Camera * camera, Obstacle obstacle[],int event,int heightPipe, int number)
 {
     updateBird(bird, event);
     obstacleCreation(camera,obstacle,number,heightPipe ,100);
@@ -93,12 +93,12 @@ int game(Bird * bird, Camera * camera, Obstacle * obstacle[],int event,int heigh
 }
 
 
-void freeAll(Bird * bird, Obstacle * obstacle[], Camera * camera)
+void freeAll(Bird * bird, Obstacle obstacle[], Camera * camera)
 {
     int i;
     freeBird(bird);
     freeCamera(camera);
     for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
-        freeObstacle(obstacle[i]);
+        freeObstacle(&obstacle[i]);
 }
 

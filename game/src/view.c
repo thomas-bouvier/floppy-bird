@@ -95,14 +95,17 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 * \param[in] obstacle the table of obstacle to display
 * \param[in] obstacle the camera
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle * obstacle[], Camera * camera)
+void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle obstacle[], Camera * camera)
 {
     int i;
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear(renderer);
     drawBird(renderer, bird, camera);
     for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
-        drawObstacle(renderer, obstacle[i], camera);
+    {
+        if (&obstacle[i])
+            drawObstacle(renderer, &obstacle[i], camera);
+    }
     SDL_RenderPresent(renderer);
     SDL_Delay(30);
 }
