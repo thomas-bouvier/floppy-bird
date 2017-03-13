@@ -31,7 +31,8 @@ struct ConnectionGene {
   double weight;                    /*!< the weight of the connection gene */
   short int innovation;             /*!< the innovation number of the connection gene, used to track its history */
   unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
-  Neuron * neuron;                  /*!< the successor Neuron */
+  Neuron * neuron_in;               /*!< the predecessor Neuron */
+  Neuron * neuron_out;              /*!< the successor Neuron */
 };
 
 /*!
@@ -91,6 +92,6 @@ int addNeuronToNetwork(Network * network, Neuron * neuron);
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
 void freeConnectionGene(ConnectionGene * connection_gene);
 
-int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene);
+int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene);
 
 #endif // NETWORK_H
