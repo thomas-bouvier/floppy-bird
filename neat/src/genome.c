@@ -63,7 +63,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
       else {
         while (!outOfConnectionGeneList(connection_gene_successors)) {
-            fprintf(f, "\t%d -> %d;\n", genome->network->current->id, connection_gene_successors->current->neuron->id);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\", weight=%.1f];\n", genome->network->current->id, connection_gene_successors->current->neuron_out->id, connection_gene_successors->current->weight, connection_gene_successors->current->weight);
             nextConnectionGene(connection_gene_successors);
         }
       }
