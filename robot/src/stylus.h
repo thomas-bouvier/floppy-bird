@@ -18,7 +18,7 @@ typedef struct {
 } Stylus;
 
 
-int attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay);
+void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay);
 void update(Stylus* stylus);
 void disable(Stylus* stylus);
 void enable(Stylus* stylus);

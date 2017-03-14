@@ -8,9 +8,8 @@
 * \param[in] the position (in uS*10) of the servomotor to press the stylus on the screen
 * \param[in] the position (in uS*10) of the servomotor to put the stylus out of the screen
 * \param[in] the delay needed by the device to take the click into account
-* \return Return 1 if everything is ok, 0 if error
 */
-int attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay)
+void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay)
 {
 	pinMode(pin,PWM_OUTPUT);
 	pwmSetMode(PWM_MODE_MS);
@@ -46,7 +45,7 @@ void disable(Stylus* stylus)
 */
 void enable(Stylus* stylus)
 {
-	pwmWrite(pin,restPosition);	// Put the stylus to the rest pos
+	moveStylus(stylus,restPosition);	// Put the stylus to the rest pos
 }
 
 /*!
@@ -58,15 +57,17 @@ void click(Stylus* stylus)
 	
 }
 
+/*!
+* \brief Update the stylus target position
+* \param[in] address of the stylus 
+* \param[in] target position msut be included between MIN_PWM_PULSE_DURATION and MAX_PWM_PULSE_DURATION
+*/
+static void moveStylus(Stylus* stylus, int targetPos)
+{
+	if(targetPos>MAX_PWM_PULSE_DURATION)
+		targetPos = MAX_PWM_PULSE_DURATION;
+	else if (targetPosition<MIN_PWM_PULSE_DURATION)
+		targetPos = MIN_PWM_PULSE_DURATION;
+	pwmWrite(stylus->pin,targetPos);
+}
 
-/*
-char key;
-	
-	
-	while(1) {
-		if(scanf("%c",&key)){
-			pwmWrite(1,140);// Stylus touching screen
-			delay(PRESS_DELAY);
-			pwmWrite(1,155);// Stylus out of the screen
-		}
-	}*/
