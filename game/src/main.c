@@ -69,7 +69,6 @@ int main(int argc, char ** argv)
     }
 
     /* Quit the game */
-    freeAll(&bird, obstacle, &camera);
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;
