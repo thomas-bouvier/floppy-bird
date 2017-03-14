@@ -84,7 +84,7 @@ void setOnConnectionGene(ConnectionGeneList * connection_gene_list, int index) {
 }
 
 /*!
-* \brief Set the current ConnectionGene on the next one.
+* \brief Set the current ConnectionGene on the next one, if the current ConnectionGene is not NULL.
 * \param[out] connection_gene_list the ConnectionGeneList to be modified
 */
 void nextConnectionGene(ConnectionGeneList * connection_gene_list) {
@@ -105,7 +105,7 @@ ConnectionGene * getCurrentConnectionGene(ConnectionGeneList * connection_gene_l
 }
 
 /*!
-* \brief Insert a ConnectionGene at the tail of the ConnectionGeneList.
+* \brief Insert a ConnectionGene at the tail of the ConnectionGeneList. The current ConnectionGene is updated to point to it.
 * \param[out] connection_gene_list the ConnectionGeneList
 * \param[in] connection_gene the ConnectionGene to be inserted
 * \return int 1 if the ConnectionGene was successfully inserted, 0 otherwise

@@ -287,6 +287,51 @@ static int teardown_setOnNeuron(void ** state) {
   return 0;
 }
 
+/* nextNeuron */
+
+static int setup_nextNeuron(void ** state) {
+  NeuronList * neuron_list = newNeuronList();
+
+  if (neuron_list == NULL)
+    return -1;
+
+  initNeuronList(neuron_list);
+  addNeuron(neuron_list, newNeuron(UNKNOW));
+  addNeuron(neuron_list, newNeuron(BIAS));
+  addNeuron(neuron_list, newNeuron(INPUT));
+  addNeuron(neuron_list, newNeuron(OUTPUT));
+  addNeuron(neuron_list, newNeuron(UNKNOW));
+  addNeuron(neuron_list, newNeuron(BIAS));
+  addNeuron(neuron_list, newNeuron(INPUT));
+  addNeuron(neuron_list, newNeuron(OUTPUT));
+
+  setOnFirstNeuron(neuron_list);
+
+  *state = neuron_list;
+
+  return 0;
+}
+
+static void test_nextNeuron(void ** state) {
+  int i;
+  NeuronList * neuron_list = (NeuronList *) (* state);
+
+  for (i = 0; i < 6; ++i)
+    nextNeuron(neuron_list);
+
+  assert_int_equal(neuron_list->current->type, INPUT);
+
+  for (i = 0; i < 60; ++i)
+    nextNeuron(neuron_list);
+
+  assert_null(neuron_list->current);
+}
+
+static int teardown_nextNeuron(void ** state) {
+  freeNeuronList(*state);
+  return 0;
+}
+
 /* initConnectionGeneList */
 
 static int setup_initConnectionGeneList(void ** state) {
@@ -565,6 +610,51 @@ static int teardown_setOnConnectionGene(void ** state) {
   return 0;
 }
 
+/* nextConnectionGene */
+
+static int setup_nextConnectionGene(void ** state) {
+  ConnectionGeneList * connection_gene_list = newConnectionGeneList();
+
+  if (connection_gene_list == NULL)
+    return -1;
+
+  initConnectionGeneList(connection_gene_list);
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 8, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 7, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 6, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 5, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 4, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 3, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 2, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
+
+  setOnFirstConnectionGene(connection_gene_list);
+
+  *state = connection_gene_list;
+
+  return 0;
+}
+
+static void test_nextConnectionGene(void ** state) {
+  int i;
+  ConnectionGeneList * connection_gene_list = (ConnectionGeneList *) (* state);
+
+  for (i = 0; i < 6; ++i)
+    nextConnectionGene(connection_gene_list);
+
+  assert_int_equal(connection_gene_list->current->innovation, 2);
+
+  for (i = 0; i < 60; ++i)
+    nextConnectionGene(connection_gene_list);
+
+  assert_null(connection_gene_list->current);
+}
+
+static int teardown_nextConnectionGene(void ** state) {
+  freeConnectionGeneList(*state);
+  return 0;
+}
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_setup_teardown(test_initNeuronList, setup_initNeuronList, teardown_initNeuronList),
@@ -578,6 +668,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_setOnFirstNeuron, setup_setOnFirstNeuron, teardown_setOnFirstNeuron),
     cmocka_unit_test_setup_teardown(test_setOnNeuronEmptyList, setup_setOnNeuronEmptyList, teardown_setOnNeuron),
     cmocka_unit_test_setup_teardown(test_setOnNeuron, setup_setOnNeuron, teardown_setOnNeuron),
+    cmocka_unit_test_setup_teardown(test_nextNeuron, setup_nextNeuron, teardown_nextNeuron),
 
     cmocka_unit_test_setup_teardown(test_initConnectionGeneList, setup_initConnectionGeneList, teardown_initConnectionGeneList),
     cmocka_unit_test_setup_teardown(test_emptyConnectionGeneList, setup_emptyConnectionGeneList, teardown_emptyConnectionGeneList),
@@ -590,6 +681,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_setOnFirstConnectionGene, setup_setOnFirstConnectionGene, teardown_setOnFirstConnectionGene),
     cmocka_unit_test_setup_teardown(test_setOnConnectionGeneEmptyList, setup_setOnConnectionGeneEmptyList, teardown_setOnConnectionGene),
     cmocka_unit_test_setup_teardown(test_setOnConnectionGene, setup_setOnConnectionGene, teardown_setOnConnectionGene),
+    cmocka_unit_test_setup_teardown(test_nextConnectionGene, setup_nextConnectionGene, teardown_nextConnectionGene),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

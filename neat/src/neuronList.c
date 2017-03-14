@@ -84,7 +84,7 @@ void setOnNeuron(NeuronList * neuron_list, int index) {
 }
 
 /*!
-* \brief Set the current Neuron on the next one.
+* \brief Set the current Neuron on the next one, if the current Neuron is not NULL.
 * \param[out] neuron_list the NeuronList to be modified
 */
 void nextNeuron(NeuronList * neuron_list) {
@@ -105,7 +105,7 @@ Neuron * getCurrentNeuron(NeuronList * neuron_list) {
 }
 
 /*!
-* \brief Insert a Neuron at the tail of the NeuronList.
+* \brief Insert a Neuron at the tail of the NeuronList. The current Neuron is updated to point to it.
 * \param[out] neuron_list the NeuronList
 * \param[in] neuron the Neuron to be inserted
 * \return int 1 if the Neuron was successfully inserted, 0 otherwise
