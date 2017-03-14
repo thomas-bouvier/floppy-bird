@@ -82,10 +82,10 @@ void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera)
 */
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 {
-    Pipe * obslow = obstacle->lower;
-    Pipe * obsup = obstacle->lower;
-    drawRectangle(renderer, camera, obslow->x, obslow->y, obslow->w, obslow->h, 0, 0, 255);
-    drawRectangle(renderer, camera, obsup->x, obsup->y, obsup->w, obsup->h, 0, 255, 0);
+    Pipe obslow = obstacle->lower;
+    Pipe obsup = obstacle->upper;
+    drawRectangle(renderer, camera, obslow.x, obslow.y, obslow.w, obslow.h, 0, 0, 255);
+    drawRectangle(renderer, camera, obsup.x, obsup.y, obsup.w, obsup.h, 0, 255, 0);
 }
 
 /*!
@@ -95,16 +95,16 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 * \param[in] obstacle the table of obstacle to display
 * \param[in] obstacle the camera
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, Obstacle obstacle[], Camera * camera)
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera)
 {
     int i;
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear(renderer);
     drawBird(renderer, bird, camera);
-    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
+    while (i < PIPES_ON_SCREEN)
     {
-        if (&obstacle[i])
-            drawObstacle(renderer, &obstacle[i], camera);
+        if (l->current)
+            drawObstacle(renderer, l->current, camera);
     }
     SDL_RenderPresent(renderer);
     SDL_Delay(30);

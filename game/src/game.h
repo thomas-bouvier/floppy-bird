@@ -12,10 +12,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[]);
+void initGame(Bird * bird, Camera * camera, List * l);
 void cameraScrolling(Camera * camera, Bird * bird);
-int obstacleCreation(Camera * camera, Obstacle * obstacle[], int number, int height_lower, int obstacle_gap);
+int obstacleCreation(Camera * camera, List * l, int number, int height_lower, int obstacle_gap);
 int detectHit(Bird * bird, Obstacle * obstacle);
-int game(Bird * bird, Camera * camera, Obstacle obstacle[],int event,int heightPipe, int number);
+int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number);
 
 #endif // GAME_H

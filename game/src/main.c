@@ -17,19 +17,19 @@ int main(int argc, char ** argv)
     int number;
 
     Bird bird;
-    Obstacle obstacle[PIPES_ON_SCREEN];
     Camera camera;
+    List * l = NULL;
 
     while(running)
     {
 
-        initGame(&bird, &camera, &obstacle);
+        initGame(&bird, &camera, l);
         if (initDisplay(window, renderer) == 0)
         {
             fprintf(stderr, "Display initialization failure");
             return EXIT_FAILURE;
         }
-        displayGame(renderer, &bird, obstacle, &camera);
+        displayGame(renderer, &bird, l, &camera);
 
 
         /* Open the file that contains the save of the level */
@@ -60,8 +60,8 @@ int main(int argc, char ** argv)
             int event = detectTouch();
             if(event == QUIT)
                 running = 0;
-            hit = game(&bird, &camera, obstacle, event, readLevel(f, number), number);
-            displayGame(renderer, &bird, obstacle, &camera);
+            hit = game(&bird, &camera, l, event, readLevel(f, number), number);
+            displayGame(renderer, &bird, l, &camera);
             ++number;
             SDL_Delay(30);
         }

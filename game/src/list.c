@@ -39,7 +39,7 @@ void next (List * l){
 
 int deleteFirst(List * l){
 	Obstacle * to_del = l->first;
-	if(empty(l))
+	if(isEmpty(l))
 		return 0;
 	l->first = l->first->next;
 	setOnFirst(l);
@@ -50,7 +50,7 @@ int deleteFirst(List * l){
 }
 
 int insertLast(List * l, Obstacle * obstacle){
-	if(empty(l))
+	if(isEmpty(l))
 		l->first = obstacle;
 	else
 		l->last->next = obstacle;

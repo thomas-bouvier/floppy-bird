@@ -11,11 +11,12 @@
 * \param[in] obstacle_gap the gap between two pipes
 * \return Return the created obstacle, NULL if error
 */
-void initObstacle(Obstacle * obstacle, int number, int height_lower, int obstacle_gap)
+void initObstacle(Obstacle * obstacle, int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle)
 {
     initPipe(&obstacle->lower, number, SCREEN_HEIGHT - height_lower, height_lower);             //Lower pipe
     initPipe(&obstacle->upper, number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
     obstacle->gap = obstacle_gap;
+    obstacle->next = next_obstacle;
 }
 
 /*!
@@ -23,13 +24,15 @@ void initObstacle(Obstacle * obstacle, int number, int height_lower, int obstacl
 * \param[in] obstacle[] the table of obstacle that appears on screen
 * \return Return the next obstacle for the bird. If the bird is between between an obstacle, it returns the
 */
-Obstacle * nextObstacle(Obstacle * obstacle, Bird * bird)
+Obstacle * nextBirdObstacle(List * l, Bird * bird)
 {
     int i;
-    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
+    setOnFirst(l);
+    while (i < PIPES_ON_SCREEN)
     {
-        if ((*(obstacle+i))lower->x + PIPE_WIDTH > bird->x + bird->w/2)
-            return (Obstacle *) obstacle+i;
+        if (l->current->lower.x + PIPE_WIDTH > bird->x + bird->w/2)
+            return l->current;
+        next(l);
     }
     return NULL;
 }
