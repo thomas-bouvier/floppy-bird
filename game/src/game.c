@@ -13,7 +13,7 @@ void initGame(Bird * bird, Camera * camera, List * l)
 {
     initBird(bird);
     initCamera(camera,0,1);
-    l = newList();
+    initList(l);
 }
 
 /*!

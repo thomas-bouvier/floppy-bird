@@ -18,18 +18,51 @@ int main(int argc, char ** argv)
 
     Bird bird;
     Camera camera;
-    List * l = NULL;
+    List l;
 
     while(running)
     {
 
-        initGame(&bird, &camera, l);
-        if (initDisplay(window, renderer) == 0)
+        initGame(&bird, &camera, &l);
+        /*if (initDisplay(window, renderer) == 0)
         {
             fprintf(stderr, "Display initialization failure");
             return EXIT_FAILURE;
+        }*/
+
+        /* SDL initialization */
+        if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        {
+            fprintf(stderr, "SDL initialization failure");
+            return 0;
         }
-        displayGame(renderer, &bird, l, &camera);
+
+        /* Setup window */
+        window = SDL_CreateWindow("Floppy Bird",
+                                  SDL_WINDOWPOS_UNDEFINED,
+                                  SDL_WINDOWPOS_UNDEFINED,
+                                  SCREEN_WIDTH,
+                                  SCREEN_HEIGHT,
+                                  SDL_WINDOW_SHOWN);
+        if (window == NULL)
+        {
+            fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
+            return 0;
+        }
+
+        /* Setup renderer */
+        renderer =  SDL_CreateRenderer(window,
+                                       -1,
+                                       SDL_RENDERER_ACCELERATED);
+        SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+        /*if (renderer == NULL);
+        {
+            fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
+            return 0;
+        }*/
+
+
+        displayGame(renderer, &bird, &l, &camera);
 
 
         /* Open the file that contains the save of the level */
@@ -52,7 +85,6 @@ int main(int argc, char ** argv)
                 running = 0;
         }
 
-
         number = 0;
         hit = 0;
         while(!hit && running)
@@ -60,8 +92,8 @@ int main(int argc, char ** argv)
             int event = detectTouch();
             if(event == QUIT)
                 running = 0;
-            hit = game(&bird, &camera, l, event, readLevel(f, number), number);
-            displayGame(renderer, &bird, l, &camera);
+            hit = game(&bird, &camera, &l, event, readLevel(f, number), number);
+            displayGame(renderer, &bird, &l, &camera);
             ++number;
             SDL_Delay(30);
         }

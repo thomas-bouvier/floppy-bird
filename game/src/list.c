@@ -4,14 +4,15 @@
 */
 #include "list.h"
 
-List * newList(){
-	List * new_list = (List*) malloc(sizeof(List));
-	if(new_list == NULL){
-		fprintf(stderr, "List allocation failure");
-		return NULL;
-	}
-	new_list->first = new_list->current = new_list->last = NULL;
-	return new_list;
+int initList(List * l){
+	int i = 0;
+	l->first = l->current = l->last = NULL;
+	while (i < PIPES_ON_SCREEN)
+    {
+        insertLast(l, newObstacle(0, 0, 0, NULL));
+        ++i;
+    }
+    return 1;
 }
 
 int isEmpty(List * l){
