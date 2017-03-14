@@ -4,4 +4,9 @@
 #define PRESS_DELAY 100
 #define DELAY 450 - PRESS_DELAY
 
+
+#define PWM_RANGE 2000
+#define PWM_CLOCK 192
+
+
 #endif //CONFIGURATION_H

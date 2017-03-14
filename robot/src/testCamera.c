@@ -11,6 +11,7 @@
 
 int main(int argc, char *argv[]){
 	
+	wiringPiSetup();	// Setup the GPIO
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
 	config->width=960;

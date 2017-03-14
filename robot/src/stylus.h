@@ -18,11 +18,11 @@ typedef struct {
 } Stylus;
 
 
-int attach(int pin, int clickPosition, int restPosition, int pressDelay);
-void update();
-void disable();
-void enable();
-void click();
+int attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay);
+void update(Stylus* stylus);
+void disable(Stylus* stylus);
+void enable(Stylus* stylus);
+void click(Stylus* stylus);
 
 
 #endif //STYLUS_H
