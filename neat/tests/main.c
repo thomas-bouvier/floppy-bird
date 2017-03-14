@@ -169,6 +169,7 @@ static void test_setOnFirstNeuronEmptyList(void ** state) {
 
   setOnFirstNeuron(neuron_list);
 
+  assert_ptr_equal(neuron_list->current, neuron_list->first);
   assert_null(neuron_list->current);
 }
 
@@ -179,7 +180,7 @@ static int setup_setOnFirstNeuronOneElement(void ** state) {
     return -1;
 
   initNeuronList(neuron_list);
-  addNeuron(neuron_list, newNeuron(UNKNOW));
+  addNeuron(neuron_list, newNeuron(OUTPUT));
 
   *state = neuron_list;
 
@@ -192,6 +193,7 @@ static void test_setOnFirstNeuronOneElement(void ** state) {
   setOnFirstNeuron(neuron_list);
 
   assert_ptr_equal(neuron_list->current, neuron_list->first);
+  assert_int_equal(neuron_list->current->type, OUTPUT);
 }
 
 static int setup_setOnFirstNeuron(void ** state) {
@@ -201,10 +203,10 @@ static int setup_setOnFirstNeuron(void ** state) {
     return -1;
 
   initNeuronList(neuron_list);
-  addNeuron(neuron_list, newNeuron(UNKNOW));
+  addNeuron(neuron_list, newNeuron(OUTPUT));
   addNeuron(neuron_list, newNeuron(BIAS));
   addNeuron(neuron_list, newNeuron(INPUT));
-  addNeuron(neuron_list, newNeuron(OUTPUT));
+  addNeuron(neuron_list, newNeuron(UNKNOW));
 
   *state = neuron_list;
 
@@ -217,6 +219,7 @@ static void test_setOnFirstNeuron(void ** state) {
   setOnFirstNeuron(neuron_list);
 
   assert_ptr_equal(neuron_list->current, neuron_list->first);
+  assert_int_equal(neuron_list->current->type, OUTPUT);
 }
 
 static int teardown_setOnFirstNeuron(void ** state) {
@@ -319,11 +322,6 @@ static void test_outOfConnectionGeneList(void ** state) {
   assert_int_equal(outOfConnectionGeneList(connection_gene_list), 1);
 }
 
-static int teardown_outOfConnectionGeneList(void ** state) {
-  freeConnectionGeneList(*state);
-  return 0;
-}
-
 static int setup_outOfConnectionGeneListOneElement(void ** state) {
   ConnectionGeneList * connection_gene_list = newConnectionGeneList();
 
@@ -365,6 +363,11 @@ static void test_outOfConnectionGeneListOneElementNext(void ** state) {
   assert_int_equal(outOfConnectionGeneList(connection_gene_list), 1);
 }
 
+static int teardown_outOfConnectionGeneList(void ** state) {
+  freeConnectionGeneList(*state);
+  return 0;
+}
+
 /* setOnFirstNeuron */
 
 static int setup_setOnFirstConnectionGeneEmptyList(void ** state) {
@@ -385,6 +388,7 @@ static void test_setOnFirstConnectionGeneEmptyList(void ** state) {
 
   setOnFirstConnectionGene(connection_gene_list);
 
+  assert_ptr_equal(connection_gene_list->current, connection_gene_list->first);
   assert_null(connection_gene_list->current);
 }
 
@@ -395,7 +399,7 @@ static int setup_setOnFirstConnectionGeneOneElement(void ** state) {
     return -1;
 
   initConnectionGeneList(connection_gene_list);
-  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 1, 1));
 
   *state = connection_gene_list;
 
@@ -408,6 +412,7 @@ static void test_setOnFirstConnectionGeneOneElement(void ** state) {
   setOnFirstConnectionGene(connection_gene_list);
 
   assert_ptr_equal(connection_gene_list->current, connection_gene_list->first);
+  assert_int_equal(connection_gene_list->current->innovation, 1);
 }
 
 static int setup_setOnFirstConnectionGene(void ** state) {
@@ -417,10 +422,10 @@ static int setup_setOnFirstConnectionGene(void ** state) {
     return -1;
 
   initConnectionGeneList(connection_gene_list);
-  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
-  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
-  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
-  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 0, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 4, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 3, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 2, 1));
+  addConnectionGene(connection_gene_list, newConnectionGene(0.0, 1, 1));
 
   *state = connection_gene_list;
 
@@ -433,6 +438,7 @@ static void test_setOnFirstConnectionGene(void ** state) {
   setOnFirstConnectionGene(connection_gene_list);
 
   assert_ptr_equal(connection_gene_list->current, connection_gene_list->first);
+  assert_int_equal(connection_gene_list->current->innovation, 4);
 }
 
 static int teardown_setOnFirstConnectionGene(void ** state) {
