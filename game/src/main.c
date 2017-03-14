@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
     while(running)
     {
 
-        initGame(&bird, &camera, obstacle);
+        initGame(&bird, &camera, &obstacle);
         if (initDisplay(window, renderer) == 0)
         {
             fprintf(stderr, "Display initialization failure");

@@ -20,6 +20,6 @@ typedef struct{
     int h;                  /*!< the height of the pipe */
 } Pipe;
 
-Pipe * newPipe(int number, int pipe_y, int pipe_h);
+void initPipe(Pipe * pipe, int number, int pipe_y, int pipe_h);
 
 #endif // PIPE_H
