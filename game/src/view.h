@@ -9,6 +9,7 @@
 #include "bird.h"
 #include "obstacle.h"
 #include "camera.h"
+#include "list.h"
 #include <SDL2/SDL.h>
 
 

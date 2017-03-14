@@ -97,14 +97,15 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 */
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera)
 {
-    int i;
+    int i = 0;
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
     SDL_RenderClear(renderer);
     drawBird(renderer, bird, camera);
     while (i < PIPES_ON_SCREEN)
     {
-        if (l->current)
+        if (outOfList(l))
             drawObstacle(renderer, l->current, camera);
+        ++i;
     }
     SDL_RenderPresent(renderer);
     SDL_Delay(30);

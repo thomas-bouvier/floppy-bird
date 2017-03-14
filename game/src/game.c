@@ -13,7 +13,7 @@ void initGame(Bird * bird, Camera * camera, List * l)
 {
     initBird(bird);
     initCamera(camera,0,1);
-    initList(l);
+    l = newList();
 }
 
 /*!
@@ -41,9 +41,8 @@ int obstacleCreation(Camera * camera, List * l, int number, int height_lower, in
     {
         freeObstacle(l->first);
         deleteFirst(l);
-        Obstacle obstacle;
-        initObstacle(&obstacle, number, height_lower, obstacle_gap, NULL);
-        insertLast(l, &obstacle);
+        Obstacle * obstacle = newObstacle(number, height_lower, obstacle_gap, NULL);
+        insertLast(l, obstacle);
     }
     return 1;
 }

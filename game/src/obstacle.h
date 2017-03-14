@@ -26,7 +26,7 @@ struct Obstacle{
     struct Obstacle * next;         /*!< the next obstacle in the list */
 };
 
-void initObstacle(Obstacle * obstacle, int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle);
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle);
 Obstacle * nextBirdObstacle(List * l, Bird * bird);
 void freeObstacle(Obstacle * obstacle);
 

@@ -4,8 +4,14 @@
 */
 #include "list.h"
 
-void initList(List * l){
-	l->first = l->current = l->last = NULL;
+List * newList(){
+	List * new_list = (List*) malloc(sizeof(List));
+	if(new_list == NULL){
+		fprintf(stderr, "List allocation failure");
+		return NULL;
+	}
+	new_list->first = new_list->current = new_list->last = NULL;
+	return new_list;
 }
 
 int isEmpty(List * l){

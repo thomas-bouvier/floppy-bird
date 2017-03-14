@@ -21,7 +21,7 @@ struct List{
     struct Obstacle * last;            /*!< the address of the first obstacle in the list*/
 };
 
-void initList(List * l);
+List * newList();
 int isEmpty(List * l);
 int isFirst(List * l);
 int isLast(List * l);
