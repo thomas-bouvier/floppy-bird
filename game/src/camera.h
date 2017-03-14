@@ -21,8 +21,7 @@ typedef struct{
     int speed;              /*!< the speed of scrolling of the camera */
 } Camera;
 
-Camera * newCamera(int x, int camera_speed);
-void freeCamera(Camera * camera);
+void initCamera(Camera * new_camera, int x, int camera_speed);
 
 #endif // CAMERA_H
 

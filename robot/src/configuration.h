@@ -1,0 +1,7 @@
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
+
+#define PRESS_DELAY 100
+#define DELAY 450 - PRESS_DELAY
+
+#endif //CONFIGURATION_H

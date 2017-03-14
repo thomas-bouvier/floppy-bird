@@ -7,8 +7,7 @@
 #include <highgui.h>
 #include "RaspiCamCV.h"
 
-#define PRESS_DELAY 100
-#define DELAY 450 - PRESS_DELAY
+#include "configuration.h"
 
 int main(int argc, char *argv[]){
 	
@@ -55,20 +54,7 @@ int main(int argc, char *argv[]){
   cvReleaseImage(&img );
 	
 	
-	char key;
-	wiringPiSetup();
-	pinMode(1,PWM_OUTPUT);
-	pwmSetMode(PWM_MODE_MS);
-	pwmSetRange(2000);
-	pwmSetClock(192);
 	
-	while(1) {
-		if(scanf("%c",&key)){
-			pwmWrite(1,140);// Stylus touching screen
-			delay(PRESS_DELAY);
-			pwmWrite(1,155);// Stylus out of the screen
-		}
-	}
 	
 	
 	return 0; 

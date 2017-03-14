@@ -17,6 +17,5 @@ void cameraScrolling(Camera * camera, Bird * bird);
 int obstacleCreation(Camera * camera, Obstacle * obstacle[], int number, int height_lower, int obstacle_gap);
 int detectHit(Bird * bird, Obstacle * obstacle);
 int game(Bird * bird, Camera * camera, Obstacle obstacle[],int event,int heightPipe, int number);
-void freeAll(Bird * bird, Obstacle obstacle[], Camera * camera);
 
 #endif // GAME_H

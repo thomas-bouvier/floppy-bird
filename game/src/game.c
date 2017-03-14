@@ -12,8 +12,8 @@
 void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[])
 {
     int i;
-    bird = newBird();
-    camera = newCamera(0,1);
+    initBird(bird);
+    initCamera(camera,0,1);
     for(i=0; i<PIPES_ON_SCREEN; ++i)
     {
         initObstacle(obstacle[i], 0, 0, 0);
@@ -91,14 +91,3 @@ int game(Bird * bird, Camera * camera, Obstacle obstacle[],int event,int heightP
     cameraScrolling(camera, bird);
     return detectHit(bird, nextObstacle(obstacle, bird));
 }
-
-
-void freeAll(Bird * bird, Obstacle obstacle[], Camera * camera)
-{
-    int i;
-    freeBird(bird);
-    freeCamera(camera);
-    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
-        freeObstacle(&obstacle[i]);
-}
-
