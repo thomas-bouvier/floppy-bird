@@ -79,13 +79,14 @@ int main(int argc, char ** argv)
         while(init == NOTHING)
         {
             init = detectTouch();
+            //init = JUMP;    /*Juste pour debugger ! */
             if(init == JUMP)
                 bird.dir_y = BIRD_JUMP;
             if(init == QUIT)
                 running = 0;
         }
 
-        number = 0;
+        number = 1;
         hit = 0;
         while(!hit && running)
         {
@@ -95,8 +96,9 @@ int main(int argc, char ** argv)
             hit = game(&bird, &camera, &l, event, readLevel(f, number), number);
             displayGame(renderer, &bird, &l, &camera);
             ++number;
-            SDL_Delay(30);
+            SDL_Delay(1);
         }
+        SDL_Delay(1000);
         fclose(f);
     }
 

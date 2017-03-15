@@ -13,7 +13,7 @@
 */
 void initPipe(Pipe * pipe, int number, int pipe_y, int pipe_h)
 {
-    pipe->x = number * PIPE_X_OFFSET;
+    pipe->x = number * PIPE_X_OFFSET + SCREEN_WIDTH;
     pipe->y = pipe_y;
     pipe->w = PIPE_WIDTH;
     pipe->h = pipe_h;

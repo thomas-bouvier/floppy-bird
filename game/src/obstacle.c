@@ -33,7 +33,7 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 */
 Obstacle * nextBirdObstacle(List * l, Bird * bird)
 {
-    int i;
+    int i = 0;
     setOnFirst(l);
     while (i < PIPES_ON_SCREEN)
     {

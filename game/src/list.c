@@ -9,7 +9,7 @@ int initList(List * l){
 	l->first = l->current = l->last = NULL;
 	while (i < PIPES_ON_SCREEN)
     {
-        insertLast(l, newObstacle(0, 0, 0, NULL));
+        insertLast(l, newObstacle(0, 500, 200, NULL));
         ++i;
     }
     return 1;
