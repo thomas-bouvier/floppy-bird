@@ -56,7 +56,7 @@ int main(int argc, char ** argv)
         f = fopen("./../../res/files/level.txt", "r");
         if(f==NULL)
         {
-            fprintf(stderr,"Opening file failure : %d", ferror(f));
+            fprintf(stderr,"Opening file failure");
             return EXIT_FAILURE;
         }
 
