@@ -12,7 +12,7 @@
 void initGame(Bird * bird, Camera * camera, List * l)
 {
     initBird(bird);
-    initCamera(camera,0,5);
+    initCamera(camera,0,8);
     initList(l);
 }
 
@@ -35,17 +35,25 @@ void cameraScrolling(Camera * camera, Bird * bird)
 * \param[in] height_lower the ordinate of the lower pipe of the new obstacle
 * \param[in] obstacle_gap the gap between two pipes of the new obstacle
 */
-int obstacleCreation(Camera * camera, List * l, int number, int height_lower, int obstacle_gap)
+int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap)
 {
+    /*if (SCREEN_WIDTH + camera->x - l->last->lower.x > PIPE_X_OFFSET)
+    {*/
+        insertLast(l, newObstacle(number, height_lower, obstacle_gap, NULL));
+        return 1;
+    /*}*/
+    return 0;
+}
+
+int deleteObstacle(Camera * camera, List * l){
     if ((l->first->lower.x + PIPE_WIDTH) < camera->x)
     {
-        freeObstacle(l->first);
         deleteFirst(l);
-        Obstacle * obstacle = newObstacle(number, height_lower, obstacle_gap, NULL);
-        insertLast(l, obstacle);
+        return 1;
     }
-    return 1;
+    return 0;
 }
+
 
 /*!
 * \brief Detect the collisions
@@ -80,7 +88,8 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number)
 {
     updateBird(bird, event);
-    obstacleCreation(camera, l,number,heightPipe ,100);
+    deleteObstacle(camera, l);
+    createObstacle(camera, l, number, heightPipe , 200);
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird));
 }

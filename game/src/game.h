@@ -15,7 +15,8 @@
 
 void initGame(Bird * bird, Camera * camera, List * l);
 void cameraScrolling(Camera * camera, Bird * bird);
-int obstacleCreation(Camera * camera, List * l, int number, int height_lower, int obstacle_gap);
+int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap);
+int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle);
 int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number);
 

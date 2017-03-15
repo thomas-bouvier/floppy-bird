@@ -5,13 +5,8 @@
 #include "list.h"
 
 int initList(List * l){
-	int i = 0;
 	l->first = l->current = l->last = NULL;
-	while (i < PIPES_ON_SCREEN)
-    {
-        insertLast(l, newObstacle(0, 500, 200, NULL));
-        ++i;
-    }
+    insertLast(l, newObstacle(0, 400, 250, NULL));
     return 1;
 }
 

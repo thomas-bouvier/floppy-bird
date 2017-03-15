@@ -20,8 +20,41 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    /* SDL initialization */
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        fprintf(stderr, "SDL initialization failure");
+        return 0;
+    }
+
+    /* Setup window */
+    window = SDL_CreateWindow("Floppy Bird",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SCREEN_WIDTH,
+                              SCREEN_HEIGHT,
+                              SDL_WINDOW_SHOWN);
+    if (window == NULL)
+    {
+        fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
+        return 0;
+    }
+
+    /* Setup renderer */
+    renderer =  SDL_CreateRenderer(window,
+                                   -1,
+                                   SDL_RENDERER_ACCELERATED);
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    /*if (renderer == NULL);
+    {
+        fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
+        return 0;
+    }*/
+
+
     while(running)
     {
+
 
         initGame(&bird, &camera, &l);
         /*if (initDisplay(window, renderer) == 0)
@@ -30,36 +63,9 @@ int main(int argc, char ** argv)
             return EXIT_FAILURE;
         }*/
 
-        /* SDL initialization */
-        if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        {
-            fprintf(stderr, "SDL initialization failure");
-            return 0;
-        }
 
-        /* Setup window */
-        window = SDL_CreateWindow("Floppy Bird",
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  SDL_WINDOWPOS_UNDEFINED,
-                                  SCREEN_WIDTH,
-                                  SCREEN_HEIGHT,
-                                  SDL_WINDOW_SHOWN);
-        if (window == NULL)
-        {
-            fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
-            return 0;
-        }
 
-        /* Setup renderer */
-        renderer =  SDL_CreateRenderer(window,
-                                       -1,
-                                       SDL_RENDERER_ACCELERATED);
-        SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-        /*if (renderer == NULL);
-        {
-            fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
-            return 0;
-        }*/
+
 
 
         displayGame(renderer, &bird, &l, &camera);

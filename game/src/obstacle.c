@@ -37,7 +37,7 @@ Obstacle * nextBirdObstacle(List * l, Bird * bird)
     setOnFirst(l);
     while (i < PIPES_ON_SCREEN)
     {
-        if (l->current->lower.x + PIPE_WIDTH > bird->x + bird->w/2)
+        if (l->current->lower.x + PIPE_WIDTH > bird->x - bird->w/2)
             return l->current;
         next(l);
         ++i;
