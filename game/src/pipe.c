@@ -5,7 +5,8 @@
 #include "pipe.h"
 
 /*!
-*\brief Create a pipe
+* \brief Create a pipe
+* \param[out] pipe the pipe to fill
 * \param[in] number the pipe number
 * \param[in] pipe_y the pipe ordinate
 * \param[in] pipe_h the pipe height

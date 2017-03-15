@@ -3,22 +3,23 @@
 * \brief File containing the functions to manage the game
 */
 #include "game.h"
+
 /*!
 * \brief Allocate all the object of the game
 * \param[out] bird the bird to allocate
 * \param[out] camera the camera to allocate
-* \param[out] obstacle[] the table that contains the obstacles
+* \param[out] l the list of obstacles
 */
-void initGame(Bird * bird, Camera * camera, List * l)
+void startGame(Bird * bird, Camera * camera, List * l)
 {
     initBird(bird);
-    initCamera(camera,0,8);
+    initCamera(camera, 0, CAMERA_SPEED);
     initList(l);
 }
 
 /*!
 * \brief Allow to scroll the camera in the right direction
-* \param[out] pipe the pipe to scroll
+* \param[out] camera the camera that follows the bird
 * \param[out] bird the bird that moves with the camera
 */
 void cameraScrolling(Camera * camera, Bird * bird)
@@ -28,23 +29,28 @@ void cameraScrolling(Camera * camera, Bird * bird)
 }
 
 /*!
-* \brief Deallocate an obstacle when it leaves the screen by the left, and create a new obstacle on the right side of the screen. Update the table of obstacle
-* \param[out] camera the view of the game
-* \param[out] obstacle the table of obstacle that appears on the screen
+* \brief Create an obstacle when the distance between two obstacle is reached
+* \param[in] camera the view of the game
+* \param[out] l the list of obstacles
 * \param[in] number the obstacle number of the new obstacle
 * \param[in] height_lower the ordinate of the lower pipe of the new obstacle
 * \param[in] obstacle_gap the gap between two pipes of the new obstacle
 */
 int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap)
 {
-    /*if (SCREEN_WIDTH + camera->x - l->last->lower.x > PIPE_X_OFFSET)
-    {*/
+    if (camera->x + SCREEN_WIDTH >= l->first->lower.x)
+    {
         insertLast(l, newObstacle(number, height_lower, obstacle_gap, NULL));
         return 1;
-    /*}*/
+    }
     return 0;
 }
 
+/*!
+* \brief Delete an obstacle of the list when it leaves the camera
+* \param[in] camera the view of the game
+* \param[out] l the list of obstacles
+*/
 int deleteObstacle(Camera * camera, List * l){
     if ((l->first->lower.x + PIPE_WIDTH) < camera->x)
     {
@@ -65,13 +71,13 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 {
     int h = 0;
     if(bird->y + bird->h/2 >= SCREEN_HEIGHT)
-        h = 1;              //detect the collision with the ground
+        h = 1;              /* Collision with the ground */
     if(bird->x + bird->w/2 >= obstacle->lower.x)
     {
         if(bird->y - bird->h/2 <= obstacle->upper.y + obstacle->upper.h)
-            h = 1;          //collision with the upper pipe
+            h = 1;          /* Collision with the upper pipe */
         if(bird->y + bird->h/2 >= obstacle->lower.y)
-            h = 1;          //collision with the lower pipe
+            h = 1;          /* Collision with the lower pipe */
     }
     return h;
 }
@@ -79,7 +85,7 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 * \brief The function called every frame of the running game to update all objects
 * \param[out] bird the bird linked to the running game
 * \param[out] camera the camera linked to the running game
-* \param[out] obstacle[] the table of obstacles linked to the running game
+* \param[out] l the list of obstacles linked to the running game
 * \param[in] event the value that indicate if the bird must jump(1) or not(0 or 2)
 * \param[in] heightPipe the ordinate of the lower pipe of the new obstacle created
 * \param[in] number the obstacle number of the new obstacle

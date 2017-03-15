@@ -12,8 +12,6 @@
 #include "list.h"
 #include <SDL2/SDL.h>
 
-
-int initDisplay(SDL_Window * window, SDL_Renderer * renderer);
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);

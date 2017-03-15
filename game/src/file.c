@@ -6,7 +6,7 @@
 
 /*!
 * \brief Read the predefined level from a file
-* \param[in] file the file to read
+* \param[out] file the file to read
 * \param[in] number the number of the obstacle read
 * \return Return the height of the low pipe of the obstacle
 */
@@ -20,7 +20,6 @@ int readLevel(FILE * file, int number)
         ++i;
     }
     return heightPipe;
-
 }
 
 

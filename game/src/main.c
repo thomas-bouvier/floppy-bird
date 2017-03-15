@@ -45,31 +45,11 @@ int main(int argc, char ** argv)
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-    /*if (renderer == NULL);
-    {
-        fprintf(stderr, "Renderer creation failure : %s\n", SDL_GetError());
-        return 0;
-    }*/
-
 
     while(running)
     {
-
-
-        initGame(&bird, &camera, &l);
-        /*if (initDisplay(window, renderer) == 0)
-        {
-            fprintf(stderr, "Display initialization failure");
-            return EXIT_FAILURE;
-        }*/
-
-
-
-
-
-
+        startGame(&bird, &camera, &l);
         displayGame(renderer, &bird, &l, &camera);
-
 
         /* Open the file that contains the save of the level */
         FILE * f = NULL;
@@ -85,13 +65,13 @@ int main(int argc, char ** argv)
         while(init == NOTHING)
         {
             init = detectTouch();
-            //init = JUMP;    /*Juste pour debugger ! */
             if(init == JUMP)
                 bird.dir_y = BIRD_JUMP;
             if(init == QUIT)
                 running = 0;
         }
 
+        /* Loop of game */
         number = 1;
         hit = 0;
         while(!hit && running)

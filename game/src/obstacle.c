@@ -9,6 +9,7 @@
 * \param[in] number the obstacle number
 * \param[in] height_lower the ordinate of the lower pipe
 * \param[in] obstacle_gap the gap between two pipes
+* \param[in] next_obstacle the next element of the current obstacle
 * \return Return the created obstacle, NULL if error
 */
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle)
@@ -28,8 +29,9 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 
 /*!
 * \brief Indicate the next obstacle for the bird
-* \param[in] obstacle[] the table of obstacle that appears on screen
-* \return Return the next obstacle for the bird. If the bird is between between an obstacle, it returns the
+* \param[out] l the list of obstacle
+* \param[in] bird the bird that determines the next obstacle
+* \return Return the next obstacle for the bird. If the bird is between between two pipes of an obstacle, it returns this obstacle
 */
 Obstacle * nextBirdObstacle(List * l, Bird * bird)
 {

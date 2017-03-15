@@ -4,41 +4,81 @@
 */
 #include "list.h"
 
-int initList(List * l){
+/*!
+* \brief Initialize a list, and fill it with a unique obstacle
+* \param[out] l the list to initialize
+*/
+void initList(List * l){
 	l->first = l->current = l->last = NULL;
     insertLast(l, newObstacle(0, 400, 250, NULL));
-    return 1;
 }
 
+/*!
+* \brief Test if a list is empty or not
+* \param[in] l the list to test
+* \return Return 1 if the list is empty, 0 if not
+*/
 int isEmpty(List * l){
 	return (l->first == NULL);
 }
 
+/*!
+* \brief Test if the current obstacle is the first
+* \param[in] l the list to test
+* \return Return 1 if the current obstacle is the first of the list, 0 if not
+*/
 int isFirst(List * l){
 	return (l->current == l->first);
 }
 
+/*!
+* \brief Test if the current obstacle is the last
+* \param[in] l the list to test
+* \return Return 1 if the current obstacle is the last of the list, 0 if not
+*/
 int isLast(List * l){
 	return (l->current == l->last);
 }
 
+/*!
+* \brief Test if the current node is not valid
+* \param[in] l the list to test
+* \return Return 1 if the current obstacle is not valid, 0 otherwise
+*/
 int outOfList(List * l){
 	return (l->current == NULL);
 }
 
+/*!
+* \brief Set the current obstacle on the first one
+* \param[in] l the list to modify
+*/
 void setOnFirst(List * l){
 	l->current = l->first;
 }
 
+/*!
+* \brief Set the current obstacle on the last one
+* \param[in] l the list to modify
+*/
 void setOnLast(List * l){
 	l->current = l->last;
 }
 
+/*!
+* \brief Set the current obstacle on the next one, if it exists
+* \param[in] l the list to modify
+*/
 void next (List * l){
 	if(!outOfList(l))
 		l->current = l->current->next;
 }
 
+/*!
+* \brief Delete the first obstacle of the list
+* \param[out] l the list to modify
+* \return Return 1 if the first obstacle has been deleted, 0 if not
+*/
 int deleteFirst(List * l){
 	Obstacle * to_del = l->first;
 	if(isEmpty(l))
@@ -51,6 +91,12 @@ int deleteFirst(List * l){
 	return 1;
 }
 
+/*!
+* \brief Insert an obstacle at the end of the list
+* \param[out] l the list to modify
+* \param[out] obstacle the obstacle to insert
+* \return Return 1 if the obstacle has been added, 0 if not
+*/
 int insertLast(List * l, Obstacle * obstacle){
 	if(isEmpty(l))
 		l->first = obstacle;
@@ -58,6 +104,5 @@ int insertLast(List * l, Obstacle * obstacle){
 		l->last->next = obstacle;
 	l->last = obstacle;
 	return 1;
-
 }
 
