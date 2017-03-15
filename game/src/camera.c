@@ -13,7 +13,7 @@
 void initCamera(Camera * new_camera, int x, int camera_speed)
 {
     new_camera->x = x;
-    new_camera->y = SCREEN_HEIGHT;
+    new_camera->y = 0;
     new_camera->w = SCREEN_WIDTH;
     new_camera->h = SCREEN_HEIGHT;
     new_camera->speed = camera_speed;

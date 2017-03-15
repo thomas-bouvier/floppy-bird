@@ -25,9 +25,7 @@ void initBird(Bird * new_bird)
 void updateBird(Bird * bird, int t)
 {
     if( t == JUMP)
-    {
-        bird->dir_y=BIRD_JUMP;
-    }
+        bird->dir_y = BIRD_JUMP;
     else
     {
         bird->dir_y += GRAVITY;
@@ -39,5 +37,4 @@ void updateBird(Bird * bird, int t)
         bird->y = BIRD_SIZE/2;
     if(bird->y + BIRD_SIZE/2 > SCREEN_HEIGHT)
         bird->y = SCREEN_HEIGHT - BIRD_SIZE/2;
-
 }

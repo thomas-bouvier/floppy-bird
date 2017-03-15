@@ -5,8 +5,8 @@
 #include "control.h"
 
 /*!
-* \brief Detect the interesting events for the project
-*\return Return return 1 if the event to jump is detected, 2 for the one to quit and 0 in other case
+* \brief Detect the interesting events for the game
+* \return Return 1 if the event to jump is detected, 2 for the one to quit and 0 in other case
 */
 int detectTouch()
 {

@@ -11,7 +11,7 @@
 
 /*!
 *\struct Camera camera.h
-*\brief The rectangle that moves with the bird
+*\brief The rectangle that moves with the bird and follows the game
 */
 typedef struct{
     int x;                  /*!< the abscissa of the camera */

@@ -17,27 +17,46 @@ int main(int argc, char ** argv)
     int number;
 
     Bird bird;
-    Obstacle obstacle[PIPES_ON_SCREEN];
     Camera camera;
+    List l;
+
+    /* SDL initialization */
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        fprintf(stderr, "SDL initialization failure");
+        return 0;
+    }
+
+    /* Setup window */
+    window = SDL_CreateWindow("Floppy Bird",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SCREEN_WIDTH,
+                              SCREEN_HEIGHT,
+                              SDL_WINDOW_SHOWN);
+    if (window == NULL)
+    {
+        fprintf(stderr, "Opening window failure %s\n,", SDL_GetError());
+        return 0;
+    }
+
+    /* Setup renderer */
+    renderer =  SDL_CreateRenderer(window,
+                                   -1,
+                                   SDL_RENDERER_ACCELERATED);
+    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 
     while(running)
     {
-
-        initGame(&bird, &camera, &obstacle);
-        if (initDisplay(window, renderer) == 0)
-        {
-            fprintf(stderr, "Display initialization failure");
-            return EXIT_FAILURE;
-        }
-        displayGame(renderer, &bird, obstacle, &camera);
-
+        startGame(&bird, &camera, &l);
+        displayGame(renderer, &bird, &l, &camera);
 
         /* Open the file that contains the save of the level */
         FILE * f = NULL;
         f = fopen("./../../res/files/level.txt", "r");
         if(f==NULL)
         {
-            fprintf(stderr,"Opening file failure : %d", ferror(f));
+            fprintf(stderr,"Opening file failure");
             return EXIT_FAILURE;
         }
 
@@ -52,19 +71,20 @@ int main(int argc, char ** argv)
                 running = 0;
         }
 
-
-        number = 0;
+        /* Loop of game */
+        number = 1;
         hit = 0;
         while(!hit && running)
         {
             int event = detectTouch();
             if(event == QUIT)
                 running = 0;
-            hit = game(&bird, &camera, obstacle, event, readLevel(f, number), number);
-            displayGame(renderer, &bird, obstacle, &camera);
+            hit = game(&bird, &camera, &l, event, readLevel(f, number), number);
+            displayGame(renderer, &bird, &l, &camera);
             ++number;
-            SDL_Delay(30);
+            SDL_Delay(1);
         }
+        SDL_Delay(1000);
         fclose(f);
     }
 
