@@ -27,17 +27,27 @@ int main() {
     }
   }
 
-  printf("%d\n", pool->species[0].genomes[0].network->first->id);
-  printf("%d\n", pool->species[0].genomes[0].network->last->id);
+  ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, 1);
+  ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, 0);
 
-  ConnectionGene * connection_gene = newConnectionGene(34, 2, 1);
-
-  if (connection_gene == (ConnectionGene *) NULL) {
+  if (connection_gene_1 == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
 
-  if (!addConnectionGeneToNeurons(pool->species[0].genomes[0].network->first, pool->species[0].genomes[0].network->last, connection_gene)) {
+  if (connection_gene_2 == (ConnectionGene *) NULL) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
+  if (!addConnectionGeneToNeurons(pool->species[0].genomes[0].network->first, pool->species[0].genomes[0].network->last, connection_gene_1)) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
+  setOnNeuron(pool->species[0].genomes[0].network, 2);
+
+  if (!addConnectionGeneToNeurons(getCurrentNeuron(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last, connection_gene_2)) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
