@@ -12,7 +12,7 @@
 
 typedef struct State State;
 typedef struct Actions Actions;
-typedef struct Q Q;
+typedef struct MatrixQ MatrixQ;
 typedef enum Rewards Rewards;
 
 /*!
@@ -22,7 +22,7 @@ typedef enum Rewards Rewards;
 struct State {
   short int delta_x;    /*!< X is the horizontal distance from the bird to the next lower pipe */
   short int delta_y;    /*!< Y is the vertical distance from the bird to the next lower pipe */
-  char bird_state;	/*!< bird_state is the state of the bird with those parameters, 0=death 1=live */
+  /*char bird_state;	/*!< bird_state is the state of the bird with those parameters, 0=death 1=live */*/
 };
 
 /*!
@@ -34,13 +34,13 @@ struct Actions {
 };
 
 /*!
-* \struct matrixQ qlearning.h
-* \brief matrixQ linked a state with an action to a reward
+* \struct MatrixQ qlearning.h
+* \brief MatrixQ linked a state with an action to a reward
 */
-struct matrixQ {
-	short int index;
+struct MatrixQ {
 	struct State *state;
 	struct Actions *actions;
+	int *rewards; /*!< Q(state, action) array */
 };
 
 /**
@@ -51,5 +51,16 @@ enum Rewards {
   life = +15,  /*!< A positive reward if the bird still lives in the future state */
   death = -1000; /*!< A negative reward if the bird dies */
 };
+
+struct State getCurrentState(int delta_x, int delta_y);
+int getCurrentReward(int bird_state);
+
+int findStateIndex(struct State cur_state, struct MatrixQ matrixQ); /* otherwise creation */
+void updateLastQ(struct MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level);
+
+int findBestAction(int state_index, struct MatrixQ matrixQ);
+
+
+/*Load/Save of the QMatrix functions*/
 
 #endif
