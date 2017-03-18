@@ -8,8 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define DISCOUNT                0.5
-#define LEARNING_RATE           0.5
+#include "conf.h"
 
 typedef struct State State;
 typedef struct Actions Actions;
@@ -35,10 +34,10 @@ struct Actions {
 };
 
 /*!
-* \struct Q qlearning.h
-* \brief Q linked a state with an action
+* \struct matrixQ qlearning.h
+* \brief matrixQ linked a state with an action to a reward
 */
-struct Q {
+struct matrixQ {
 	short int index;
 	struct State *state;
 	struct Actions *actions;
@@ -53,4 +52,4 @@ enum Rewards {
   death = -1000; /*!< A negative reward if the bird dies */
 };
 
-#endif // QLEARNING_H
+#endif
