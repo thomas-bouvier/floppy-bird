@@ -5,12 +5,12 @@
 - Développement de l’IA2 : apprentissage du fonctionnement d’un réseau de neurones de type NEAT, définition des structures, écritures des fonctions de crossover, d’évaluation, mutations, intégration dans le jeu en mode “normal”, intégration dans le robot
 - Tests unitaires, tests fonctionnels, interfaçage
 
-##Alexis :
+##Alexis
 
 - Développement du jeu : définition des structures, gestion de défilement des tuyaux, génération des obstacles selon un fichier, ajout de son, intégration et sauvegarde du score, création de menu
 - Tests fonctionnels
 
-##Roman :
+##Roman
 
 - Développement du jeu : définition des structures, gestion des mouvements de l’oiseau, détection des collisions, gestion du framerate, possibilité de pause, intégration des sprites
 - Tests fonctionnels
