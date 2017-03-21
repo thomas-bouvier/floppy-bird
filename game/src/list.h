@@ -8,6 +8,9 @@
 #include "constants.h"
 #include "obstacle.h"
 
+/*!
+The list of obstacle displayed on screen
+*/
 typedef struct List List;
 
 /*!

@@ -31,7 +31,7 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 * \brief Indicate the next obstacle for the bird
 * \param[out] l the list of obstacle
 * \param[in] bird the bird that determines the next obstacle
-* \return Return the next obstacle for the bird. If the bird is between between two pipes of an obstacle, it returns this obstacle
+* \return Return the next obstacle for the bird. If the bird is between two pipes of an obstacle, it returns this obstacle
 */
 Obstacle * nextBirdObstacle(List * l, Bird * bird)
 {
