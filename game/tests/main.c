@@ -7,6 +7,7 @@
 
 #include "../src/constants.h"
 #include "../src/bird.h"
+#include "../src/obstacle.h"
 
 /* initBird */
 
@@ -38,9 +39,34 @@ static int teardown_initBird(void ** state) {
   return 0;
 }
 
+/* newObstacle */
+
+static int setup_newObstacle(void ** state) {
+  Obstacle * obstacle = NULL;
+
+  *state = obstacle;
+
+  return 0;
+}
+
+static void test_newObstacle(void ** state) {
+  Obstacle * obstacle = (Obstacle *) (* state);
+
+  obstacle = newObstacle(14, 120, 15, NULL);
+
+  assert_int_equal(obstacle->gap, 15);
+  assert_null(obstacle->next);
+}
+
+static int teardown_newObstacle(void ** state) {
+  free(*state);
+  return 0;
+}
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
+    cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

@@ -2,19 +2,13 @@ CC=gcc -g
 CFLAGS=-Wall
 LDFLAGS=-lcmocka
 
-main: main.o game.o view.o control.o file.o bird.o camera.o obstacle.o pipe.o list.o
-	$(CC) $^ -lSDL2 -o $@
+main: main.o game.o file.o bird.o camera.o obstacle.o pipe.o list.o
+	$(CC) $^ $(LDFLAGS) -o $@
 
 main.o: main.c
 	$(CC) $(CFLAGS) $< -c
 
 game.o: ../src/game.c ../src/game.h ../src/constants.h ../src/bird.h ../src/obstacle.h ../src/camera.h
-	$(CC) $(CFLAGS) $< -c
-
-view.o: ../src/view.c ../src/view.h ../src/constants.h ../src/bird.h ../src/obstacle.h ../src/camera.h
-	$(CC) $(CFLAGS) $< -c
-
-control.o: ../src/control.c ../src/control.h ../src/constants.h
 	$(CC) $(CFLAGS) $< -c
 
 file.o: ../src/file.c ../src/file.h ../src/constants.h
