@@ -41,10 +41,8 @@ MatingPool * newMatingPool();
 void freeMatingPool(MatingPool * pool);
 
 void populateMatingPool(MatingPool * pool);
-int addSpeciesToMatingPool(MatingPool * pool, Species * species);
+int addSpeciesToMatingPool(MatingPool * pool);
 
-Species * newSpecies(MatingPool * pool);
-
-int addGenomeToSpecies(Species * species, Genome * genome);
+int addGenomeToSpecies(Species * species);
 
 #endif // POPULATION_H

@@ -76,6 +76,9 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
   new_connection_gene->innovation = innovation;
   new_connection_gene->enabled = enabled;
 
+  new_connection_gene->neuron_in = NULL;
+  new_connection_gene->neuron_out = NULL;
+
   return new_connection_gene;
 }
 
@@ -89,22 +92,23 @@ void freeConnectionGene(ConnectionGene * connection_gene) {
 
 /*!
 * \brief Add two Neuron elements to a ConnectionGene. The first one is the source, the second the destination.
-* \param[out] neuron_src the source Neuron
-* \param[in] neuron_dst the destination Neuron
+* \param[out] neuron_in the predecessor Neuron
+* \param[in] neuron_out the successor Neuron
 * \param[out] connection_gene the ConnectionGene to modify
 * \return int 1 if the two Neuron elements were successfully added, 0 otherwise
 */
-int addConnectionGeneToNeurons(Neuron * neuron_src, Neuron * neuron_dst, ConnectionGene * connection_gene) {
-  int count = countConnectionGenes(neuron_src->connections);
+int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene) {
+  int count = countConnectionGenes(neuron_in->connections);
   if (count == N_MAX_CONNECTION_GENES) {
     fprintf(stderr, "Can't add connection gene to neuron : reached limit (%d, max=%d)\n", count, N_MAX_CONNECTION_GENES);
     return 0;
   }
 
-  if (!addConnectionGene(neuron_src->connections, connection_gene))
+  if (!addConnectionGene(neuron_in->connections, connection_gene))
     return 0;
 
-  connection_gene->neuron = neuron_dst;
+  connection_gene->neuron_in = neuron_in;
+  connection_gene->neuron_out = neuron_out;
 
   return 1;
 }

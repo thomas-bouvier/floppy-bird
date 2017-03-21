@@ -1,32 +1,6 @@
 #include "genome.h"
 
 /*!
-* \brief Create a Genome.
-* \return Return a Genome, NULL if error
-*/
-Genome * newGenome() {
-  Genome * new_genome = (Genome *) malloc(sizeof(Genome));
-
-  if (new_genome == (Genome *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Genome\n");
-    return NULL;
-  }
-
-  new_genome->network = newNeuronList();
-  initNeuronList(new_genome->network);
-
-  return new_genome;
-}
-
-/*!
-* \brief Delete a Genome.
-*/
-void freeGenome(Genome * genome) {
-  freeNeuronList(genome->network);
-  free(genome);
-}
-
-/*!
 * \brief Generate a Genome by creating its network elements
 * \param[out] genome the Genome to generate
 * \return Return 1 if the Genome was successfully generated, 0 otherwise
@@ -68,6 +42,7 @@ Neuron * getRandomNeuron(Genome * genome) {
 */
 int writeGraphVizGenome(Genome * genome, char * filename) {
   FILE * f = NULL;
+  ConnectionGeneList * connection_gene_successors = NULL;
 
   if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
       fprintf(stderr, "Error while opening %s\n", filename);
@@ -80,7 +55,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   setOnFirstNeuron(genome->network);
   while (!outOfNeuronList(genome->network)) {
-      ConnectionGeneList * connection_gene_successors = &(genome->network->current->connections);
+      connection_gene_successors = genome->network->current->connections;
       setOnFirstConnectionGene(connection_gene_successors);
 
       if (emptyConnectionGeneList(connection_gene_successors))
@@ -88,8 +63,12 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
       else {
         while (!outOfConnectionGeneList(connection_gene_successors)) {
-            fprintf(f, "\t%d -> %d;\n", genome->network->current->id, connection_gene_successors->current->neuron->id);
-            nextConnectionGene(connection_gene_successors);
+          if (connection_gene_successors->current->enabled)
+            fprintf(f, "\t%d -> %d [label=\"%.1f\", weight=%.1f];\n", genome->network->current->id, connection_gene_successors->current->neuron_out->id, connection_gene_successors->current->weight, connection_gene_successors->current->weight);
+          else
+            fprintf(f, "\t%d -> %d [label=\"%.1f\", weight=%.1f color=red];\n", genome->network->current->id, connection_gene_successors->current->neuron_out->id, connection_gene_successors->current->weight, connection_gene_successors->current->weight);
+
+          nextConnectionGene(connection_gene_successors);
         }
       }
 
