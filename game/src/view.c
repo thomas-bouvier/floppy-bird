@@ -8,6 +8,7 @@
 /*!
 * \brief Color a rectangle
 * \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
 * \param[in] x the abscissa of the rectangle
 * \param[in] y the ordinate of the rectangle
 * \param[in] w the width of the rectangle

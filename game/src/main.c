@@ -4,6 +4,7 @@
 #include "view.h"
 #include "control.h"
 #include "file.h"
+#include "constants.h"
 #include <SDL2/SDL.h>
 
 int main(int argc, char ** argv)
@@ -13,7 +14,7 @@ int main(int argc, char ** argv)
 
     int hit;
     int running = 1;
-    int init;
+    Action init;
     int number;
 
     Bird bird;
@@ -76,7 +77,7 @@ int main(int argc, char ** argv)
         hit = 0;
         while(!hit && running)
         {
-            int event = detectTouch();
+            Action event = detectTouch();
             if(event == QUIT)
                 running = 0;
             hit = game(&bird, &camera, &l, event, readLevel(f, number), number);

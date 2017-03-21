@@ -12,7 +12,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*!
+*An obstacle contains two pipes, and the bird has to pass between them
+*/
 typedef struct Obstacle Obstacle;
+
+/*!
+The list of obstacle displayed on screen
+*/
 typedef struct List List;
 
 /*!
