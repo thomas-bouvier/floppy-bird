@@ -23,7 +23,7 @@ int main(int argc, char ** argv)
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        fprintf(stderr, "SDL initialization failure");
+        fprintf(stderr, "SDL initialization failure\n");
         return 0;
     }
 
@@ -56,7 +56,7 @@ int main(int argc, char ** argv)
         f = fopen("./../../res/files/level.txt", "r");
         if(f==NULL)
         {
-            fprintf(stderr,"Opening file failure");
+            fprintf(stderr,"Opening file failure\n");
             return EXIT_FAILURE;
         }
 
