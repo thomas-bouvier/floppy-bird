@@ -1,5 +1,5 @@
-CC=gcc
-CFLAGS=-Wall -g
+CC=gcc -g
+CFLAGS=-Wall
 LDFLAGS=-lcmocka
 
 main: main.o game.o view.o control.o file.o bird.o camera.o obstacle.o pipe.o list.o
