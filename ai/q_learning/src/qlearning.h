@@ -1,6 +1,6 @@
 /*!
 * \file qlearning.h
-* \brief File containing structures and prototypes linked to the deep q-learning algorithm
+* \brief File containing structures and prototypes linked to the q-learning algorithm
 */
 #ifndef QLEARNING_H
 #define QLEARNING_H
@@ -20,6 +20,7 @@ typedef enum Rewards Rewards;
 * \brief A State contains every informations needed to know exactly the state of a bird and pipes.
 */
 struct State {
+  int id_state;			/*!< ID of the current state */
   short int delta_x;    /*!< X is the horizontal distance from the bird to the next lower pipe */
   short int delta_y;    /*!< Y is the vertical distance from the bird to the next lower pipe */
   /*char bird_state;	/*!< bird_state is the state of the bird with those parameters, 0=death 1=live */*/
@@ -48,11 +49,11 @@ struct MatrixQ {
  * \brief the reward given to the associated state/action according to the future state
  */
 enum Rewards {
-  life = +15,  /*!< A positive reward if the bird still lives in the future state */
-  death = -1000; /*!< A negative reward if the bird dies */
+  living = +15,  /*!< A positive reward if the bird still lives in the future state */
+  dead = -100; /*!< A negative reward if the bird dies */
 };
 
-struct State getCurrentState(int delta_x, int delta_y);
+State * getCurrentState(int id_state, int delta_x, int delta_y, int dead);
 int getCurrentReward(int bird_state);
 
 int findStateIndex(struct State cur_state, struct MatrixQ matrixQ); /* otherwise creation */
