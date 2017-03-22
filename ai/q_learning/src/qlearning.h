@@ -44,15 +44,6 @@ struct MatrixQ {
 	int *rewards; /*!< Q(state, action) array */
 };
 
-/**
- * \enum Rewards qlearning.h
- * \brief the reward given to the associated state/action according to the future state
- */
-enum Rewards {
-  living = +15,  /*!< A positive reward if the bird still lives in the future state */
-  dead = -100; /*!< A negative reward if the bird dies */
-};
-
 State * getCurrentState(int id_state, int delta_x, int delta_y, int dead);
 int getCurrentReward(int bird_state);
 
