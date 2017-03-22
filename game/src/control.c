@@ -8,7 +8,7 @@
 * \brief Detect the interesting events for the game
 * \return Return 1 if the event to jump is detected, 2 for the one to quit and 0 in other case
 */
-int detectTouch()
+Action detectTouch()
 {
     SDL_Event event;
     while( SDL_PollEvent(&event))
