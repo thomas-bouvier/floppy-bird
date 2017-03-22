@@ -5,17 +5,23 @@
 ### For Windows (with CodeBlocks) :
 
 Take care to install SDL version 2.0.5. 
+
 In order to compile with CodeBlocks, you have to add a PATH environement variable, that leads to the folder "SDL2-2.0.5".
+
 Then open the project with Codeblocks (.cbp file), build, compile and run.
 
 ### For Linux :
 
 Install the SDL2 :
+
 	apt-get install libsdl2-dev
+
 Extract the archive and cd to the folder that got extracted. Then :
+
 	./configure
 	make
 	sudo make install
+
 Now you can compile and run the project with the Makefile provided with the sources.
 
 
