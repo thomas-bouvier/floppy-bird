@@ -21,9 +21,7 @@ typedef struct{
     int dir_y;                  /*!< the speed of climb/fall of the bird */
 } Bird;
 
-Bird * newBird();
-
+void initBird(Bird * new_bird);
 void updateBird(Bird * bird, int t);
-void freeBird(Bird * bird);
 
 #endif // BIRD_H

@@ -8,21 +8,33 @@
 #include "constants.h"
 #include "pipe.h"
 #include "bird.h"
+#include "list.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+/*!
+*An obstacle contains two pipes, and the bird has to pass between them
+*/
+typedef struct Obstacle Obstacle;
+
+/*!
+The list of obstacle displayed on screen
+*/
+typedef struct List List;
 
 /*!
 * \struct Obstacle obstacle.h
 * \brief An obstacle contains two pipes, and the bird has to pass between them
 */
-typedef struct{
-    Pipe * upper;           /*!< the upper pipe */
-    Pipe * lower;           /*!< the lower pipe */
-    int gap;                /*!< the gap between two pipes */
-} Obstacle;
+struct Obstacle{
+    Pipe upper;                     /*!< the upper pipe */
+    Pipe lower;                     /*!< the lower pipe */
+    int gap;                        /*!< the gap between two pipes */
+    struct Obstacle * next;         /*!< the next obstacle in the list */
+};
 
-Obstacle * newObstacle(int number, int height_lower, int obstacle_gap);
-Obstacle * nextObstacle(Obstacle * obstacle, Bird * Bird);
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle);
+Obstacle * nextBirdObstacle(List * l, Bird * bird);
 void freeObstacle(Obstacle * obstacle);
 
 #endif // OBSTACLE_H

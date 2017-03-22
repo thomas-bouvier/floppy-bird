@@ -9,14 +9,15 @@
 #include "bird.h"
 #include "obstacle.h"
 #include "camera.h"
+#include "list.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-void initGame(Bird * bird, Camera * camera, Obstacle * obstacle[]);
+void startGame(Bird * bird, Camera * camera, List * l);
 void cameraScrolling(Camera * camera, Bird * bird);
-int obstacleCreation(Camera * camera, Obstacle * ostacle[], int number, int height_lower, int obstacle_gap);
+int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap);
+int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle);
-int game(Bird * bird, Camera * camera, Obstacle * obstacle[],int event,int heightPipe, int number);
-void freeAll(Bird * bird, Obstacle * obstacle[], Camera * camera);
+int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number);
 
 #endif // GAME_H

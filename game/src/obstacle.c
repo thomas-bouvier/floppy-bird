@@ -9,9 +9,10 @@
 * \param[in] number the obstacle number
 * \param[in] height_lower the ordinate of the lower pipe
 * \param[in] obstacle_gap the gap between two pipes
+* \param[in] next_obstacle the next element of the current obstacle
 * \return Return the created obstacle, NULL if error
 */
-Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
+Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle)
 {
     Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
     if(new_obstacle == NULL)
@@ -19,26 +20,29 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap)
         fprintf(stderr, "Obstacle allocation problem");
         return NULL;
     }
-    Pipe * low = newPipe(number, SCREEN_HEIGHT - height_lower, height_lower);            //Lower pipe
-    Pipe * up = newPipe(number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
-    new_obstacle->lower = low;
-    new_obstacle->upper = up;
+    initPipe(&new_obstacle->lower, number, SCREEN_HEIGHT - height_lower, height_lower);             //Lower pipe
+    initPipe(&new_obstacle->upper, number, 0, SCREEN_HEIGHT - (height_lower + obstacle_gap));       //Upper pipe
     new_obstacle->gap = obstacle_gap;
+    new_obstacle->next = next_obstacle;
     return new_obstacle;
 }
 
 /*!
 * \brief Indicate the next obstacle for the bird
-* \param[in] obstacle[] the table of obstacle that appears on screen
-* \return Return the next obstacle for the bird. If the bird is between between an obstacle, it returns the
+* \param[out] l the list of obstacle
+* \param[in] bird the bird that determines the next obstacle
+* \return Return the next obstacle for the bird. If the bird is between two pipes of an obstacle, it returns this obstacle
 */
-Obstacle * nextObstacle(Obstacle * obstacle, Bird * bird)
+Obstacle * nextBirdObstacle(List * l, Bird * bird)
 {
-    int i;
-    for (i=0 ; i<PIPES_ON_SCREEN ; ++i)
+    int i = 0;
+    setOnFirst(l);
+    while (i < PIPES_ON_SCREEN)
     {
-        if ((*(obstacle+i)).lower->x + PIPE_WIDTH > bird->x + bird->w/2)
-            return (Obstacle *) obstacle+i;
+        if (l->current->lower.x + PIPE_WIDTH > bird->x - bird->w/2)
+            return l->current;
+        next(l);
+        ++i;
     }
     return NULL;
 }
@@ -49,7 +53,5 @@ Obstacle * nextObstacle(Obstacle * obstacle, Bird * bird)
 */
 void freeObstacle(Obstacle * obstacle)
 {
-    free(obstacle->lower);
-    free(obstacle->upper);
     free(obstacle);
 }
