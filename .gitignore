@@ -1,12 +1,11 @@
 Floppy_Bird/
+bin/
+build/
 *.dot
 
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-Makefile
-main
 
 # Code::Blocks
 *.depend
