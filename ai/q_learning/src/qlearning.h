@@ -20,7 +20,7 @@ typedef enum Rewards Rewards;
 * \brief A State contains every informations needed to know exactly the state of a bird and pipes.
 */
 struct State {
-  int id_state;			/*!< ID of the current state */
+  /*int id_state;			/*!< ID of the current state */*/
   short int delta_x;    /*!< X is the horizontal distance from the bird to the next lower pipe */
   short int delta_y;    /*!< Y is the vertical distance from the bird to the next lower pipe */
   /*char bird_state;	/*!< bird_state is the state of the bird with those parameters, 0=death 1=live */*/
@@ -39,15 +39,19 @@ struct Actions {
 * \brief MatrixQ linked a state with an action to a reward
 */
 struct MatrixQ {
-	struct State *state;
-	struct Actions *actions;
+	int nb_states;
+	int nb_actions;
+	State *state;
+	Actions *actions;
 	int *rewards; /*!< Q(state, action) array */
 };
 
 State * getCurrentState(int id_state, int delta_x, int delta_y, int dead);
+void freeState(State * state);
 int getCurrentReward(int bird_state);
 
-int findStateIndex(struct State cur_state, struct MatrixQ matrixQ); /* otherwise creation */
+int findStateIndex(State * cur_state,MatrixQ * matrixQ); /* otherwise creation */
+int AddState(State * cur_state,MatrixQ * matrixQ);
 void updateLastQ(struct MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level);
 
 int findBestAction(int state_index, struct MatrixQ matrixQ);
