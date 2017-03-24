@@ -1,6 +1,7 @@
 Floppy_Bird/
 bin/
 build/
+main
 *.dot
 
 .DS_Store
