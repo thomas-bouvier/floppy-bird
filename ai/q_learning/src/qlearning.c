@@ -41,7 +41,7 @@ State * getCurrentState(int delta_x, int delta_y, int bird_state)
 /*!
 * \brief Get the reward according to the current state of the bird
 * \param[in] bird_state 0 if the bird is dead, another positive integer value otherwise
-* \return Return a reward value
+* \return Return a reward value, 0 if error
 */
 int getCurrentReward(int bird_state)
 {
@@ -54,7 +54,7 @@ int getCurrentReward(int bird_state)
 			return LIFE_REWARD;
 			break;
 	}
-	return NULL;
+	return 0;
 }
 
 /*!
@@ -89,13 +89,13 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 
 /*!
 * \brief Add a new state in the MatrixQ
-* \param[in] cur_state current state to add in the matrix
-* \param[in] matrixQ matrix of every known state
+* \param[out] cur_state current state to add in the matrix
+* \param[out] matrixQ matrix of every known state
 * \return Return an index of the matrix corresponding to the current state, -1 if error
 */
 int AddState(State * cur_state, MatrixQ * matrixQ)
 {
-	if(matrixQ = realloc(matrixQ, sizeof(matrixQ)+sizeof(State)+1) == NULL) return -1; /*A voir*/
+	if(matrixQ = realloc(matrixQ, sizeof(matrixQ)+sizeof(State)+1) == NULL) return -1; /*A voir realloc nbstate et nbreward*/
 	matrixQ->state[matrixQ->nb_state]->delta_x = cur_state->delta_x;
 	matrixQ->state[matrixQ->nb_state]->delta_y = cur_state->delta_y;
 	matrixQ->nb_state++;
@@ -103,7 +103,23 @@ int AddState(State * cur_state, MatrixQ * matrixQ)
 	return matrixQ->nb_state-1;
 }
 
+/*!
+* \brief return the action to be performed
+* \param[in] state_index
+* \param[in] matrixQ matrix of every known state
+* \return Return 1 to jump, 0 otherwise
+*/
 int findBestAction(int state_index, struct MatrixQ matrixQ)
+{
+	return (matrixQ->reward[state_index*2] <= matrixQ->reward[state_index*2+1])? 1:0;
+}
+
+void updateLastQ(struct MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level)
+{
+
+}
+
+int main()
 {
 
 }

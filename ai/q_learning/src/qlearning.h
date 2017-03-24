@@ -29,9 +29,9 @@ struct State {
 * \struct Actions qlearning.h
 * \brief Actions contains every actions that the bird can perform.
 */
-struct Actions {
+/*struct Actions {
   char jump;	/*!< jump is equal to zero if no jump otherwise one */
-};
+};*/
 
 /*!
 * \struct MatrixQ qlearning.h
@@ -39,10 +39,10 @@ struct Actions {
 */
 struct MatrixQ {
 	int nb_states;
-	int nb_actions;
+	/*int nb_actions;*/
 	State *state;
-	Actions *action;
-	int *rewards; /*!< Q(state, action) array */
+	/*Actions action;*/
+	int *reward; /*!< Q(state, action) array */
 };
 
 State * getCurrentState(int id_state, int delta_x, int delta_y, int dead);
