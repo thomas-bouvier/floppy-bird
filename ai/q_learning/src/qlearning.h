@@ -13,7 +13,6 @@
 typedef struct State State;
 typedef struct Actions Actions;
 typedef struct MatrixQ MatrixQ;
-typedef enum Rewards Rewards;
 
 /*!
 * \struct State qlearning.h
@@ -42,7 +41,7 @@ struct MatrixQ {
 	int nb_states;
 	int nb_actions;
 	State *state;
-	Actions *actions;
+	Actions *action;
 	int *rewards; /*!< Q(state, action) array */
 };
 
