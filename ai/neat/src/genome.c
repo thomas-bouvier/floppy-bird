@@ -24,6 +24,51 @@ int generateGenome(Genome * genome) {
   return 1;
 }
 
+int mutateEnableFlag(Genome * genome, unsigned char enable) {
+  int i = 0;
+  int random_connection_gene_index;
+  Neuron * current_neuron = NULL;
+  ConnectionGene * current_connection_gene = NULL;
+  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
+
+  setOnFirstNeuron(genome->network);
+  while (!outOfNeuronList(genome->network)) {
+
+    current_neuron = getCurrentNeuron(genome->network);
+
+    if (current_neuron == NULL)
+      return 0;
+
+    setOnFirstConnectionGene(current_neuron->connections);
+    while (!outOfConnectionGeneList(current_neuron->connections)) {
+
+      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+
+      if (current_connection_gene == NULL)
+        return 0;
+
+      if (current_connection_gene->enabled != enable) {
+        candidates[i] = current_connection_gene;
+        ++i;
+      }
+
+      nextConnectionGene(current_neuron->connections);
+    }
+
+    nextNeuron(genome->network);
+  }
+
+  if (i == 0) {
+    fprintf(stderr, "There is no ConnectionGene candidate for enable flag mutation\n");
+    return 0;
+  }
+
+  random_connection_gene_index = randomAtMost(i);
+  candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
+
+  return 1;
+}
+
 /*!
 * \brief Return a random Neuron from the given Genome.
 * \param[in] genome the Genome to choose a Neuron from

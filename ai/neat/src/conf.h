@@ -10,7 +10,7 @@
 #define N_MAX_SPECIES             8
 #define N_MAX_GENOMES             50
 #define N_MAX_CONNECTION_GENES    50
-#define N_MAX_INPUTS              10
+#define N_MAX_NEURONS             10
 #define N_MAX_NETWORK             50
 
 #define N_INPUTS                  3

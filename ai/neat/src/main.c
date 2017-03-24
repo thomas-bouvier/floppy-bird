@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "network.h"
 #include "genome.h"
@@ -8,8 +9,10 @@
 int main() {
   int i;
   int j;
+  time_t t;
   MatingPool * pool = NULL;
 
+  srand((unsigned) time(&t));
   pool = newMatingPool();
 
   if (pool == (MatingPool *) NULL) {
@@ -28,7 +31,8 @@ int main() {
   }
 
   ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, 1);
-  ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, 0);
+  ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, 1);
+  ConnectionGene * connection_gene_3 = newConnectionGene(45, 5, 1);
 
   if (connection_gene_1 == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error\n");
@@ -36,6 +40,11 @@ int main() {
   }
 
   if (connection_gene_2 == (ConnectionGene *) NULL) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
+  if (connection_gene_3 == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
@@ -51,6 +60,15 @@ int main() {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
+
+  setOnNeuron(pool->species[0].genomes[0].network, 3);
+
+  if (!addConnectionGeneToNeurons(getCurrentNeuron(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last, connection_gene_3)) {
+    fprintf(stderr, "Error\n");
+    return EXIT_FAILURE;
+  }
+
+  mutateEnableFlag(&(pool->species[0].genomes[0]), 0);
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

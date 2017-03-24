@@ -3,20 +3,18 @@
 /*!
 * \brief Return a random number between 0 and the specified parameter
 * \param[in] limit the upper limit
-* \return Return a random number in [0; limit]
+* \return Return a random number in [0; limit[
 */
 int randomAtMost(int limit) {
-  int r;
-  int d;
+  if ((limit - 1) == RAND_MAX) {
+    return rand();
+  } else {
+    long end = RAND_MAX / limit;
+    end *= limit;
 
-  if (limit == 0) return 0;
+    int r;
+    while ((r = rand()) >= end);
 
-  d = RAND_MAX / limit;
-  limit *= d;
-
-  do {
-    r = rand();
-  } while (r >= limit);
-
-  return r / d;
+    return r % limit;
+  }
 }

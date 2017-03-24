@@ -13,7 +13,7 @@ Neuron * newNeuron(NeuronType type) {
     return NULL;
   }
 
-  ConnectionGeneList * connection_gene_list = newConnectionGeneList(0.0, 0, 1);
+  ConnectionGeneList * connection_gene_list = newConnectionGeneList();
 
   if (connection_gene_list == (ConnectionGeneList *) NULL) {
     fprintf(stderr, "Error while creating ConnectionGeneList for new Neuron\n");
@@ -52,7 +52,13 @@ void freeNeuron(Neuron * neuron) {
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
 int addNeuronToNetwork(Network * network, Neuron * neuron) {
-  neuron->id = countNeurons(network);
+  int count = countNeurons(network);
+  if (count == N_MAX_NEURONS) {
+    fprintf(stderr, "Can't add neuron to network : reached limit (%d, max=%d)\n", count, N_MAX_NEURONS);
+    return 0;
+  }
+
+  neuron->id = count;
 
   return addNeuron(network, neuron);
 }
