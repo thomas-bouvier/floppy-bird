@@ -73,6 +73,27 @@ int main() {
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

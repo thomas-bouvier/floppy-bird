@@ -48,7 +48,7 @@ void freeNeuron(Neuron * neuron) {
 /*!
 * \brief Add a Neuron to the Network.
 * \param[out] network the Network
-* \param[in] neuron the Neuron to add
+* \param[out] neuron the Neuron to add
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
 int addNeuronToNetwork(Network * network, Neuron * neuron) {

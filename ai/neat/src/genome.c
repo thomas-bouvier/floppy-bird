@@ -7,18 +7,33 @@
 */
 int generateGenome(Genome * genome) {
   int i;
+  Neuron * neuron = NULL;
 
   for (i = 0; i < N_INPUTS; ++i) {
-    if (!addNeuronToNetwork(genome->network, newNeuron(INPUT)))
+    neuron = newNeuron(INPUT);
+    if (addNeuronToNetwork(genome->network, neuron) == 0) {
+      printf("test\n");
+      freeNeuron(neuron);
       return 0;
+    }
   }
+
   for (i = 0; i < N_BIAS; ++i) {
-    if (!addNeuronToNetwork(genome->network, newNeuron(BIAS)))
+    neuron = newNeuron(BIAS);
+    if (addNeuronToNetwork(genome->network, neuron) == 0) {
+      printf("test\n");
+      freeNeuron(neuron);
       return 0;
+    }
   }
+
   for (i = 0; i < N_OUTPUTS; ++i) {
-    if (!addNeuronToNetwork(genome->network, newNeuron(OUTPUT)))
+    neuron = newNeuron(OUTPUT);
+    if (addNeuronToNetwork(genome->network, neuron) == 0) {
+      printf("test\n");
+      freeNeuron(neuron);
       return 0;
+    }
   }
 
   return 1;
