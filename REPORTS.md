@@ -1,5 +1,16 @@
 ﻿# reports
 
+## Compte-rendu réunion n°4 (22/03/2017)
+
+La version 1 du jeu ne compile pas automatiquement. Des ajustements sont a effectuer dans le projet code::blocks et dans le Makefile :
+- Tous les LDFLAGS pour la SDL devront ^être remplacés par une lige générique
+- Un fichier de configuration devra être crée afin de permettre, via des chemins relatifs, de retrouver automatiquement les chemins des différents fichiers (fichier de sauvegarde du niveau, sprites...)
+
+Un fichier doxyfile permettant de générer automatiquement la documentation du projet sera ajouté.
+
+Les tests unitaires pour la partie concernant le jeu devront être fini pour la prochiane réunion. Ils doivent recouvrir 100% du code et seront inclus dans la version du projet présente sur la branche master.
+
+
 ## Compte-rendu réunion n°3 (07/03/2017)
 
 Actuellement le modèle MVC n'est pas respecté dans le jeu. Les structures de données doivent être indépendantes de la SDL ; elles sont donc à refaire, en séparant davantage les fichiers (Bird, Pipe, Camera...).
