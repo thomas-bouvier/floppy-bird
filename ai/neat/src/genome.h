@@ -23,10 +23,11 @@ typedef struct {
 
 int generateGenome(Genome * genome);
 
+int mutate(Genome * genome);
 int mutatePoint(Genome * genome);
-int mutateEnableFlag(Genome * genome, unsigned char enable);
 int mutateLink(Genome * genome);
 int mutateNode(Genome * genome);
+int mutateEnableFlag(Genome * genome, unsigned char enable);
 
 int linked(Neuron * neurion_in, Neuron * neuron_out);
 

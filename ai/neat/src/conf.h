@@ -19,5 +19,8 @@
 
 #define POINT_MUTATION_PERTURBATION   0.50
 #define POINT_MUTATION_RATE           0.50
+#define LINK_MUTATION_RATE            0.50
+#define NODE_MUTATION_RATE            0.50
+#define ENABLE_DISABLE_MUTATION_RATE  0.50
 
 #endif // CONF_H

@@ -68,11 +68,11 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  mutateEnableFlag(&pool->species[0].genomes[0], 0);
-  mutateNode(&pool->species[0].genomes[0]);
-  mutateLink(&pool->species[0].genomes[0]);
-  mutateNode(&pool->species[0].genomes[0]);
-  mutateNode(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
+  mutate(&pool->species[0].genomes[0]);
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

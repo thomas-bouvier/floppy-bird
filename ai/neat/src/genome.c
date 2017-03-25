@@ -24,6 +24,42 @@ int generateGenome(Genome * genome) {
   return 1;
 }
 
+int mutate(Genome * genome) {
+  double r = POINT_MUTATION_RATE;
+  while (r > 0) {
+    if (random01() < r)
+      mutatePoint(genome);
+
+    r -= 1.0;
+  }
+
+  r = LINK_MUTATION_RATE;
+  while (r > 0) {
+    if (random01() < r)
+      mutateLink(genome);
+
+    r -= 1.0;
+  }
+
+  r = NODE_MUTATION_RATE;
+  while (r > 0) {
+    if (random01() < r)
+      mutateNode(genome);
+
+    r -= 1.0;
+  }
+
+  r = ENABLE_DISABLE_MUTATION_RATE;
+  while (r > 0) {
+    if (random01() < r)
+      mutateEnableFlag(genome, 0);
+
+    r -= 1.0;
+  }
+
+  return 1;
+}
+
 /*!
 * \brief Randomly update the weight of a randomly selected ConnectionGene from the given Genome
 * \param[out] genome The Genome whose a random ConnectionGene has to be updated
@@ -64,55 +100,6 @@ int mutatePoint(Genome * genome) {
 
     nextNeuron(genome->network);
   }
-
-  return 1;
-}
-
-/*!
-* \brief Randomly enable and disable ConnectionGene elements from the given Genome
-* \param[out] genome the Genome whose ConnectionGene elements have to be updated
-* \param[in] enable
-* \return int 1 if the ConnectionGene elements were successfully updated, 0 otherwise
-*/
-int mutateEnableFlag(Genome * genome, unsigned char enable) {
-  int i = 0;
-  int random_connection_gene_index;
-  Neuron * current_neuron = NULL;
-  ConnectionGene * current_connection_gene = NULL;
-  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
-
-  setOnFirstNeuron(genome->network);
-  while (!outOfNeuronList(genome->network)) {
-
-    current_neuron = getCurrentNeuron(genome->network);
-
-    if (current_neuron == NULL)
-      return 0;
-
-    setOnFirstConnectionGene(current_neuron->connections);
-    while (!outOfConnectionGeneList(current_neuron->connections)) {
-
-      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
-
-      if (current_connection_gene == NULL)
-        return 0;
-
-      if (current_connection_gene->enabled != enable) {
-        candidates[i] = current_connection_gene;
-        ++i;
-      }
-
-      nextConnectionGene(current_neuron->connections);
-    }
-
-    nextNeuron(genome->network);
-  }
-
-  if (i == 0)
-    return 1;
-
-  random_connection_gene_index = randomAtMost(i);
-  candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
 
   return 1;
 }
@@ -217,6 +204,55 @@ int mutateNode(Genome * genome) {
   new_connection_gene_2 = cloneConnectionGene(candidates[random_connection_gene_index]);
   new_connection_gene_2->enabled = 1;
   addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
+
+  return 1;
+}
+
+/*!
+* \brief Randomly enable and disable ConnectionGene elements from the given Genome
+* \param[out] genome the Genome whose ConnectionGene elements have to be updated
+* \param[in] enable
+* \return int 1 if the ConnectionGene elements were successfully updated, 0 otherwise
+*/
+int mutateEnableFlag(Genome * genome, unsigned char enable) {
+  int i = 0;
+  int random_connection_gene_index;
+  Neuron * current_neuron = NULL;
+  ConnectionGene * current_connection_gene = NULL;
+  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
+
+  setOnFirstNeuron(genome->network);
+  while (!outOfNeuronList(genome->network)) {
+
+    current_neuron = getCurrentNeuron(genome->network);
+
+    if (current_neuron == NULL)
+      return 0;
+
+    setOnFirstConnectionGene(current_neuron->connections);
+    while (!outOfConnectionGeneList(current_neuron->connections)) {
+
+      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+
+      if (current_connection_gene == NULL)
+        return 0;
+
+      if (current_connection_gene->enabled != enable) {
+        candidates[i] = current_connection_gene;
+        ++i;
+      }
+
+      nextConnectionGene(current_neuron->connections);
+    }
+
+    nextNeuron(genome->network);
+  }
+
+  if (i == 0)
+    return 1;
+
+  random_connection_gene_index = randomAtMost(i);
+  candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
 
   return 1;
 }
