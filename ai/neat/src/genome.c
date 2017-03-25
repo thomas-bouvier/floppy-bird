@@ -108,13 +108,42 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
     nextNeuron(genome->network);
   }
 
-  if (i == 0) {
-    fprintf(stderr, "There is no ConnectionGene candidate for enable flag mutation\n");
-    return 0;
-  }
+  if (i == 0)
+    return 1;
 
   random_connection_gene_index = randomAtMost(i);
   candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
+
+  return 1;
+}
+
+/*!
+* \brief
+* \param[out] genome
+* \return int
+*/
+int mutateLink(Genome * genome) {
+  Neuron * neuron_1 = NULL;
+  Neuron * neuron_2 = NULL;
+  ConnectionGene * connection_gene = NULL;
+
+  if (countNeurons(genome->network) <= 1)
+    return 1;
+
+  neuron_1 = getRandomNeuron(genome);
+  neuron_2 = getRandomNeuron(genome);
+  while (neuron_1 == neuron_2)
+    neuron_2 = getRandomNeuron(genome);
+
+  if (linked(neuron_1, neuron_2))
+    return 1;
+
+  connection_gene = newConnectionGene(4.0 * random01() - 2.0, 1, 1);
+
+  if (connection_gene == NULL)
+    return 0;
+
+  addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene);
 
   return 1;
 }
@@ -166,15 +195,13 @@ int mutateNode(Genome * genome) {
     nextNeuron(genome->network);
   }
 
-  if (i == 0) {
-    fprintf(stderr, "There is no ConnectionGene candidate for node mutation\n");
-    return 0;
-  }
+  if (i == 0)
+    return 1;
 
   random_connection_gene_index = randomAtMost(i);
 
   if (candidates[random_connection_gene_index]->enabled == 0)
-    return 0;
+    return 1;
 
   candidates[random_connection_gene_index]->enabled = 0;
 
@@ -192,6 +219,24 @@ int mutateNode(Genome * genome) {
   addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
 
   return 1;
+}
+
+/*!
+* \brief Check if the two given Neuron elements are linked by a ConnectionGene
+* \param[out] neuron_in The first Neuron
+* \param[in] neuron_out The second Neuron
+* \return int 1 if the two Neuron elements are linked, 0 otherwise
+*/
+int linked(Neuron * neuron_in, Neuron * neuron_out) {
+  setOnFirstConnectionGene(neuron_in->connections);
+  while (!outOfConnectionGeneList(neuron_in->connections)) {
+    if (getCurrentConnectionGene(neuron_in->connections)->neuron_out == neuron_out)
+      return 1;
+
+    nextConnectionGene(neuron_in->connections);
+  }
+
+  return 0;
 }
 
 /*!
