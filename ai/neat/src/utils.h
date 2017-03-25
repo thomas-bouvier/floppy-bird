@@ -9,5 +9,6 @@
 #include <stdio.h>
 
 int randomAtMost(int limit);
+double random01();
 
 #endif // UTILS_H

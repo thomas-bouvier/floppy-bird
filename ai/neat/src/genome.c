@@ -24,6 +24,57 @@ int generateGenome(Genome * genome) {
   return 1;
 }
 
+/*!
+* \brief Randomly update the weight of a randomly selected ConnectionGene from the given Genome
+* \param[out] genome The Genome whose a random ConnectionGene has to be updated
+* \return int 1 if a ConnectionGene was successfully updated, 0 otherwise
+*
+* The updates are either:
+* New Weight = Old Weight +/- Random number between 0 and pointMutationRate
+* or
+* New Weight = Random number between -2 and 2
+*/
+int mutatePoint(Genome * genome) {
+  Neuron * current_neuron = NULL;
+  ConnectionGene * current_connection_gene = NULL;
+  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
+
+  setOnFirstNeuron(genome->network);
+  while (!outOfNeuronList(genome->network)) {
+
+    current_neuron = getCurrentNeuron(genome->network);
+
+    if (current_neuron == NULL)
+      return 0;
+
+    setOnFirstConnectionGene(current_neuron->connections);
+    while (!outOfConnectionGeneList(current_neuron->connections)) {
+
+      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+
+      if (current_connection_gene == NULL)
+        return 0;
+
+      if (random01() < POINT_MUTATION_PERTURBATION)
+        current_connection_gene->weight += 2.0 * random01() * POINT_MUTATION_RATE - POINT_MUTATION_RATE;
+      else
+        current_connection_gene->weight = 4.0 * random01() - 2.0;
+
+      nextConnectionGene(current_neuron->connections);
+    }
+
+    nextNeuron(genome->network);
+  }
+
+  return 1;
+}
+
+/*!
+* \brief Randomly enable and disable ConnectionGene elements from the given Genome
+* \param[out] genome the Genome whose ConnectionGene elements have to be updated
+* \param[in] enable
+* \return int 1 if the ConnectionGene elements were successfully updated, 0 otherwise
+*/
 int mutateEnableFlag(Genome * genome, unsigned char enable) {
   int i = 0;
   int random_connection_gene_index;

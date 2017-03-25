@@ -107,7 +107,7 @@ ConnectionGene * getCurrentConnectionGene(ConnectionGeneList * connection_gene_l
 /*!
 * \brief Insert a ConnectionGene at the tail of the ConnectionGeneList. The current ConnectionGene is updated to point to it.
 * \param[out] connection_gene_list the ConnectionGeneList
-* \param[in] connection_gene the ConnectionGene to be inserted
+* \param[out] connection_gene the ConnectionGene to be inserted
 * \return int 1 if the ConnectionGene was successfully inserted, 0 otherwise
 */
 int addConnectionGene(ConnectionGeneList * connection_gene_list, ConnectionGene * connection_gene) {

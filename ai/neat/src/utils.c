@@ -18,3 +18,11 @@ int randomAtMost(int limit) {
     return r % limit;
   }
 }
+
+/*!
+* \brief Return a random number between 0 and 1
+* \return Return a random number in [0; 1]
+*/
+double random01() {
+    return (double) rand() / (double) RAND_MAX ;
+}

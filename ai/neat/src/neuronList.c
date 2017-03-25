@@ -107,7 +107,7 @@ Neuron * getCurrentNeuron(NeuronList * neuron_list) {
 /*!
 * \brief Insert a Neuron at the tail of the NeuronList. The current Neuron is updated to point to it.
 * \param[out] neuron_list the NeuronList
-* \param[in] neuron the Neuron to be inserted
+* \param[out] neuron the Neuron to be inserted
 * \return int 1 if the Neuron was successfully inserted, 0 otherwise
 */
 int addNeuron(NeuronList * neuron_list, Neuron * neuron) {

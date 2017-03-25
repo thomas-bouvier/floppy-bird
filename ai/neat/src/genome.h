@@ -23,6 +23,7 @@ typedef struct {
 
 int generateGenome(Genome * genome);
 
+int mutatePoint(Genome * genome);
 int mutateEnableFlag(Genome * genome, unsigned char enable);
 
 Neuron * getRandomNeuron(Genome * genome);
