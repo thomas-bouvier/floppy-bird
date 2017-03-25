@@ -68,7 +68,8 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  mutateEnableFlag(&(pool->species[0].genomes[0]), 0);
+  //mutateEnableFlag(&(pool->species[0].genomes[0]), 0);
+  printf("%d\n", mutateNode(&pool->species[0].genomes[0]));
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

@@ -37,7 +37,6 @@ int generateGenome(Genome * genome) {
 int mutatePoint(Genome * genome) {
   Neuron * current_neuron = NULL;
   ConnectionGene * current_connection_gene = NULL;
-  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
 
   setOnFirstNeuron(genome->network);
   while (!outOfNeuronList(genome->network)) {
@@ -121,6 +120,81 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 }
 
 /*!
+* \brief
+* \param[out] genome
+* \return int 1 if the mutation was successful, 0 otherwise
+*
+* This mutation adds a new Neuron to the network by disabling a ConnectionGene,
+* replacing it with a ConnectionGene of weight 1, a Neuron and a ConnectionGene with
+* the same weight as the disabled ConnectionGene.
+*
+* In essence it’s been replaced with an identically functioning equivalent.
+*/
+int mutateNode(Genome * genome) {
+  int i = 0;
+  int random_connection_gene_index;
+  Neuron * current_neuron = NULL;
+  ConnectionGene * current_connection_gene = NULL;
+  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
+
+  Neuron * new_neuron = NULL;
+  ConnectionGene * new_connection_gene_1 = NULL;
+  ConnectionGene * new_connection_gene_2 = NULL;
+
+  setOnFirstNeuron(genome->network);
+  while (!outOfNeuronList(genome->network)) {
+
+    current_neuron = getCurrentNeuron(genome->network);
+
+    if (current_neuron == NULL)
+      return 0;
+
+    setOnFirstConnectionGene(current_neuron->connections);
+    while (!outOfConnectionGeneList(current_neuron->connections)) {
+
+      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+
+      if (current_connection_gene == NULL)
+        return 0;
+
+      candidates[i] = current_connection_gene;
+      ++i;
+
+      nextConnectionGene(current_neuron->connections);
+    }
+
+    nextNeuron(genome->network);
+  }
+
+  if (i == 0) {
+    fprintf(stderr, "There is no ConnectionGene candidate for node mutation\n");
+    return 0;
+  }
+
+  random_connection_gene_index = randomAtMost(i);
+
+  if (candidates[random_connection_gene_index]->enabled == 0)
+    return 0;
+
+  candidates[random_connection_gene_index]->enabled = 0;
+
+  new_neuron = newNeuron(BASIC);
+  if (!addNeuronToNetwork(genome->network, new_neuron))
+    return 0;
+
+  new_connection_gene_1 = cloneConnectionGene(candidates[random_connection_gene_index]);
+  new_connection_gene_1->weight = 1.0;
+  new_connection_gene_1->enabled = 1;
+  addConnectionGeneToNeurons(new_connection_gene_1->neuron_in, new_neuron, new_connection_gene_1);
+
+  new_connection_gene_2 = cloneConnectionGene(candidates[random_connection_gene_index]);
+  new_connection_gene_2->enabled = 1;
+  addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
+
+  return 1;
+}
+
+/*!
 * \brief Return a random Neuron from the given Genome.
 * \param[in] genome the Genome to choose a Neuron from
 * \return Return a random Neuron
@@ -183,6 +257,9 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
     else if (genome->network->current->type == BIAS)
       fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=orange];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
+
+    else if (genome->network->current->type == BASIC)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
 
     else
       fprintf(f, "\t%d [shape=circle];\n", genome->network->current->id);

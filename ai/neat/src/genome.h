@@ -25,6 +25,7 @@ int generateGenome(Genome * genome);
 
 int mutatePoint(Genome * genome);
 int mutateEnableFlag(Genome * genome, unsigned char enable);
+int mutateNode(Genome * genome);
 
 Neuron * getRandomNeuron(Genome * genome);
 

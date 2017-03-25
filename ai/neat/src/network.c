@@ -68,7 +68,7 @@ int addNeuronToNetwork(Network * network, Neuron * neuron) {
 * \param[in] weight the weight
 * \param[in] innovation the innovation number
 * \param[in] enabled the enabled/disabled flag
-* \return Return a connection gene, NULL if error
+* \return Return a ConnectionGene, NULL if error
 */
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled) {
   ConnectionGene * new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene));
@@ -84,6 +84,29 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
 
   new_connection_gene->neuron_in = NULL;
   new_connection_gene->neuron_out = NULL;
+
+  return new_connection_gene;
+}
+
+/*!
+* \brief Create a ConnectionGene by copying the attributes of the given ConnectionGene
+* \param[in] connection_gene The ConnectionGene whose atributes have to be copied
+* \return Return a ConnectionGene, NULL if error
+*/
+ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene) {
+  ConnectionGene * new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene));
+
+  if (new_connection_gene == (ConnectionGene *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
+    return NULL;
+  }
+
+  new_connection_gene->weight = connection_gene->weight;
+  new_connection_gene->innovation = connection_gene->innovation;
+  new_connection_gene->enabled = connection_gene->enabled;
+
+  new_connection_gene->neuron_in = connection_gene->neuron_in;
+  new_connection_gene->neuron_out = connection_gene->neuron_out;
 
   return new_connection_gene;
 }

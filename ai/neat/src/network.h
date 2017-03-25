@@ -90,6 +90,7 @@ void freeNeuron(Neuron * neuron);
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled);
+ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene);
 void freeConnectionGene(ConnectionGene * connection_gene);
 
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene);
