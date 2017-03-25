@@ -4,6 +4,8 @@ build/
 main
 *.dot
 
+doc/
+
 .DS_Store
 Thumbs.db
 Desktop.ini
