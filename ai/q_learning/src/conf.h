@@ -10,4 +10,6 @@
 #define DEATH_REWARD -100 /*< Reward when the bird died */
 #define LIFE_REWARD +10 /*< Reward when the bird is alive */
 
+#define NB_ACTIONS 2 /*< Number of possible actions */
+
 #endif
