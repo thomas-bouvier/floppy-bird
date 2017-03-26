@@ -11,8 +11,7 @@ int generateGenome(Genome * genome) {
 
   for (i = 0; i < N_INPUTS; ++i) {
     neuron = newNeuron(INPUT);
-    if (addNeuronToNetwork(genome->network, neuron) == 0) {
-      printf("test\n");
+    if (!addNeuronToNetwork(genome->network, neuron)) {
       freeNeuron(neuron);
       return 0;
     }
@@ -20,8 +19,7 @@ int generateGenome(Genome * genome) {
 
   for (i = 0; i < N_BIAS; ++i) {
     neuron = newNeuron(BIAS);
-    if (addNeuronToNetwork(genome->network, neuron) == 0) {
-      printf("test\n");
+    if (!addNeuronToNetwork(genome->network, neuron)) {
       freeNeuron(neuron);
       return 0;
     }
@@ -29,8 +27,7 @@ int generateGenome(Genome * genome) {
 
   for (i = 0; i < N_OUTPUTS; ++i) {
     neuron = newNeuron(OUTPUT);
-    if (addNeuronToNetwork(genome->network, neuron) == 0) {
-      printf("test\n");
+    if (!addNeuronToNetwork(genome->network, neuron)) {
       freeNeuron(neuron);
       return 0;
     }
@@ -208,8 +205,10 @@ int mutateNode(Genome * genome) {
   candidates[random_connection_gene_index]->enabled = 0;
 
   new_neuron = newNeuron(BASIC);
-  if (!addNeuronToNetwork(genome->network, new_neuron))
+  if (!addNeuronToNetwork(genome->network, new_neuron)) {
+    freeNeuron(new_neuron);
     return 0;
+  }
 
   new_connection_gene_1 = cloneConnectionGene(candidates[random_connection_gene_index]);
   new_connection_gene_1->weight = 1.0;
