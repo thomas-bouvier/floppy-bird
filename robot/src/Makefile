@@ -11,9 +11,11 @@ ifeq ($(DEBUG),yes)
 CFLAGS+=-g
 endif
 
-testCamera: testCamera.o
+testCamera: testCamera.o stylus.o
 	$(CC) $^ $(LDFLAGS) $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -L./lib/ lib/libraspicamcv.a -o $@
 
+testCamera.o: stylus.h configuration.h
+stylus.o: stylus.h configuration.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CFLAGS_OPENCV) -c $< -o $@

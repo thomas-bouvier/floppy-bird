@@ -5,6 +5,8 @@
 #ifndef STYLUS_H
 #define STYLUS_H
 
+#include <time.h>
+#include <sys/time.h>
 
 /*!
 * \struct Stylus 
@@ -14,11 +16,15 @@ typedef struct {
 	int pin;				/*!< physical pin for the servomotor */
 	int clickPosition;		/*!< the position (in uS*10) of the servomotor to press the stylus on the screen */
 	int restPosition;		/*!< the position (in uS*10) of the servomotor to put the stylus out of the screen */
-	int pressDelay;			/*!< the delay needed by the device to take the click into account */
+	int currentPosition;	/*!< the current position (in uS*10) of the servomotor */
+	long int pressDelay;			/*!< the delay needed (in uS) by the device to take the click into account */
+	long int restDelay;			/*!< the delay needed (in uS) by the device between 2 clicks */
+	int nbClick;			/*!< the number of click to act */
+	struct timeval moveTime;		/*!< the time of the last move*/
 } Stylus;
 
 
-void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, int pressDelay);
+void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, long int pressDelay, long int restDelay);
 void update(Stylus* stylus);
 void disable(Stylus* stylus);
 void enable(Stylus* stylus);
