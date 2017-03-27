@@ -21,6 +21,10 @@ Action detectTouch()
                         return QUIT;
                     }
                     break;
+                case SDL_WINDOWEVENT:
+                    if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+                        return QUIT;
+                    break;
                 case SDL_MOUSEBUTTONDOWN:
                     if(event.button.button == SDL_BUTTON_LEFT)
                     {
