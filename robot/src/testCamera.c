@@ -14,12 +14,11 @@
 int main(int argc, char *argv[]){
 	
 	wiringPiSetup();	// Setup the GPIO
-	/*pinMode(PWM_PIN,PWM_OUTPUT);
-	pwmSetMode(PWM_MODE_MS);
-	pwmSetRange(PWM_RANGE);
-	pwmSetClock(PWM_CLOCK);*/
+	Stylus stylus;
+  attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
+  enable(&stylus);
 
-	/*RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
+	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
 	config->width=960;
 	config->height=720;
@@ -30,68 +29,61 @@ int main(int argc, char *argv[]){
 	RaspiCamCvCapture * capture = (RaspiCamCvCapture *) raspiCamCvCreateCameraCapture2(0, config); 
 	free(config);
 	
-	IplImage* img = raspiCamCvQueryFrame(capture);
 	
-  int height,width,step,channels;
-  uchar *data;
+CvFont font;
+	double hScale=0.4;
+	double vScale=0.4;
+	int    lineWidth=1;
 
-  // get the image data
-  height    = img->height;
-  width     = img->width;
-  step      = img->widthStep;
-  channels  = img->nChannels;
-  data      = (uchar *)img->imageData;
-  printf("Processing a %dx%d image with %d channels\n",height,width,channels); 
+	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
 
-  // create a window
-  cvNamedWindow("mainWin", CV_WINDOW_AUTOSIZE); 
-  cvMoveWindow("mainWin", 100, 100);
-
-  // invert the image
- // for(i=0;i<height;i++) for(j=0;j<width;j++) for(k=0;k<channels;k++)
-   // data[i*step+j*channels+k]=255-data[i*step+j*channels+k];
-
-  // show the image
-  cvShowImage("mainWin", img );
-
-  // wait for a key
-  cvWaitKey(0);
-
-  // release the image
-  cvReleaseImage(&img );
-  */
-  
-  Stylus stylus;
-  attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
-  enable(&stylus);
-  
-  char c = '\0';
-  //struct timeval tvalBefore, tvalAfter;
-  //gettimeofday(&tvalBefore,NULL);
-  while(1){
-	  //gettimeofday(&tvalAfter,NULL);
-	  //printf("%d\n",(int)*fgets(c,1,stdin));
-	  //printf("test");
-	//if(scanf("%c",&c)){
-	//	pwmWrite(PWM_PIN,80);
-	//	delay(PRESS_DELAY);
-	//	pwmWrite(PWM_PIN,95);
-	//}
-		click(&stylus);
-		int i;
-		for (i = 0; i<1000;i++){
-			delay(1);
-			update(&stylus);
+	cvNamedWindow("RaspiCamTest", 1);
+	int exit =0;
+	do {
+		IplImage* image = raspiCamCvQueryFrame(capture);
+		
+		char text[200];
+		sprintf(
+			text
+			, "w=%.0f h=%.0f fps=%.0f bitrate=%.0f monochrome=%.0f"
+			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_FRAME_WIDTH)
+			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_FRAME_HEIGHT)
+			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_FPS)
+			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_BITRATE)
+			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_MONOCHROME)
+		);
+		cvPutText (image, text, cvPoint(05, 40), &font, cvScalar(255, 255, 0, 0));
+		
+		sprintf(text, "Press ESC to exit");
+		cvPutText (image, text, cvPoint(05, 80), &font, cvScalar(255, 255, 0, 0));
+		
+		cvShowImage("RaspiCamTest", image);
+		
+		char key = cvWaitKey(1);
+		
+		switch(key)	
+		{
+			case 32:		// space to click
+				click(&stylus);
+				printf("click\n");
+				break;
+			case 27:		// Esc to exit
+				exit = 1;
+				break;
+			case 60:		// < (less than)
+				raspiCamCvSetCaptureProperty(capture, RPI_CAP_PROP_FPS, 25);	// Currently NOOP
+				break;
+			case 62:		// > (greater than)
+				raspiCamCvSetCaptureProperty(capture, RPI_CAP_PROP_FPS, 30);	// Currently NOOP
+				break;
 		}
-		//printf("time : %f\n",(float)clock()/CLOCKS_PER_SEC);
-	//	printf("Time in microseconds: %ld microseconds\n",
-      //      ((tvalAfter.tv_sec - tvalBefore.tv_sec)*1000000+tvalAfter.tv_usec) - tvalBefore.tv_usec); 
-	//
-  }
-	
-	
-	
-	
+		update(&stylus);
+		
+	} while (!exit);
+
+	cvDestroyWindow("RaspiCamTest");
+	raspiCamCvReleaseCapture(&capture);
+	disable(&stylus);
 	
 	return 0; 
 }
