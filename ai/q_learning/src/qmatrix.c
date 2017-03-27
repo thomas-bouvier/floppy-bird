@@ -27,7 +27,7 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 			}
 			break;
 	}
-	return AddState(State * cur_state, MatrixQ * matrixQ);
+	return AddState(cur_state, matrixQ);
 }
 
 /*!
@@ -38,12 +38,12 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 */
 int AddState(State * cur_state, MatrixQ * matrixQ)
 {
-	if(matrixQ = realloc(matrixQ, sizeof(matrixQ)+sizeof(State)+1) == NULL) return -1; /*A voir realloc nbstate et nbreward*/
-	matrixQ->state[matrixQ->nb_state]->delta_x = cur_state->delta_x;
-	matrixQ->state[matrixQ->nb_state]->delta_y = cur_state->delta_y;
-	matrixQ->nb_state++;
+	if((matrixQ = (MatrixQ *) realloc(matrixQ, sizeof(matrixQ)+sizeof(State)+1)) == NULL) return -1; /*A voir realloc nbstate et nbreward*/
+	matrixQ->state[matrixQ->nb_states].delta_x = cur_state->delta_x;
+	matrixQ->state[matrixQ->nb_states].delta_y = cur_state->delta_y;
+	matrixQ->nb_states++;
 	free(cur_state);
-	return matrixQ->nb_state-1;
+	return matrixQ->nb_states-1;
 }
 
 /*!
@@ -52,12 +52,12 @@ int AddState(State * cur_state, MatrixQ * matrixQ)
 * \param[in] matrixQ matrix of every known state
 * \return Return 1 to jump, 0 otherwise
 */
-int findBestAction(int state_index, struct MatrixQ matrixQ)
+int findBestAction(int state_index, MatrixQ matrixQ)
 {
-	return (matrixQ->reward[state_index*2] <= matrixQ->reward[state_index*2+1])? 1:0;
+	return (matrixQ.reward[state_index*2] <= matrixQ.reward[state_index*2+1])? 1:0;
 }
-
-void updateLastQ(struct MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level)
+/*
+void updateLastQ(MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level)
 {
 
-}
+}*/

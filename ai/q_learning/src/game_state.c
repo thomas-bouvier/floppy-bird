@@ -1,4 +1,5 @@
 #include "game_state.h"
+#include <stdlib.h>
 
 /*!
 * \brief Deallocated a state
@@ -18,20 +19,21 @@ void freeState(State * state)
 */
 State * getCurrentState(int delta_x, int delta_y, int bird_state)
 {
+	State * new_state = NULL;
 	switch(bird_state)
 	{
 		case 0:
-				State * new_state = (State *) malloc(sizeof(State));
+				new_state = (State *) malloc(sizeof(State));
 				new_state->delta_x = -1;
 				new_state->delta_y = -1;
-				break;
+				return new_state;
 		case 1:
-				State * new_state = (State *) malloc(sizeof(State));
+				new_state = (State *) malloc(sizeof(State));
 				new_state->delta_x = delta_x;
 				new_state->delta_y = delta_y;
 				return new_state;
-				break;
 		default:
+			freeState(new_state);
 			return NULL;
 			break;
 	}

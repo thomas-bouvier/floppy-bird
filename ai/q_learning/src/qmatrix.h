@@ -21,8 +21,8 @@ typedef struct MatrixQ MatrixQ;
 * \brief Actions contains every actions that the bird can perform.
 */
 /*struct Actions {
-  char jump;	/*!< jump is equal to zero if no jump otherwise one */
-/*};*/
+  char jump;	!< jump is equal to zero if no jump otherwise one 
+};*/
 
 /*!
 * \struct MatrixQ qlearning.h
@@ -37,10 +37,10 @@ struct MatrixQ {
 };
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ); /* otherwise creation */
-int AddState(State * cur_state,MatrixQ * matrixQ);
-void updateLastQ(struct MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level);
+int AddState(State * cur_state, MatrixQ * matrixQ);
+void updateLastQ(MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level);
 
-int findBestAction(int state_index, struct MatrixQ matrixQ);
+int findBestAction(int state_index, MatrixQ matrixQ);
 
 
 #endif
