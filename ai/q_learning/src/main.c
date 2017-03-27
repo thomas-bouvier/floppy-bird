@@ -1,20 +1,34 @@
 #include "qmatrix.h"
 
 int main()
-{	
-	/* INIT
-	create a q matrix 
-	load q matrix data
-	*/
-	/* LOOP
-	Get/Save the current state t
+{
+	int tab_dx[18] = {20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
+	int tab_dy[18] = {20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
+	int tab_bird_state[18] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0};
+	
+	int i, j;
+	
+	MatrixQ * matrixQ = NULL;
+	matrixQ = (MatrixQ *) malloc(sizeof(MatrixQ));
+	matrixQ->nb_states = 0;
 
-	Compute the reward of the old state t-1
-	Compute the reward of the old state t-2
+	int save_state[NB_SAVED_STATES];
+	for(i=0; i<NB_SAVED_STATES; ++i) save_state[i]=0;
+	
+	while(1)
+	{
+		for(i=0; i<18; ++i)
+		{
 
-	Find the position in the Q matrix or create a new one for state t
-	Find the best action to perform
-	*/
+			for(j=NB_SAVED_STATES-1; j>0; --j) save_state[j]=save_state[j-1];
+		
+			save_state[0]=findStateIndex(getCurrentState(tab_dx[i], tab_dy[i], tab_bird_state[i]), matrixQ);
+			if(save_state[0] == 0) for(i=0; i<NB_SAVED_STATES; ++i) save_state[i]=0;
+		}
+	}
+		/*updateLastQ(MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level); getCurrentReward(state[0]->delta_x);*/
+		/*findBestAction(state[0], matrixQ);*/
+	
 	/*
 	Save q matrix data
 	*/

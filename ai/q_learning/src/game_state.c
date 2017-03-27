@@ -1,6 +1,6 @@
 #include "game_state.h"
 #include <stdlib.h>
-
+#include <stdio.h>
 /*!
 * \brief Deallocated a state
 * \param[in] state the state to free
