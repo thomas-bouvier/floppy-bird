@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "game_state.h"
+#include "utils.h"
 #include "file_manager.h"
 
 
@@ -38,7 +39,7 @@ struct MatrixQ {
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ);
 int AddState(State * cur_state, MatrixQ * matrixQ);
-void updateLastQ(MatrixQ *matrixQ, int laststate_index, int lastaction_index, int Reward, int level);
+void updateQReward(MatrixQ *matrixQ, int * state_index, int last_action);
 
 int findBestAction(int state_index, MatrixQ * matrixQ);
 

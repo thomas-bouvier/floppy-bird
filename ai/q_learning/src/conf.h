@@ -14,4 +14,6 @@
 
 #define NB_SAVED_STATES 3 /*!< Number of saved states to compute the new reward */
 
+#define RANDOM_INIT_REWARD 50 /*!< Limit of the random reward initialization */
+
 #endif

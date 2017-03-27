@@ -42,14 +42,14 @@ State * getCurrentState(int delta_x, int delta_y, int bird_state)
 
 /*!
 * \brief Get the reward according to the current state of the bird
-* \param[in] bird_state 0 if the bird is dead, another positive integer value otherwise
+* \param[in] bird_state -1 if the bird is dead, another positive integer value otherwise
 * \return Return a reward value, 0 if error
 */
 int getCurrentReward(int bird_state)
 {
 	switch(bird_state)
 	{
-		case 0:
+		case -1:
 			return DEATH_REWARD;
 			break;		
 		default:
