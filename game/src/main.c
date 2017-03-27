@@ -4,6 +4,7 @@
 #include "view.h"
 #include "control.h"
 #include "file.h"
+#include "constants.h"
 #include <SDL2/SDL.h>
 
 int main(int argc, char ** argv)
@@ -13,7 +14,7 @@ int main(int argc, char ** argv)
 
     int hit;
     int running = 1;
-    int init;
+    Action init;
     int number;
 
     Bird bird;
@@ -23,7 +24,7 @@ int main(int argc, char ** argv)
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        fprintf(stderr, "SDL initialization failure");
+        fprintf(stderr, "SDL initialization failure\n");
         return 0;
     }
 
@@ -56,7 +57,7 @@ int main(int argc, char ** argv)
         f = fopen("./../../res/files/level.txt", "r");
         if(f==NULL)
         {
-            fprintf(stderr,"Opening file failure");
+            fprintf(stderr,"Opening file failure\n");
             return EXIT_FAILURE;
         }
 
@@ -76,7 +77,7 @@ int main(int argc, char ** argv)
         hit = 0;
         while(!hit && running)
         {
-            int event = detectTouch();
+            Action event = detectTouch();
             if(event == QUIT)
                 running = 0;
             hit = game(&bird, &camera, &l, event, readLevel(f, number), number);

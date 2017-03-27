@@ -63,14 +63,21 @@
 */
 #define PIPES_ON_SCREEN (SCREEN_WIDTH/PIPE_X_OFFSET)
 
-
-/*! \enum Action
-* \brief The possible actions for the player
-* \var NOTHING nothing to be done
-* \var JUMP make the bird jump
-* \var QUIT quit the game
+/*!
+* The possible actions for the player
 */
-enum{NOTHING, JUMP, QUIT} Action;
+typedef enum  Action Action;
+
+/*!
+* \enum Action
+* \brief The possible actions for the player
+*/
+enum Action
+{
+    NOTHING,            /*! nothing to be done */
+    JUMP,               /*! make the bird jump */
+    QUIT                /*! quit the game */
+};
 
 
 #endif // CONSTANTS_H

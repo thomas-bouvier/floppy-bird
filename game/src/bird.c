@@ -21,6 +21,8 @@ void initBird(Bird * new_bird)
 *\brief Update the ordinate of the bird and the direction of its next move
 *\param[out] bird the bird to be updated
 *\param[in] t the detection of the touch that imply a jump
+*
+* Met tes détails ici :)
 */
 void updateBird(Bird * bird, int t)
 {

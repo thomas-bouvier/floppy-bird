@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Floppy_Bird" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Floppy_Bird" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/include" />
+				</Compiler>
+				<Linker>
+					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libmingw32.a" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib/libSDL2main.a" />
+					<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib/libSDL2.dll.a" />
+					<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Floppy_Bird" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../bird.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../bird.h" />
+		<Unit filename="../camera.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../camera.h" />
+		<Unit filename="../constants.h" />
+		<Unit filename="../control.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../control.h" />
+		<Unit filename="../file.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../file.h" />
+		<Unit filename="../game.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../game.h" />
+		<Unit filename="../list.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../list.h" />
+		<Unit filename="../main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../obstacle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../obstacle.h" />
+		<Unit filename="../pipe.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../pipe.h" />
+		<Unit filename="../view.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../view.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
