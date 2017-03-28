@@ -5,6 +5,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <time.h>
+
 int randomAtMost(int limit);
 
 #endif

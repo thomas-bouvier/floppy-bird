@@ -78,10 +78,13 @@ int findBestAction(int state_index, MatrixQ * matrixQ)
 */
 void updateQReward(MatrixQ *matrixQ, int * state_index, int last_action)
 {
-	int i, optimal_nextvalue;
+	int i;
+	float optimal_nextvalue, old_value, new_value;
 	for(i=1; i<NB_SAVED_STATES; ++i)
 	{
-		optimal_nextvalue = matrixQ->reward[state_index[0]*2+last_action];
-		/*matrixQ->reward[state_index[i]*2+last_action] += LEARNING_RATE * (getCurrentReward(state_index[0]) + DISCOUNT * optimal_nextvalue - matrixQ->reward[state_index[i]*2+last_action]);*/
+		optimal_nextvalue = (float) (matrixQ->reward[state_index[0]*2+findBestAction(state_index[0], matrixQ)]);
+		old_value = (float)matrixQ->reward[state_index[i]*2+last_action];
+		new_value = old_value + LEARNING_RATE * ((float)getCurrentReward(state_index[0]) + DISCOUNT * optimal_nextvalue - old_value);
+		if(new_value < 15000 && new_value > -15000) matrixQ->reward[state_index[i]*2+last_action] = (int)new_value;
 	}
 }

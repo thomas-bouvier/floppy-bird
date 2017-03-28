@@ -8,17 +8,17 @@
 * \return Return a random number in [0; limit]
 */
 int randomAtMost(int limit) {
-  int r;
-  int d;
+  	int r;
+  	int d;
+ 
+  	if (limit == 0) return 0;
 
-  if (limit == 0) return 0;
+  	d = RAND_MAX / limit;
+  	limit *= d;
 
-  d = RAND_MAX / limit;
-  limit *= d;
+  	do {
+    	r = rand();
+  	} while (r >= limit);
 
-  do {
-    r = rand();
-  } while (r >= limit);
-
-  return r / d;
+  	return r / d;
 }
