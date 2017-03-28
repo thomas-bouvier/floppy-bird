@@ -38,3 +38,9 @@ Action detectTouch()
         }
         return NOTHING;
 }
+
+void emptyEvent()
+{
+    SDL_Event event;
+    while( SDL_PollEvent(&event));
+}

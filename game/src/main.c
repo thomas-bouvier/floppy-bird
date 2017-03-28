@@ -83,6 +83,7 @@ int main(int argc, char ** argv)
         }
 
         /* Wait the first jump to start the game*/
+        emptyEvent();
         init = NOTHING;
         while(init == NOTHING)
         {
