@@ -82,6 +82,7 @@ int main(int argc, char ** argv)
         displayGame(renderer, &bird, &l, &camera);
 
         /* Wait the first jump to start the game*/
+        emptyEvent();
         init = NOTHING;
         while(init == NOTHING)
         {
