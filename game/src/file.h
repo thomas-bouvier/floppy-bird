@@ -8,7 +8,9 @@
 #include "constants.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int readLevel(FILE * f, int number);
+int readConfig(FILE * f, char * config, char * type);
 
 #endif // FILE_H

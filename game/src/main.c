@@ -52,12 +52,33 @@ int main(int argc, char ** argv)
         startGame(&bird, &camera, &l);
         displayGame(renderer, &bird, &l, &camera);
 
-        /* Open the file that contains the save of the level */
-        FILE * f = NULL;
-        f = fopen("./../../res/files/level.txt", "r");
-        if(f==NULL)
+        /* Open the configuration file (that contains the paths of level, sprites), according to the parameter passed to main (or not)... */
+        FILE * config = NULL;
+        if (argc == 1)
+            config = fopen("conf/config.txt", "r");
+        else
+            config = fopen(argv[1], "r");
+        if(config == NULL)
         {
-            fprintf(stderr,"Opening file failure\n");
+            fprintf(stderr,"Opening configuration file failure\n");
+            return EXIT_FAILURE;
+        }
+
+        /* Open the file that contains the save of the level */
+        FILE * level = NULL;
+        char * levelPath = malloc(sizeof(*levelPath));
+        if (readConfig(config, levelPath, "level :\n"))
+        {
+            if (levelPath[strlen(levelPath)-1] == '\n')
+                levelPath[strlen(levelPath)-1] = '\0';
+            level = fopen(levelPath, "r");
+        }
+
+
+        if(level == NULL)
+        {
+            fprintf(stderr,"Opening level file failure :\n");
+            printf("%s\n", levelPath);
             return EXIT_FAILURE;
         }
 
@@ -80,13 +101,13 @@ int main(int argc, char ** argv)
             Action event = detectTouch();
             if(event == QUIT)
                 running = 0;
-            hit = game(&bird, &camera, &l, event, readLevel(f, number), number);
+            hit = game(&bird, &camera, &l, event, readLevel(level, number), number);
             displayGame(renderer, &bird, &l, &camera);
             ++number;
             SDL_Delay(1);
         }
         SDL_Delay(1000);
-        fclose(f);
+        fclose(level);
     }
 
     /* Quit the game */
