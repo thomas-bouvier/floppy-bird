@@ -10,7 +10,7 @@
 */
 void initList(List * l){
 	l->first = l->current = l->last = NULL;
-    insertLast(l, newObstacle(0, 400, 250, NULL));
+    insertLast(l, newObstacle(0, 400, 200, NULL));
 }
 
 /*!

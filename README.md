@@ -2,15 +2,17 @@
 
 ## Game
 
-### For Windows (with CodeBlocks) :
+### Installation
 
-Take care to install SDL version 2.0.5. 
+#### For Windows (with CodeBlocks) :
 
-In order to compile with CodeBlocks, you have to add a PATH environement variable, that leads to the folder "SDL2-2.0.5".
+Take care to install SDL version 2. 
+
+In order to compile with CodeBlocks, you have to add a PATH environement variable, that leads to the SDL2 folder.
 
 Then open the project with Codeblocks (.cbp file), build, compile and run.
 
-### For Linux :
+#### For Linux :
 
 Install the SDL2 :
 
@@ -24,6 +26,11 @@ Extract the archive and cd to the folder that got extracted. Then :
 
 Now you can compile and run the project with the Makefile provided with the sources.
 
+### Configuration
+
+A configuration file is provided in game/src/conf.
+
+The paths for the game (level, sprites...) are made by default for CodeBlocks, but feel free to modify these paths if you use an other configuration.
 
 ## Robot
 

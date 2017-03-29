@@ -9,6 +9,6 @@
 #include <SDL2/SDL.h>
 
 Action detectTouch();
-
+void emptyEvent();
 
 #endif // CONTROL_H

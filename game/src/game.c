@@ -64,8 +64,11 @@ int deleteObstacle(Camera * camera, List * l){
 /*!
 * \brief Detect the collisions
 * \param[in] bird the bird to test the collision with
-* \param[in] obstacle the only obstacle that the bird can hit
+* \param[in] obstacle the next obstacle, the only one that the bird can hit
 * \return 1 if the bird hit something 0 in other cases
+*
+* Firstly test if the bottom limit of the bird (bird->y + bird->h/2) is lower than the limit of the screen (SCREEN_HEIGHT)
+* then if the right limit of the bird is farther than the left limit of the next obstacle it text if the bird is'nt beyond the gap
 */
 int detectHit(Bird * bird, Obstacle * obstacle)
 {

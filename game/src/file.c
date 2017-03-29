@@ -22,4 +22,32 @@ int readLevel(FILE * file, int number)
     return heightPipe;
 }
 
+/*!
+* \brief Read the configuration file
+* \param[out] file the configuration file to read
+* \param[out] config the path of the requested parameter
+* \param[in] type the requested parameter (examples : level, sprite, sound...)
+* \return Return 1 if the configuration file was read, ie the requested path is set in config ; 0 if error
+*/
+int readConfig(FILE * f, char * config, char * type)
+{
+    int i = 0;
+    char string[50];
+    fseek(f, 0, SEEK_SET);
+    while(i < 50)
+    {
+        fgets(string, sizeof(string), f);
+        if(strcmp(string, type) == 0)
+        {
+            fgets(string, sizeof(string), f);
+            strcpy(config, string);
+            return 1;
+        }
+        ++i;
+    }
+    fprintf(stderr, "Reading the configuration file : failure\n");
+    return 0;
+}
+
+
 
