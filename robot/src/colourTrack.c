@@ -18,7 +18,7 @@
 #define sign(x) ((x) > 0 ? 1 : -1)
  
 // Step mooving for object min & max
-#define STEP_MIN 5
+#define STEP_MIN 1
 #define STEP_MAX 100 
 
 // Position of the object we overlay
@@ -34,19 +34,22 @@ IplImage* image;
 CvPoint binarisation(IplImage* image, int *nbPixels) {
  
     int x, y;
-    CvScalar pixel;
     IplImage *hsv, *mask;
     IplConvKernel *kernel;
     int sommeX = 0, sommeY = 0;
     *nbPixels = 0;
- 
+	
+	CvRect roi = cvRect(100,10,100,image->height-20);
+	
     // Create the mask &initialize it to white (no color detected)
     mask = cvCreateImage(cvGetSize(image), image->depth, 1);
- 
+	
     // Create the hsv image
     hsv = cvCloneImage(image);
     cvCvtColor(image, hsv, CV_BGR2HSV);
  
+	
+	
     // We create the mask
     cvInRangeS(hsv, cvScalar(h - Htolerance -1, s - Stolerance, 0,0), cvScalar(h + Htolerance -1, s + Stolerance, 255,0), mask);
 	
@@ -54,12 +57,29 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     kernel = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT,NULL);
  
     // Morphological opening (inverse because we have white pixels on black background)
-    cvDilate(mask, mask, kernel, 5);
-    cvErode(mask, mask, kernel, 5);  
- 
+    cvDilate(mask, mask, kernel, 2);
+    cvErode(mask, mask, kernel, 2);  
+    cvSetImageROI(mask,roi);
+	//printf("width : %d\nheight : %d\nxoffset : %d\nyoffset : %d\n",mask->roi->width,mask->roi->height,mask->roi->xOffset,mask->roi->yOffset);
+	//cvResetImageROI(mask);
+	
     // We go through the mask to look for the tracked object and get its gravity center
-    for(x = 0; x < mask->width; x++) {
-        for(y = 0; y < mask->height; y++) { 
+    for(x = mask->roi->xOffset; x < mask->roi->width + mask->roi->xOffset; x++) {
+        for(y = mask->roi->yOffset; y < mask->roi->height + mask->roi->yOffset ; y++) { 
+ 
+            // If its a tracked pixel, count it to the center of gravity's calcul
+            if((mask->imageData[x+ y*mask->widthStep]) == 255) {
+                sommeX += x;
+                sommeY += y;
+                (*nbPixels)++;
+            }
+        }
+    }
+    
+    cvResetImageROI(mask);
+    /*
+      for(x = mask->roi->xOffset; x < mask->roi->width - mask->roi->xOffset; x++) {
+        for(y = mask->roi->yOffset; y < mask->roi->height - mask->roi->yOffset ; y++) { 
  
             // If its a tracked pixel, count it to the center of gravity's calcul
             if(((uchar *)(mask->imageData + y*mask->widthStep))[x] == 255) {
@@ -69,10 +89,12 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
             }
         }
     }
- 
+	*/
+	
     // Show the result of the mask image
     cvShowImage("Mask", mask);
- 
+   
+	cvRectangleR(image,roi,cvScalar(0,0,255,0),1,8,0);
     // We release the memory of kernels
     cvReleaseStructuringElement(&kernel);
  
@@ -96,7 +118,7 @@ void addObjectToVideo(IplImage* image, CvPoint objectNextPos, int nbPixels) {
     int objectNextStepX, objectNextStepY;
  
     // Calculate circle next position (if there is enough pixels)
-    if (nbPixels > 10) {
+    /*if (nbPixels > 10) {
  
         // Reset position if no pixel were found
         if (objectPos.x == -1 || objectPos.y == -1) {
@@ -121,10 +143,10 @@ void addObjectToVideo(IplImage* image, CvPoint objectNextPos, int nbPixels) {
         objectPos.y = -1;
  
     }
- 
+	*/
     // Draw an object (circle) centered on the calculated center of gravity
     if (nbPixels > 10)
-        cvDrawCircle(image, objectPos, 15, CV_RGB(255, 0, 0), 1,8,0);
+        cvDrawCircle(image, objectNextPos, 15, CV_RGB(255, 0, 0), 1,8,0);
  
     // We show the image on the window
     cvShowImage("Color Tracking", image);
