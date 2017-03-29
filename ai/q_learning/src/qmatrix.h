@@ -39,7 +39,7 @@ struct MatrixQ {
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ);
 int AddState(State * cur_state, MatrixQ * matrixQ);
-void updateQReward(MatrixQ *matrixQ, int * state_index, int last_action);
+void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action);
 
 int findBestAction(int state_index, MatrixQ * matrixQ);
 
