@@ -22,3 +22,11 @@ int randomAtMost(int limit) {
 
   	return r / d;
 }
+
+float powerOf(float value, int power)
+{
+	float r=1;
+	int i;
+	for(i=0; i<power; ++i) r *= value;
+	return r;
+}

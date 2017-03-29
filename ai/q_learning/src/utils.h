@@ -8,5 +8,6 @@
 #include <time.h>
 
 int randomAtMost(int limit);
+float powerOf(float value, int power);
 
 #endif

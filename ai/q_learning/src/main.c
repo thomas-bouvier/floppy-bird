@@ -9,7 +9,7 @@ void show_matrixQ(MatrixQ * matrixQ)
 {
 	clearScreen();
 	int i;
-	printf("	Action 0	| Action 1\n");
+	printf("	| Action 0	| Action 1\n");
 	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %d		| %d	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
 }
 
@@ -27,9 +27,10 @@ void delay(unsigned int mseconds)
 
 int main()
 {
-	int tab_dx[18] = {10, 10, 10, 30, 10, 4, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
-	int tab_dy[18] = {20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
+	int tab_dx[18] = {10, 5, 20, 10, 5, 20, 10, 5, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
+	int tab_dy[18] = {20, 10, 30, 20, 5, 20, 10, 5, 30, 20, 10, 30, 20, 10, 30, 20, 10, 30};
 	int tab_bird_state[18] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	int tab_last_action[18] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	
 	int i, j;
 	srand(time(NULL));
@@ -56,7 +57,7 @@ int main()
 			last_action = findBestAction(save_state[0], matrixQ);
 			if(save_state[0] == -1) for(i=0; i<NB_SAVED_STATES; ++i) save_state[i]=-1;
 			show_matrixQ(matrixQ);
-			delay(500);
+			delay(50000);
 		}
 	}
 	

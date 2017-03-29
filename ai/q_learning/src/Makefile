@@ -8,7 +8,7 @@ all: $(EXEC)
 main: main.o qmatrix.o game_state.o utils.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-qmatrix.o: game_state.h utils.h
+qmatrix.o: game_state.h utils.h conf.h
 game_state.o: conf.h
 
 %.o: %.c
