@@ -19,6 +19,10 @@ MatingPool * newMatingPool() {
   return new_mating_pool;
 }
 
+/*!
+* \brief Free the given MatingPool
+* \param[out] pool the MatingPool to be freed
+*/
 void freeMatingPool(MatingPool * pool) {
   int i;
   int j;
@@ -33,7 +37,7 @@ void freeMatingPool(MatingPool * pool) {
 }
 
 /*!
-* \brief Populate a MatinPool with new Genome elements.
+* \brief Populate a MatingPool with new Genome elements
 * \param[out] pool the MatingPool to populate with new Genome elements
 */
 void populateMatingPool(MatingPool * pool) {
@@ -42,19 +46,18 @@ void populateMatingPool(MatingPool * pool) {
   if (pool->nb_species == 0)
     addSpeciesToMatingPool(pool);
 
-  for (i = 0; i < POPULATION; ++i) {
+  for (i = 0; i < POPULATION; ++i)
     addGenomeToSpecies(&pool->species[0]);
-  }
 }
 
 /*!
-* \brief Add the given Species to the given MatinPool
+* \brief Add the given Species to the given MatingPool
 * \param[out] pool the MatingPool where to insert the Species
 * \return int 1 if the Species was successfully added to the MatingPool, 0 otherwise
 */
 int addSpeciesToMatingPool(MatingPool * pool) {
   if (pool->nb_species == N_MAX_SPECIES) {
-    fprintf(stderr, "Can't add new Species to MatingPool : reached limit (%d, max=%d)\n", pool->nb_species, N_MAX_SPECIES);
+    fprintf(stderr, "Can't add new Species to MatingPool : reached limit (max=%d)\n", N_MAX_SPECIES);
     return 0;
   }
 
@@ -68,7 +71,7 @@ int addSpeciesToMatingPool(MatingPool * pool) {
 }
 
 /*!
-* \brief Add a genome to the appropriate species of the mating pool
+* \brief Add a Genome to the appropriate Species of the MatingPool
 * \param[out] pool the MatingPool where Genome elements are added
 * \return int 1 if the Genome was successfully added to the Species, 0 otherwise
 */
@@ -76,14 +79,25 @@ int addGenomeToSpecies(Species * species) {
   Network * network = NULL;
 
   if (species->nb_genomes == N_MAX_GENOMES) {
-    fprintf(stderr, "Can't add Genome to Species : reached limit (%d, max=%d)\n", species->nb_genomes, N_MAX_GENOMES);
+    fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
     return 0;
   }
 
   network = newNeuronList();
+
+  if (network == NULL)
+    return 0;
+
   initNeuronList(network);
 
   species->genomes[species->nb_genomes].network = network;
+
+  // initializing mutation rates
+
+  species->genomes[species->nb_genomes].mutation_rates[0] = POINT_MUTATION_RATE;
+  species->genomes[species->nb_genomes].mutation_rates[1] = LINK_MUTATION_RATE;
+  species->genomes[species->nb_genomes].mutation_rates[2] = NODE_MUTATION_RATE;
+  species->genomes[species->nb_genomes].mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
 
   species->nb_genomes++;
 

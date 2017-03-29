@@ -67,7 +67,7 @@ int main() {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
-
+  
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);

@@ -10,5 +10,6 @@
 
 int randomAtMost(int limit);
 double random01();
+int randomBool();
 
 #endif // UTILS_H

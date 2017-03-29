@@ -17,7 +17,9 @@
 #define N_OUTPUTS                     1
 #define N_BIAS                        1
 
+#define DECREASE_PROBABILITY          0.50
 #define POINT_MUTATION_PERTURBATION   0.50
+
 #define POINT_MUTATION_RATE           0.50
 #define LINK_MUTATION_RATE            0.50
 #define NODE_MUTATION_RATE            0.50

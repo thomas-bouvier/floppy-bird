@@ -52,9 +52,14 @@ void freeNeuron(Neuron * neuron) {
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
 int addNeuronToNetwork(Network * network, Neuron * neuron) {
-  int count = countNeurons(network);
+  int count;
+
+  if (network == NULL || neuron == NULL)
+    return 0;
+
+  count = countNeurons(network);
   if (count == N_MAX_NEURONS) {
-    fprintf(stderr, "Can't add neuron to network : reached limit (%d, max=%d)\n", count, N_MAX_NEURONS);
+    fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
     return 0;
   }
 
@@ -129,7 +134,7 @@ void freeConnectionGene(ConnectionGene * connection_gene) {
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene) {
   int count = countConnectionGenes(neuron_in->connections);
   if (count == N_MAX_CONNECTION_GENES) {
-    fprintf(stderr, "Can't add connection gene to neuron : reached limit (%d, max=%d)\n", count, N_MAX_CONNECTION_GENES);
+    fprintf(stderr, "Can't add connection gene to neuron : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
     return 0;
   }
 

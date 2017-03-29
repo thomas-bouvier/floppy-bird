@@ -3,11 +3,13 @@
 /*!
 * \brief Generate a Genome by creating its network elements
 * \param[out] genome the Genome to generate
-* \return Return 1 if the Genome was successfully generated, 0 otherwise
+* \return int Return 1 if the Genome was successfully generated, 0 otherwise
 */
 int generateGenome(Genome * genome) {
   int i;
   Neuron * neuron = NULL;
+
+  // populating neuron list
 
   for (i = 0; i < N_INPUTS; ++i) {
     neuron = newNeuron(INPUT);
@@ -36,8 +38,42 @@ int generateGenome(Genome * genome) {
   return 1;
 }
 
+/*!
+* \brief Disturb the mutation rates of the given Genome, by increasing or decreasing them
+* \param[out] genome The Genome whose mutation rates have to be updated
+*/
+static void disturbMutationRates(Genome * genome) {
+  int i;
+
+  int count = sizeof(genome->mutation_rates) / sizeof(float);
+
+  for (i = 0; i < count; ++i) {
+    if (random01() < DECREASE_PROBABILITY)
+      genome->mutation_rates[i] *= 0.95;
+    else
+      genome->mutation_rates[i] *= 1.05;
+  }
+}
+
+/*!
+* \brief Mutate the given Genome
+* \param[out] genome The Genome to mutate
+* \return int 1 if the mutation was successful, 0 otherwise
+*
+* A Genome has a mutation rate for each type of mutation that can occur.
+* These mutation rates are also randomly increased or decreased as the evolution progresses.
+*/
 int mutate(Genome * genome) {
-  double r = POINT_MUTATION_RATE;
+  disturbMutationRates(genome);
+
+  /*
+    genome->mutation_rates[0] = POINT_MUTATION_RATE;
+    genome->mutation_rates[1] = LINK_MUTATION_RATE;
+    genome->mutation_rates[2] = NODE_MUTATION_RATE;
+    genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+  */
+
+  double r = genome->mutation_rates[0];
   while (r > 0) {
     if (random01() < r)
       mutatePoint(genome);
@@ -45,7 +81,7 @@ int mutate(Genome * genome) {
     r -= 1.0;
   }
 
-  r = LINK_MUTATION_RATE;
+  r = genome->mutation_rates[1];
   while (r > 0) {
     if (random01() < r)
       mutateLink(genome);
@@ -53,7 +89,7 @@ int mutate(Genome * genome) {
     r -= 1.0;
   }
 
-  r = NODE_MUTATION_RATE;
+  r = genome->mutation_rates[2];
   while (r > 0) {
     if (random01() < r)
       mutateNode(genome);
@@ -61,7 +97,7 @@ int mutate(Genome * genome) {
     r -= 1.0;
   }
 
-  r = ENABLE_DISABLE_MUTATION_RATE;
+  r = genome->mutation_rates[3];
   while (r > 0) {
     if (random01() < r)
       mutateEnableFlag(genome, 0);

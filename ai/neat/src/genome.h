@@ -18,7 +18,8 @@
 * \brief A Genome contains a Network element.
 */
 typedef struct {
-  Network * network;    /*!< the Network attached to this Genome */
+  Network * network;          /*!< the Network attached to this Genome */
+  float mutation_rates[4];    /*!< the mutation rates attached to this Genome */
 } Genome;
 
 int generateGenome(Genome * genome);
