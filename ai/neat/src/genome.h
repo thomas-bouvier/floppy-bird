@@ -20,6 +20,7 @@
 typedef struct {
   Network * network;          /*!< the Network attached to this Genome */
   float mutation_rates[4];    /*!< the mutation rates attached to this Genome */
+  int * innovation;           /*!< the address of the innovation number of the MatingPool containing this Genome */
 } Genome;
 
 int generateGenome(Genome * genome);

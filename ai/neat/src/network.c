@@ -71,11 +71,11 @@ int addNeuronToNetwork(Network * network, Neuron * neuron) {
 /*!
 * \brief Create a ConnectionGene.
 * \param[in] weight the weight
-* \param[in] innovation the innovation number
 * \param[in] enabled the enabled/disabled flag
+* \param[in] innovation the address of the innovation number
 * \return Return a ConnectionGene, NULL if error
 */
-ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned char enabled) {
+ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int * innovation) {
   ConnectionGene * new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene));
 
   if (new_connection_gene == (ConnectionGene *) NULL) {
@@ -84,11 +84,12 @@ ConnectionGene * newConnectionGene(double weight, short int innovation, unsigned
   }
 
   new_connection_gene->weight = weight;
-  new_connection_gene->innovation = innovation;
   new_connection_gene->enabled = enabled;
 
   new_connection_gene->neuron_in = NULL;
   new_connection_gene->neuron_out = NULL;
+
+  new_connection_gene->innovation = innovation;
 
   return new_connection_gene;
 }
@@ -107,11 +108,12 @@ ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene) {
   }
 
   new_connection_gene->weight = connection_gene->weight;
-  new_connection_gene->innovation = connection_gene->innovation;
   new_connection_gene->enabled = connection_gene->enabled;
 
   new_connection_gene->neuron_in = connection_gene->neuron_in;
   new_connection_gene->neuron_out = connection_gene->neuron_out;
+
+  new_connection_gene->innovation = connection_gene->innovation;
 
   return new_connection_gene;
 }

@@ -173,11 +173,12 @@ int mutateLink(Genome * genome) {
   if (linked(neuron_1, neuron_2))
     return 1;
 
-  connection_gene = newConnectionGene(4.0 * random01() - 2.0, 1, 1);
+  connection_gene = newConnectionGene(4.0 * random01() - 2.0, 1, genome->innovation);
 
   if (connection_gene == NULL)
     return 0;
 
+  ++genome->innovation;
   addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene);
 
   return 1;
@@ -247,12 +248,18 @@ int mutateNode(Genome * genome) {
   }
 
   new_connection_gene_1 = cloneConnectionGene(candidates[random_connection_gene_index]);
+
   new_connection_gene_1->weight = 1.0;
   new_connection_gene_1->enabled = 1;
+
+  ++genome->innovation;
   addConnectionGeneToNeurons(new_connection_gene_1->neuron_in, new_neuron, new_connection_gene_1);
 
   new_connection_gene_2 = cloneConnectionGene(candidates[random_connection_gene_index]);
+
   new_connection_gene_2->enabled = 1;
+
+  ++genome->innovation;
   addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
 
   return 1;

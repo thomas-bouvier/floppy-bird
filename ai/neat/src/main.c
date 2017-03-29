@@ -30,9 +30,9 @@ int main() {
     }
   }
 
-  ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, 1);
-  ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, 1);
-  ConnectionGene * connection_gene_3 = newConnectionGene(45, 5, 1);
+  ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, &pool->innovation);
+  ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, &pool->innovation);
+  ConnectionGene * connection_gene_3 = newConnectionGene(45, 5, &pool->innovation);
 
   if (connection_gene_1 == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error\n");
@@ -49,6 +49,10 @@ int main() {
     return EXIT_FAILURE;
   }
 
+  pool->species[0].genomes[0].network->first;
+  pool->species[0].genomes[0].network->last;
+
+  /*
   if (!addConnectionGeneToNeurons(pool->species[0].genomes[0].network->first, pool->species[0].genomes[0].network->last, connection_gene_1)) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
@@ -67,7 +71,9 @@ int main() {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
-  
+  */
+
+  /*
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
@@ -94,6 +100,7 @@ int main() {
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
   mutate(&pool->species[0].genomes[0]);
+  */
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
 

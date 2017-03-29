@@ -15,6 +15,7 @@ MatingPool * newMatingPool() {
   new_mating_pool->nb_species = 0;
   new_mating_pool->generation = 0;
   new_mating_pool->max_fitness = 0.0;
+  new_mating_pool->innovation = 0;
 
   return new_mating_pool;
 }
@@ -64,6 +65,7 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   pool->species[pool->nb_species].id = pool->nb_species;
   pool->species[pool->nb_species].nb_genomes = 0;
   pool->species[pool->nb_species].max_fitness = 0.0;
+  pool->species[pool->nb_species].innovation = &pool->innovation;
 
   pool->nb_species++;
 
@@ -98,6 +100,8 @@ int addGenomeToSpecies(Species * species) {
   species->genomes[species->nb_genomes].mutation_rates[1] = LINK_MUTATION_RATE;
   species->genomes[species->nb_genomes].mutation_rates[2] = NODE_MUTATION_RATE;
   species->genomes[species->nb_genomes].mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+
+  species->genomes[species->nb_genomes].innovation = species->innovation;
 
   species->nb_genomes++;
 
