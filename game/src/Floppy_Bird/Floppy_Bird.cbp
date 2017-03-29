@@ -11,6 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters='&quot;../conf/config.txt&quot;' />
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/include" />

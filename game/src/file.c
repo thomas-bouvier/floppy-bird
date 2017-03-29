@@ -34,7 +34,7 @@ int readConfig(FILE * f, char * config, char * type)
     int i = 0;
     char string[50];
     fseek(f, 0, SEEK_SET);
-    while(1)
+    while(i < 50)
     {
         fgets(string, sizeof(string), f);
         if(strcmp(string, type) == 0)
@@ -43,13 +43,10 @@ int readConfig(FILE * f, char * config, char * type)
             strcpy(config, string);
             return 1;
         }
-        if(i > 50)
-        {
-            fprintf(stderr, "Reading the configuration file : failure\n");
-            return 0;
-        }
         ++i;
     }
+    fprintf(stderr, "Reading the configuration file : failure\n");
+    return 0;
 }
 
 

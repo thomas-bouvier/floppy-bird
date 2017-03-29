@@ -36,7 +36,7 @@ int main(int argc, char ** argv)
 
     /* Open the file that contains the save of the level */
     FILE * level = NULL;
-    char * levelPath = malloc(sizeof(*levelPath));
+    char * levelPath = malloc(sizeof(char)*100);
     if (readConfig(config, levelPath, "level :\n"))
     {
         if (levelPath[strlen(levelPath)-1] == '\n')
