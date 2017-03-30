@@ -15,6 +15,7 @@ MatingPool * newMatingPool() {
   new_mating_pool->nb_species = 0;
   new_mating_pool->generation = 0;
   new_mating_pool->max_fitness = 0.0;
+  new_mating_pool->average_fitness = 0.0;
   new_mating_pool->innovation = 0;
 
   return new_mating_pool;
@@ -72,6 +73,50 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   return 1;
 }
 
+static int compareFitness(const void * genome_1, const void * genome_2) {
+  return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
+}
+
+/*!
+* \brief Compute the global rank of all Genome elements from all Species
+* \param[out] pool the MatingPool whose global ranks of Genomes elements have to be calculated
+*/
+void computeGlobalRanks(MatingPool * pool) {
+  int i;
+  int j;
+  int k;
+  Genome * genomes[N_MAX_SPECIES * N_MAX_GENOMES];
+
+  // we're storing the addresses of all genomes from all species in a single array
+
+  for (j = 0; j < pool->nb_species; ++j)
+    for (i = 0; i < pool->species[j].nb_genomes; ++i)
+      genomes[j * pool->nb_species + i] = &pool->species[j].genomes[i];
+
+  // we're sorting the genomes from their fitness
+
+  qsort(genomes, j * pool->nb_species + i, sizeof(Genome *), compareFitness);
+
+  // we're calculating the global rank for the current genome
+
+  for (k = 0; k <= j * pool->nb_species + i; ++k)
+    genomes[k]->global_rank = k;
+}
+
+/*!
+* \brief Compute the average fitness of the given MatingPool
+* \param[out] pool The MatingPool whose the average fitness has to be calculated
+*/
+void computeGlobalAverageFitness(MatingPool * pool) {
+  int i;
+  double sum = 0.0;
+
+  for (i = 0; i < pool->nb_species; ++i)
+    sum += pool->species[i].average_fitness;
+
+  pool->average_fitness = sum / pool->nb_species;
+}
+
 /*!
 * \brief Add a Genome to the appropriate Species of the MatingPool
 * \param[out] pool the MatingPool where Genome elements are added
@@ -108,36 +153,6 @@ int addGenomeToSpecies(Species * species) {
   species->nb_genomes++;
 
   return 1;
-}
-
-static int compareFitness(const void * genome_1, const void * genome_2) {
-  return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
-}
-
-/*!
-* \brief Compute the global rank of all Genome elements from all Species
-* \param[out] pool the MatingPool whose global ranks of Genomes elements have to be calculated
-*/
-void computeGlobalRanks(MatingPool * pool) {
-  int i;
-  int j;
-  int k;
-  Genome * genomes[N_MAX_SPECIES * N_MAX_GENOMES];
-
-  // we're storing the addresses of all genomes from all species in a single array
-
-  for (j = 0; j < pool->nb_species; ++j)
-    for (i = 0; i < pool->species[j].nb_genomes; ++i)
-      genomes[j * pool->nb_species + i] = &pool->species[j].genomes[i];
-
-  // we're sorting the genomes from their fitness
-
-  qsort(genomes, j * pool->nb_species + i, sizeof(Genome *), compareFitness);
-
-  // we're calculating the global rank for the current genome
-
-  for (k = 0; k <= j * pool->nb_species + i; ++k)
-    genomes[k]->global_rank = k;
 }
 
 /*!
