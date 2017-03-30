@@ -19,7 +19,9 @@
 */
 typedef struct {
   Network * network;          /*!< the Network attached to this Genome */
+  float fitness;              /*!< the fitness of the Genome */
   float mutation_rates[4];    /*!< the mutation rates attached to this Genome */
+  int global_rank;            /*!< the global rank of this Genome, including other Species */
   int * innovation;           /*!< the address of the innovation number of the MatingPool containing this Genome */
 } Genome;
 

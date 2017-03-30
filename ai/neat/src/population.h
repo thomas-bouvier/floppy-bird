@@ -47,6 +47,8 @@ int addSpeciesToMatingPool(MatingPool * pool);
 
 int addGenomeToSpecies(Species * species);
 
+void computeGlobalRanks(MatingPool * pool);
+
 Genome * getRandomGenome(Species * species);
 
 #endif // POPULATION_H

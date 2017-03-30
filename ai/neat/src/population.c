@@ -93,6 +93,7 @@ int addGenomeToSpecies(Species * species) {
   initNeuronList(network);
 
   species->genomes[species->nb_genomes].network = network;
+  species->genomes[species->nb_genomes].fitness = 0.0;
 
   // initializing mutation rates
 
@@ -101,11 +102,42 @@ int addGenomeToSpecies(Species * species) {
   species->genomes[species->nb_genomes].mutation_rates[2] = NODE_MUTATION_RATE;
   species->genomes[species->nb_genomes].mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
 
+  species->genomes[species->nb_genomes].global_rank = 0;
   species->genomes[species->nb_genomes].innovation = species->innovation;
 
   species->nb_genomes++;
 
   return 1;
+}
+
+static int compareFitness(const void * genome_1, const void * genome_2) {
+  return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
+}
+
+/*!
+* \brief Compute the global rank of all Genome elements from all Species
+* \param[out] pool the MatingPool whose global ranks of Genomes elements have to be calculated
+*/
+void computeGlobalRanks(MatingPool * pool) {
+  int i;
+  int j;
+  int k;
+  Genome * genomes[N_MAX_SPECIES * N_MAX_GENOMES];
+
+  // we're storing the addresses of all genomes from all species in a single array
+
+  for (j = 0; j < pool->nb_species; ++j)
+    for (i = 0; i < pool->species[j].nb_genomes; ++i)
+      genomes[j * pool->nb_species + i] = &pool->species[j].genomes[i];
+
+  // we're sorting the genomes from their fitness
+
+  qsort(genomes, j * pool->nb_species + i, sizeof(Genome *), compareFitness);
+
+  // we're calculating the global rank for the current genome
+
+  for (k = 0; k <= j * pool->nb_species + i; ++k)
+    genomes[k]->global_rank = k;
 }
 
 /*!
