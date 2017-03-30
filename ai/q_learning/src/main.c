@@ -39,12 +39,11 @@ int main()
 	/* Array to simulate dx, dy, the bird state*/
 	int tab_dx[18];
 	int tab_dy[18];
-	int tab_bird_state[18];
+	int tab_bird_state[18] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	for(i=0; i<18; ++i)
 	{
 		tab_dx[i] = randomAtMost(5);
 		tab_dy[i] = randomAtMost(5);
-		tab_bird_state[i] = 1;
 	}
 
 	/* Number of last states saved / last actions */
@@ -86,6 +85,8 @@ int main()
 	}
 	
 	/*Save Q matrix data */
+
+	freeMatrixQ(matrixQ);
 
 	return 0;
 }

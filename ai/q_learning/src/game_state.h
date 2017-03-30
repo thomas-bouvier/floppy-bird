@@ -15,10 +15,8 @@
 typedef struct State State;
 
 struct State {
-  /*int id_state;			!< ID of the current state */
   short int delta_x;    /*!< X is the horizontal distance from the bird to the next lower pipe */
   short int delta_y;    /*!< Y is the vertical distance from the bird to the next lower pipe */
-  /*char bird_state;	!< bird_state is the state of the bird with those parameters, 0=death 1=live */
 };
 
 State * getCurrentState(int delta_x, int delta_y, int bird_state);

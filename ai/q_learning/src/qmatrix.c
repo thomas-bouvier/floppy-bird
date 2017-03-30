@@ -1,6 +1,17 @@
 #include "qmatrix.h"
 
 /*!
+* \brief Deallocated a Q Matrix
+* \param[in] matrixQ matrix of every known state
+*/
+void freeMatrixQ(MatrixQ * matrixQ)
+{
+	free(matrixQ->state);
+	free(matrixQ->reward);
+	free(matrixQ);
+}
+
+/*!
 * \brief Search and return the index of the current state in the MatrixQ
 * \param[in] cur_state current state to search or add in the matrix
 * \param[in] matrixQ matrix of every known state

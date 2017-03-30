@@ -31,9 +31,7 @@ typedef struct MatrixQ MatrixQ;
 */
 struct MatrixQ {
 	int nb_states; 
-	/*int nb_actions;*/
-	State *state; 
-	/*Actions action;*/
+	State *state;
 	int *reward; /*!< Q(state, action) array */
 };
 
@@ -43,5 +41,6 @@ void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action);
 
 int findBestAction(int state_index, MatrixQ * matrixQ);
 
+void freeMatrixQ(MatrixQ * matrixQ);
 
 #endif
