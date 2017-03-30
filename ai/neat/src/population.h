@@ -47,6 +47,8 @@ void freeMatingPool(MatingPool * pool);
 void populateMatingPool(MatingPool * pool);
 int addSpeciesToMatingPool(MatingPool * pool);
 
+int generateNewGeneration(MatingPool * pool);
+
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);
 

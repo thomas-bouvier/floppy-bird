@@ -173,7 +173,7 @@ int mutateLink(Genome * genome) {
   if (linked(neuron_1, neuron_2))
     return 1;
 
-  connection_gene = newConnectionGene(4.0 * random01() - 2.0, 1, genome->innovation);
+  connection_gene = newConnectionGene(4.0 * random01() - 2.0, 1, *genome->innovation);
 
   if (connection_gene == NULL)
     return 0;
@@ -320,6 +320,70 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
 
   return genome;
+}
+
+static double computeWeights(Genome * genome_1, Genome * genome_2) {
+  double sum = 0.0;
+  int sameInnovation = 0;
+
+  Neuron * current_neuron_1 = NULL;
+  Neuron * current_neuron_2 = NULL;
+
+  ConnectionGene * current_connection_gene_1 = NULL;
+  ConnectionGene * current_connection_gene_2 = NULL;
+
+  // first connection gene
+
+  setOnFirstNeuron(genome_1->network);
+  while (!outOfNeuronList(genome_1->network)) {
+
+    current_neuron_1 = getCurrentNeuron(genome_1->network);
+    if (current_neuron_1 == NULL)
+      return 0;
+
+    setOnFirstConnectionGene(current_neuron_1->connections);
+    while (!outOfConnectionGeneList(current_neuron_1->connections)) {
+
+      current_connection_gene_1 = getCurrentConnectionGene(current_neuron_1->connections);
+      if (current_connection_gene_1 == NULL)
+        return 0;
+
+      // second connection gene
+
+      setOnFirstNeuron(genome_2->network);
+      while (!outOfNeuronList(genome_2->network)) {
+
+        current_neuron_2 = getCurrentNeuron(genome_2->network);
+        if (current_neuron_2 == NULL)
+          return 0;
+
+        setOnFirstConnectionGene(current_neuron_2->connections);
+        while (!outOfConnectionGeneList(current_neuron_2->connections)) {
+
+          current_connection_gene_2 = getCurrentConnectionGene(current_neuron_2->connections);
+          if (current_connection_gene_2 == NULL)
+            return 0;
+
+          // we finally have current_connection_gene_1 and current_connection_gene_2
+
+          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
+            sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
+            ++sameInnovation;
+          }
+
+          nextConnectionGene(current_neuron_2->connections);
+        }
+
+        nextNeuron(genome_2->network);
+      }
+
+      nextConnectionGene(current_neuron_1->connections);
+    }
+
+    nextNeuron(genome_1->network);
+  }
+
+  return sum / sameInnovation;
 }
 
 /*!

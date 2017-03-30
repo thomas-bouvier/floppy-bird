@@ -73,6 +73,17 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   return 1;
 }
 
+int generateNewGeneration(MatingPool * pool) {
+  int i;
+
+  for (i = 0; i < pool->nb_species; ++i)
+    computeAverageFitness(&pool->species[i]);
+
+  ++pool->generation;
+
+  return 1;
+}
+
 static int compareFitness(const void * genome_1, const void * genome_2) {
   return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
 }

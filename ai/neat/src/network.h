@@ -32,7 +32,7 @@ struct ConnectionGene {
   unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
   Neuron * neuron_in;               /*!< the predecessor Neuron */
   Neuron * neuron_out;              /*!< the successor Neuron */
-  int * innovation;                 /*!< the address of the innovation number of the Genome containing this ConnectionGene */
+  int innovation;                   /*!< the innovation number of the Genome containing this ConnectionGene */
 };
 
 /*!
@@ -89,7 +89,7 @@ void freeNeuron(Neuron * neuron);
 
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
-ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int * innovation);
+ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);
 ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene);
 void freeConnectionGene(ConnectionGene * connection_gene);
 
