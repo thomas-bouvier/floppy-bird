@@ -107,3 +107,13 @@ int addGenomeToSpecies(Species * species) {
 
   return 1;
 }
+
+/*!
+* \brief Return a random Genome from the given Species.
+* \param[in] species the Species to choose a Genome from
+* \return Return a random Genome
+*/
+Genome * getRandomGenome(Species * species) {
+  int count = species->nb_genomes;
+  return &species->genomes[count];
+}

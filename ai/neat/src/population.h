@@ -47,4 +47,6 @@ int addSpeciesToMatingPool(MatingPool * pool);
 
 int addGenomeToSpecies(Species * species);
 
+Genome * getRandomGenome(Species * species);
+
 #endif // POPULATION_H
