@@ -31,6 +31,8 @@ int mutateLink(Genome * genome);
 int mutateNode(Genome * genome);
 int mutateEnableFlag(Genome * genome, unsigned char enable);
 
+Genome * crossover(Genome * genome_1, Genome * genome_2);
+
 int linked(Neuron * neurion_in, Neuron * neuron_out);
 
 Neuron * getRandomNeuron(Genome * genome);

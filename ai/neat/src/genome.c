@@ -178,7 +178,7 @@ int mutateLink(Genome * genome) {
   if (connection_gene == NULL)
     return 0;
 
-  ++genome->innovation;
+  ++(*genome->innovation);
   addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene);
 
   return 1;
@@ -252,14 +252,14 @@ int mutateNode(Genome * genome) {
   new_connection_gene_1->weight = 1.0;
   new_connection_gene_1->enabled = 1;
 
-  ++genome->innovation;
+  ++(*genome->innovation);
   addConnectionGeneToNeurons(new_connection_gene_1->neuron_in, new_neuron, new_connection_gene_1);
 
   new_connection_gene_2 = cloneConnectionGene(candidates[random_connection_gene_index]);
 
   new_connection_gene_2->enabled = 1;
 
-  ++genome->innovation;
+  ++(*genome->innovation);
   addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
 
   return 1;
@@ -312,6 +312,14 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
   candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
 
   return 1;
+}
+
+Genome * crossover(Genome * genome_1, Genome * genome_2) {
+  Genome * genome = NULL;
+
+
+
+  return genome;
 }
 
 /*!
