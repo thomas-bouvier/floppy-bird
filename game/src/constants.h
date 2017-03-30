@@ -19,13 +19,13 @@
 /*! \def CAMERA_SPEED
 * \brief The speed of the camera
 */
-#define CAMERA_SPEED 8
+#define CAMERA_SPEED 5
 
 
 /*! \def GRAVITY
 * \brief The gravity of the bird
 */
-#define GRAVITY 3
+#define GRAVITY 1
 
 /*! \def BIRD_X_OFFSET
 * \brief The distance in pixels between the bird and the left side of the screen
@@ -45,7 +45,7 @@
 /*! \def BIRD_JUMP
 * \brief The speed of a jump of the bird
 */
-#define BIRD_JUMP -25
+#define BIRD_JUMP -15
 
 
 /*! \def PIPE_WIDTH
@@ -62,6 +62,11 @@
 * \brief The number of obstacles displayed on screen
 */
 #define PIPES_ON_SCREEN (SCREEN_WIDTH/PIPE_X_OFFSET)
+
+/*! \def FRAME_PER_SECOND
+* \brief the number of frame max per second
+*/
+#define FRAME_PER_SECOND 60
 
 /*!
 * The possible actions for the player

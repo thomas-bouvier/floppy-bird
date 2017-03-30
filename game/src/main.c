@@ -12,6 +12,8 @@ int main(int argc, char ** argv)
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
 
+    Uint32 last_frame;
+
     int hit;
     int running = 1;
     Action init;
@@ -96,17 +98,32 @@ int main(int argc, char ** argv)
         /* Loop of game */
         number = 1;
         hit = 0;
+        last_frame = SDL_GetTicks();
         while(!hit && running)
         {
-            Action event = detectTouch();
-            if(event == QUIT)
-                running = 0;
-            hit = game(&bird, &camera, &l, event, readLevel(level, number), number);
-            displayGame(renderer, &bird, &l, &camera);
-            ++number;
-            SDL_Delay(1);
+            while(SDL_GetTicks()-last_frame >= (1000/FRAME_PER_SECOND))
+            {
+
+
+                Action event = detectTouch();
+                if(event == QUIT)
+                    running = 0;
+                hit = game(&bird, &camera, &l, event, readLevel(level, number), number);
+                displayGame(renderer, &bird, &l, &camera);
+                ++number;
+                last_frame=SDL_GetTicks();
+
+            }
+            //SDL_Delay(4);
         }
-        SDL_Delay(1000);
+        if(hit)
+        {
+            SDL_Delay(300);
+            SDL_SetRenderDrawColor( renderer, 255, 105, 180, 255 );
+            SDL_RenderClear(renderer);
+            SDL_RenderPresent(renderer);
+            SDL_Delay(600);
+        }
     }
 
     /* Quit the game */

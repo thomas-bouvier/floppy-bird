@@ -38,7 +38,9 @@ Action detectTouch()
         }
         return NOTHING;
 }
-
+/*!
+* \brief empty the stack containing all the event
+*/
 void emptyEvent()
 {
     SDL_Event event;

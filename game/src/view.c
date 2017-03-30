@@ -72,7 +72,6 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
         }
     }
     SDL_RenderPresent(renderer);
-    SDL_Delay(30);
 }
 
 /*!
