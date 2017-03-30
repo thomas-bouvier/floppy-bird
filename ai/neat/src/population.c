@@ -141,6 +141,20 @@ void computeGlobalRanks(MatingPool * pool) {
 }
 
 /*!
+* \brief Compute the average fitness of the given Species
+* \param[out] species The Species whose the average fitness has to be calculated
+*/
+void computeAverageFitness(Species * species) {
+  int i;
+  double sum = 0.0;
+
+  for (i = 0; i < species->nb_genomes; ++i)
+    sum += species->genomes[i].global_rank;
+
+  species->average_fitness = sum / species->nb_genomes;
+}
+
+/*!
 * \brief Return a random Genome from the given Species.
 * \param[in] species the Species to choose a Genome from
 * \return Return a random Genome
