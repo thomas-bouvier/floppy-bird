@@ -17,9 +17,9 @@
 
 #define RANDOM_INIT_REWARD 50 /*!< Limit of the random reward initialization */
 
-#define HIGHER_QREWARD_LIMIT 1500 /*!< Higher limit of the computation of the Q reward */
+#define HIGHER_QREWARD_LIMIT 15000 /*!< Higher limit of the computation of the Q reward */
 
-#define LOWER_QREWARD_LIMIT -1500  /*!< Higher limit of the computation of the Q reward */
+#define LOWER_QREWARD_LIMIT -15000  /*!< Higher limit of the computation of the Q reward */
 
 /* FIXED PARAMETERS */
 

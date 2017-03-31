@@ -12,6 +12,18 @@ void freeMatrixQ(MatrixQ * matrixQ)
 }
 
 /*!
+* \brief Print the Q matrix
+* \param[in] matrixQ matrix of every known state
+*/
+void show_matrixQ(MatrixQ * matrixQ)
+{
+	clearScreen();
+	int i;
+	printf("	| Action 0	| Action 1\n");
+	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %d		| %d	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
+}
+
+/*!
 * \brief Search and return the index of the current state in the MatrixQ
 * \param[in] cur_state current state to search or add in the matrix
 * \param[in] matrixQ matrix of every known state
@@ -116,7 +128,6 @@ int computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int act
 	old_value = (float) matrixQ->reward[state_index*2+action];
 
 	new_value = old_value + powerOf(LEARNING_RATE, position) * ((float) getCurrentReward(current_index) + powerOf(DISCOUNT, position) * optimal_nextvalue - old_value);
-
-			if(new_value < HIGHER_QREWARD_LIMIT && new_value > -LOWER_QREWARD_LIMIT)  return (int)new_value;
+			if(new_value < HIGHER_QREWARD_LIMIT && new_value > LOWER_QREWARD_LIMIT)  return (int)new_value;
 			else return old_value;
 }
