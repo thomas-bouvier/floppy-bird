@@ -505,6 +505,8 @@ Neuron * getRandomNeuron(Genome * genome) {
 int writeGraphVizGenome(Genome * genome, char * filename) {
   FILE * f = NULL;
   ConnectionGeneList * connection_gene_successors = NULL;
+  Neuron * current_neuron = NULL;
+  ConnectionGene * current_connection_gene = NULL;
 
   if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
       fprintf(stderr, "Error while opening %s\n", filename);
@@ -513,7 +515,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   fprintf(f, "digraph {\n");
 
-  // nodes
+  // links
 
   setOnFirstNeuron(genome->network);
   while (!outOfNeuronList(genome->network)) {
@@ -524,11 +526,13 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
         fprintf(f, "\t%d;\n", genome->network->current->id);
 
       else {
+        current_connection_gene = connection_gene_successors->current;
+
         while (!outOfConnectionGeneList(connection_gene_successors)) {
-          if (connection_gene_successors->current->enabled)
-            fprintf(f, "\t%d -> %d [label=\"%.1f\", weight=%.1f];\n", genome->network->current->id, connection_gene_successors->current->neuron_out->id, connection_gene_successors->current->weight, connection_gene_successors->current->weight);
+          if (current_connection_gene->enabled)
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", genome->network->current->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
           else
-            fprintf(f, "\t%d -> %d [label=\"%.1f\", weight=%.1f color=red];\n", genome->network->current->id, connection_gene_successors->current->neuron_out->id, connection_gene_successors->current->weight, connection_gene_successors->current->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", genome->network->current->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
           nextConnectionGene(connection_gene_successors);
         }
@@ -537,24 +541,26 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
       nextNeuron(genome->network);
   }
 
-  // colors
+  // nodes
 
   setOnFirstNeuron(genome->network);
   while(!outOfNeuronList(genome->network)) {
-    if (genome->network->current->type == INPUT)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
+    current_neuron = genome->network->current;
 
-    else if (genome->network->current->type == OUTPUT)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
+    if (current_neuron->type == INPUT)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
-    else if (genome->network->current->type == BIAS)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=orange];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
+    else if (current_neuron->type == OUTPUT)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
-    else if (genome->network->current->type == BASIC)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", genome->network->current->id, genome->network->current->id, genome->network->current->value);
+    else if (current_neuron->type == BIAS)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=orange];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+
+    else if (current_neuron->type == BASIC)
+      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
     else
-      fprintf(f, "\t%d [shape=circle];\n", genome->network->current->id);
+      fprintf(f, "\t%d [shape=circle];\n", current_neuron->id);
 
     nextNeuron(genome->network);
   }
