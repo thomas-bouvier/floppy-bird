@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 #include "network.h"
 #include "neuronList.h"
@@ -20,6 +21,8 @@
 */
 typedef struct {
   Network * network;          /*!< the Network attached to this Genome */
+  int nb_neurons;             /*!< te number of Neuron elements contained in this Genome */
+  int nb_connection_genes;    /*!< the number of ConnectionGene elements contained in this Genome */
   float fitness;              /*!< the fitness of the Genome */
   float mutation_rates[4];    /*!< the mutation rates attached to this Genome */
   int global_rank;            /*!< the global rank of this Genome, including other Species */
@@ -27,6 +30,8 @@ typedef struct {
 } Genome;
 
 int generateGenome(Genome * genome);
+int addNeuronToGenome(Genome * genome, Neuron * neuron);
+int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene);
 
 int mutate(Genome * genome);
 int mutatePoint(Genome * genome);

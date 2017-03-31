@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall
-LDFLAGS =
+LDFLAGS = -lm
 
 main: main.o genome.o population.o utils.o network.o neuronList.o connectionGeneList.o
 	$(CC) $^ $(LDFLAGS) -o $@

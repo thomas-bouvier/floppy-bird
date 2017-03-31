@@ -149,6 +149,8 @@ int addGenomeToSpecies(Species * species) {
   initNeuronList(network);
 
   species->genomes[species->nb_genomes].network = network;
+  species->genomes[species->nb_genomes].nb_neurons = 0;
+  species->genomes[species->nb_genomes].nb_connection_genes = 0;
   species->genomes[species->nb_genomes].fitness = 0.0;
 
   // initializing mutation rates

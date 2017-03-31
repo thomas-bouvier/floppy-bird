@@ -7,33 +7,47 @@
 */
 int generateGenome(Genome * genome) {
   int i;
-  Neuron * neuron = NULL;
 
   // populating neuron list
 
-  for (i = 0; i < N_INPUTS; ++i) {
-    neuron = newNeuron(INPUT);
-    if (!addNeuronToNetwork(genome->network, neuron)) {
-      freeNeuron(neuron);
+  for (i = 0; i < N_INPUTS; ++i)
+    if (!addNeuronToGenome(genome, newNeuron(INPUT)))
       return 0;
-    }
+
+  for (i = 0; i < N_BIAS; ++i)
+    if (!addNeuronToGenome(genome, newNeuron(BIAS)))
+      return 0;
+
+  for (i = 0; i < N_OUTPUTS; ++i)
+    if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
+      return 0;
+
+  return 1;
+}
+
+/*!
+* \brief Add the given Neuron to the given Genome
+* \param[out] genome the Genome to modify
+* \param[in] neuron the Neuron to insert
+* \return int 1 if the Neuron was succesfully inserted, 0 otherwise
+*/
+int addNeuronToGenome(Genome * genome, Neuron * neuron) {
+  if (!addNeuronToNetwork(genome->network, neuron)) {
+    freeNeuron(neuron);
+    return 0;
   }
 
-  for (i = 0; i < N_BIAS; ++i) {
-    neuron = newNeuron(BIAS);
-    if (!addNeuronToNetwork(genome->network, neuron)) {
-      freeNeuron(neuron);
-      return 0;
-    }
+  ++genome->nb_neurons;
+
+  return 1;
+}
+
+int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene) {
+  if (!addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene)) {
+    return 0;
   }
 
-  for (i = 0; i < N_OUTPUTS; ++i) {
-    neuron = newNeuron(OUTPUT);
-    if (!addNeuronToNetwork(genome->network, neuron)) {
-      freeNeuron(neuron);
-      return 0;
-    }
-  }
+  ++genome->nb_connection_genes;
 
   return 1;
 }
@@ -179,7 +193,10 @@ int mutateLink(Genome * genome) {
     return 0;
 
   ++(*genome->innovation);
-  addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene);
+  if (!addConnectionGeneToGenome(genome, neuron_1, neuron_2, connection_gene)) {
+    --(*genome->innovation);
+    return 0;
+  }
 
   return 1;
 }
@@ -242,10 +259,8 @@ int mutateNode(Genome * genome) {
   candidates[random_connection_gene_index]->enabled = 0;
 
   new_neuron = newNeuron(BASIC);
-  if (!addNeuronToNetwork(genome->network, new_neuron)) {
-    freeNeuron(new_neuron);
+  if (!addNeuronToGenome(genome, new_neuron))
     return 0;
-  }
 
   new_connection_gene_1 = cloneConnectionGene(candidates[random_connection_gene_index]);
 
@@ -253,14 +268,20 @@ int mutateNode(Genome * genome) {
   new_connection_gene_1->enabled = 1;
 
   ++(*genome->innovation);
-  addConnectionGeneToNeurons(new_connection_gene_1->neuron_in, new_neuron, new_connection_gene_1);
+  if (!addConnectionGeneToGenome(genome, new_connection_gene_1->neuron_in, new_neuron, new_connection_gene_1)) {
+    --(*genome->innovation);
+    return 0;
+  }
 
   new_connection_gene_2 = cloneConnectionGene(candidates[random_connection_gene_index]);
 
   new_connection_gene_2->enabled = 1;
 
   ++(*genome->innovation);
-  addConnectionGeneToNeurons(new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2);
+  if (!addConnectionGeneToGenome(genome, new_neuron, new_connection_gene_2->neuron_out, new_connection_gene_2)) {
+    --(*genome->innovation);
+    return 0;
+  }
 
   return 1;
 }
@@ -339,14 +360,14 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
 
     current_neuron_1 = getCurrentNeuron(genome_1->network);
     if (current_neuron_1 == NULL)
-      return 0;
+      return -DBL_MAX;
 
     setOnFirstConnectionGene(current_neuron_1->connections);
     while (!outOfConnectionGeneList(current_neuron_1->connections)) {
 
       current_connection_gene_1 = getCurrentConnectionGene(current_neuron_1->connections);
       if (current_connection_gene_1 == NULL)
-        return 0;
+        return -DBL_MAX;
 
       // second connection gene
 
@@ -355,14 +376,14 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
 
         current_neuron_2 = getCurrentNeuron(genome_2->network);
         if (current_neuron_2 == NULL)
-          return 0;
+          return -DBL_MAX;
 
         setOnFirstConnectionGene(current_neuron_2->connections);
         while (!outOfConnectionGeneList(current_neuron_2->connections)) {
 
           current_connection_gene_2 = getCurrentConnectionGene(current_neuron_2->connections);
           if (current_connection_gene_2 == NULL)
-            return 0;
+            return -DBL_MAX;
 
           // we finally have current_connection_gene_1 and current_connection_gene_2
 
@@ -384,6 +405,67 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
   }
 
   return sum / sameInnovation;
+}
+
+static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
+  int disjoint_count = 0;
+
+  Neuron * current_neuron_1 = NULL;
+  Neuron * current_neuron_2 = NULL;
+
+  ConnectionGene * current_connection_gene_1 = NULL;
+  ConnectionGene * current_connection_gene_2 = NULL;
+
+  // first connection gene
+
+  setOnFirstNeuron(genome_1->network);
+  while (!outOfNeuronList(genome_1->network)) {
+
+    current_neuron_1 = getCurrentNeuron(genome_1->network);
+    if (current_neuron_1 == NULL)
+      return -DBL_MAX;
+
+    setOnFirstConnectionGene(current_neuron_1->connections);
+    while (!outOfConnectionGeneList(current_neuron_1->connections)) {
+
+      current_connection_gene_1 = getCurrentConnectionGene(current_neuron_1->connections);
+      if (current_connection_gene_1 == NULL)
+        return -DBL_MAX;
+
+      // second connection gene
+
+      setOnFirstNeuron(genome_2->network);
+      while (!outOfNeuronList(genome_2->network)) {
+
+        current_neuron_2 = getCurrentNeuron(genome_2->network);
+        if (current_neuron_2 == NULL)
+          return -DBL_MAX;
+
+        setOnFirstConnectionGene(current_neuron_2->connections);
+        while (!outOfConnectionGeneList(current_neuron_2->connections)) {
+
+          current_connection_gene_2 = getCurrentConnectionGene(current_neuron_2->connections);
+          if (current_connection_gene_2 == NULL)
+            return -DBL_MAX;
+
+          // we finally have current_connection_gene_1 and current_connection_gene_2
+
+          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation)
+            ++disjoint_count;
+
+          nextConnectionGene(current_neuron_2->connections);
+        }
+
+        nextNeuron(genome_2->network);
+      }
+
+      nextConnectionGene(current_neuron_1->connections);
+    }
+
+    nextNeuron(genome_1->network);
+  }
+
+  return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
 }
 
 /*!
