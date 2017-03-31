@@ -85,17 +85,38 @@ int findBestAction(int state_index, MatrixQ * matrixQ)
 * \param[in] matrixQ matrix of every known state
 * \param[in] state_index index from the last state to the older one to find them in the Q matrix
 * \param[in] last_action last_action performed
-* \param[in] reward reward function of the current state due to the last action
 */
 void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action)
 {
 	int i;
-	float optimal_nextvalue, old_value, new_value;
 	for(i=1; i<NB_SAVED_STATES; ++i)
 	{
-		optimal_nextvalue = (float) (matrixQ->reward[state_index[0]*2+findBestAction(state_index[0], matrixQ)]);
-		old_value = (float) matrixQ->reward[state_index[i]*2+last_action[i]];
-		new_value = old_value + LEARNING_RATE * ((float) getCurrentReward(state_index[0]) + powerOf(DISCOUNT, i) * optimal_nextvalue - old_value);
-		if(new_value < 15000 && new_value > -15000) matrixQ->reward[state_index[i]*2+last_action[i]] = (int)new_value;
+		if(last_action[i] != -1)
+		{
+			matrixQ->reward[state_index[i]*2+last_action[i]] = computeQReward(matrixQ, state_index[0], state_index[i], last_action[i], i);
+		}
 	}
+}
+
+
+/*!
+* \brief compute a new Q reward
+* \param[in] matrixQ matrix of every known state
+* \param[in] current_index index of the current state
+* \param[in] state_index index of the state where change the Q reward
+* \param[in] action action performed when the bird was in the state corresponding to index_state
+* \param[in] position position of the state to modify compared to the current state
+*/
+int computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int position)
+{
+	float optimal_nextvalue, old_value, new_value;
+
+	optimal_nextvalue = (float) (matrixQ->reward[current_index*2+findBestAction(current_index, matrixQ)]);
+
+	old_value = (float) matrixQ->reward[state_index*2+action];
+
+	new_value = old_value + powerOf(LEARNING_RATE, position) * ((float) getCurrentReward(current_index) + powerOf(DISCOUNT, position) * optimal_nextvalue - old_value);
+
+			if(new_value < HIGHER_QREWARD_LIMIT && new_value > -LOWER_QREWARD_LIMIT)  return (int)new_value;
+			else return old_value;
 }

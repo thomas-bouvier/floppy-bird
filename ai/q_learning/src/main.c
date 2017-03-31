@@ -65,8 +65,8 @@ int main()
 
 			/* Update the new state */
 			save_state[0]=findStateIndex(getCurrentState(tab_dx[i], tab_dy[i], tab_bird_state[i]), matrixQ);
-			/* Update the Q matrix if total old state/action is filled */
-			if(save_last_action[NB_SAVED_STATES-1] != -1) updateQReward(matrixQ, save_state, save_last_action);
+			/* Update the Q matrix */
+			updateQReward(matrixQ, save_state, save_last_action);
 
 			/* Compute the new action */
 			save_last_action[0] = findBestAction(save_state[0], matrixQ);
