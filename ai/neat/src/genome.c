@@ -469,6 +469,16 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
 }
 
 /*!
+* \brief Check if the given Genome elements are from the same Species
+* \param[out] genome_1 the first Genome to compare
+* \param[out] genome_2 the second Genome to compare
+* \return int 1 if the two Genome elements are from the same Species, 0 otherwise
+*/
+int sameSpecies(Genome * genome_1, Genome * genome_2) {
+  return WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2) < SPECIATION_THRESHOLD;
+}
+
+/*!
 * \brief Check if the two given Neuron elements are linked by a ConnectionGene
 * \param[out] neuron_in The first Neuron
 * \param[in] neuron_out The second Neuron

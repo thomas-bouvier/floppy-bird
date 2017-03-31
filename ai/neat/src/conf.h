@@ -25,4 +25,8 @@
 #define NODE_MUTATION_RATE            0.50
 #define ENABLE_DISABLE_MUTATION_RATE  0.50
 
+#define SPECIATION_THRESHOLD          1.0
+#define WEIGHT_COEFFICIENT            0.5
+#define DISJOINT_COEFFICIENT          1.5
+
 #endif // CONF_H
