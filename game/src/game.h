@@ -13,11 +13,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void startGame(Bird * bird, Camera * camera, List * l);
+void startGame(Bird * bird, Camera * camera, List * l, FILE * level);
 void cameraScrolling(Camera * camera, Bird * bird);
-int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap);
+int createObstacle(Camera * camera, List * l, FILE * level, int number);
 int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle);
-int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number);
+int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number);
 
 #endif // GAME_H

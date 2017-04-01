@@ -58,10 +58,20 @@
 */
 #define PIPE_X_OFFSET 400
 
+/*! \def OBSTACLE_GAP
+* \brief The distance in pixels between two the two pipes of an obstacle
+*/
+#define OBSTACLE_GAP 200
+
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
 */
-#define PIPES_ON_SCREEN (SCREEN_WIDTH/PIPE_X_OFFSET)
+#define PIPES_ON_SCREEN ((SCREEN_WIDTH / PIPE_X_OFFSET) + 1)
+
+/*! \def OBSTACLE_NUMBER
+* \brief The number of obstacles maximum in the list
+*/
+#define OBSTACLE_NUMBER (PIPES_ON_SCREEN + 1)
 
 /*! \def FRAME_PER_SECOND
 * \brief the number of frame max per second

@@ -76,11 +76,11 @@ int main(int argc, char ** argv)
     renderer =  SDL_CreateRenderer(window,
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     while(running)
     {
-        startGame(&bird, &camera, &l);
+        startGame(&bird, &camera, &l, level);
         displayGame(renderer, &bird, &l, &camera);
 
         /* Wait the first jump to start the game*/
@@ -96,30 +96,26 @@ int main(int argc, char ** argv)
         }
 
         /* Loop of game */
-        number = 1;
+        number = OBSTACLE_NUMBER;
         hit = 0;
         last_frame = SDL_GetTicks();
         while(!hit && running)
         {
             while(SDL_GetTicks()-last_frame >= (1000/FRAME_PER_SECOND))
             {
-
-
                 Action event = detectTouch();
                 if(event == QUIT)
                     running = 0;
-                hit = game(&bird, &camera, &l, event, readLevel(level, number), number);
+                hit = game(&bird, &camera, &l, level, event, &number);
                 displayGame(renderer, &bird, &l, &camera);
-                ++number;
-                last_frame=SDL_GetTicks();
-
+                last_frame = SDL_GetTicks();
             }
             //SDL_Delay(4);
         }
         if(hit)
         {
             SDL_Delay(300);
-            SDL_SetRenderDrawColor( renderer, 255, 105, 180, 255 );
+            SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
             SDL_RenderClear(renderer);
             SDL_RenderPresent(renderer);
             SDL_Delay(600);

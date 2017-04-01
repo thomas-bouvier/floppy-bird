@@ -55,3 +55,11 @@ void freeObstacle(Obstacle * obstacle)
 {
     free(obstacle);
 }
+
+
+void createObstacleFromFile(FILE * level, int number, List * l)
+{
+    int heightPipe = readLevel(level, number);
+    Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
+    insertLast(l, newObs);
+}

@@ -18,12 +18,13 @@ typedef struct List List;
 * \brief The list of obstacle displayed on screen
 */
 struct List{
-    struct Obstacle * first;           /*!< the address of the first obstacle in the list*/
-    struct Obstacle * current;         /*!< the address of the current obstacle in the list*/
-    struct Obstacle * last;            /*!< the address of the last obstacle in the list*/
+    struct Obstacle * first;            /*!< the address of the first obstacle in the list*/
+    struct Obstacle * current;          /*!< the address of the current obstacle in the list*/
+    struct Obstacle * last;             /*!< the address of the last obstacle in the list*/
+    int nbObstacles;                    /*!< the number of obstacles in the list*/
 };
 
-void initList(List * l);
+void initList(List * l, FILE * level);
 int isEmpty(List * l);
 int isFirst(List * l);
 int isLast(List * l);

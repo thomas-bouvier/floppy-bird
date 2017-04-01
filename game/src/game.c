@@ -10,11 +10,11 @@
 * \param[out] camera the camera to allocate
 * \param[out] l the list of obstacles
 */
-void startGame(Bird * bird, Camera * camera, List * l)
+void startGame(Bird * bird, Camera * camera, List * l, FILE * level)
 {
     initBird(bird);
     initCamera(camera, 0, CAMERA_SPEED);
-    initList(l);
+    initList(l, level);
 }
 
 /*!
@@ -36,11 +36,11 @@ void cameraScrolling(Camera * camera, Bird * bird)
 * \param[in] height_lower the ordinate of the lower pipe of the new obstacle
 * \param[in] obstacle_gap the gap between two pipes of the new obstacle
 */
-int createObstacle(Camera * camera, List * l, int number, int height_lower, int obstacle_gap)
+int createObstacle(Camera * camera, List * l, FILE * level, int number)
 {
-    if (camera->x + SCREEN_WIDTH >= l->first->lower.x)
+    if ((camera->x + SCREEN_WIDTH >= l->first->lower.x) && (l->nbObstacles < OBSTACLE_NUMBER))
     {
-        insertLast(l, newObstacle(number, height_lower, obstacle_gap, NULL));
+        createObstacleFromFile(level, number, l);
         return 1;
     }
     return 0;
@@ -94,11 +94,12 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 * \param[in] number the obstacle number of the new obstacle
 * \return 1 in case of game over, 0 in the others cases
 */
-int game(Bird * bird, Camera * camera, List * l, int event,int heightPipe, int number)
+int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number)
 {
     updateBird(bird, event);
     deleteObstacle(camera, l);
-    createObstacle(camera, l, number, heightPipe , 200);
+    if (createObstacle(camera, l, level, *number))
+        (*number)++;
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird));
 }
