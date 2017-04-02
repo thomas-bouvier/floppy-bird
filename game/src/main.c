@@ -55,14 +55,16 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    /* Open the file that contains the save of the best score */
+    /* Open the file that contains the save of the best score : create it if it does not exist yet */
     FILE * scoreFile = NULL;
     char * scorePath = malloc(sizeof(char)*100);
     if (readConfig(config, scorePath, "score :\n"))
     {
         if (scorePath[strlen(scorePath)-1] == '\n')
             scorePath[strlen(scorePath)-1] = '\0';
-        scoreFile = fopen(scorePath, "w+");
+        scoreFile = fopen(scorePath, "r+");
+        if (scoreFile == NULL)
+            scoreFile = fopen(scorePath, "w+");
     }
     if(scoreFile == NULL)
     {
@@ -130,7 +132,6 @@ int main(int argc, char ** argv)
                     running = 0;
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                printf("%d\n", score);
                 displayGame(renderer, &bird, &l, &camera);
                 last_frame = SDL_GetTicks();
             }

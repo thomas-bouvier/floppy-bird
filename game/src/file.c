@@ -24,7 +24,7 @@ int readLevel(FILE * file, int number)
 
 /*!
 * \brief Read the configuration file
-* \param[out] file the configuration file to read
+* \param[out] f the configuration file to read
 * \param[out] config the path of the requested parameter
 * \param[in] type the requested parameter (examples : level, sprite, sound...)
 * \return Return 1 if the configuration file was read, ie the requested path is set in config ; 0 if error
@@ -49,7 +49,12 @@ int readConfig(FILE * f, char * config, char * type)
     return 0;
 }
 
-
+/*!
+* \brief Read the configuration file
+* \param[out] f the file that contains the score
+* \param[in] score the score to be saved (or not)
+* \return Return 1 if the score was saved, ie if it is biggest that the previous score, 0 otherwise
+*/
 int saveScore(FILE * f, int score)
 {
     int savedScore;

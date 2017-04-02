@@ -9,6 +9,7 @@
 * \param[out] bird the bird to allocate
 * \param[out] camera the camera to allocate
 * \param[out] l the list of obstacles
+* \param[in] level the file that contains the height of the obstacles
 */
 void startGame(Bird * bird, Camera * camera, List * l, FILE * level)
 {
@@ -32,9 +33,9 @@ void cameraScrolling(Camera * camera, Bird * bird)
 * \brief Create an obstacle when the distance between two obstacle is reached
 * \param[in] camera the view of the game
 * \param[out] l the list of obstacles
+* \param[in] level the file that contains the height of the obstacles
 * \param[in] number the obstacle number of the new obstacle
-* \param[in] height_lower the ordinate of the lower pipe of the new obstacle
-* \param[in] obstacle_gap the gap between two pipes of the new obstacle
+* \return Return 1 if the function created an obstacle, 0 otherwise
 */
 int createObstacle(Camera * camera, List * l, FILE * level, int number)
 {
@@ -50,6 +51,7 @@ int createObstacle(Camera * camera, List * l, FILE * level, int number)
 * \brief Delete an obstacle of the list when it leaves the camera
 * \param[in] camera the view of the game
 * \param[out] l the list of obstacles
+* \return Return 1 if the function deleted an obstacle, 0 otherwise
 */
 int deleteObstacle(Camera * camera, List * l){
     if ((l->first->lower.x + PIPE_WIDTH) < camera->x)
@@ -87,13 +89,12 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 
 /*!
 * \brief The function update the score if an obstacle is passed
-* \param[in] score current score
-* \param[in] l the list of obstacle
+* \param[in] score the current score
 * \param[in] bird the bird that determines the next obstacle
 * \param[out] savedObstacle the obstacle saved previously
 * \return return the updated score
 */
-int updateScore(int score, List * l, Bird * bird, Obstacle * savedObstacle, int number)
+int updateScore(int score, Bird * bird, Obstacle * savedObstacle)
 {
     if (obstaclePassed(bird, savedObstacle))
     {
@@ -108,9 +109,11 @@ int updateScore(int score, List * l, Bird * bird, Obstacle * savedObstacle, int 
 * \param[out] bird the bird linked to the running game
 * \param[out] camera the camera linked to the running game
 * \param[out] l the list of obstacles linked to the running game
+* \param[in] level the file that contains the height of the obstacles
 * \param[in] event the value that indicate if the bird must jump(1) or not(0 or 2)
-* \param[in] heightPipe the ordinate of the lower pipe of the new obstacle created
 * \param[in] number the obstacle number of the new obstacle
+* \param[in] savedObstacle the obstacle saved to compare with the next obstacle
+* \param[out] score the score of the player to be updated
 * \return 1 in case of game over, 0 in the others cases
 */
 int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score)
@@ -119,7 +122,7 @@ int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * 
     deleteObstacle(camera, l);
     if (createObstacle(camera, l, level, *number))
         (*number)++;
-    *score = updateScore(*score, l, bird, savedObstacle, *number);
+    *score = updateScore(*score, bird, savedObstacle);
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird));
 }

@@ -18,7 +18,7 @@ void cameraScrolling(Camera * camera, Bird * bird);
 int createObstacle(Camera * camera, List * l, FILE * level, int number);
 int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle);
-int updateScore(int score, List * l, Bird * bird, Obstacle * savedObstacle, int number);
+int updateScore(int score, Bird * bird, Obstacle * savedObstacle);
 int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score);
 
 #endif // GAME_H

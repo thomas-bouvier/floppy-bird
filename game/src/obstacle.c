@@ -56,7 +56,12 @@ void freeObstacle(Obstacle * obstacle)
     free(obstacle);
 }
 
-
+/*!
+* \brief Create an obstacle with the height indicated in the level file for its number
+* \param[in] level the file that contains the height of the obstacles
+* \param[in] number the obstacle number
+* \param[out] l the list of obstacles
+*/
 void createObstacleFromFile(FILE * level, int number, List * l)
 {
     int heightPipe = readLevel(level, number);

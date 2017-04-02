@@ -7,6 +7,7 @@
 /*!
 * \brief Initialize a list, and fill it with a unique obstacle
 * \param[out] l the list to initialize
+* \param[in] level the file that contains the height of the obstacles
 */
 void initList(List * l, FILE * level){
     int  i;
