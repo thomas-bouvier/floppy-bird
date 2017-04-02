@@ -10,5 +10,6 @@
 
 Action detectTouch();
 void emptyEvent();
+Action waiting();
 
 #endif // CONTROL_H

@@ -13,6 +13,7 @@ int main(int argc, char ** argv)
     SDL_Renderer * renderer = NULL;
 
     Uint32 last_frame;
+    int i;
 
     int hit;
     int running = 1;
@@ -125,11 +126,14 @@ int main(int argc, char ** argv)
 
         while(!hit && running)
         {
-            while(SDL_GetTicks()-last_frame >= (1000/FRAME_PER_SECOND))
+
+            for(i = 0; i < (SDL_GetTicks()-last_frame)/(1000/FRAME_PER_SECOND); ++i)
             {
                 Action event = detectTouch();
                 if(event == QUIT)
-                    running = 0;
+                     running = 0;
+                if(event == PAUSE)
+                    running = (waiting() != QUIT);
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera);
