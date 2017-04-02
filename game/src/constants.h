@@ -59,7 +59,7 @@
 #define PIPE_X_OFFSET 400
 
 /*! \def OBSTACLE_GAP
-* \brief The distance in pixels between two the two pipes of an obstacle
+* \brief The distance in pixels between the two pipes of an obstacle
 */
 #define OBSTACLE_GAP 200
 

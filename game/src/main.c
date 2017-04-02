@@ -23,6 +23,9 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    int score;
+    Obstacle * savedObstacle = NULL;
+
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
     FILE * config = NULL;
@@ -81,6 +84,7 @@ int main(int argc, char ** argv)
     while(running)
     {
         startGame(&bird, &camera, &l, level);
+        savedObstacle = nextBirdObstacle(&l, &bird);
         displayGame(renderer, &bird, &l, &camera);
 
         /* Wait the first jump to start the game*/
@@ -97,8 +101,10 @@ int main(int argc, char ** argv)
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
+        score = 0;
         hit = 0;
         last_frame = SDL_GetTicks();
+
         while(!hit && running)
         {
             while(SDL_GetTicks()-last_frame >= (1000/FRAME_PER_SECOND))
@@ -106,7 +112,9 @@ int main(int argc, char ** argv)
                 Action event = detectTouch();
                 if(event == QUIT)
                     running = 0;
-                hit = game(&bird, &camera, &l, level, event, &number);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
+                savedObstacle = nextBirdObstacle(&l, &bird);
+                printf("%d\n", score);
                 displayGame(renderer, &bird, &l, &camera);
                 last_frame = SDL_GetTicks();
             }

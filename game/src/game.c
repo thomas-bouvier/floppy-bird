@@ -84,6 +84,25 @@ int detectHit(Bird * bird, Obstacle * obstacle)
     }
     return h;
 }
+
+/*!
+* \brief The function update the score if an obstacle is passed
+* \param[in] score current score
+* \param[in] l the list of obstacle
+* \param[in] bird the bird that determines the next obstacle
+* \param[out] savedObstacle the obstacle saved previously
+* \return return the updated score
+*/
+int updateScore(int score, List * l, Bird * bird, Obstacle * savedObstacle, int number)
+{
+    if (obstaclePassed(bird, savedObstacle))
+    {
+        score++;
+        return score;
+    }
+    return score;
+}
+
 /*!
 * \brief The function called every frame of the running game to update all objects
 * \param[out] bird the bird linked to the running game
@@ -94,12 +113,13 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 * \param[in] number the obstacle number of the new obstacle
 * \return 1 in case of game over, 0 in the others cases
 */
-int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number)
+int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score)
 {
     updateBird(bird, event);
     deleteObstacle(camera, l);
     if (createObstacle(camera, l, level, *number))
         (*number)++;
+    *score = updateScore(*score, l, bird, savedObstacle, *number);
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird));
 }

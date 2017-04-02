@@ -38,5 +38,6 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 Obstacle * nextBirdObstacle(List * l, Bird * bird);
 void freeObstacle(Obstacle * obstacle);
 void createObstacleFromFile(FILE * level, int number, List * l);
+int obstaclePassed(Bird * bird, Obstacle * savedObstacle);
 
 #endif // OBSTACLE_H

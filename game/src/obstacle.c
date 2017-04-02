@@ -63,3 +63,18 @@ void createObstacleFromFile(FILE * level, int number, List * l)
     Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
     insertLast(l, newObs);
 }
+
+/*!
+* \brief Indicate if the bird passed the next obstacle
+* \param[in] bird the bird that determines the next obstacle
+* \param[out] savedObstacle the obstacle saved previously
+* \return Return 1 when the bird passed the obstacle (ie if the next obstacle is different than previously), 0 else
+*/
+int obstaclePassed(Bird * bird, Obstacle * savedObstacle)
+{
+    if(bird->x - bird->w/3 > savedObstacle->lower.x + PIPE_WIDTH){
+        //printf("1\n");
+        return 1;
+    }
+    return 0;
+}
