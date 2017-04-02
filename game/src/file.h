@@ -12,5 +12,6 @@
 
 int readLevel(FILE * f, int number);
 int readConfig(FILE * f, char * config, char * type);
+int saveScore(FILE * f, int score);
 
 #endif // FILE_H

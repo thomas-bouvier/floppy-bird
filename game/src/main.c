@@ -55,6 +55,22 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
+    /* Open the file that contains the save of the best score */
+    FILE * scoreFile = NULL;
+    char * scorePath = malloc(sizeof(char)*100);
+    if (readConfig(config, scorePath, "score :\n"))
+    {
+        if (scorePath[strlen(scorePath)-1] == '\n')
+            scorePath[strlen(scorePath)-1] = '\0';
+        scoreFile = fopen(scorePath, "w+");
+    }
+    if(scoreFile == NULL)
+    {
+        fprintf(stderr,"Opening score file failure :\n");
+        printf("%s\n", scorePath);
+        return EXIT_FAILURE;
+    }
+
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -118,7 +134,7 @@ int main(int argc, char ** argv)
                 displayGame(renderer, &bird, &l, &camera);
                 last_frame = SDL_GetTicks();
             }
-            //SDL_Delay(4);
+            saveScore(scoreFile, score);
         }
         if(hit)
         {
@@ -132,7 +148,9 @@ int main(int argc, char ** argv)
 
     /* Quit the game */
     quitGame(window, renderer);
+    fclose(config);
     fclose(level);
+    fclose(scoreFile);
 
     return EXIT_SUCCESS;
 }

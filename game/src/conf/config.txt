@@ -1,5 +1,5 @@
 level :
 ../../res/files/level.txt
 
-
-
+score :
+../../res/files/score.txt

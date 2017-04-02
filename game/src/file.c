@@ -50,4 +50,18 @@ int readConfig(FILE * f, char * config, char * type)
 }
 
 
+int saveScore(FILE * f, int score)
+{
+    int savedScore;
+    fseek(f, 0, SEEK_SET);
+    fscanf(f, "%d", &savedScore);
+    if(savedScore < score){
+        fseek(f, 0, SEEK_SET);
+        fprintf(f, "%d", score);
+        return 1;
+    }
+    return 0;
+}
+
+
 
