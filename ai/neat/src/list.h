@@ -39,7 +39,7 @@ void setOnFirst(List * list);
 void setOn(List * list, int index);
 void next(List * list);
 
-void * getCurrentConnectionGene(List * list);
+void * getCurrent(List * list);
 
 int add(List * list, void * element);
 int delete(List * list, void * element);

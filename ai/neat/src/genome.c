@@ -529,20 +529,19 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   setOnFirst(genome->network);
   while (!outOfList(genome->network)) {
-      connection_gene_successors = ((Neuron *) genome->network->current)->connections;
-      setOnFirst(connection_gene_successors);
+      connection_gene_successors = ((Neuron *) genome->network->current->data)->connections;
 
       if (emptyList(connection_gene_successors))
-        fprintf(f, "\t%d;\n", ((Neuron *) genome->network->current)->id);
-
+        fprintf(f, "\t%d;\n", ((Neuron *) genome->network->current->data)->id);
       else {
-        current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
-
+        setOnFirst(connection_gene_successors);
         while (!outOfList(connection_gene_successors)) {
+          current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
+
           if (current_connection_gene->enabled)
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->network->current)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->network->current->data)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
           else
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->network->current)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->network->current->data)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
           next(connection_gene_successors);
         }
