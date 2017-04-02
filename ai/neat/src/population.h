@@ -45,7 +45,7 @@ struct MatingPool {
 MatingPool * newMatingPool();
 void freeMatingPool(MatingPool * pool);
 
-void populateMatingPool(MatingPool * pool);
+int populateMatingPool(MatingPool * pool);
 int addSpeciesToMatingPool(MatingPool * pool);
 
 int generateNewGeneration(MatingPool * pool);
@@ -53,7 +53,7 @@ int generateNewGeneration(MatingPool * pool);
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);
 
-int addGenomeToSpecies(Species * species);
+int addNewGenomeToSpecies(Species * species);
 
 void computeAverageFitness(Species * species);
 

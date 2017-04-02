@@ -119,6 +119,9 @@ void * getCurrent(List * list) {
 int add(List * list, void * element) {
   Node * new_node = NULL;
 
+  if (!element)
+    return 0;
+
   if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
     fprintf(stderr, "Error while allocating memory for new Node\n");
     return 0;

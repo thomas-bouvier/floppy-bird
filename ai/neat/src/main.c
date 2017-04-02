@@ -25,11 +25,16 @@ int main() {
   /* new level */
 
   for (i = 0; i < pool->nb_species; ++i) {
-    for (j = 0; j < pool->species[i].nb_genomes; ++j) {
-      generateGenome(&(pool->species[i].genomes[j]));
+
+    setOnFirst(pool->species[i].genomes);
+    while (!outOfList(pool->species[i].genomes)) {
+      generateGenome(getCurrent(pool->species[i].genomes));
+
+      next(pool->species[i].genomes);
     }
   }
 
+  /*
   printf("nb_neurons: %d\n", pool->species[0].genomes[0].nb_neurons);
   printf("nb_connection_genes: %d\n", pool->species[0].genomes[0].nb_connection_genes);
   printf("Adding 3 connection genes\n");
@@ -93,6 +98,7 @@ int main() {
   printf("nb_connection_genes: %d\n", pool->species[0].genomes[0].nb_connection_genes);
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
+  */
 
   freeMatingPool(pool);
 

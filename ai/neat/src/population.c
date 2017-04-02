@@ -37,15 +37,20 @@ void freeMatingPool(MatingPool * pool) {
 /*!
 * \brief Populate a MatingPool with new Genome elements
 * \param[out] pool the MatingPool to populate with new Genome elements
+* \return int Return 1 if the MatingPool was successfully filled, 0 otherwise
 */
-void populateMatingPool(MatingPool * pool) {
+int populateMatingPool(MatingPool * pool) {
   int i;
 
   if (pool->nb_species == 0)
-    addSpeciesToMatingPool(pool);
+    if (!addSpeciesToMatingPool(pool))
+      return 0;
 
   for (i = 0; i < POPULATION; ++i)
-    addGenomeToSpecies(&pool->species[0]);
+    if (!addNewGenomeToSpecies(&pool->species[0]))
+      return 0;
+
+  return 1;
 }
 
 /*!
@@ -70,6 +75,7 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   pool->species[pool->nb_species].id = pool->nb_species;
   pool->species[pool->nb_species].nb_genomes = 0;
   pool->species[pool->nb_species].max_fitness = 0.0;
+  pool->species[pool->nb_species].average_fitness = 0.0;
   pool->species[pool->nb_species].innovation = &pool->innovation;
 
   ++pool->nb_species;
@@ -144,18 +150,14 @@ void computeGlobalAverageFitness(MatingPool * pool) {
 * \param[out] pool the MatingPool where Genome elements are added
 * \return int 1 if the Genome was successfully added to the Species, 0 otherwise
 */
-int addGenomeToSpecies(Species * species) {
-  Genome * genome = NULL;
-
+int addNewGenomeToSpecies(Species * species) {
   if (species->nb_genomes == N_MAX_GENOMES) {
     fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
     return 0;
   }
 
-  if ((genome = newGenome(species->innovation)) == (Genome *) NULL)
+  if (!add(species->genomes, newGenome(species->innovation)))
     return 0;
-
-  add(species->genomes, genome);
 
   ++species->nb_genomes;
 
