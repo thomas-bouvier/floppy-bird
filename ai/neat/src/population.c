@@ -45,10 +45,8 @@ void freeMatingPool(MatingPool * pool) {
 void populateMatingPool(MatingPool * pool) {
   int i;
 
-  /*
   if (pool->nb_species == 0)
     addSpeciesToMatingPool(pool);
-  */
 
   for (i = 0; i < POPULATION; ++i)
     addGenomeToSpecies(&pool->species[0]);

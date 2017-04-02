@@ -52,12 +52,7 @@ void freeNeuron(void * neuron) {
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
 int addNeuronToNetwork(Network * network, Neuron * neuron) {
-  int nb_neurons;
-
-  if (network == NULL || neuron == NULL)
-    return 0;
-
-  nb_neurons = count(network);
+  int nb_neurons = nb_neurons = count(network);
   if (nb_neurons == N_MAX_NEURONS) {
     fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
     return 0;

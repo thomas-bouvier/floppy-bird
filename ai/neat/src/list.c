@@ -117,13 +117,22 @@ void * getCurrent(List * list) {
 * \return int 1 if the element was successfully inserted, 0 otherwise
 */
 int add(List * list, void * element) {
-  if (emptyList(list))
-    list->first->data = element;
-  else
-    list->last->next->data = element;
+  Node * new_node = NULL;
 
-  list->current->data = list->last->data = element;
-  list->current->next = NULL;
+  if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Node\n");
+    return 0;
+  }
+
+  new_node->data = element;
+
+  if (emptyList(list))
+    list->first = new_node;
+  else
+    list->last->next = new_node;
+
+  list->current = list->last = new_node;
+  new_node->next = NULL;
 
   return 1;
 }

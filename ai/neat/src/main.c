@@ -30,6 +30,7 @@ int main() {
     }
   }
 
+  /*
   printf("nb_neurons: %d\n", pool->species[0].genomes[0].nb_neurons);
   printf("nb_connection_genes: %d\n", pool->species[0].genomes[0].nb_connection_genes);
   printf("Adding 3 connection genes\n");
@@ -93,6 +94,7 @@ int main() {
   printf("nb_connection_genes: %d\n", pool->species[0].genomes[0].nb_connection_genes);
 
   writeGraphVizGenome(&(pool->species[0].genomes[0]), "graph.dot");
+  */
 
   freeMatingPool(pool);
 
