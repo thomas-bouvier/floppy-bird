@@ -45,8 +45,10 @@ void freeMatingPool(MatingPool * pool) {
 void populateMatingPool(MatingPool * pool) {
   int i;
 
+  /*
   if (pool->nb_species == 0)
     addSpeciesToMatingPool(pool);
+  */
 
   for (i = 0; i < POPULATION; ++i)
     addGenomeToSpecies(&pool->species[0]);
@@ -166,6 +168,22 @@ int addGenomeToSpecies(Species * species) {
   species->nb_genomes++;
 
   return 1;
+}
+
+int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
+  int i;
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    if (pool->species[i].nb_genomes > 0) {
+      if (sameSpecies(genome, pool->species[i].genomes[0])) {
+        addGenomeToSpecies();
+        return 1;
+      }
+    }
+  }
+
+  if (!addSpeciesToMatingPool(pool))
+    return 0;
 }
 
 /*!
