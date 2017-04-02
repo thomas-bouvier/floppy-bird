@@ -1,9 +1,9 @@
 #include "network.h"
 
 /*!
-* \brief Create a neuron
+* \brief Create a Neuron
 * \param[in] type The NeuronType of the Neuron to be created
-* \return Return a neuron, NULL if error
+* \return Return a new Neuron, or NULL if error
 */
 Neuron * newNeuron(NeuronType type) {
   Neuron * new_neuron = (Neuron *) malloc(sizeof(Neuron));

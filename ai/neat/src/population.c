@@ -27,13 +27,9 @@ MatingPool * newMatingPool() {
 */
 void freeMatingPool(MatingPool * pool) {
   int i;
-  int j;
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    for (j = 0; j < pool->species[i].nb_genomes; ++j) {
-      freeList(pool->species[i].genomes[j].network);
-    }
-  }
+  for (i = 0; i < pool->nb_species; ++i)
+    freeList(pool->species[i].genomes);
 
   free(pool);
 }
@@ -58,17 +54,25 @@ void populateMatingPool(MatingPool * pool) {
 * \return int 1 if the Species was successfully added to the MatingPool, 0 otherwise
 */
 int addSpeciesToMatingPool(MatingPool * pool) {
+  List * genomes = NULL;
+
   if (pool->nb_species == N_MAX_SPECIES) {
     fprintf(stderr, "Can't add new Species to MatingPool : reached limit (max=%d)\n", N_MAX_SPECIES);
     return 0;
   }
+
+  if ((genomes = newList(freeGenome)) == (List *) NULL)
+    return 0;
+
+  initList(genomes);
+  pool->species[pool->nb_species].genomes = genomes;
 
   pool->species[pool->nb_species].id = pool->nb_species;
   pool->species[pool->nb_species].nb_genomes = 0;
   pool->species[pool->nb_species].max_fitness = 0.0;
   pool->species[pool->nb_species].innovation = &pool->innovation;
 
-  pool->nb_species++;
+  ++pool->nb_species;
 
   return 1;
 }
@@ -100,9 +104,16 @@ void computeGlobalRanks(MatingPool * pool) {
 
   // we're storing the addresses of all genomes from all species in a single array
 
-  for (j = 0; j < pool->nb_species; ++j)
-    for (i = 0; i < pool->species[j].nb_genomes; ++i)
-      genomes[j * pool->nb_species + i] = &pool->species[j].genomes[i];
+  j = 0;
+  for (i = 0; i < pool->nb_species; ++i) {
+    setOnFirst(pool->species[i].genomes);
+    while (!outOfList(pool->species[i].genomes)) {
+      genomes[j * pool->nb_species + i] = getCurrent(pool->species[i].genomes);
+
+      ++j;
+      next(pool->species[i].genomes);
+    }
+  }
 
   // we're sorting the genomes from their fitness
 
@@ -134,36 +145,19 @@ void computeGlobalAverageFitness(MatingPool * pool) {
 * \return int 1 if the Genome was successfully added to the Species, 0 otherwise
 */
 int addGenomeToSpecies(Species * species) {
-  Network * network = NULL;
+  Genome * genome = NULL;
 
   if (species->nb_genomes == N_MAX_GENOMES) {
     fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
     return 0;
   }
 
-  network = newList(freeNeuron);
-
-  if (network == NULL)
+  if ((genome = newGenome(species->innovation)) == (Genome *) NULL)
     return 0;
 
-  initList(network);
+  add(species->genomes, genome);
 
-  species->genomes[species->nb_genomes].network = network;
-  species->genomes[species->nb_genomes].nb_neurons = 0;
-  species->genomes[species->nb_genomes].nb_connection_genes = 0;
-  species->genomes[species->nb_genomes].fitness = 0.0;
-
-  // initializing mutation rates
-
-  species->genomes[species->nb_genomes].mutation_rates[0] = POINT_MUTATION_RATE;
-  species->genomes[species->nb_genomes].mutation_rates[1] = LINK_MUTATION_RATE;
-  species->genomes[species->nb_genomes].mutation_rates[2] = NODE_MUTATION_RATE;
-  species->genomes[species->nb_genomes].mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
-
-  species->genomes[species->nb_genomes].global_rank = 0;
-  species->genomes[species->nb_genomes].innovation = species->innovation;
-
-  species->nb_genomes++;
+  ++species->nb_genomes;
 
   return 1;
 }
@@ -173,8 +167,8 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
   for (i = 0; i < pool->nb_species; ++i) {
     if (pool->species[i].nb_genomes > 0) {
-      if (sameSpecies(genome, &pool->species[i].genomes[0])) {
-        addGenomeToSpecies(&pool->species[i]);
+      if (sameSpecies(genome, (Genome *) pool->species[i].genomes->first->data)) {
+        //addGenomeToSpecies(&pool->species[i]);
         return 1;
       }
     }
@@ -191,11 +185,14 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 * \param[out] species The Species whose the average fitness has to be calculated
 */
 void computeAverageFitness(Species * species) {
-  int i;
   double sum = 0.0;
 
-  for (i = 0; i < species->nb_genomes; ++i)
-    sum += species->genomes[i].global_rank;
+  setOnFirst(species->genomes);
+  while (!outOfList(species->genomes)) {
+    sum += ((Genome *) species->genomes->current->data)->global_rank;
+
+    next(species->genomes);
+  }
 
   species->average_fitness = sum / species->nb_genomes;
 }
@@ -206,6 +203,6 @@ void computeAverageFitness(Species * species) {
 * \return Return a random Genome
 */
 Genome * getRandomGenome(Species * species) {
-  int count = species->nb_genomes;
-  return &species->genomes[count];
+  setOn(species->genomes, randomAtMost(species->nb_genomes));
+  return getCurrent(species->genomes);
 }

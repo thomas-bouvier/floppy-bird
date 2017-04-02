@@ -1,6 +1,50 @@
 #include "genome.h"
 
 /*!
+* \brief Create a Genome
+* \return Return a new Genome, or NULL if error
+*/
+Genome * newGenome(int * innovation) {
+  Network * network = NULL;
+  Genome * new_genome = malloc(sizeof(Genome));
+
+  if (new_genome == (Genome * ) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Genome\n");
+    return NULL;
+  }
+
+  if ((network = malloc(sizeof(Network))) == (Network *) NULL)
+    return NULL;
+
+  initList(network);
+
+  new_genome->network = network;
+  new_genome->nb_neurons = 0;
+  new_genome->nb_connection_genes = 0;
+  new_genome->fitness = 0.0;
+
+  // initializing mutation rates
+
+  new_genome->mutation_rates[0] = POINT_MUTATION_RATE;
+  new_genome->mutation_rates[1] = LINK_MUTATION_RATE;
+  new_genome->mutation_rates[2] = NODE_MUTATION_RATE;
+  new_genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+
+  new_genome->global_rank = 0;
+  new_genome->innovation = innovation;
+
+  return new_genome;
+}
+
+/*!
+* \brief Free the given Genome
+*/
+void freeGenome(void * genome) {
+  freeList(((Genome *) genome)->network);
+  free(genome);
+}
+
+/*!
 * \brief Generate a Genome by creating its network elements
 * \param[out] genome the Genome to generate
 * \return int Return 1 if the Genome was successfully generated, 0 otherwise

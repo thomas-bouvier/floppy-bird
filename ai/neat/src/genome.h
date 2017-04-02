@@ -27,6 +27,9 @@ typedef struct {
   int * innovation;           /*!< the address of the innovation number of the MatingPool containing this Genome */
 } Genome;
 
+Genome * newGenome(int * innovation);
+void freeGenome(void * genome);
+
 int generateGenome(Genome * genome);
 int addNeuronToGenome(Genome * genome, Neuron * neuron);
 int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene);
