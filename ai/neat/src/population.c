@@ -31,7 +31,7 @@ void freeMatingPool(MatingPool * pool) {
 
   for (i = 0; i < pool->nb_species; ++i) {
     for (j = 0; j < pool->species[i].nb_genomes; ++j) {
-      freeNeuronList(pool->species[i].genomes[j].network);
+      freeList(pool->species[i].genomes[j].network);
     }
   }
 
@@ -143,12 +143,12 @@ int addGenomeToSpecies(Species * species) {
     return 0;
   }
 
-  network = newNeuronList();
+  network = newList(freeNeuron);
 
   if (network == NULL)
     return 0;
 
-  initNeuronList(network);
+  initList(network);
 
   species->genomes[species->nb_genomes].network = network;
   species->genomes[species->nb_genomes].nb_neurons = 0;
@@ -175,8 +175,8 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
   for (i = 0; i < pool->nb_species; ++i) {
     if (pool->species[i].nb_genomes > 0) {
-      if (sameSpecies(genome, pool->species[i].genomes[0])) {
-        addGenomeToSpecies();
+      if (sameSpecies(genome, &pool->species[i].genomes[0])) {
+        addGenomeToSpecies(&pool->species[i]);
         return 1;
       }
     }
@@ -184,6 +184,8 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
   if (!addSpeciesToMatingPool(pool))
     return 0;
+
+  return 1;
 }
 
 /*!

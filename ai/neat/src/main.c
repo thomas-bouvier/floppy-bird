@@ -53,21 +53,21 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], pool->species[0].genomes[0].network->first, pool->species[0].genomes[0].network->last, connection_gene_1)) {
+  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], pool->species[0].genomes[0].network->first->data, pool->species[0].genomes[0].network->last->data, connection_gene_1)) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
 
-  setOnNeuron(pool->species[0].genomes[0].network, 2);
+  setOn(pool->species[0].genomes[0].network, 2);
 
-  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], getCurrentNeuron(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last, connection_gene_2)) {
+  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], (Neuron *) getCurrent(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last->data, connection_gene_2)) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
 
-  setOnNeuron(pool->species[0].genomes[0].network, 3);
+  setOn(pool->species[0].genomes[0].network, 3);
 
-  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], getCurrentNeuron(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last, connection_gene_3)) {
+  if (!addConnectionGeneToGenome(&pool->species[0].genomes[0], (Neuron *) getCurrent(pool->species[0].genomes[0].network), pool->species[0].genomes[0].network->last->data, connection_gene_3)) {
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }

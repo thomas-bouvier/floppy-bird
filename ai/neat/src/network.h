@@ -9,18 +9,13 @@
 #include <stdio.h>
 
 #include "conf.h"
-#include "neuronList.h"
-#include "connectionGeneList.h"
+#include "list.h"
 
 typedef struct ConnectionGene ConnectionGene;
-
-typedef struct ConnectionGeneList ConnectionGeneList;
 
 typedef enum NeuronType NeuronType;
 
 typedef struct Neuron Neuron;
-
-typedef struct NeuronList NeuronList;
 
 /*!
 * \struct ConnectionGene network.h
@@ -33,16 +28,6 @@ struct ConnectionGene {
   Neuron * neuron_in;               /*!< the predecessor Neuron */
   Neuron * neuron_out;              /*!< the successor Neuron */
   int innovation;                   /*!< the innovation number of the Genome containing this ConnectionGene */
-};
-
-/*!
-* \struct ConnectionGeneList network.h
-* \brief A ConnectionGeneList is a conatiner for ConnectionGene elements.
-*/
-struct ConnectionGeneList {
-  ConnectionGene * first;     /*<! the address of the first ConnectionGene of the list */
-  ConnectionGene * current;   /*<! the address of the current ConnectionGene in the list */
-  ConnectionGene * last;      /*<! the address of the last ConnectionGene of the list */
 };
 
 /*!
@@ -62,7 +47,7 @@ enum NeuronType {
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
 struct Neuron {
-  ConnectionGeneList * connections;   /*!< the successors ConnectionGene linked to this Neuron */
+  List * connections;                 /*!< the successors ConnectionGene linked to this Neuron */
   struct Neuron * next;               /*!< the address of the next Neuron in the list */
   short int id;                       /*!< the id of this Neuron */
   NeuronType type;                    /*!< the type of this Neuron */
@@ -70,28 +55,18 @@ struct Neuron {
 };
 
 /*!
-* \struct NeuronList network.h
-* \brief A NeuronList is a container for Neuron elements.
+* \brief The Network type is actually a neuron List.
 */
-struct NeuronList {
-  Neuron * first;       /*<! the address of the first Neuron of the list */
-  Neuron * current;     /*<! the address of the current Neuron in the list */
-  Neuron * last;        /*<! the address of the last Neuron of the list */
-};
-
-/*!
-* \brief The Network type is actually a NeuronList.
-*/
-typedef NeuronList Network;
+typedef List Network;
 
 Neuron * newNeuron(NeuronType type);
-void freeNeuron(Neuron * neuron);
+void freeNeuron(void * neuron);
 
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);
 ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene);
-void freeConnectionGene(ConnectionGene * connection_gene);
+void freeConnectionGene(void * connection_gene);
 
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene);
 

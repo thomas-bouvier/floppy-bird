@@ -1,4 +1,4 @@
-SUBDIRS := src tests
+SUBDIRS := src
 
 -include def.mk
 

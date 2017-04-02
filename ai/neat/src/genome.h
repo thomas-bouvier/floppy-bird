@@ -11,8 +11,6 @@
 #include <float.h>
 
 #include "network.h"
-#include "neuronList.h"
-#include "connectionGeneList.h"
 #include "utils.h"
 
 /*!

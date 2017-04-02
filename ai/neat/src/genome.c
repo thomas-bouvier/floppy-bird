@@ -136,18 +136,18 @@ int mutatePoint(Genome * genome) {
   Neuron * current_neuron = NULL;
   ConnectionGene * current_connection_gene = NULL;
 
-  setOnFirstNeuron(genome->network);
-  while (!outOfNeuronList(genome->network)) {
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
 
-    current_neuron = getCurrentNeuron(genome->network);
+    current_neuron = (Neuron *) getCurrent(genome->network);
 
     if (current_neuron == NULL)
       return 0;
 
-    setOnFirstConnectionGene(current_neuron->connections);
-    while (!outOfConnectionGeneList(current_neuron->connections)) {
+    setOnFirst(current_neuron->connections);
+    while (!outOfList(current_neuron->connections)) {
 
-      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+      current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connections);
 
       if (current_connection_gene == NULL)
         return 0;
@@ -157,10 +157,10 @@ int mutatePoint(Genome * genome) {
       else
         current_connection_gene->weight = 4.0 * random01() - 2.0;
 
-      nextConnectionGene(current_neuron->connections);
+      next(current_neuron->connections);
     }
 
-    nextNeuron(genome->network);
+    next(genome->network);
   }
 
   return 1;
@@ -176,7 +176,7 @@ int mutateLink(Genome * genome) {
   Neuron * neuron_2 = NULL;
   ConnectionGene * connection_gene = NULL;
 
-  if (countNeurons(genome->network) <= 1)
+  if (count(genome->network) <= 1)
     return 1;
 
   neuron_1 = getRandomNeuron(genome);
@@ -223,18 +223,18 @@ int mutateNode(Genome * genome) {
   ConnectionGene * new_connection_gene_1 = NULL;
   ConnectionGene * new_connection_gene_2 = NULL;
 
-  setOnFirstNeuron(genome->network);
-  while (!outOfNeuronList(genome->network)) {
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
 
-    current_neuron = getCurrentNeuron(genome->network);
+    current_neuron = (Neuron *) getCurrent(genome->network);
 
     if (current_neuron == NULL)
       return 0;
 
-    setOnFirstConnectionGene(current_neuron->connections);
-    while (!outOfConnectionGeneList(current_neuron->connections)) {
+    setOnFirst(current_neuron->connections);
+    while (!outOfList(current_neuron->connections)) {
 
-      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+      current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connections);
 
       if (current_connection_gene == NULL)
         return 0;
@@ -242,10 +242,10 @@ int mutateNode(Genome * genome) {
       candidates[i] = current_connection_gene;
       ++i;
 
-      nextConnectionGene(current_neuron->connections);
+      next(current_neuron->connections);
     }
 
-    nextNeuron(genome->network);
+    next(genome->network);
   }
 
   if (i == 0)
@@ -299,18 +299,18 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
   ConnectionGene * current_connection_gene = NULL;
   ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
 
-  setOnFirstNeuron(genome->network);
-  while (!outOfNeuronList(genome->network)) {
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
 
-    current_neuron = getCurrentNeuron(genome->network);
+    current_neuron = (Neuron *) getCurrent(genome->network);
 
     if (current_neuron == NULL)
       return 0;
 
-    setOnFirstConnectionGene(current_neuron->connections);
-    while (!outOfConnectionGeneList(current_neuron->connections)) {
+    setOnFirst(current_neuron->connections);
+    while (!outOfList(current_neuron->connections)) {
 
-      current_connection_gene = getCurrentConnectionGene(current_neuron->connections);
+      current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connections);
 
       if (current_connection_gene == NULL)
         return 0;
@@ -320,10 +320,10 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
         ++i;
       }
 
-      nextConnectionGene(current_neuron->connections);
+      next(current_neuron->connections);
     }
 
-    nextNeuron(genome->network);
+    next(genome->network);
   }
 
   if (i == 0)
@@ -355,33 +355,33 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
 
   // first connection gene
 
-  setOnFirstNeuron(genome_1->network);
-  while (!outOfNeuronList(genome_1->network)) {
+  setOnFirst(genome_1->network);
+  while (!outOfList(genome_1->network)) {
 
-    current_neuron_1 = getCurrentNeuron(genome_1->network);
+    current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
     if (current_neuron_1 == NULL)
       return -DBL_MAX;
 
-    setOnFirstConnectionGene(current_neuron_1->connections);
-    while (!outOfConnectionGeneList(current_neuron_1->connections)) {
+    setOnFirst(current_neuron_1->connections);
+    while (!outOfList(current_neuron_1->connections)) {
 
-      current_connection_gene_1 = getCurrentConnectionGene(current_neuron_1->connections);
+      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connections);
       if (current_connection_gene_1 == NULL)
         return -DBL_MAX;
 
       // second connection gene
 
-      setOnFirstNeuron(genome_2->network);
-      while (!outOfNeuronList(genome_2->network)) {
+      setOnFirst(genome_2->network);
+      while (!outOfList(genome_2->network)) {
 
-        current_neuron_2 = getCurrentNeuron(genome_2->network);
+        current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
         if (current_neuron_2 == NULL)
           return -DBL_MAX;
 
-        setOnFirstConnectionGene(current_neuron_2->connections);
-        while (!outOfConnectionGeneList(current_neuron_2->connections)) {
+        setOnFirst(current_neuron_2->connections);
+        while (!outOfList(current_neuron_2->connections)) {
 
-          current_connection_gene_2 = getCurrentConnectionGene(current_neuron_2->connections);
+          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
           if (current_connection_gene_2 == NULL)
             return -DBL_MAX;
 
@@ -392,16 +392,16 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
             ++sameInnovation;
           }
 
-          nextConnectionGene(current_neuron_2->connections);
+          next(current_neuron_2->connections);
         }
 
-        nextNeuron(genome_2->network);
+        next(genome_2->network);
       }
 
-      nextConnectionGene(current_neuron_1->connections);
+      next(current_neuron_1->connections);
     }
 
-    nextNeuron(genome_1->network);
+    next(genome_1->network);
   }
 
   return sum / sameInnovation;
@@ -418,33 +418,33 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
 
   // first connection gene
 
-  setOnFirstNeuron(genome_1->network);
-  while (!outOfNeuronList(genome_1->network)) {
+  setOnFirst(genome_1->network);
+  while (!outOfList(genome_1->network)) {
 
-    current_neuron_1 = getCurrentNeuron(genome_1->network);
+    current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
     if (current_neuron_1 == NULL)
       return -DBL_MAX;
 
-    setOnFirstConnectionGene(current_neuron_1->connections);
-    while (!outOfConnectionGeneList(current_neuron_1->connections)) {
+    setOnFirst(current_neuron_1->connections);
+    while (!outOfList(current_neuron_1->connections)) {
 
-      current_connection_gene_1 = getCurrentConnectionGene(current_neuron_1->connections);
+      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connections);
       if (current_connection_gene_1 == NULL)
         return -DBL_MAX;
 
       // second connection gene
 
-      setOnFirstNeuron(genome_2->network);
-      while (!outOfNeuronList(genome_2->network)) {
+      setOnFirst(genome_2->network);
+      while (!outOfList(genome_2->network)) {
 
-        current_neuron_2 = getCurrentNeuron(genome_2->network);
+        current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
         if (current_neuron_2 == NULL)
           return -DBL_MAX;
 
-        setOnFirstConnectionGene(current_neuron_2->connections);
-        while (!outOfConnectionGeneList(current_neuron_2->connections)) {
+        setOnFirst(current_neuron_2->connections);
+        while (!outOfList(current_neuron_2->connections)) {
 
-          current_connection_gene_2 = getCurrentConnectionGene(current_neuron_2->connections);
+          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
           if (current_connection_gene_2 == NULL)
             return -DBL_MAX;
 
@@ -453,16 +453,16 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
           if (current_connection_gene_1->innovation == current_connection_gene_2->innovation)
             ++disjoint_count;
 
-          nextConnectionGene(current_neuron_2->connections);
+          next(current_neuron_2->connections);
         }
 
-        nextNeuron(genome_2->network);
+        next(genome_2->network);
       }
 
-      nextConnectionGene(current_neuron_1->connections);
+      next(current_neuron_1->connections);
     }
 
-    nextNeuron(genome_1->network);
+    next(genome_1->network);
   }
 
   return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
@@ -485,12 +485,12 @@ int sameSpecies(Genome * genome_1, Genome * genome_2) {
 * \return int 1 if the two Neuron elements are linked, 0 otherwise
 */
 int linked(Neuron * neuron_in, Neuron * neuron_out) {
-  setOnFirstConnectionGene(neuron_in->connections);
-  while (!outOfConnectionGeneList(neuron_in->connections)) {
-    if (getCurrentConnectionGene(neuron_in->connections)->neuron_out == neuron_out)
+  setOnFirst(neuron_in->connections);
+  while (!outOfList(neuron_in->connections)) {
+    if (((ConnectionGene *) getCurrent(neuron_in->connections))->neuron_out == neuron_out)
       return 1;
 
-    nextConnectionGene(neuron_in->connections);
+    next(neuron_in->connections);
   }
 
   return 0;
@@ -502,8 +502,8 @@ int linked(Neuron * neuron_in, Neuron * neuron_out) {
 * \return Return a random Neuron
 */
 Neuron * getRandomNeuron(Genome * genome) {
-  setOnNeuron(genome->network, randomAtMost(countNeurons(genome->network) - 1));
-  return getCurrentNeuron(genome->network);
+  setOn(genome->network, randomAtMost(count(genome->network) - 1));
+  return ((Neuron *) getCurrent(genome->network));
 }
 
 /*!
@@ -514,7 +514,7 @@ Neuron * getRandomNeuron(Genome * genome) {
 */
 int writeGraphVizGenome(Genome * genome, char * filename) {
   FILE * f = NULL;
-  ConnectionGeneList * connection_gene_successors = NULL;
+  List * connection_gene_successors = NULL;
   Neuron * current_neuron = NULL;
   ConnectionGene * current_connection_gene = NULL;
 
@@ -527,35 +527,35 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
   // links
 
-  setOnFirstNeuron(genome->network);
-  while (!outOfNeuronList(genome->network)) {
-      connection_gene_successors = genome->network->current->connections;
-      setOnFirstConnectionGene(connection_gene_successors);
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
+      connection_gene_successors = ((Neuron *) genome->network->current)->connections;
+      setOnFirst(connection_gene_successors);
 
-      if (emptyConnectionGeneList(connection_gene_successors))
-        fprintf(f, "\t%d;\n", genome->network->current->id);
+      if (emptyList(connection_gene_successors))
+        fprintf(f, "\t%d;\n", ((Neuron *) genome->network->current)->id);
 
       else {
-        current_connection_gene = connection_gene_successors->current;
+        current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
 
-        while (!outOfConnectionGeneList(connection_gene_successors)) {
+        while (!outOfList(connection_gene_successors)) {
           if (current_connection_gene->enabled)
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", genome->network->current->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->network->current)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
           else
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", genome->network->current->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->network->current)->id, current_connection_gene->neuron_out->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
-          nextConnectionGene(connection_gene_successors);
+          next(connection_gene_successors);
         }
       }
 
-      nextNeuron(genome->network);
+      next(genome->network);
   }
 
   // nodes
 
-  setOnFirstNeuron(genome->network);
-  while(!outOfNeuronList(genome->network)) {
-    current_neuron = genome->network->current;
+  setOnFirst(genome->network);
+  while(!outOfList(genome->network)) {
+    current_neuron = (Neuron *) genome->network->current->data;
 
     if (current_neuron->type == INPUT)
       fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
@@ -572,7 +572,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
     else
       fprintf(f, "\t%d [shape=circle];\n", current_neuron->id);
 
-    nextNeuron(genome->network);
+    next(genome->network);
   }
 
   fprintf(f, "}");

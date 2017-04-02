@@ -6,7 +6,7 @@
 #include <cmocka.h>
 
 #include "../src/network.h"
-#include "../src/neuronList.h"
+#include "../src/list.h"
 
 /* initNeuronList */
 
