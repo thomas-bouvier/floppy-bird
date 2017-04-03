@@ -56,7 +56,7 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 * \param[in] l the list of obstacle
 * \param[in] camera the view of the scene
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, FILE * config)
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font)
 {
     int i = 0;
     setOnFirst(l);
@@ -71,7 +71,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
-    displayScore(renderer, score, config);
+    displayScore(renderer, score, font);
     SDL_RenderPresent(renderer);
 }
 
@@ -88,24 +88,16 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
     SDL_Quit();
 }
 
-
-int displayScore(SDL_Renderer * renderer, int score, FILE * config)
+/*!
+* \brief Display the current score on screen
+* \param[out] renderer the drawing target
+* \param[in] score the current score to be displayed
+* \param[in] config the configuration file to be read in order to have the path of the font
+*/
+int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 {
 	char scoreString[10];
-	char fontPath[100];
-	if (readConfig(config, fontPath, "font :\n"))
-    {
-        if (fontPath[strlen(fontPath)-1] == '\n')
-            fontPath[strlen(fontPath)-1] = '\0';
-    }
-	sprintf(scoreString, "%d", score);
-	TTF_Font * font = NULL;
-    font = TTF_OpenFont(fontPath, 70);
-    if(font == NULL)
-    {
-    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
-    	return 0;
-    }    
+	sprintf(scoreString, "%d", score);   
     SDL_Color color = {0, 0, 0};
 	SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, scoreString, color);
 	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);

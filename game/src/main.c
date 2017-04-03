@@ -106,13 +106,28 @@ int main(int argc, char ** argv)
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+   
+   	/* Open a font for text */ 
+   	TTF_Font * font = NULL;
+   	char fontPath[100];
+	if (readConfig(config, fontPath, "font :\n"))
+    {
+        if (fontPath[strlen(fontPath)-1] == '\n')
+            fontPath[strlen(fontPath)-1] = '\0';
+    }
+	font = TTF_OpenFont(fontPath, 70);
+    if(font == NULL)
+    {
+    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
+    	return 0;
+    } 
 
     while(running)
     {
     	score = 0;
         startGame(&bird, &camera, &l, level);
         savedObstacle = nextBirdObstacle(&l, &bird);
-        displayGame(renderer, &bird, &l, &camera, score, config);
+        displayGame(renderer, &bird, &l, &camera, score, font);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
@@ -143,7 +158,7 @@ int main(int argc, char ** argv)
                     running = (waiting() != QUIT);
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                displayGame(renderer, &bird, &l, &camera, score, config);
+                displayGame(renderer, &bird, &l, &camera, score, font);
                 last_frame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);
