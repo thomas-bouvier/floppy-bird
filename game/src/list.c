@@ -13,8 +13,20 @@ void initList(List * l, FILE * level){
     int  i;
     l->nbObstacles = 0;
 	l->first = l->current = l->last = NULL;
+	printf("init");
 	for (i=0 ; i<OBSTACLE_NUMBER ; ++i)
-        createObstacleFromFile(level, i, l);
+    {
+        if(LEVEL_FROM_FILE)
+            createObstacleFromFile(level, i, l);
+        else
+        {
+            int heightPipe = rand() % (500 - 100 + 1) + 100;
+            printf("%d \n", heightPipe);
+            Obstacle * newObs = newObstacle(i, heightPipe, OBSTACLE_GAP, NULL);
+            insertLast(l, newObs);
+        }
+    }
+
 }
 
 /*!
