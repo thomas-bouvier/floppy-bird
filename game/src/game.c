@@ -41,8 +41,19 @@ int createObstacle(Camera * camera, List * l, FILE * level, int number)
 {
     if ((camera->x + SCREEN_WIDTH >= l->first->lower.x) && (l->nbObstacles < OBSTACLE_NUMBER))
     {
-        createObstacleFromFile(level, number, l);
-        return 1;
+        if(LEVEL_FROM_FILE)
+        {
+            createObstacleFromFile(level, number, l);
+            return 1;
+        }
+        else
+        {
+            int heightPipe = rand() % (500 - 100 + 1) + 100;
+            printf("%d \n", heightPipe);
+            Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
+            insertLast(l, newObs);
+            return 1;
+        }
     }
     return 0;
 }

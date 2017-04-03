@@ -24,36 +24,41 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    FILE * level = NULL;
+
     int score;
     Obstacle * savedObstacle = NULL;
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
     FILE * config = NULL;
-    if (argc == 1)
-        config = fopen("conf/config.txt", "r");
-    else
-        config = fopen(argv[1], "r");
-    if(config == NULL)
-    {
-        fprintf(stderr,"Opening configuration file failure\n");
-        return EXIT_FAILURE;
-    }
 
-    /* Open the file that contains the save of the level */
-    FILE * level = NULL;
-    char * levelPath = malloc(sizeof(char)*100);
-    if (readConfig(config, levelPath, "level :\n"))
-    {
-        if (levelPath[strlen(levelPath)-1] == '\n')
-            levelPath[strlen(levelPath)-1] = '\0';
-        level = fopen(levelPath, "r");
-    }
-    if(level == NULL)
-    {
-        fprintf(stderr,"Opening level file failure :\n");
-        printf("%s\n", levelPath);
-        return EXIT_FAILURE;
+        if (argc == 1)
+            config = fopen("conf/config.txt", "r");
+        else
+            config = fopen(argv[1], "r");
+        if(config == NULL)
+        {
+            fprintf(stderr,"Opening configuration file failure\n");
+            return EXIT_FAILURE;
+        }
+
+        /* Open the file that contains the save of the level */
+        if(LEVEL_FROM_FILE)
+        {
+        char * levelPath = malloc(sizeof(char)*100);
+        if (readConfig(config, levelPath, "level :\n"))
+        {
+            if (levelPath[strlen(levelPath)-1] == '\n')
+                levelPath[strlen(levelPath)-1] = '\0';
+            level = fopen(levelPath, "r");
+        }
+        if(level == NULL)
+        {
+            fprintf(stderr,"Opening level file failure :\n");
+            printf("%s\n", levelPath);
+            return EXIT_FAILURE;
+        }
     }
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
