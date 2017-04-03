@@ -45,7 +45,8 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     int sommeX = 0, sommeY = 0;
     *nbPixels = 0;
 	
-	CvRect roi = cvRect(100,10,100,image->height-20);
+	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
+	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->height-20);
 	
     // Create the mask &initialize it to white (no color detected)
     mask = cvCreateImage(cvGetSize(image), image->depth, 1);
@@ -66,8 +67,6 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     cvDilate(mask, mask, kernel, 2);
     cvErode(mask, mask, kernel, 2);  
     cvSetImageROI(mask,roi);
-	//printf("width : %d\nheight : %d\nxoffset : %d\nyoffset : %d\n",mask->roi->width,mask->roi->height,mask->roi->xOffset,mask->roi->yOffset);
-	//cvResetImageROI(mask);
 	
     // We go through the mask to look for the tracked object and get its gravity center
     for(x = mask->roi->xOffset; x < mask->roi->width + mask->roi->xOffset; x++) {
