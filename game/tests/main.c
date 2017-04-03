@@ -102,6 +102,8 @@ static int teardown_updateBird(void ** state) {
   return 0;
 }
 
+/* initCamera */
+
 /* newObstacle */
 
 static int setup_newObstacle(void ** state) {
