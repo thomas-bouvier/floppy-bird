@@ -171,6 +171,12 @@ static void test_readLevel(void ** state) {
   assert_int_equal(readLevel(file, 9), 209);
 }
 
+static void test_readLevelOut(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(readLevel(file, 150), 209);
+}
+
 static int teardown_readLevel(void ** state) {
   fclose(*state);
   return remove("test_readLevel.txt");
@@ -239,6 +245,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
 
     cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
+    cmocka_unit_test_setup_teardown(test_readLevelOut, setup_readLevel, teardown_readLevel),
 
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
