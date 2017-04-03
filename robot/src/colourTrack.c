@@ -194,10 +194,9 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
 	
 	if(point1saved == 1 && event == CV_EVENT_MOUSEMOVE){
-		CvRect selectingArea = cvRect(point1.x,point1.y,x-point1.x,y-point1.y);
+		CvRect selectingArea = cvRect(min(x,point1.x),min(y,point1.y),abs(x-point1.x),abs(y-point1.y));
 		cvRectangleR(image,selectingArea,cvScalar(0,0,255,0),1,8,0);
 		cvShowImage("WorkingSpaceDefinition", image);
-		printf("printing rect\n");
 	}
 	
 	if(event == CV_EVENT_LBUTTONUP){
@@ -206,7 +205,7 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 			point2.x = x;
 			point2.y = y;
 			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
-			workingSpace = cvRect(point1.x,point1.y,point2.x-point1.x,point2.y-point1.y);
+			workingSpace = cvRect(min(point1.x,point2.x),min(point1.y,point2.y),abs(point2.x-point1.x),abs(point2.y-point1.y));
 			workSpaceDefined = 1;
 		} else {
 			point1.x = x;
@@ -252,10 +251,16 @@ int main(int argc, char *argv[]){
 	cvMoveWindow("WorkingSpaceDefinition", 0, 100);
 	cvSetMouseCallback("WorkingSpaceDefinition", getCurrentPointCoordinates, NULL);
 	printf("Definitoin of the working space \n");
-	while(workSpaceDefined == 0) {
+	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
 		image = raspiCamCvQueryFrame(capture);
-		cvShowImage("WorkingSpaceDefinition", image);		// wait for the definition of the workspace
-		cvWaitKey(10);
+		if(!point1saved) 
+			cvShowImage("WorkingSpaceDefinition", image);		
+		char keyPressed = cvWaitKey(30);
+		switch (keyPressed){
+			case 27:		//ESC
+				point1saved = 0;
+				break;
+		}
 	}
 	printf("Working space defined\n");
 	cvDestroyWindow("WorkingSpaceDefinition");
