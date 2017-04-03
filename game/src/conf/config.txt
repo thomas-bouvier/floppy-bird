@@ -1,5 +1,8 @@
 level :
-../../res/files/level.txt
+../res/files/level.txt
 
 score :
-../../res/files/score.txt
+../res/files/score.txt
+
+font :
+../res/fonts/DejaVuSans.ttf

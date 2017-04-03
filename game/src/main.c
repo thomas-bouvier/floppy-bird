@@ -81,6 +81,13 @@ int main(int argc, char ** argv)
         return 0;
     }
 
+	/* SDL_TTF initialization */
+    if (TTF_Init() != 0)
+    {
+        fprintf(stderr, "SDL_TTF initialization failure\n");
+        return 0;
+    }
+
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -102,9 +109,10 @@ int main(int argc, char ** argv)
 
     while(running)
     {
+    	score = 0;
         startGame(&bird, &camera, &l, level);
         savedObstacle = nextBirdObstacle(&l, &bird);
-        displayGame(renderer, &bird, &l, &camera);
+        displayGame(renderer, &bird, &l, &camera, score, config);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
@@ -120,7 +128,6 @@ int main(int argc, char ** argv)
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
-        score = 0;
         hit = 0;
         last_frame = SDL_GetTicks();
 
@@ -136,7 +143,7 @@ int main(int argc, char ** argv)
                     running = (waiting() != QUIT);
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                displayGame(renderer, &bird, &l, &camera);
+                displayGame(renderer, &bird, &l, &camera, score, config);
                 last_frame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);

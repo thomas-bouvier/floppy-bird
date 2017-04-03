@@ -56,7 +56,7 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 * \param[in] l the list of obstacle
 * \param[in] camera the view of the scene
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera)
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, FILE * config)
 {
     int i = 0;
     setOnFirst(l);
@@ -71,6 +71,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
+    displayScore(renderer, score, config);
     SDL_RenderPresent(renderer);
 }
 
@@ -83,5 +84,33 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
     SDL_Quit();
+}
+
+
+int displayScore(SDL_Renderer * renderer, int score, FILE * config)
+{
+	char scoreString[10];
+	char fontPath[100];
+	if (readConfig(config, fontPath, "font :\n"))
+    {
+        if (fontPath[strlen(fontPath)-1] == '\n')
+            fontPath[strlen(fontPath)-1] = '\0';
+    }
+	sprintf(scoreString, "%d", score);
+	TTF_Font * font = NULL;
+    font = TTF_OpenFont(fontPath, 70);
+    if(font == NULL)
+    {
+    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
+    	return 0;
+    }    
+    SDL_Color color = {0, 0, 0};
+	SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, scoreString, color);
+	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+	SDL_Rect dest = {30, 30, scoreSurface->w, scoreSurface->h};
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
+	SDL_FreeSurface(scoreSurface);
+	return 1;	
 }
