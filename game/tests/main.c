@@ -140,16 +140,16 @@ static int setup_readLevel(void ** state) {
   if (file == (FILE *) NULL)
     return -1;
 
-  fputs("200,\n", file);
-  fputs("201,\n", file);
-  fputs("202,\n", file);
-  fputs("203,\n", file);
-  fputs("204,\n", file);
-  fputs("205,\n", file);
-  fputs("206,\n", file);
-  fputs("207,\n", file);
-  fputs("208,\n", file);
-  fputs("209,\n", file);
+  fputs("200\n", file);
+  fputs("201\n", file);
+  fputs("202\n", file);
+  fputs("203\n", file);
+  fputs("204\n", file);
+  fputs("205\n", file);
+  fputs("206\n", file);
+  fputs("207\n", file);
+  fputs("208\n", file);
+  fputs("209\n", file);
 
   *state = file;
 
