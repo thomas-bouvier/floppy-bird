@@ -1,5 +1,9 @@
 Floppy_Bird/
+<<<<<<< HEAD
 html/
+=======
+*.dot
+>>>>>>> q_learning
 
 .DS_Store
 Thumbs.db
