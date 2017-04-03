@@ -132,6 +132,50 @@ static int teardown_initCamera(void ** state) {
   return 0;
 }
 
+/* readLevel */
+
+static int setup_readLevel(void ** state) {
+  FILE * file = fopen("test_readLevel.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  fputs("200,\n", file);
+  fputs("201,\n", file);
+  fputs("202,\n", file);
+  fputs("203,\n", file);
+  fputs("204,\n", file);
+  fputs("205,\n", file);
+  fputs("206,\n", file);
+  fputs("207,\n", file);
+  fputs("208,\n", file);
+  fputs("209,\n", file);
+
+  *state = file;
+
+  return 0;
+}
+
+static void test_readLevel(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(readLevel(file, 0), 200);
+  assert_int_equal(readLevel(file, 1), 201);
+  assert_int_equal(readLevel(file, 2), 202);
+  assert_int_equal(readLevel(file, 3), 203);
+  assert_int_equal(readLevel(file, 4), 204);
+  assert_int_equal(readLevel(file, 5), 205);
+  assert_int_equal(readLevel(file, 6), 206);
+  assert_int_equal(readLevel(file, 7), 207);
+  assert_int_equal(readLevel(file, 8), 208);
+  assert_int_equal(readLevel(file, 9), 209);
+}
+
+static int teardown_readLevel(void ** state) {
+  fclose(*state);
+  return remove("test_readLevel.txt");
+}
+
 /* newObstacle */
 
 static int setup_newObstacle(void ** state) {
@@ -193,6 +237,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
 
     cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
+
+    cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
 
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
