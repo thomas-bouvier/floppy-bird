@@ -7,6 +7,7 @@
 
 #include "../src/constants.h"
 #include "../src/bird.h"
+#include "../src/camera.h"
 #include "../src/obstacle.h"
 
 /* initBird */
@@ -104,6 +105,33 @@ static int teardown_updateBird(void ** state) {
 
 /* initCamera */
 
+static int setup_initCamera(void ** state) {
+  Camera * camera = malloc(sizeof(Camera));
+
+  if (camera == (Camera *) NULL)
+    return -1;
+
+  *state = camera;
+
+  return 0;
+}
+
+static void test_initCamera(void ** state) {
+  Camera * camera = (Camera *) (* state);
+  initCamera(camera, 0, 15000);
+
+  assert_int_equal(camera->x, 0);
+  assert_int_equal(camera->y, 0);
+  assert_int_equal(camera->w, SCREEN_WIDTH);
+  assert_int_equal(camera->h, SCREEN_HEIGHT);
+  assert_int_equal(camera->speed, 15000);
+}
+
+static int teardown_initCamera(void ** state) {
+  free(*state);
+  return 0;
+}
+
 /* newObstacle */
 
 static int setup_newObstacle(void ** state) {
@@ -163,6 +191,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
+
+    cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
 
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
