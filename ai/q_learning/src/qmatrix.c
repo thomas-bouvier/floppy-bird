@@ -19,8 +19,8 @@ void show_matrixQ(MatrixQ * matrixQ)
 {
 	clearScreen();
 	int i;
-	printf("	| Action 0	| Action 1\n");
-	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %d		| %d	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
+	printf("	| Action 0		| Action 1\n");
+	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %f		| %f	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
 }
 
 /*!
@@ -66,7 +66,7 @@ int AddState(State * cur_state, MatrixQ * matrixQ)
 		fprintf(stderr, "Erreur allocation d'un nouvel état: index %d", matrixQ->nb_states);
 		return -1;
 	}
-	if((matrixQ->reward = (int *) realloc(matrixQ->reward, 2*(matrixQ->nb_states+1)*sizeof(int))) == NULL) 
+	if((matrixQ->reward = (float *) realloc(matrixQ->reward, 2*(matrixQ->nb_states+1)*sizeof(float))) == NULL) 
 	{
 		fprintf(stderr, "Erreur allocation d'un nouveau reward: index %d", matrixQ->nb_states);
 		return -1;
@@ -89,25 +89,22 @@ int AddState(State * cur_state, MatrixQ * matrixQ)
 */
 int findBestAction(int state_index, MatrixQ * matrixQ)
 {
-	return (matrixQ->reward[state_index*2] <= matrixQ->reward[state_index*2+1])? 1:0;
+	if(matrixQ->reward[state_index*2] == matrixQ->reward[state_index*2+1]) return randomAtMost(1);
+	return (matrixQ->reward[state_index*2] < matrixQ->reward[state_index*2+1])? 1:0;
 }
 
 /*!
-* \brief update each Q reward for every state_index given
+* \brief update each Q reward for every state_index given (currently only one state)
 * \param[in] matrixQ matrix of every known state
 * \param[in] state_index index from the last state to the older one to find them in the Q matrix
 * \param[in] last_action last_action performed
 */
-void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action)
+void updateQReward(MatrixQ * matrixQ, int * last_states_index, int last_action)
 {
-	int i;
-	for(i=1; i<NB_SAVED_STATES; ++i)
-	{
-		if(last_action[i] != -1)
+		if(last_states_index[1] != -1)
 		{
-			matrixQ->reward[state_index[i]*2+last_action[i]] = computeQReward(matrixQ, state_index[0], state_index[i], last_action[i], i);
+			matrixQ->reward[last_states_index[1]*2+last_action] = computeQReward(matrixQ, last_states_index[0], last_states_index[1], last_action);
 		}
-	}
 }
 
 
@@ -117,9 +114,8 @@ void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action)
 * \param[in] current_index index of the current state
 * \param[in] state_index index of the state where change the Q reward
 * \param[in] action action performed when the bird was in the state corresponding to index_state
-* \param[in] position position of the state to modify compared to the current state
 */
-int computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int position)
+float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action)
 {
 	float optimal_nextvalue, old_value, new_value;
 
@@ -127,7 +123,7 @@ int computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int act
 
 	old_value = (float) matrixQ->reward[state_index*2+action];
 
-	new_value = old_value + powerOf(LEARNING_RATE, position) * ((float) getCurrentReward(current_index) + powerOf(DISCOUNT, position) * optimal_nextvalue - old_value);
-			if(new_value < HIGHER_QREWARD_LIMIT && new_value > LOWER_QREWARD_LIMIT)  return (int)new_value;
+	new_value = old_value + LEARNING_RATE * (getCurrentReward(current_index) + DISCOUNT * optimal_nextvalue - old_value);
+			if(new_value < HIGHER_QREWARD_LIMIT && new_value > LOWER_QREWARD_LIMIT)  return new_value;
 			else return old_value;
 }

@@ -10,7 +10,6 @@
 
 #include "game_state.h"
 #include "utils.h"
-#include "file_manager.h"
 
 
 /*typedef struct Actions Actions;*/
@@ -32,13 +31,13 @@ typedef struct MatrixQ MatrixQ;
 struct MatrixQ {
 	int nb_states; 
 	State *state;
-	int *reward; /*!< Q(state, action) array */
+	float *reward; /*!< Q(state, action) array */
 };
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ);
 int AddState(State * cur_state, MatrixQ * matrixQ);
-void updateQReward(MatrixQ *matrixQ, int * state_index, int * last_action);
-int computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int position);
+void updateQReward(MatrixQ *matrixQ, int * last_states_index, int last_action);
+float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action);
 
 int findBestAction(int state_index, MatrixQ * matrixQ);
 

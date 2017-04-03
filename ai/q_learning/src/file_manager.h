@@ -5,6 +5,9 @@
 #ifndef FILE_MANAGER_H
 #define FILE_MANAGER_H
 
-/*Load/Save of the Q Matrix*/
+#include "qmatrix.h"
+
+MatrixQ * loadQMatrix();
+void saveQMatrix(MatrixQ * matrixQ);
 
 #endif

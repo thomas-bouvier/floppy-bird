@@ -5,10 +5,11 @@ EXEC=main
 
 all: $(EXEC)
 
-main: main.o qmatrix.o game_state.o utils.o
+main: main.o qmatrix.o game_state.o utils.o file_manager.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 qmatrix.o: game_state.h utils.h conf.h
+file_manager.o: qmatrix.h
 game_state.o: conf.h
 
 %.o: %.c
