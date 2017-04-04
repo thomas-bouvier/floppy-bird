@@ -20,14 +20,15 @@
 // Color tracked and our tolerance towards it
 int h = 0, s = 0, v = 0, Htolerance = 5, Stolerance = 30;
 IplImage* image;
-// Definition of the working space rectangle
-CvPoint point1;
-CvPoint point2;
-CvRect workingSpace;
-int workSpaceDefined = 0;
-int point1saved = 0;
+
 
 enum {CIRCLE,RECTANGLE};
+
+struct VolatileRect{
+	CvRect rect;
+	int origineDefined;
+	int rectDefined;
+};
  
 /*
  * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
@@ -168,25 +169,23 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
 }
 
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
-	
-	if(point1saved == 1 && event == CV_EVENT_MOUSEMOVE){
-		CvRect selectingArea = cvRect(min(x,point1.x),min(y,point1.y),abs(x-point1.x),abs(y-point1.y));
-		cvRectangleR(image,selectingArea,cvScalar(0,0,255,0),1,8,0);
-		cvShowImage("WorkingSpaceDefinition", image);
+	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
+	if(workingSpace->origineDefined == 1 && event == CV_EVENT_MOUSEMOVE){
+		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
+		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
 	}
 	
 	if(event == CV_EVENT_LBUTTONUP){
 		printf("click at x=%d \ty=%d\n",x,y);
-		if(point1saved){
-			point2.x = x;
-			point2.y = y;
-			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
-			workingSpace = cvRect(min(point1.x,point2.x),min(point1.y,point2.y),abs(point2.x-point1.x),abs(point2.y-point1.y));
-			workSpaceDefined = 1;
+		if(workingSpace->origineDefined){
+			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
+//			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
+			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
+			workingSpace->rectDefined = 1;
 		} else {
-			point1.x = x;
-			point1.y = y;
-			point1saved = 1;
+			workingSpace->rect.x = x;
+			workingSpace->rect.y = y;
+			workingSpace->origineDefined = 1;
 		}
 	}
 }
@@ -213,24 +212,31 @@ void initFont(CvFont * font){
 	cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
 }
 
-void initWorkSpace(RaspiCamCvCapture * capture, char* window){
+CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
+	struct VolatileRect workingSpace;
+	workingSpace.origineDefined = 0;
+	workingSpace.rectDefined = 0;
+	
 	cvNamedWindow(window, CV_WINDOW_AUTOSIZE);
 	cvMoveWindow(window, 0, 100);
-	cvSetMouseCallback(window, getCurrentPointCoordinates, NULL);
-	printf("Definitoin of the working space \n");
-	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
+	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
+	printf("Definition of the working space \n");
+	while(workingSpace.rectDefined == 0) {			// wait for the definition of the workspace
 		image = raspiCamCvQueryFrame(capture);
-		if(!point1saved) 
+		if(workingSpace.origineDefined) {
+			cvRectangleR(image,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
+		}
 			cvShowImage(window, image);		
 		char keyPressed = cvWaitKey(30);
 		switch (keyPressed){
-			case 27:		//ESC to reset the point1
-				point1saved = 0;
+			case 27:				//ESC to reset the rectangle origin
+				workingSpace.origineDefined = 0;
 				break;
 		}
 	}
 	printf("Working space defined\n");
 	cvDestroyWindow(window);
+	return workingSpace.rect;
 }
 
 int main(int argc, char *argv[]){
@@ -239,6 +245,7 @@ int main(int argc, char *argv[]){
 	int nbPixels;
 	RaspiCamCvCapture * capture = initCapture();
 	CvFont * font = (CvFont *)malloc(sizeof(CvFont));
+	CvRect workingSpace;
 	Stylus stylus;
 	char colourTrackingWindow[] = "Color Tracking";
 	char maskWindow[] = "Mask";
@@ -249,7 +256,7 @@ int main(int argc, char *argv[]){
 	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
 	enable(&stylus);
 	initFont(font);
-	initWorkSpace(capture, workSpaceDefWindow);
+	workingSpace = initWorkSpace(capture, workSpaceDefWindow);
 
 	
 	cvNamedWindow(colourTrackingWindow, CV_WINDOW_AUTOSIZE);
