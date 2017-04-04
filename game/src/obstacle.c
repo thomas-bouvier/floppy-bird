@@ -74,6 +74,17 @@ void createObstacleFromFile(FILE * level, int number, List * l)
 }
 
 /*!
+* \brief Create an obstacle with an random height
+* \param[in] number the obstacle number
+* \param[out] l the list of obstacles
+*/
+void createObstacleRandomly(int number, List * l)
+{
+    int heightPipe = rand() % (MAX_HEIGHT_LOWER - MIN_HEIGHT_LOWER + 1) + MIN_HEIGHT_LOWER;
+    Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
+    insertLast(l, newObs);
+}
+/*!
 * \brief Indicate if the bird passed the next obstacle
 * \param[in] bird the bird that determines the next obstacle
 * \param[in] savedObstacle the obstacle saved previously

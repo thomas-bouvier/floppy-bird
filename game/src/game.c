@@ -52,10 +52,7 @@ int createObstacle(Camera * camera, List * l, FILE * level, int number)
         }
         else
         {
-            int heightPipe = rand() % (500 - 100 + 1) + 100;
-            printf("%d \n", heightPipe);
-            Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
-            insertLast(l, newObs);
+            createObstacleRandomly(number, l);
             return 1;
         }
     }
