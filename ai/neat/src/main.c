@@ -23,7 +23,9 @@ int main() {
 
   populateMatingPool(pool);
 
-  /* new level */
+  printf("nb_species: %d\n", pool->nb_species);
+
+  /* generating genomes */
 
   for (i = 0; i < pool->nb_species; ++i) {
 
@@ -35,12 +37,14 @@ int main() {
     }
   }
 
+  printf("\n");
+  printf("First genome of first species :\n");
+
   setOnFirst(pool->species[0].genomes);
   current_genome = getCurrent(pool->species[0].genomes);
 
   printf("nb_neurons: %d\n", current_genome->nb_neurons);
   printf("nb_connection_genes: %d\n", current_genome->nb_connection_genes);
-  printf("Adding 3 connection genes\n");
 
   ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, pool->innovation);
   ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, pool->innovation);
@@ -80,9 +84,6 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  printf("nb_neurons: %d\n", current_genome->nb_neurons);
-  printf("nb_connection_genes: %d\n", current_genome->nb_connection_genes);
-
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
@@ -97,10 +98,6 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
-  mutate(current_genome);
-
-  printf("nb_neurons: %d\n", current_genome->nb_neurons);
-  printf("nb_connection_genes: %d\n", current_genome->nb_connection_genes);
 
   writeGraphVizGenome(current_genome, "graph.dot");
 

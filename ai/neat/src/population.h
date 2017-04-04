@@ -53,7 +53,7 @@ int generateNewGeneration(MatingPool * pool);
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);
 
-int addNewGenomeToSpecies(Species * species);
+int addGenomeToProperSpecies(Genome * genome, MatingPool * pool);
 
 void computeAverageFitness(Species * species);
 

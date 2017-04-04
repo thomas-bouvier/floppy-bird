@@ -42,12 +42,8 @@ void freeMatingPool(MatingPool * pool) {
 int populateMatingPool(MatingPool * pool) {
   int i;
 
-  if (pool->nb_species == 0)
-    if (!addSpeciesToMatingPool(pool))
-      return 0;
-
   for (i = 0; i < POPULATION; ++i)
-    if (!addNewGenomeToSpecies(&pool->species[0]))
+    if (!addGenomeToProperSpecies(newGenome(&pool->innovation), pool))
       return 0;
 
   return 1;
@@ -85,9 +81,14 @@ int addSpeciesToMatingPool(MatingPool * pool) {
 
 int generateNewGeneration(MatingPool * pool) {
   int i;
+  int nb_genomes = 0;
+  Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
 
   for (i = 0; i < pool->nb_species; ++i)
     computeAverageFitness(&pool->species[i]);
+
+  for (i = 0; i < nb_genomes; ++i)
+    addGenomeToProperSpecies(children[i], pool);
 
   ++pool->generation;
 
@@ -145,18 +146,14 @@ void computeGlobalAverageFitness(MatingPool * pool) {
   pool->average_fitness = sum / pool->nb_species;
 }
 
-/*!
-* \brief Add a Genome to the appropriate Species of the MatingPool
-* \param[out] pool the MatingPool where Genome elements are added
-* \return int 1 if the Genome was successfully added to the Species, 0 otherwise
-*/
-int addNewGenomeToSpecies(Species * species) {
+
+static int addGenomeToSpecies(Genome * genome, Species * species) {
   if (species->nb_genomes == N_MAX_GENOMES) {
     fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
     return 0;
   }
 
-  if (!add(species->genomes, newGenome(species->innovation)))
+  if (!add(species->genomes, genome))
     return 0;
 
   ++species->nb_genomes;
@@ -164,19 +161,32 @@ int addNewGenomeToSpecies(Species * species) {
   return 1;
 }
 
+/*!
+* \brief Add the given Genome to the appropriate Species of the MatingPool
+* \param[in] genome the Genome to add
+* \param[out] pool the MatingPool where Genome elements are added
+* \return int 1 if the Genome was successfully added to the Species, 0 otherwise
+*/
 int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
   int i;
+
+  // we're looking for a species that matches the given genome
 
   for (i = 0; i < pool->nb_species; ++i) {
     if (pool->species[i].nb_genomes > 0) {
       if (sameSpecies(genome, (Genome *) pool->species[i].genomes->first->data)) {
-        //addGenomeToSpecies(&pool->species[i]);
+        addGenomeToSpecies(genome, &pool->species[i]);
         return 1;
       }
     }
   }
 
+  // no species matches the given genome
+
   if (!addSpeciesToMatingPool(pool))
+    return 0;
+
+  if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1]))
     return 0;
 
   return 1;
