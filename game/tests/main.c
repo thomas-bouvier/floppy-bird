@@ -134,6 +134,17 @@ static int teardown_initCamera(void ** state) {
 
 /* readLevel */
 
+static int setup_readLevelEmpty(void ** state) {
+  FILE * file = fopen("test_readLevel.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  *state = file;
+
+  return 0;
+}
+
 static int setup_readLevel(void ** state) {
   FILE * file = fopen("test_readLevel.txt", "w+");
 
@@ -177,9 +188,112 @@ static void test_readLevelOut(void ** state) {
   assert_int_equal(readLevel(file, 150), 209);
 }
 
+static void test_readLevelEmpty(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(readLevel(file, 0), 150);
+}
+
 static int teardown_readLevel(void ** state) {
   fclose(*state);
   return remove("test_readLevel.txt");
+}
+
+/* readConfig */
+
+static int setup_readConfigEmpty(void ** state) {
+  FILE * file = fopen("test_readConfig.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  *state = file;
+
+  return 0;
+}
+
+static int setup_readConfig(void ** state) {
+  FILE * file = fopen("test_readConfig.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  fputs("level :\n", file);
+  fputs("../../res/files/level.txt\n", file);
+
+  *state = file;
+
+  return 0;
+}
+
+static void test_readConfig(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  char * path = malloc(sizeof(char) * 100);
+
+  assert_int_equal(readConfig(file, path, "level :\n"), 1);
+  assert_string_equal(path, "../../res/files/level.txt");
+}
+
+static int teardown_readConfig(void ** state) {
+  fclose(*state);
+  return remove("test_readConfig.txt");
+}
+
+/* saveScore */
+
+static int setup_saveScore(void ** state) {
+  FILE * file = fopen("test_saveScore.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  *state = file;
+
+  return 0;
+}
+
+static int setup_saveScoreLowScore(void ** state) {
+  FILE * file = fopen("test_saveScore.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  fputs("1", file);
+
+  *state = file;
+
+  return 0;
+}
+
+static int setup_saveScoreHighScore(void ** state) {
+  FILE * file = fopen("test_saveScore.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  fputs("1000000", file);
+
+  *state = file;
+
+  return 0;
+}
+
+static void test_saveScore(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(saveScore(file, 15000), 1);
+}
+
+static void test_saveScoreHighScore(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(saveScore(file, 15000), 0);
+}
+
+static int teardown_saveScore(void ** state) {
+  free(*state);
+  return remove("test_saveScore.txt");
 }
 
 /* newObstacle */
@@ -244,8 +358,16 @@ int main() {
 
     cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
 
+    cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevelOut, setup_readLevel, teardown_readLevel),
+
+    cmocka_unit_test_setup_teardown(test_readConfig, setup_readConfigEmpty, teardown_readConfig),
+    cmocka_unit_test_setup_teardown(test_readConfig, setup_readConfig, teardown_readConfig),
+
+    cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScore, teardown_saveScore),
+    cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScoreLowScore, teardown_saveScore),
+    cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
