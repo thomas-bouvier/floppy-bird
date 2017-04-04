@@ -26,6 +26,12 @@ CvPoint objectPos = {-1, -1};
 // Color tracked and our tolerance towards it
 int h = 0, s = 0, v = 0, Htolerance = 5, Stolerance = 30;
 IplImage* image;
+// Definition of the working space rectangle
+CvPoint point1;
+CvPoint point2;
+CvRect workingSpace;
+int workSpaceDefined = 0;
+int point1saved = 0;
  
 /*
  * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
@@ -39,7 +45,8 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     int sommeX = 0, sommeY = 0;
     *nbPixels = 0;
 	
-	CvRect roi = cvRect(100,10,100,image->height-20);
+	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
+	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->height-20);
 	
     // Create the mask &initialize it to white (no color detected)
     mask = cvCreateImage(cvGetSize(image), image->depth, 1);
@@ -60,8 +67,6 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     cvDilate(mask, mask, kernel, 2);
     cvErode(mask, mask, kernel, 2);  
     cvSetImageROI(mask,roi);
-	//printf("width : %d\nheight : %d\nxoffset : %d\nyoffset : %d\n",mask->roi->width,mask->roi->height,mask->roi->xOffset,mask->roi->yOffset);
-	//cvResetImageROI(mask);
 	
     // We go through the mask to look for the tracked object and get its gravity center
     for(x = mask->roi->xOffset; x < mask->roi->width + mask->roi->xOffset; x++) {
@@ -76,8 +81,8 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
         }
     }
     
-    cvResetImageROI(mask);
-    /*
+    
+    
       for(x = mask->roi->xOffset; x < mask->roi->width - mask->roi->xOffset; x++) {
         for(y = mask->roi->yOffset; y < mask->roi->height - mask->roi->yOffset ; y++) { 
  
@@ -89,8 +94,8 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
             }
         }
     }
-	*/
 	
+	cvResetImageROI(mask);
     // Show the result of the mask image
     cvShowImage("Mask", mask);
    
@@ -101,7 +106,7 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     // We release the memory of the mask
     cvReleaseImage(&mask);
     // We release the memory of the hsv image
-        cvReleaseImage(&hsv);
+    cvReleaseImage(&hsv);
  
     // If there is no pixel, we return a center outside the image, else we return the center of gravity
     if(*nbPixels > 0)
@@ -185,12 +190,37 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
  
 }
 
+void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
+	
+	if(point1saved == 1 && event == CV_EVENT_MOUSEMOVE){
+		CvRect selectingArea = cvRect(min(x,point1.x),min(y,point1.y),abs(x-point1.x),abs(y-point1.y));
+		cvRectangleR(image,selectingArea,cvScalar(0,0,255,0),1,8,0);
+		cvShowImage("WorkingSpaceDefinition", image);
+	}
+	
+	if(event == CV_EVENT_LBUTTONUP){
+		printf("click at x=%d \ty=%d\n",x,y);
+		if(point1saved){
+			point2.x = x;
+			point2.y = y;
+			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
+			workingSpace = cvRect(min(point1.x,point2.x),min(point1.y,point2.y),abs(point2.x-point1.x),abs(point2.y-point1.y));
+			workSpaceDefined = 1;
+		} else {
+			point1.x = x;
+			point1.y = y;
+			point1saved = 1;
+		}
+	}
+}
+
+
 int main(int argc, char *argv[]){
 	
 	wiringPiSetup();	// Setup the GPIO
 	Stylus stylus;
-  attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
-  enable(&stylus);
+	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
+	enable(&stylus);
 
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
@@ -203,8 +233,8 @@ int main(int argc, char *argv[]){
 	RaspiCamCvCapture * capture = (RaspiCamCvCapture *) raspiCamCvCreateCameraCapture2(0, config); 
 	free(config);
 	
-	
-CvFont font;
+	image = raspiCamCvQueryFrame(capture);
+	CvFont font;
 	double hScale=0.4;
 	double vScale=0.4;
 	int    lineWidth=1;
@@ -214,6 +244,27 @@ CvFont font;
 
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
 
+
+	
+	cvNamedWindow("WorkingSpaceDefinition", CV_WINDOW_AUTOSIZE);
+	cvMoveWindow("WorkingSpaceDefinition", 0, 100);
+	cvSetMouseCallback("WorkingSpaceDefinition", getCurrentPointCoordinates, NULL);
+	printf("Definitoin of the working space \n");
+	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
+		image = raspiCamCvQueryFrame(capture);
+		if(!point1saved) 
+			cvShowImage("WorkingSpaceDefinition", image);		
+		char keyPressed = cvWaitKey(30);
+		switch (keyPressed){
+			case 27:		//ESC
+				point1saved = 0;
+				break;
+		}
+	}
+	printf("Working space defined\n");
+	cvDestroyWindow("WorkingSpaceDefinition");
+
+	
 	cvNamedWindow("Color Tracking", CV_WINDOW_AUTOSIZE);
     cvNamedWindow("Mask", CV_WINDOW_AUTOSIZE);
     cvMoveWindow("Mask", 650, 100);
@@ -223,6 +274,7 @@ CvFont font;
 	int exit =0;
 	do {
 		image = raspiCamCvQueryFrame(capture);
+		cvSetImageROI(image,workingSpace);
 		
 		objectNextPos = binarisation(image, &nbPixels);
         addObjectToVideo(image, objectNextPos, nbPixels);
@@ -248,8 +300,10 @@ CvFont font;
 		
 	} while (!exit);
 
-	cvDestroyWindow("Color Tracking");
-    cvDestroyWindow("Mask");
+	
+    
+    cvDestroyAllWindows();
+    
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);
 	
