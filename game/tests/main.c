@@ -525,19 +525,19 @@ static int setup_isFirstMultipleObstacles(void ** state) {
 static void test_isFirst(void ** state) {
   List * list = (List *) (* state);
 
-  assert_equal(isFirst(list), 1);
+  assert_int_equal(isFirst(list), 1);
 }
 
 static void test_isFirstEmpty(void ** state) {
   List * list = (List *) (* state);
 
-  assert_equal(isFirst(list), 1);
+  assert_int_equal(isFirst(list), 1);
 }
 
 static void test_isFirstMultipleObstacles(void ** state) {
   List * list = (List *) (* state);
 
-  assert_equal(isFirst(list), 0);
+  assert_int_equal(isFirst(list), 0);
 }
 
 static int teardown_isFirst(void ** state) {
@@ -587,13 +587,13 @@ static int setup_isLastEmpty(void ** state) {
 static void test_isLast(void ** state) {
   List * list = (List *) (* state);
 
-  assert_equal(isLast(list), 1);
+  assert_int_equal(isLast(list), 1);
 }
 
 static void test_isLastEmpty(void ** state) {
   List * list = (List *) (* state);
 
-  assert_equal(isFirst(list), 1);
+  assert_int_equal(isFirst(list), 1);
 }
 
 static int teardown_isLast(void ** state) {
