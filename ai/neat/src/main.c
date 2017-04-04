@@ -21,9 +21,10 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  populateMatingPool(pool);
+  if (!populateMatingPool(pool))
+    return EXIT_FAILURE;
 
-  printf("nb_species: %d\n", pool->nb_species);
+  printMatingPool(pool);
 
   /* generating genomes */
 
@@ -46,6 +47,7 @@ int main() {
   printf("nb_neurons: %d\n", current_genome->nb_neurons);
   printf("nb_connection_genes: %d\n", current_genome->nb_connection_genes);
 
+  /*
   ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, pool->innovation);
   ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, pool->innovation);
   ConnectionGene * connection_gene_3 = newConnectionGene(45, 5, pool->innovation);
@@ -98,6 +100,7 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
+  */
 
   writeGraphVizGenome(current_genome, "graph.dot");
 

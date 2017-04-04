@@ -41,10 +41,17 @@ void freeMatingPool(MatingPool * pool) {
 */
 int populateMatingPool(MatingPool * pool) {
   int i;
+  Genome * genome = NULL;
 
-  for (i = 0; i < POPULATION; ++i)
-    if (!addGenomeToProperSpecies(newGenome(&pool->innovation), pool))
+  for (i = 0; i < POPULATION; ++i) {
+    if ((genome = newGenome(&pool->innovation)) == (Genome *) NULL)
       return 0;
+
+    mutate(genome);
+
+    if (!addGenomeToProperSpecies(genome, pool))
+      return 0;
+  }
 
   return 1;
 }
@@ -217,4 +224,45 @@ void computeAverageFitness(Species * species) {
 Genome * getRandomGenome(Species * species) {
   setOn(species->genomes, randomAtMost(species->nb_genomes));
   return getCurrent(species->genomes);
+}
+
+/*!
+* \brief Print the given MatingPool.
+* \param[in] pool the MatingPool to print
+*/
+void printMatingPool(MatingPool * pool) {
+  int i;
+  int j;
+  Genome * current_genome = NULL;
+
+  printf("nb_species: %d\n", pool->nb_species);
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    printf("\n");
+    printf("==================================\n");
+    printf("==================================\n");
+    printf("Species no %d\n", i);
+    printf("nb_genomes: %d\n", pool->species[i].nb_genomes);
+
+    j = 0;
+    setOnFirst(pool->species[i].genomes);
+    while (!outOfList(pool->species[i].genomes)) {
+      current_genome = (Genome *) getCurrent(pool->species[i].genomes);
+
+      printf("----------------------------------\n");
+      printf("Genome no %d (%p)\n", j, (void *) current_genome);
+
+      printf("\tPOINT_MUTATION_RATE: %f\n", current_genome->mutation_rates[0]);
+      printf("\tLINK_MUTATION_RATE: %f\n", current_genome->mutation_rates[1]);
+      printf("\tNODE_MUTATION_RATE: %f\n", current_genome->mutation_rates[2]);
+      printf("\tENABLE_DISABLE_MUTATION_RATE: %f\n", current_genome->mutation_rates[3]);
+
+      printf("\tnb_neurons: %d\n", current_genome->nb_neurons);
+      printf("\tnb_connection_genes: %d\n", current_genome->nb_connection_genes);
+      printf("\n");
+
+      ++j;
+      next(pool->species[i].genomes);
+    }
+  }
 }

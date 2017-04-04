@@ -385,9 +385,9 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
   return genome;
 }
 
-static double computeWeights(Genome * genome_1, Genome * genome_2) {
+static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
   double sum = 0.0;
-  int sameInnovation = 0;
+  double sameInnovation = 0.0;
 
   Neuron * current_neuron_1 = NULL;
   Neuron * current_neuron_2 = NULL;
@@ -401,15 +401,19 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
   while (!outOfList(genome_1->network)) {
 
     current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
-    if (current_neuron_1 == NULL)
+    if (current_neuron_1 == NULL) {
+      fprintf(stderr, "Error in computeWeights function: current Neuron of genome 1 is NULL\n");
       return -DBL_MAX;
+    }
 
     setOnFirst(current_neuron_1->connections);
     while (!outOfList(current_neuron_1->connections)) {
 
       current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connections);
-      if (current_connection_gene_1 == NULL)
+      if (current_connection_gene_1 == NULL) {
+        fprintf(stderr, "Error in computeWeights function: current ConnectionGene of genome 1 is NULL\n");
         return -DBL_MAX;
+      }
 
       // second connection gene
 
@@ -417,21 +421,25 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
       while (!outOfList(genome_2->network)) {
 
         current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
-        if (current_neuron_2 == NULL)
+        if (current_neuron_2 == NULL) {
+          fprintf(stderr, "Error in computeWeights function: current Neuron of genome 2 is NULL\n");
           return -DBL_MAX;
+        }
 
         setOnFirst(current_neuron_2->connections);
         while (!outOfList(current_neuron_2->connections)) {
 
           current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
-          if (current_connection_gene_2 == NULL)
+          if (current_connection_gene_2 == NULL) {
+            fprintf(stderr, "Error in computeWeights function: current ConnectionGene of genome 2 is NULL\n");
             return -DBL_MAX;
+          }
 
           // we finally have current_connection_gene_1 and current_connection_gene_2
 
           if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
             sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
-            ++sameInnovation;
+            sameInnovation += 1.0;
           }
 
           next(current_neuron_2->connections);
@@ -446,11 +454,18 @@ static double computeWeights(Genome * genome_1, Genome * genome_2) {
     next(genome_1->network);
   }
 
+  if (verbose) {
+    printf("computeWeights\n");
+    printf("sum: %f\n", sum);
+    printf("sameInnovation: %f\n", sameInnovation);
+    printf("res: %f\n\n", sum / sameInnovation);
+  }
+
   return sum / sameInnovation;
 }
 
-static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
-  int disjoint_count = 0;
+static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose) {
+  double disjoint_count = 0.0;
 
   Neuron * current_neuron_1 = NULL;
   Neuron * current_neuron_2 = NULL;
@@ -464,15 +479,19 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
   while (!outOfList(genome_1->network)) {
 
     current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
-    if (current_neuron_1 == NULL)
+    if (current_neuron_1 == NULL) {
+      fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 1 is NULL\n");
       return -DBL_MAX;
+    }
 
     setOnFirst(current_neuron_1->connections);
     while (!outOfList(current_neuron_1->connections)) {
 
       current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connections);
-      if (current_connection_gene_1 == NULL)
+      if (current_connection_gene_1 == NULL) {
+        fprintf(stderr, "Error in computeDisjoint function: current ConnectionGene of genome 1 is NULL\n");
         return -DBL_MAX;
+      }
 
       // second connection gene
 
@@ -480,20 +499,24 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
       while (!outOfList(genome_2->network)) {
 
         current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
-        if (current_neuron_2 == NULL)
+        if (current_neuron_2 == NULL) {
+          fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 2 is NULL\n");
           return -DBL_MAX;
+        }
 
         setOnFirst(current_neuron_2->connections);
         while (!outOfList(current_neuron_2->connections)) {
 
           current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
-          if (current_connection_gene_2 == NULL)
+          if (current_connection_gene_2 == NULL) {
+            fprintf(stderr, "Error in computeDisjoint function: current ConnectionGene of genome 2 is NULL\n");
             return -DBL_MAX;
+          }
 
           // we finally have current_connection_gene_1 and current_connection_gene_2
 
           if (current_connection_gene_1->innovation == current_connection_gene_2->innovation)
-            ++disjoint_count;
+            disjoint_count += 1.0;
 
           next(current_neuron_2->connections);
         }
@@ -507,6 +530,13 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
     next(genome_1->network);
   }
 
+  if (verbose) {
+    printf("computeDisjoint\n");
+    printf("disjoint_count: %f\n", disjoint_count);
+    printf("max: %f\n", fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
+    printf("res: %f\n\n", disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
+  }
+
   return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
 }
 
@@ -517,7 +547,7 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2) {
 * \return int 1 if the two Genome elements are from the same Species, 0 otherwise
 */
 int sameSpecies(Genome * genome_1, Genome * genome_2) {
-  return WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2) < SPECIATION_THRESHOLD;
+  return WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 0) < SPECIATION_THRESHOLD;
 }
 
 /*!

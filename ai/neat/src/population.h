@@ -59,4 +59,6 @@ void computeAverageFitness(Species * species);
 
 Genome * getRandomGenome(Species * species);
 
+void printMatingPool(MatingPool * pool);
+
 #endif // POPULATION_H
