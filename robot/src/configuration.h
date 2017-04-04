@@ -13,5 +13,11 @@
 #define MIN_PWM_PULSE_DURATION 80
 #define MAX_PWM_PULSE_DURATION 200
 
+#define NB_PIXEL_THRESHOLD 10
+#define BIRD_CIRCLE_DIAMETER 15
+
+#define CAPTURE_WIDTH 960/2		// Must be a multiple of 32
+#define CAPTURE_HEIGHT 720/2	// Must be a multiple of 32
+
 
 #endif //CONFIGURATION_H

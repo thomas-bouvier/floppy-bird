@@ -16,13 +16,7 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))  
 #define abs(x) ((x) > 0 ? (x) : -(x))
 #define sign(x) ((x) > 0 ? 1 : -1)
- 
-// Step mooving for object min & max
-#define STEP_MIN 1
-#define STEP_MAX 100 
 
-// Position of the object we overlay
-CvPoint objectPos = {-1, -1};
 // Color tracked and our tolerance towards it
 int h = 0, s = 0, v = 0, Htolerance = 5, Stolerance = 30;
 IplImage* image;
@@ -32,12 +26,14 @@ CvPoint point2;
 CvRect workingSpace;
 int workSpaceDefined = 0;
 int point1saved = 0;
+
+enum {CIRCLE,RECTANGLE};
  
 /*
  * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
  * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
  */
-CvPoint binarisation(IplImage* image, int *nbPixels) {
+CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
  
     int x, y;
     IplImage *hsv, *mask;
@@ -97,7 +93,8 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
 	
 	cvResetImageROI(mask);
     // Show the result of the mask image
-    cvShowImage("Mask", mask);
+    if(window != NULL) 
+		cvShowImage(window, mask);
    
 	cvRectangleR(image,roi,cvScalar(0,0,255,0),1,8,0);
     // We release the memory of kernels
@@ -118,43 +115,23 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
 /*
  * Add a circle on the video that fellow your colored object
  */
-void addObjectToVideo(IplImage* image, CvPoint objectNextPos, int nbPixels) {
- 
-    int objectNextStepX, objectNextStepY;
- 
-    // Calculate circle next position (if there is enough pixels)
-    /*if (nbPixels > 10) {
- 
-        // Reset position if no pixel were found
-        if (objectPos.x == -1 || objectPos.y == -1) {
-            objectPos.x = objectNextPos.x;
-            objectPos.y = objectNextPos.y;
-        }
- 
-        // Move step by step the object position to the desired position
-        if (abs(objectPos.x - objectNextPos.x) > STEP_MIN) {
-            objectNextStepX = max(STEP_MIN, min(STEP_MAX, abs(objectPos.x - objectNextPos.x) / 2));
-            objectPos.x += (-1) * sign(objectPos.x - objectNextPos.x) * objectNextStepX;
-        }
-        if (abs(objectPos.y - objectNextPos.y) > STEP_MIN) {
-            objectNextStepY = max(STEP_MIN, min(STEP_MAX, abs(objectPos.y - objectNextPos.y) / 2));
-            objectPos.y += (-1) * sign(objectPos.y - objectNextPos.y) * objectNextStepY;
-        }
- 
-    // -1 = object isn't within the camera range
-    } else {
- 
-        objectPos.x = -1;
-        objectPos.y = -1;
- 
-    }
-	*/
+void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint position, int nbPixels) {
+	
     // Draw an object (circle) centered on the calculated center of gravity
-    if (nbPixels > 10)
-        cvDrawCircle(image, objectNextPos, 15, CV_RGB(255, 0, 0), 1,8,0);
+    if (nbPixels > NB_PIXEL_THRESHOLD){
+		switch (shape){
+			case CIRCLE:
+				cvDrawCircle(image, position, BIRD_CIRCLE_DIAMETER, CV_RGB(255, 0, 0), 1,8,0);
+				break;
+			case RECTANGLE:
+				break;
+		}
+		cvShowImage(window, image);
+	}
+        
  
     // We show the image on the window
-    cvShowImage("Color Tracking", image);
+    
  
 }
  
@@ -214,46 +191,55 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 	}
 }
 
-
-int main(int argc, char *argv[]){
-	
-	wiringPiSetup();	// Setup the GPIO
-	Stylus stylus;
-	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
-	enable(&stylus);
-
+RaspiCamCvCapture * initCapture(){
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
-	config->width=960/2;
-	config->height=720/2;
-	config->bitrate=0;	// zero: leave as default
-	config->framerate=0;
-	config->monochrome=0;
+	config->width = CAPTURE_WIDTH;
+	config->height = CAPTURE_HEIGHT;
+	config->bitrate = 0;	// zero: leave as default
+	config->framerate = 0;
+	config->monochrome = 0;
 	
 	RaspiCamCvCapture * capture = (RaspiCamCvCapture *) raspiCamCvCreateCameraCapture2(0, config); 
 	free(config);
-	
-	image = raspiCamCvQueryFrame(capture);
-	CvFont font;
+	return capture;
+}
+
+void initFont(CvFont * font){
 	double hScale=0.4;
 	double vScale=0.4;
 	int    lineWidth=1;
-	int nbPixels;
-	// Next position of the object we overlay
-    CvPoint objectNextPos;
+	
+	cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
+}
 
-	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
+int main(int argc, char *argv[]){
+	
+	// Variables
+	int nbPixels;
+	RaspiCamCvCapture * capture = initCapture();
+	CvFont * font = (CvFont *)malloc(sizeof(CvFont));
+	Stylus stylus;
+	char colourTrackingWindow[] = "Color Tracking";
+	char maskWindow[] = "Mask";
+	char workSpaceDefWindow[] = "WorkingSpaceDefinition";
+	
+	// Setup
+	wiringPiSetup();	// Setup the GPIO
+	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
+	enable(&stylus);
+	initFont(font);
 
 
 	
-	cvNamedWindow("WorkingSpaceDefinition", CV_WINDOW_AUTOSIZE);
-	cvMoveWindow("WorkingSpaceDefinition", 0, 100);
-	cvSetMouseCallback("WorkingSpaceDefinition", getCurrentPointCoordinates, NULL);
+	cvNamedWindow(workSpaceDefWindow, CV_WINDOW_AUTOSIZE);
+	cvMoveWindow(workSpaceDefWindow, 0, 100);
+	cvSetMouseCallback(workSpaceDefWindow, getCurrentPointCoordinates, NULL);
 	printf("Definitoin of the working space \n");
 	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
 		image = raspiCamCvQueryFrame(capture);
 		if(!point1saved) 
-			cvShowImage("WorkingSpaceDefinition", image);		
+			cvShowImage(workSpaceDefWindow, image);		
 		char keyPressed = cvWaitKey(30);
 		switch (keyPressed){
 			case 27:		//ESC to reset the point1
@@ -262,22 +248,23 @@ int main(int argc, char *argv[]){
 		}
 	}
 	printf("Working space defined\n");
-	cvDestroyWindow("WorkingSpaceDefinition");
+	cvDestroyWindow(workSpaceDefWindow);
 
 	
-	cvNamedWindow("Color Tracking", CV_WINDOW_AUTOSIZE);
-    cvNamedWindow("Mask", CV_WINDOW_AUTOSIZE);
-    cvMoveWindow("Mask", 650, 100);
-    cvMoveWindow("Color Tracking", 0, 100);
+	
+	cvNamedWindow(colourTrackingWindow, CV_WINDOW_AUTOSIZE);
+    cvNamedWindow(maskWindow, CV_WINDOW_AUTOSIZE);
+    cvMoveWindow(maskWindow, 650, 100);
+    cvMoveWindow(colourTrackingWindow, 0, 100);
     
-    cvSetMouseCallback("Color Tracking", getObjectColor,NULL);
+    cvSetMouseCallback(colourTrackingWindow, getObjectColor,NULL);
 	int exit =0;
 	do {
 		image = raspiCamCvQueryFrame(capture);
 		cvSetImageROI(image,workingSpace);
 		
-		objectNextPos = binarisation(image, &nbPixels);
-        addObjectToVideo(image, objectNextPos, nbPixels);
+		CvPoint position = binarisation(image, &nbPixels, maskWindow);
+        addObjectToVideo(colourTrackingWindow, image, CIRCLE, position, nbPixels);
 		
 		char key = cvWaitKey(1);
 		
@@ -289,21 +276,13 @@ int main(int argc, char *argv[]){
 			case 27:		// Esc to exit
 				exit = 1;
 				break;
-			case 60:		// < (less than)
-				raspiCamCvSetCaptureProperty(capture, RPI_CAP_PROP_FPS, 25);	// Currently NOOP
-				break;
-			case 62:		// > (greater than)
-				raspiCamCvSetCaptureProperty(capture, RPI_CAP_PROP_FPS, 30);	// Currently NOOP
-				break;
 		}
 		update(&stylus);
 		
 	} while (!exit);
 
 	
-    
     cvDestroyAllWindows();
-    
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);
 	
