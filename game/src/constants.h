@@ -63,6 +63,16 @@
 */
 #define OBSTACLE_GAP 200
 
+/*! \def MIN_HEIGHT_LOWER
+* \brief The minimum height of the lower pipe of an obstacle
+*/
+#define MIN_HEIGHT_LOWER 100
+
+/*! \def MAX_HEIGHT_LOWER
+* \brief The maximum height of the lower pipe of an obstacle
+*/
+#define MAX_HEIGHT_LOWER 500
+
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
 */

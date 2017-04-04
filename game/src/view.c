@@ -50,7 +50,7 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 }
 
 /*!
-* \brief Display the items of  the game
+* \brief Display the items of the game
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to display
 * \param[in] l the list of obstacle

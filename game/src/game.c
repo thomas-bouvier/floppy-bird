@@ -22,6 +22,8 @@ void startGame(Bird * bird, Camera * camera, List * l, FILE * level)
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
 * \param[out] bird the bird that moves with the camera
+*
+* Add 1 to the abscissa of camera and bird in order to move them at the same speed
 */
 void cameraScrolling(Camera * camera, Bird * bird)
 {
@@ -36,6 +38,8 @@ void cameraScrolling(Camera * camera, Bird * bird)
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] number the obstacle number of the new obstacle
 * \return Return 1 if the function created an obstacle, 0 otherwise
+*
+* If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
 int createObstacle(Camera * camera, List * l, FILE * level, int number)
 {
@@ -102,7 +106,7 @@ int detectHit(Bird * bird, Obstacle * obstacle)
 * \brief The function update the score if an obstacle is passed
 * \param[in] score the current score
 * \param[in] bird the bird that determines the next obstacle
-* \param[out] savedObstacle the obstacle saved previously
+* \param[in] savedObstacle the obstacle saved previously
 * \return return the updated score
 */
 int updateScore(int score, Bird * bird, Obstacle * savedObstacle)
@@ -122,10 +126,10 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle)
 * \param[out] l the list of obstacles linked to the running game
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] event the value that indicate if the bird must jump(1) or not(0 or 2)
-* \param[in] number the obstacle number of the new obstacle
+* \param[in] number the number of the new obstacle
 * \param[in] savedObstacle the obstacle saved to compare with the next obstacle
 * \param[out] score the score of the player to be updated
-* \return 1 in case of game over, 0 in the others cases
+* \return Return 1 in case of game over, 0 in the other cases
 */
 int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score)
 {

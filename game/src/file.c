@@ -9,6 +9,8 @@
 * \param[out] file the file to read
 * \param[in] number the number of the obstacle read
 * \return Return the height of the low pipe of the obstacle
+*
+* The height of an obstacle is contained in a line, then  go to line to have the next height
 */
 int readLevel(FILE * file, int number)
 {
@@ -28,6 +30,10 @@ int readLevel(FILE * file, int number)
 * \param[out] config the path of the requested parameter
 * \param[in] type the requested parameter (examples : level, sprite, sound...)
 * \return Return 1 if the configuration file was read, ie the requested path is set in config ; 0 if error
+*
+* The configuration file is written such as :
+*       type :\n
+*       config
 */
 int readConfig(FILE * f, char * config, char * type)
 {
@@ -50,10 +56,10 @@ int readConfig(FILE * f, char * config, char * type)
 }
 
 /*!
-* \brief Read the configuration file
+* \brief Save the best score in a file
 * \param[out] f the file that contains the score
 * \param[in] score the score to be saved (or not)
-* \return Return 1 if the score was saved, ie if it is biggest that the previous score, 0 otherwise
+* \return Return 1 if the score was saved, ie if it is biggest than the previous score, 0 otherwise
 */
 int saveScore(FILE * f, int score)
 {

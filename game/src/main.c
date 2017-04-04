@@ -12,7 +12,7 @@ int main(int argc, char ** argv)
     SDL_Window * window = NULL;
     SDL_Renderer * renderer = NULL;
 
-    Uint32 last_frame;
+    Uint32 lastFrame;
     int i;
 
     int hit;
@@ -24,6 +24,7 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    FILE * config = NULL;
     FILE * level = NULL;
 
     int score;
@@ -31,22 +32,20 @@ int main(int argc, char ** argv)
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
-    FILE * config = NULL;
+    if (argc == 1)
+        config = fopen("conf/config.txt", "r");
+    else
+        config = fopen(argv[1], "r");
+    if(config == NULL)
+    {
+        fprintf(stderr,"Opening configuration file failure\n");
+        return EXIT_FAILURE;
+    }
 
-        if (argc == 1)
-            config = fopen("conf/config.txt", "r");
-        else
-            config = fopen(argv[1], "r");
-        if(config == NULL)
-        {
-            fprintf(stderr,"Opening configuration file failure\n");
-            return EXIT_FAILURE;
-        }
-
-        /* Open the file that contains the save of the level */
-        if(LEVEL_FROM_FILE)
-        {
-        char * levelPath = malloc(sizeof(char)*100);
+    /* Open the file that contains the save of the level */
+    if(LEVEL_FROM_FILE)
+    {
+        char levelPath[100];
         if (readConfig(config, levelPath, "level :\n"))
         {
             if (levelPath[strlen(levelPath)-1] == '\n')
@@ -63,7 +62,7 @@ int main(int argc, char ** argv)
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
     FILE * scoreFile = NULL;
-    char * scorePath = malloc(sizeof(char)*100);
+    char scorePath[100];
     if (readConfig(config, scorePath, "score :\n"))
     {
         if (scorePath[strlen(scorePath)-1] == '\n')
@@ -127,12 +126,12 @@ int main(int argc, char ** argv)
         number = OBSTACLE_NUMBER;
         score = 0;
         hit = 0;
-        last_frame = SDL_GetTicks();
+        lastFrame = SDL_GetTicks();
 
         while(!hit && running)
         {
 
-            for(i = 0; i < (SDL_GetTicks()-last_frame)/(1000/FRAME_PER_SECOND); ++i)
+            for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
             {
                 Action event = detectTouch();
                 if(event == QUIT)
@@ -142,7 +141,7 @@ int main(int argc, char ** argv)
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera);
-                last_frame = SDL_GetTicks();
+                lastFrame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);
         }

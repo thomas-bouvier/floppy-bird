@@ -5,9 +5,11 @@
 #include "list.h"
 
 /*!
-* \brief Initialize a list, and fill it with a unique obstacle
+* \brief Initialize a list, and fill it with OBSTACLE_NUMBER obstacles
 * \param[out] l the list to initialize
 * \param[in] level the file that contains the height of the obstacles
+*
+* If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
 void initList(List * l, FILE * level){
     int  i;
