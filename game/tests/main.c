@@ -227,6 +227,14 @@ static int setup_readConfig(void ** state) {
   return 0;
 }
 
+static void test_readConfigEmpty(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  char * path = malloc(sizeof(char) * 100);
+
+  assert_int_equal(readConfig(file, path, "level :\n"), 0);
+}
+
 static void test_readConfig(void ** state) {
   FILE * file = (FILE *) (* state);
 
@@ -370,12 +378,12 @@ static int setup_newObstacle(void ** state) {
 static void test_newObstacle(void ** state) {
   Obstacle * obstacle = (Obstacle *) (* state);
 
-  obstacle = newObstacle(14, 120, 15, NULL);
+  obstacle = newObstacle(14, 200, 250, NULL);
 
   assert_non_null(&obstacle->lower);
   assert_non_null(&obstacle->upper);
-  assert_int_equal(obstacle->upper.y, 120);
-  assert_int_equal(obstacle->gap, 15);
+  assert_int_equal(obstacle->lower.y, SCREEN_HEIGHT-200);
+  assert_int_equal(obstacle->gap, 250);
   assert_null(obstacle->next);
 }
 
@@ -389,23 +397,15 @@ static void test_newObstacleNegativeGap(void ** state) {
 
   obstacle = newObstacle(14, 120, -15, NULL);
 
-  assert_non_null(&obstacle->lower);
-  assert_non_null(&obstacle->upper);
-  assert_int_equal(obstacle->upper.y, 120);
-  assert_int_equal(obstacle->gap, 0);
-  assert_null(obstacle->next);
+	assert_int_equal(obstacle, NULL);
 }
 
 static void test_newObstacleMaxHeight(void ** state) {
   Obstacle * obstacle = (Obstacle *) (* state);
 
-  obstacle = newObstacle(14, SCREEN_HEIGHT, 15, NULL);
+  obstacle = newObstacle(14, SCREEN_HEIGHT, 250, NULL);
 
-  assert_non_null(&obstacle->lower);
-  assert_non_null(&obstacle->upper);
-  assert_int_equal(obstacle->upper.y, SCREEN_HEIGHT / 2);
-  assert_int_equal(obstacle->gap, 15);
-  assert_null(obstacle->next);
+	assert_int_equal(obstacle, NULL);
 }
 
 int main() {
@@ -423,7 +423,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevelOut, setup_readLevel, teardown_readLevel),
 
-    cmocka_unit_test_setup_teardown(test_readConfig, setup_readConfigEmpty, teardown_readConfig),
+    cmocka_unit_test_setup_teardown(test_readConfigEmpty, setup_readConfigEmpty, teardown_readConfig),
     cmocka_unit_test_setup_teardown(test_readConfig, setup_readConfig, teardown_readConfig),
 
     cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScore, teardown_saveScore),

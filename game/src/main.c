@@ -158,7 +158,8 @@ int main(int argc, char ** argv)
     /* Quit the game */
     quitGame(window, renderer);
     fclose(config);
-    fclose(level);
+    if(LEVEL_FROM_FILE)
+		fclose(level);
     fclose(scoreFile);
 
     return EXIT_SUCCESS;
