@@ -46,7 +46,7 @@ CvPoint binarisation(IplImage* image, int *nbPixels) {
     *nbPixels = 0;
 	
 	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
-	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->height-20);
+	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
 	
     // Create the mask &initialize it to white (no color detected)
     mask = cvCreateImage(cvGetSize(image), image->depth, 1);
@@ -256,7 +256,7 @@ int main(int argc, char *argv[]){
 			cvShowImage("WorkingSpaceDefinition", image);		
 		char keyPressed = cvWaitKey(30);
 		switch (keyPressed){
-			case 27:		//ESC
+			case 27:		//ESC to reset the point1
 				point1saved = 0;
 				break;
 		}
