@@ -4,8 +4,11 @@
 #include "view.h"
 #include "control.h"
 #include "file.h"
+#include "sound.h"
 #include "constants.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 int main(int argc, char ** argv)
 {
@@ -18,6 +21,7 @@ int main(int argc, char ** argv)
     int hit;
     int running = 1;
     Action init;
+	Sound sound;
     int number;
 
     Bird bird;
@@ -78,14 +82,21 @@ int main(int argc, char ** argv)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         fprintf(stderr, "SDL initialization failure\n");
-        return 0;
+        return EXIT_FAILURE;
     }
 
 	/* SDL_TTF initialization */
     if (TTF_Init() != 0)
     {
         fprintf(stderr, "SDL_TTF initialization failure\n");
-        return 0;
+        return EXIT_FAILURE;
+    }
+    
+	/* SDL_mixer initialization */
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
+    {
+        fprintf(stderr, "SDL_mixer initialization failure\n");
+        return EXIT_FAILURE;
     }
 
     /* Setup window */
@@ -136,7 +147,10 @@ int main(int argc, char ** argv)
         {
             init = detectTouch();
             if(init == JUMP)
+            {
                 bird.dir_y = BIRD_JUMP;
+                playSound(JUMPSOUND);
+            }
             if(init == QUIT)
                 running = 0;
         }
@@ -152,13 +166,15 @@ int main(int argc, char ** argv)
             for(i = 0; i < (SDL_GetTicks()-last_frame)/(1000/FRAME_PER_SECOND); ++i)
             {
                 Action event = detectTouch();
+                sound = NOSOUND;
                 if(event == QUIT)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera, score, font);
+                playSound(sound);
                 last_frame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);

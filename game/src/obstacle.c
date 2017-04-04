@@ -75,10 +75,10 @@ void createObstacleFromFile(FILE * level, int number, List * l)
 * \param[out] savedObstacle the obstacle saved previously
 * \return Return 1 when the bird passed the obstacle (ie if the next obstacle is different than previously), 0 else
 */
-int obstaclePassed(Bird * bird, Obstacle * savedObstacle)
+int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
 {
     if(bird->x - bird->w/3 > savedObstacle->lower.x + PIPE_WIDTH){
-        //printf("1\n");
+        (*sound) = OBSTACLE;
         return 1;
     }
     return 0;

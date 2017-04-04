@@ -12,6 +12,7 @@
 #include "list.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
