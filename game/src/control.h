@@ -11,5 +11,7 @@
 Action detectTouch();
 void emptyEvent();
 Action waiting();
+int waitForTI();
+
 
 #endif // CONTROL_H

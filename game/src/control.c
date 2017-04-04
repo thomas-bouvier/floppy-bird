@@ -20,9 +20,7 @@ Action detectTouch()
             {
                 case SDL_KEYDOWN:
                     if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    {
                         return QUIT;
-                    }
                     if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
                     {
                         return PAUSE;
@@ -62,4 +60,33 @@ Action waiting()
         a = detectTouch();
     }
     return a;
+}
+/*!
+* \brief wait a left click on a square at the center of the screen
+* \return return 0 if the game have to be stop and 1 if all went good
+*/
+int waitForTI()
+{
+    int run = 1;
+    SDL_Event event;
+    while(run)
+    {
+        SDL_PollEvent(&event);
+        if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+            return 0;
+        if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+            return 0;
+        if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        {
+            int x = event.button.x;
+            int y = event.button.y;
+            int x_max = SCREEN_WIDTH/2 + BIRD_SIZE/2;
+            int x_min = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+            int y_max = SCREEN_HEIGHT/2 + BIRD_SIZE/2;
+            int y_min = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
+            if(x <= x_max && x >= x_min && y <= y_max && y >= y_min)
+                run = 0;
+        }
+    }
+    return 1;
 }
