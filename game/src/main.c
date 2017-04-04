@@ -25,6 +25,7 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    int levelFromFile = 1;
     FILE * config = NULL;
     FILE * level = NULL;
 
@@ -46,7 +47,7 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the level */
-    if(LEVEL_FROM_FILE)
+    if(levelFromFile)
     {
         char levelPath[100];
         if (readConfig(config, levelPath, "level :\n"))
@@ -109,7 +110,7 @@ int main(int argc, char ** argv)
 
     while(running)
     {
-        startGame(&bird, &camera, &l, level);
+        startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
         drawLowForTI(renderer, &camera);
         running = waitForTI();
@@ -147,7 +148,7 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, levelFromFile);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera);
                 lastFrame = SDL_GetTicks();
@@ -167,7 +168,7 @@ int main(int argc, char ** argv)
     /* Quit the game */
     quitGame(window, renderer);
     fclose(config);
-    if(LEVEL_FROM_FILE)
+    if(levelFromFile)
 		fclose(level);
     fclose(scoreFile);
 

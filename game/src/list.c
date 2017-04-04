@@ -8,16 +8,17 @@
 * \brief Initialize a list, and fill it with OBSTACLE_NUMBER obstacles
 * \param[out] l the list to initialize
 * \param[in] level the file that contains the height of the obstacles
+* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 *
 * If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
-void initList(List * l, FILE * level){
+void initList(List * l, FILE * level, int levelFromFile){
     int  i;
     l->nbObstacles = 0;
 	l->first = l->current = l->last = NULL;
 	for (i=0 ; i<OBSTACLE_NUMBER ; ++i)
     {
-        if(LEVEL_FROM_FILE)
+        if(levelFromFile)
             createObstacleFromFile(level, i, l);
         else
         {
