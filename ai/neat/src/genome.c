@@ -5,20 +5,18 @@
 * \return Return a new Genome, or NULL if error
 */
 Genome * newGenome(int * innovation) {
-  Network * network = NULL;
-  Genome * new_genome = malloc(sizeof(Genome));
+  Network * new_network = NULL;
+  Genome * new_genome = NULL;
 
-  if (new_genome == (Genome * ) NULL) {
+  if ((new_genome = malloc(sizeof(Genome))) == (Genome * ) NULL) {
     fprintf(stderr, "Error while allocating memory for new Genome\n");
     return NULL;
   }
 
-  if ((network = malloc(sizeof(Network))) == (Network *) NULL)
-    return NULL;
+  new_network = newList(freeNeuron);
+  initList(new_network);
 
-  initList(network);
-
-  new_genome->network = network;
+  new_genome->network = new_network;
   new_genome->nb_neurons = 0;
   new_genome->nb_connection_genes = 0;
   new_genome->fitness = 0.0;
