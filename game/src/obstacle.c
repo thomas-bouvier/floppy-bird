@@ -10,14 +10,20 @@
 * \param[in] height_lower the ordinate of the lower pipe (must be between MIN_HEIGHT_LOWER and MAX_HEIGHT_LOWER)
 * \param[in] obstacle_gap the gap between two pipes (must not be lower than OBSTACLE_GAP)
 * \param[in] next_obstacle the next element of the current obstacle
-* \return Return the created obstacle, NULL if error
+* \return Return the created obstacle, NULL if error or incorrect value
 */
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle)
 {
     if((height_lower < MIN_HEIGHT_LOWER) || (height_lower > MAX_HEIGHT_LOWER))
+    {
+    	fprintf(stderr, "Obstacle created has a wrong value of height_lower\n");
         return NULL;
+    }
     if(obstacle_gap < OBSTACLE_GAP)
+    {
+    	fprintf(stderr, "Obstacle created has a wrong value of gap\n");
         return NULL;
+    }
     Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
     if(new_obstacle == NULL)
     {

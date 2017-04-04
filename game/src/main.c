@@ -108,19 +108,25 @@ int main(int argc, char ** argv)
     {
         startGame(&bird, &camera, &l, level);
         savedObstacle = nextBirdObstacle(&l, &bird);
+        drawLowForTI(renderer, &camera);
+        running = waitForTI();
+        drawUpForTI(renderer, &camera);
+        if (running)
+            running = waitForTI();
         displayGame(renderer, &bird, &l, &camera);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
         init = NOTHING;
-        while(init == NOTHING)
-        {
-            init = detectTouch();
-            if(init == JUMP)
-                bird.dir_y = BIRD_JUMP;
-            if(init == QUIT)
-                running = 0;
-        }
+        if (running)
+            while(init == NOTHING)
+            {
+                init = detectTouch();
+                if(init == JUMP)
+                    bird.dir_y = BIRD_JUMP;
+                if(init == QUIT)
+                    running = 0;
+            }
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
@@ -158,7 +164,8 @@ int main(int argc, char ** argv)
     /* Quit the game */
     quitGame(window, renderer);
     fclose(config);
-    fclose(level);
+    if(LEVEL_FROM_FILE)
+		fclose(level);
     fclose(scoreFile);
 
     return EXIT_SUCCESS;
