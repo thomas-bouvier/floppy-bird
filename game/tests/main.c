@@ -10,6 +10,7 @@
 #include "../src/camera.h"
 #include "../src/game.h"
 #include "../src/obstacle.h"
+#include "../src/list.h"
 
 /* initBird */
 
@@ -305,22 +306,6 @@ static int teardown_saveScore(void ** state) {
   return remove("test_saveScore.txt");
 }
 
-/* startGame */
-
-/*
-static int setup_startGame(void ** state) {
-
-}
-
-static void test_startGame(void ** state) {
-
-}
-
-static int teardown_startGame(void ** state) {
-
-}
-*/
-
 /* cameraScrolling */
 
 /*
@@ -408,6 +393,223 @@ static void test_newObstacleMaxHeight(void ** state) {
 	assert_int_equal(obstacle, NULL);
 }
 
+/* initList */
+
+static int setup_initList(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  *state = list;
+
+  return 0;
+}
+
+static void test_initList(void ** state) {
+  List * list = (List *) (* state);
+
+  initList(list, NULL);
+
+  assert_null(list->first);
+  assert_null(list->current);
+  assert_null(list->last);
+}
+
+static int teardown_initList(void ** state) {
+  free(*state);
+  return 0;
+}
+
+/* isEmpty */
+
+static int setup_isEmpty(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+  *state = list;
+
+  return 0;
+}
+
+static int setup_isEmptyMultipleObstacles(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+
+  insertLast(list, newObstacle(0, 200, 250, NULL));
+  insertLast(list, newObstacle(1, 200, 250, NULL));
+  insertLast(list, newObstacle(2, 200, 250, NULL));
+  insertLast(list, newObstacle(3, 200, 250, NULL));
+
+  *state = list;
+
+  return 0;
+}
+
+static void test_isEmpty(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isEmpty(list), 1);
+}
+
+static void test_isEmptyMutipleObstacles(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isEmpty(list), 0);
+}
+
+static int teardown_isEmpty(void ** state) {
+  free(*state);
+  return 0;
+}
+
+/* isFirst */
+
+static int setup_isFirst(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+
+  insertLast(list, newObstacle(0, 200, 250, NULL));
+  insertLast(list, newObstacle(1, 200, 250, NULL));
+  insertLast(list, newObstacle(2, 200, 250, NULL));
+  insertLast(list, newObstacle(3, 200, 250, NULL));
+
+  list->current = list->first;
+
+  *state = list;
+
+  return 0;
+}
+
+static int setup_isFirstEmpty(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+  *state = list;
+
+  return 0;
+}
+
+static int setup_isFirstMultipleObstacles(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+
+  insertLast(list, newObstacle(0, 200, 250, NULL));
+  insertLast(list, newObstacle(1, 200, 250, NULL));
+  insertLast(list, newObstacle(2, 200, 250, NULL));
+  insertLast(list, newObstacle(3, 200, 250, NULL));
+
+  *state = list;
+
+  return 0;
+}
+
+static void test_isFirst(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isFirst(list), 1);
+}
+
+static void test_isFirstEmpty(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isFirst(list), 1);
+}
+
+static void test_isFirstMultipleObstacles(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isFirst(list), 0);
+}
+
+static int teardown_isFirst(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* isLast */
+
+static int setup_isLast(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+
+  insertLast(list, newObstacle(0, 200, 250, NULL));
+  insertLast(list, newObstacle(1, 200, 250, NULL));
+  insertLast(list, newObstacle(2, 200, 250, NULL));
+  insertLast(list, newObstacle(3, 200, 250, NULL));
+
+  *state = list;
+
+  return 0;
+}
+
+static int setup_isLastEmpty(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL);
+  *state = list;
+
+  return 0;
+}
+
+static void test_isLast(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isLast(list), 1);
+}
+
+static void test_isLastEmpty(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(isFirst(list), 1);
+}
+
+static int teardown_isLast(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* outOfList */
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
@@ -433,6 +635,15 @@ int main() {
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
+
+    cmocka_unit_test_setup_teardown(test_initList, setup_initList, teardown_initList),
+    cmocka_unit_test_setup_teardown(test_isEmpty, setup_isEmpty, teardown_isEmpty),
+    cmocka_unit_test_setup_teardown(test_isEmptyMutipleObstacles, setup_isEmptyMultipleObstacles, teardown_isEmpty),
+    cmocka_unit_test_setup_teardown(test_isFirst, setup_isFirst, teardown_isFirst),
+    cmocka_unit_test_setup_teardown(test_isFirstEmpty, setup_isFirstEmpty, teardown_isFirst),
+    cmocka_unit_test_setup_teardown(test_isFirstMultipleObstacles, setup_isFirstMultipleObstacles, teardown_isFirst),
+    cmocka_unit_test_setup_teardown(test_isLast, setup_isLast, teardown_isLast),
+    cmocka_unit_test_setup_teardown(test_isLastEmpty, setup_isLastEmpty, teardown_isLast),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
