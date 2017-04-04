@@ -8,6 +8,7 @@
 #include "../src/constants.h"
 #include "../src/bird.h"
 #include "../src/camera.h"
+#include "../src/game.h"
 #include "../src/obstacle.h"
 
 /* initBird */
@@ -295,6 +296,66 @@ static int teardown_saveScore(void ** state) {
   free(*state);
   return remove("test_saveScore.txt");
 }
+
+/* startGame */
+
+/*
+static int setup_startGame(void ** state) {
+
+}
+
+static void test_startGame(void ** state) {
+
+}
+
+static int teardown_startGame(void ** state) {
+
+}
+*/
+
+/* cameraScrolling */
+
+/*
+static int setup_cameraScrolling(void ** state_1, void ** state_2) {
+  Camera * camera = NULL;
+  Bird * bird = NULL;
+
+  if ((camera = malloc(sizeof(Camera))) == (Camera *) NULL)
+    return -1;
+
+  initCamera(camera, 0, 100);
+
+  *state_1 = camera;
+
+  if ((bird = malloc(sizeof(Bird))) == (Bird *) NULL)
+    return -1;
+
+  initBird(bird);
+
+  *state_2 = bird;
+
+  return 0;
+}
+
+static void test_cameraScrolling(void ** state_1, void ** state_2) {
+  Camera * camera = (Camera *) (* state_1);
+  Bird * bird = (Bird *) (* state_2);
+
+  int camera_x = camera->x;
+  int bird_x = bird->x;
+
+  cameraScrolling(camera, bird);
+
+  assert_int_equal(camera->x, camera_x + 100);
+  assert_int_equal(bird->x, bird_x + 100);
+}
+
+static int teardown_cameraScrolling(void ** state_1, void ** state_2) {
+  free(*state_1);
+  free(*state_2);
+  return 0;
+}
+*/
 
 /* newObstacle */
 
