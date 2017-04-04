@@ -33,7 +33,10 @@ Action detectTouch()
                 case SDL_MOUSEBUTTONDOWN:
                     if(event.button.button == SDL_BUTTON_LEFT)
                     {
-                        return JUMP;
+                        if(event.button.x >= SCREEN_WIDTH - 50 && event.button.y <= 50)
+                            return PAUSE;
+                        else
+                            return JUMP;
                     }
                     break;
             }

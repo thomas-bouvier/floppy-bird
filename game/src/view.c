@@ -100,6 +100,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
+    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
     SDL_RenderPresent(renderer);
 }
 

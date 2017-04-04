@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "game.h"
 #include "view.h"
 #include "control.h"
@@ -29,6 +30,8 @@ int main(int argc, char ** argv)
 
     int score;
     Obstacle * savedObstacle = NULL;
+
+    srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
