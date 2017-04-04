@@ -20,6 +20,8 @@
 
 #define LOWER_QREWARD_LIMIT -15000  /*!< Higher limit of the computation of the Q reward */
 
+#define DISTANCE_ACCURACY 2 /*!< Accuracy of the distance to process less states, an higher value reduce the accuracy and raise the collision risk */
+
 /* FIXED PARAMETERS */
 
 #define NB_SAVED_STATES 2 /*!< Number of saved states to compute the new reward */

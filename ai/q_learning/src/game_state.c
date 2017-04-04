@@ -60,3 +60,13 @@ int getCurrentReward(int bird_state)
 	return 0;
 }
 
+/*!
+* \brief Approximate a distance dx or dy to get less different states
+* \param[in] initial_d initial distance dx or dy
+* \return Return a new distance 
+*/
+int processing_dxdy(int initial_d)
+{
+	return initial_d/DISTANCE_ACCURACY;
+}
+

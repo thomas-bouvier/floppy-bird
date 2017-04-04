@@ -154,7 +154,7 @@ int main(int argc, char ** argv)
                 last_frame = SDL_GetTicks();
             }
 			
-			/*q_learning_loop(matrixQ, last_states, &last_action, , , );*/
+			/*q_learning_loop(matrixQ, last_states, &last_action, processing_dxdy(), processing_dxdy(), );*/
 			/*show_matrixQ(matrixQ);*/
             saveScore(scoreFile, score);
         }
