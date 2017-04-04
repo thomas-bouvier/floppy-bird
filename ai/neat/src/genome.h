@@ -18,13 +18,15 @@
 * \brief A Genome contains a Network element.
 */
 typedef struct {
-  Network * network;          /*!< the Network attached to this Genome */
-  int nb_neurons;             /*!< te number of Neuron elements contained in this Genome */
-  int nb_connection_genes;    /*!< the number of ConnectionGene elements contained in this Genome */
-  float fitness;              /*!< the fitness of the Genome */
-  float mutation_rates[4];    /*!< the mutation rates attached to this Genome */
-  int global_rank;            /*!< the global rank of this Genome, including other Species */
-  int * innovation;           /*!< the address of the innovation number of the MatingPool containing this Genome */
+  Network * network;                        /*!< the Network attached to this Genome */
+  int nb_neurons;                           /*!< te number of Neuron elements contained in this Genome */
+  int nb_connection_genes;                  /*!< the number of ConnectionGene elements contained in this Genome */
+  float fitness;                            /*!< the fitness of the Genome */
+  float mutation_rates[4];                  /*!< the mutation rates attached to this Genome */
+  int global_rank;                          /*!< the global rank of this Genome, including other Species */
+  int * innovation;                         /*!< the address of the innovation number of the MatingPool containing this Genome */
+  int nb_mutations;                         /*!< the number of mutations of this Genome */
+  int mutations_history[N_MAX_MUTATIONS];   /*!< the mutations history of this Genome */
 } Genome;
 
 Genome * newGenome(int * innovation);

@@ -30,6 +30,7 @@ Genome * newGenome(int * innovation) {
 
   new_genome->global_rank = 0;
   new_genome->innovation = innovation;
+  new_genome->nb_mutations = 0;
 
   return new_genome;
 }
@@ -120,6 +121,11 @@ static void disturbMutationRates(Genome * genome) {
 * These mutation rates are also randomly increased or decreased as the evolution progresses.
 */
 int mutate(Genome * genome) {
+  if (genome->nb_mutations == N_MAX_MUTATIONS) {
+    fprintf(stderr, "Can't perform mutation: reached limit (max=%d)\n", N_MAX_MUTATIONS);
+    return 0;
+  }
+
   disturbMutationRates(genome);
 
   /*
@@ -205,6 +211,9 @@ int mutatePoint(Genome * genome) {
     next(genome->network);
   }
 
+  genome->mutations_history[genome->nb_mutations] = 0;
+  ++genome->nb_mutations;
+
   return 1;
 }
 
@@ -239,6 +248,9 @@ int mutateLink(Genome * genome) {
     --(*genome->innovation);
     return 0;
   }
+
+  genome->mutations_history[genome->nb_mutations] = 1;
+  ++genome->nb_mutations;
 
   return 1;
 }
@@ -325,6 +337,9 @@ int mutateNode(Genome * genome) {
     return 0;
   }
 
+  genome->mutations_history[genome->nb_mutations] = 2;
+  ++genome->nb_mutations;
+
   return 1;
 }
 
@@ -373,6 +388,9 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 
   random_connection_gene_index = randomAtMost(i);
   candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
+
+  genome->mutations_history[genome->nb_mutations] = 3;
+  ++genome->nb_mutations;
 
   return 1;
 }

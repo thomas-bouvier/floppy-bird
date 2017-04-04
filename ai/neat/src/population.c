@@ -233,8 +233,15 @@ Genome * getRandomGenome(Species * species) {
 void printMatingPool(MatingPool * pool) {
   int i;
   int j;
+  int k;
   Genome * current_genome = NULL;
 
+  printf("==================================\n");
+  printf("==================================\n");
+  printf("==================================\n");
+  printf("Printing MatingPool...\n");
+
+  printf("\n");
   printf("nb_species: %d\n", pool->nb_species);
 
   for (i = 0; i < pool->nb_species; ++i) {
@@ -242,7 +249,7 @@ void printMatingPool(MatingPool * pool) {
     printf("==================================\n");
     printf("==================================\n");
     printf("Species no %d\n", i);
-    printf("nb_genomes: %d\n", pool->species[i].nb_genomes);
+    printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
 
     j = 0;
     setOnFirst(pool->species[i].genomes);
@@ -250,15 +257,25 @@ void printMatingPool(MatingPool * pool) {
       current_genome = (Genome *) getCurrent(pool->species[i].genomes);
 
       printf("----------------------------------\n");
-      printf("Genome no %d (%p)\n", j, (void *) current_genome);
+      printf("Genome no %d (%p):\n", j, (void *) current_genome);
+
+      printf("\tnb_neurons: %d\n", current_genome->nb_neurons);
+      printf("\tnb_connection_genes: %d\n", current_genome->nb_connection_genes);
+      printf("\n");
+
+      printf("Mutation rates:\n");
 
       printf("\tPOINT_MUTATION_RATE: %f\n", current_genome->mutation_rates[0]);
       printf("\tLINK_MUTATION_RATE: %f\n", current_genome->mutation_rates[1]);
       printf("\tNODE_MUTATION_RATE: %f\n", current_genome->mutation_rates[2]);
       printf("\tENABLE_DISABLE_MUTATION_RATE: %f\n", current_genome->mutation_rates[3]);
 
-      printf("\tnb_neurons: %d\n", current_genome->nb_neurons);
-      printf("\tnb_connection_genes: %d\n", current_genome->nb_connection_genes);
+      printf("\n");
+      printf("Mutations history: ");
+
+      for (k = 0; k < current_genome->nb_mutations; ++k)
+        printf("%d ", current_genome->mutations_history[k]);
+
       printf("\n");
 
       ++j;
