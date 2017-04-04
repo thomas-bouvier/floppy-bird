@@ -213,6 +213,26 @@ void initFont(CvFont * font){
 	cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
 }
 
+void initWorkSpace(RaspiCamCvCapture * capture, char* window){
+	cvNamedWindow(window, CV_WINDOW_AUTOSIZE);
+	cvMoveWindow(window, 0, 100);
+	cvSetMouseCallback(window, getCurrentPointCoordinates, NULL);
+	printf("Definitoin of the working space \n");
+	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
+		image = raspiCamCvQueryFrame(capture);
+		if(!point1saved) 
+			cvShowImage(window, image);		
+		char keyPressed = cvWaitKey(30);
+		switch (keyPressed){
+			case 27:		//ESC to reset the point1
+				point1saved = 0;
+				break;
+		}
+	}
+	printf("Working space defined\n");
+	cvDestroyWindow(window);
+}
+
 int main(int argc, char *argv[]){
 	
 	// Variables
@@ -229,28 +249,8 @@ int main(int argc, char *argv[]){
 	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
 	enable(&stylus);
 	initFont(font);
+	initWorkSpace(capture, workSpaceDefWindow);
 
-
-	
-	cvNamedWindow(workSpaceDefWindow, CV_WINDOW_AUTOSIZE);
-	cvMoveWindow(workSpaceDefWindow, 0, 100);
-	cvSetMouseCallback(workSpaceDefWindow, getCurrentPointCoordinates, NULL);
-	printf("Definitoin of the working space \n");
-	while(workSpaceDefined == 0) {			// wait for the definition of the workspace
-		image = raspiCamCvQueryFrame(capture);
-		if(!point1saved) 
-			cvShowImage(workSpaceDefWindow, image);		
-		char keyPressed = cvWaitKey(30);
-		switch (keyPressed){
-			case 27:		//ESC to reset the point1
-				point1saved = 0;
-				break;
-		}
-	}
-	printf("Working space defined\n");
-	cvDestroyWindow(workSpaceDefWindow);
-
-	
 	
 	cvNamedWindow(colourTrackingWindow, CV_WINDOW_AUTOSIZE);
     cvNamedWindow(maskWindow, CV_WINDOW_AUTOSIZE);
