@@ -86,22 +86,84 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   return 1;
 }
 
+/*!
+* \brief Remove the Species whose id is given from the given MatingPool
+* \param[out] pool the MatingPool where the Species to remove is contained
+* \param[in] id the id of the Species to remove
+* \return int 1 if the Species was successfully removed from the MatingPool, 0 otherwise
+*/
+int removeSpecies(MatingPool * pool, short int id) {
+  int i;
+  int index = -1;
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    if (pool->species[i].id == id) {
+      index = i;
+      break;
+    }
+  }
+
+  if (index == -1) {
+    fprintf(stderr, "No Species found with id %d\n", id);
+    return 0;
+  }
+
+  for (i = index; i < pool->nb_species - 1; ++i)
+    pool->species[i] = pool->species[i + 1];
+
+  --pool->nb_species;
+
+  return 1;
+}
+
+/*!
+* \brief Generate the next generation of Species
+* \param[out] pool the MatingPool whose next generation of Species has to be generated
+*/
 int generateNewGeneration(MatingPool * pool) {
   int i;
   int nb_genomes = 0;
   Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
 
-  for (i = 0; i < pool->nb_species; ++i)
-    computeAverageFitness(&pool->species[i]);
+  removeWeakSpecies(pool);
 
+/*
   for (i = 0; i < nb_genomes; ++i)
     addGenomeToProperSpecies(children[i], pool);
+*/
 
   ++pool->generation;
 
   return 1;
 }
 
+/*!
+* \brief Remove weak Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
+* \param[out] pool the MatingPool whose weak Species have to be removed
+*/
+void removeWeakSpecies(MatingPool * pool) {
+  int i;
+  double breed;
+
+  for (i = 0; i < pool->nb_species; ++i)
+    computeAverageFitness(&pool->species[i]);
+
+  computeGlobalAverageFitness(pool);
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    breed = pool->species[i].average_fitness / pool->average_fitness * POPULATION;
+
+    if (breed < WEAK_SPECIES_THRESHOLD)
+      removeSpecies(pool, pool->species[i].id);
+  }
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \Return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
+*/
 static int compareFitness(const void * genome_1, const void * genome_2) {
   return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
 }

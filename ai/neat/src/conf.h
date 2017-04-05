@@ -30,4 +30,6 @@
 #define WEIGHT_COEFFICIENT            0.5
 #define DISJOINT_COEFFICIENT          1.5
 
+#define WEAK_SPECIES_THRESHOLD        1.0
+
 #endif // CONF_H
