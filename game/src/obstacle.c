@@ -96,9 +96,10 @@ void createObstacleRandomly(int number, List * l)
 * \param[in] savedObstacle the obstacle saved previously
 * \return Return 1 when the bird passed the obstacle (ie if the left side of the bird exceed the right side of the obstacle), 0 else
 */
-int obstaclePassed(Bird * bird, Obstacle * savedObstacle)
+int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
 {
     if(bird->x - bird->w/3 > savedObstacle->lower.x + PIPE_WIDTH){
+        (*sound) = OBSTACLE;
         return 1;
     }
     return 0;

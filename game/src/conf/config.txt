@@ -3,3 +3,17 @@ level :
 
 score :
 ../res/files/score.txt
+<<<<<<< HEAD
+=======
+
+font :
+../res/fonts/DejaVuSans.ttf
+
+sounds :
+jump :
+../res/sounds/jump.wav
+obstacle :
+../res/sounds/obstacle.wav
+death :
+../res/sounds/death.wav
+>>>>>>> linux

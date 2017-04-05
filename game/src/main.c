@@ -4,8 +4,11 @@
 #include "view.h"
 #include "control.h"
 #include "file.h"
+#include "sound.h"
 #include "constants.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 int main(int argc, char ** argv)
 {
@@ -18,6 +21,7 @@ int main(int argc, char ** argv)
     int hit;
     int running = 1;
     Action init;
+	Sound sound;
     int number;
 
     Bird bird;
@@ -82,8 +86,49 @@ int main(int argc, char ** argv)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         fprintf(stderr, "SDL initialization failure\n");
-        return 0;
+        return EXIT_FAILURE;
     }
+
+	/* SDL_TTF initialization */
+    if (TTF_Init() != 0)
+    {
+        fprintf(stderr, "SDL_TTF initialization failure\n");
+        return EXIT_FAILURE;
+    }
+    
+	/* SDL_mixer initialization */
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
+    {
+        fprintf(stderr, "SDL_mixer initialization failure\n");
+        return EXIT_FAILURE;
+    }
+
+	/* Setup sounds */
+	Mix_AllocateChannels(3);
+	Mix_Chunk * jump_sound;
+	Mix_Chunk * obstacle_sound;
+	Mix_Chunk * death_sound;
+	char jump_path[100];
+	if (readConfig(config, jump_path, "jump :\n"))
+    {
+        if (jump_path[strlen(jump_path)-1] == '\n')
+            jump_path[strlen(jump_path)-1] = '\0';
+    }
+	char obstacle_path[100];
+	if (readConfig(config, obstacle_path, "obstacle :\n"))
+    {
+        if (obstacle_path[strlen(obstacle_path)-1] == '\n')
+            obstacle_path[strlen(obstacle_path)-1] = '\0';
+    }
+	char death_path[100];
+	if (readConfig(config, death_path, "death :\n"))
+    {
+        if (death_path[strlen(death_path)-1] == '\n')
+            death_path[strlen(death_path)-1] = '\0';
+    }
+	jump_sound = Mix_LoadWAV(jump_path);
+	obstacle_sound = Mix_LoadWAV(obstacle_path);
+	death_sound= Mix_LoadWAV(death_path);
 
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
@@ -103,12 +148,28 @@ int main(int argc, char ** argv)
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+   
+   	/* Open a font for text */ 
+   	TTF_Font * font = NULL;
+   	char fontPath[100];
+	if (readConfig(config, fontPath, "font :\n"))
+    {
+        if (fontPath[strlen(fontPath)-1] == '\n')
+            fontPath[strlen(fontPath)-1] = '\0';
+    }
+	font = TTF_OpenFont(fontPath, 70);
+    if(font == NULL)
+    {
+    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
+    	return 0;
+    } 
 
     while(running)
     {
+    	score = 0;
         startGame(&bird, &camera, &l, level);
         savedObstacle = nextBirdObstacle(&l, &bird);
-        displayGame(renderer, &bird, &l, &camera);
+        displayGame(renderer, &bird, &l, &camera, score, font);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
@@ -117,14 +178,16 @@ int main(int argc, char ** argv)
         {
             init = detectTouch();
             if(init == JUMP)
+            {
                 bird.dir_y = BIRD_JUMP;
+                playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
+            }
             if(init == QUIT)
                 running = 0;
         }
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
-        score = 0;
         hit = 0;
         lastFrame = SDL_GetTicks();
 
@@ -134,13 +197,15 @@ int main(int argc, char ** argv)
             for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
             {
                 Action event = detectTouch();
+                sound = NOSOUND;
                 if(event == QUIT)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                displayGame(renderer, &bird, &l, &camera);
+                displayGame(renderer, &bird, &l, &camera, score, font);
+                playSound(sound, jump_sound, obstacle_sound, death_sound);
                 lastFrame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);
@@ -157,6 +222,9 @@ int main(int argc, char ** argv)
 
     /* Quit the game */
     quitGame(window, renderer);
+    Mix_FreeChunk(jump_sound);
+    Mix_FreeChunk(obstacle_sound);
+    Mix_FreeChunk(death_sound);
     fclose(config);
     if(LEVEL_FROM_FILE)
 		fclose(level);
