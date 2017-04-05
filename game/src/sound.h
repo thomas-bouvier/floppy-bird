@@ -11,6 +11,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int playSound(Sound sound);
+int playSound(Sound sound, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound, Mix_Chunk * death_sound);
 
 #endif // SOUND_H

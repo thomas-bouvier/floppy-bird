@@ -99,6 +99,33 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
+	/* Setup sounds */
+	Mix_AllocateChannels(3);
+	Mix_Chunk * jump_sound;
+	Mix_Chunk * obstacle_sound;
+	Mix_Chunk * death_sound;
+	char jump_path[100];
+	if (readConfig(config, jump_path, "jump :\n"))
+    {
+        if (jump_path[strlen(jump_path)-1] == '\n')
+            jump_path[strlen(jump_path)-1] = '\0';
+    }
+	char obstacle_path[100];
+	if (readConfig(config, obstacle_path, "obstacle :\n"))
+    {
+        if (obstacle_path[strlen(obstacle_path)-1] == '\n')
+            obstacle_path[strlen(obstacle_path)-1] = '\0';
+    }
+	char death_path[100];
+	if (readConfig(config, death_path, "death :\n"))
+    {
+        if (death_path[strlen(death_path)-1] == '\n')
+            death_path[strlen(death_path)-1] = '\0';
+    }
+	jump_sound = Mix_LoadWAV(jump_path);
+	obstacle_sound = Mix_LoadWAV(obstacle_path);
+	death_sound= Mix_LoadWAV(death_path);
+
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -149,7 +176,7 @@ int main(int argc, char ** argv)
             if(init == JUMP)
             {
                 bird.dir_y = BIRD_JUMP;
-                playSound(JUMPSOUND);
+                playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
             }
             if(init == QUIT)
                 running = 0;
@@ -174,7 +201,7 @@ int main(int argc, char ** argv)
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera, score, font);
-                playSound(sound);
+                playSound(sound, jump_sound, obstacle_sound, death_sound);
                 last_frame = SDL_GetTicks();
             }
             saveScore(scoreFile, score);
@@ -191,6 +218,9 @@ int main(int argc, char ** argv)
 
     /* Quit the game */
     quitGame(window, renderer);
+    Mix_FreeChunk(jump_sound);
+    Mix_FreeChunk(obstacle_sound);
+    Mix_FreeChunk(death_sound);
     fclose(config);
     fclose(level);
     fclose(scoreFile);
