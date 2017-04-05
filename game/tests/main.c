@@ -516,6 +516,219 @@ static int teardown_isLast(void ** state) {
 
 /* outOfList */
 
+static int setup_outOfList(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+
+  list->current = NULL;
+
+  *state = list;
+
+  return 0;
+}
+
+static void test_outOfList(void ** state) {
+  List * list = (List *) (* state);
+
+  assert_int_equal(outOfList(list), 1);
+}
+
+static int teardown_outOfList(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* setOnFirst */
+
+static int setup_setOnFirst(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+  *state = list;
+
+  return 0;
+}
+
+static void test_setOnFirst(void ** state) {
+  List * list = (List *) (* state);
+
+  setOnFirst(list);
+
+  assert_ptr_equal(list->current, list->first);
+}
+
+static int teardown_setOnFirst(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* setOnLast */
+
+static int setup_setOnLast(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+  *state = list;
+
+  return 0;
+}
+
+static void test_setOnLast(void ** state) {
+  List * list = (List *) (* state);
+
+  setOnLast(list);
+
+  assert_ptr_equal(list->current, list->last);
+}
+
+static int teardown_setOnLast(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* next */
+
+static int setup_next(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+  setOnFirst(list);
+  *state = list;
+
+  return 0;
+}
+
+static void test_next(void ** state) {
+  List * list = (List *) (* state);
+
+  Obstacle * current = list->current;
+  next(list);
+
+  assert_ptr_equal(list->current, current->next);
+}
+
+static int teardown_next(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* deleteFirst */
+
+static int setup_deleteFirst(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+  *state = list;
+
+  return 0;
+}
+
+static void test_deleteFirst(void ** state) {
+  List * list = (List *) (* state);
+
+  Obstacle * first = list->first;
+  int nb_obstacles = list->nbObstacles;
+
+  deleteFirst(list);
+
+  assert_ptr_equal(list->first, first->next);
+  assert_int_equal(nb_obstacles - 1, list->nbObstacles);
+}
+
+static int teardown_deleteFirst(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
+/* deleteLast */
+
+static int setup_insertLast(void ** state) {
+  List * list = malloc(sizeof(List));
+
+  if (list == (List *) NULL)
+    return -1;
+
+  initList(list, NULL, 0);
+  *state = list;
+
+  return 0;
+}
+
+static void test_insertLast(void ** state) {
+  List * list = (List *) (* state);
+
+  Obstacle * last = list->last;
+  int nb_obstacles = list->nbObstacles;
+
+  insertLast(list, newObstacle(100, 300, 300, NULL));
+
+  assert_ptr_equal(list->last, last->next);
+  assert_int_equal(nb_obstacles + 1, list->nbObstacles);
+}
+
+static int teardown_insertLast(void ** state) {
+  int i;
+  List * list = (List *) (* state);
+
+  for (i = 0; i < list->nbObstacles; ++i)
+    deleteFirst(list);
+
+  free(list);
+
+  return 0;
+}
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
@@ -546,6 +759,12 @@ int main() {
     cmocka_unit_test_setup_teardown(test_isEmpty, setup_isEmpty, teardown_isEmpty),
     cmocka_unit_test_setup_teardown(test_isFirst, setup_isFirst, teardown_isFirst),
     cmocka_unit_test_setup_teardown(test_isLast, setup_isLast, teardown_isLast),
+    cmocka_unit_test_setup_teardown(test_outOfList, setup_outOfList, teardown_outOfList),
+    cmocka_unit_test_setup_teardown(test_setOnFirst, setup_setOnFirst, teardown_setOnFirst),
+    cmocka_unit_test_setup_teardown(test_setOnLast, setup_setOnLast, teardown_setOnLast),
+    cmocka_unit_test_setup_teardown(test_next, setup_next, teardown_next),
+    cmocka_unit_test_setup_teardown(test_deleteFirst, setup_deleteFirst, teardown_deleteFirst),
+    cmocka_unit_test_setup_teardown(test_insertLast, setup_insertLast, teardown_insertLast)
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
