@@ -17,8 +17,9 @@ void startGame(Bird * bird, Camera * camera, List * l, FILE * level, int levelFr
 void cameraScrolling(Camera * camera, Bird * bird);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);
 int deleteObstacle(Camera * camera, List * l);
-int detectHit(Bird * bird, Obstacle * obstacle);
-int updateScore(int score, Bird * bird, Obstacle * savedObstacle);
-int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, int levelFromFile);
+int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound);
+int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound);
+int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, Sound * sound, int levelFromFile);
+
 
 #endif // GAME_H

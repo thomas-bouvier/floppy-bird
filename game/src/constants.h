@@ -105,5 +105,22 @@ enum Action
     PAUSE               /*! pause the game */
 };
 
+/*!
+* The possible sounds for the bird
+*/
+typedef enum  Sound Sound;
+
+/*!
+* \enum Sound
+* \brief The possible sounds for the bird
+*/
+enum Sound
+{
+    NOSOUND,            /*! nothing to be played */
+    JUMPSOUND,        	/*! sound when the bird jump */
+    OBSTACLE,           /*! sound when the bird pass an obstacle */
+    DEATH               /*! sound when the bird die */
+};
+
 
 #endif // CONSTANTS_H

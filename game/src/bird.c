@@ -28,10 +28,13 @@ void initBird(Bird * new_bird)
 * of the bird (bird->y - BIRD_SIZE/2) is higher than the limit of the screen (0), the bird is replace at the limit
 * of the screen, and same for the bottom.
 */
-void updateBird(Bird * bird, int t)
+void updateBird(Bird * bird, int t, Sound * sound)
 {
-    if( t == JUMP)
+    if(t == JUMP)
+	{
         bird->dir_y = BIRD_JUMP;
+        (*sound) = JUMPSOUND;
+    }
     else
     {
         bird->dir_y += GRAVITY;
