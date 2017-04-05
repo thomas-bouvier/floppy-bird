@@ -24,7 +24,7 @@ struct List{
     int nbObstacles;                    /*!< the number of obstacles in the list*/
 };
 
-void initList(List * l, FILE * level);
+void initList(List * l, FILE * level, int levelFromFile);
 int isEmpty(List * l);
 int isFirst(List * l);
 int isLast(List * l);

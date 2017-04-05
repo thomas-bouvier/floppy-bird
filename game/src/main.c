@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "game.h"
 #include "view.h"
 #include "control.h"
@@ -28,11 +29,14 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
+    int levelFromFile = 1;
     FILE * config = NULL;
     FILE * level = NULL;
 
     int score;
     Obstacle * savedObstacle = NULL;
+
+    srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
@@ -47,7 +51,7 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the level */
-    if(LEVEL_FROM_FILE)
+    if(levelFromFile)
     {
         char levelPath[100];
         if (readConfig(config, levelPath, "level :\n"))
@@ -167,8 +171,13 @@ int main(int argc, char ** argv)
     while(running)
     {
     	score = 0;
-        startGame(&bird, &camera, &l, level);
+        startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
+        drawLowForTI(renderer, &camera);
+        running = waitForTI();
+        drawUpForTI(renderer, &camera);
+        if (running)
+            running = waitForTI();
         displayGame(renderer, &bird, &l, &camera, score, font);
 
         /* Wait the first jump to start the game*/
@@ -202,7 +211,7 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera, score, font);
                 playSound(sound, jump_sound, obstacle_sound, death_sound);
@@ -226,7 +235,7 @@ int main(int argc, char ** argv)
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);
     fclose(config);
-    if(LEVEL_FROM_FILE)
+    if(levelFromFile)
 		fclose(level);
     fclose(scoreFile);
 

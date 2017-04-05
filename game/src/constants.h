@@ -83,11 +83,6 @@
 */
 #define OBSTACLE_NUMBER (PIPES_ON_SCREEN + 1)
 
-/*! \def LEVEL_FROM_FILE
-* \brief Select if the level is generated from a file or randomly
-*/
-#define LEVEL_FROM_FILE 1
-
 /*! \def FRAME_PER_SECOND
 * \brief the number of frame max per second
 */

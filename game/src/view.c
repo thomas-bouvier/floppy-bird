@@ -50,6 +50,35 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 }
 
 /*!
+* \brief Draw a square with the color of lower pipes and the size of the bird at the center of the screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+*/
+void drawLowForTI(SDL_Renderer * renderer, Camera * camera)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
+    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
+    SDL_RenderPresent(renderer);
+}
+
+/*!
+* \brief Draw a square with the color of upper pipes and the size of the bird at the center of the screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+*/
+void drawUpForTI(SDL_Renderer * renderer, Camera * camera)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
+    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
+    SDL_RenderPresent(renderer);
+}
+/*!
 * \brief Display the items of the game
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to display
@@ -72,6 +101,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
         }
     }
     displayScore(renderer, score, font);
+    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
     SDL_RenderPresent(renderer);
 }
 
