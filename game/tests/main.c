@@ -729,6 +729,35 @@ static int teardown_insertLast(void ** state) {
   return 0;
 }
 
+/* initPipe */
+
+static int setup_initPipe(void ** state) {
+  Pipe * pipe = malloc(sizeof(Pipe));
+
+  if (pipe == (Pipe *) NULL)
+    return -1;
+
+  *state = pipe;
+
+  return 0;
+}
+
+static void test_initPipe(void ** state) {
+  Pipe * pipe = (Pipe *) (* state);
+
+  initPipe(pipe, 10, 100, 200);
+
+  assert_int_equal(pipe->x, 10 * PIPE_X_OFFSET + SCREEN_WIDTH);
+  assert_int_equal(pipe->y, 100);
+  assert_int_equal(pipe->w, PIPE_WIDTH);
+  assert_int_equal(pipe->h, 200);
+}
+
+static int teardown_initPipe(void ** state) {
+  free(*state);
+  return 0;
+}
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
@@ -764,7 +793,9 @@ int main() {
     cmocka_unit_test_setup_teardown(test_setOnLast, setup_setOnLast, teardown_setOnLast),
     cmocka_unit_test_setup_teardown(test_next, setup_next, teardown_next),
     cmocka_unit_test_setup_teardown(test_deleteFirst, setup_deleteFirst, teardown_deleteFirst),
-    cmocka_unit_test_setup_teardown(test_insertLast, setup_insertLast, teardown_insertLast)
+    cmocka_unit_test_setup_teardown(test_insertLast, setup_insertLast, teardown_insertLast),
+
+    cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);
