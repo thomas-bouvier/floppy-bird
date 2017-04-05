@@ -409,11 +409,12 @@ static int setup_initList(void ** state) {
 static void test_initList(void ** state) {
   List * list = (List *) (* state);
 
-  initList(list, NULL);
+  initList(list, NULL, 0);
 
-  assert_null(list->first);
-  assert_null(list->current);
-  assert_null(list->last);
+  assert_int_equal(list->nbObstacles, OBSTACLE_NUMBER);
+  assert_non_null(list->first);
+  assert_non_null(list->current);
+  assert_non_null(list->last);
 }
 
 static int teardown_initList(void ** state) {
@@ -429,37 +430,13 @@ static int setup_isEmpty(void ** state) {
   if (list == (List *) NULL)
     return -1;
 
-  initList(list, NULL);
-  *state = list;
-
-  return 0;
-}
-
-static int setup_isEmptyMultipleObstacles(void ** state) {
-  List * list = malloc(sizeof(List));
-
-  if (list == (List *) NULL)
-    return -1;
-
-  initList(list, NULL);
-
-  insertLast(list, newObstacle(0, 200, 250, NULL));
-  insertLast(list, newObstacle(1, 200, 250, NULL));
-  insertLast(list, newObstacle(2, 200, 250, NULL));
-  insertLast(list, newObstacle(3, 200, 250, NULL));
-
+  initList(list, NULL, 0);
   *state = list;
 
   return 0;
 }
 
 static void test_isEmpty(void ** state) {
-  List * list = (List *) (* state);
-
-  assert_int_equal(isEmpty(list), 1);
-}
-
-static void test_isEmptyMutipleObstacles(void ** state) {
   List * list = (List *) (* state);
 
   assert_int_equal(isEmpty(list), 0);
@@ -478,44 +455,9 @@ static int setup_isFirst(void ** state) {
   if (list == (List *) NULL)
     return -1;
 
-  initList(list, NULL);
-
-  insertLast(list, newObstacle(0, 200, 250, NULL));
-  insertLast(list, newObstacle(1, 200, 250, NULL));
-  insertLast(list, newObstacle(2, 200, 250, NULL));
-  insertLast(list, newObstacle(3, 200, 250, NULL));
+  initList(list, NULL, 0);
 
   list->current = list->first;
-
-  *state = list;
-
-  return 0;
-}
-
-static int setup_isFirstEmpty(void ** state) {
-  List * list = malloc(sizeof(List));
-
-  if (list == (List *) NULL)
-    return -1;
-
-  initList(list, NULL);
-  *state = list;
-
-  return 0;
-}
-
-static int setup_isFirstMultipleObstacles(void ** state) {
-  List * list = malloc(sizeof(List));
-
-  if (list == (List *) NULL)
-    return -1;
-
-  initList(list, NULL);
-
-  insertLast(list, newObstacle(0, 200, 250, NULL));
-  insertLast(list, newObstacle(1, 200, 250, NULL));
-  insertLast(list, newObstacle(2, 200, 250, NULL));
-  insertLast(list, newObstacle(3, 200, 250, NULL));
 
   *state = list;
 
@@ -526,18 +468,6 @@ static void test_isFirst(void ** state) {
   List * list = (List *) (* state);
 
   assert_int_equal(isFirst(list), 1);
-}
-
-static void test_isFirstEmpty(void ** state) {
-  List * list = (List *) (* state);
-
-  assert_int_equal(isFirst(list), 1);
-}
-
-static void test_isFirstMultipleObstacles(void ** state) {
-  List * list = (List *) (* state);
-
-  assert_int_equal(isFirst(list), 0);
 }
 
 static int teardown_isFirst(void ** state) {
@@ -560,25 +490,7 @@ static int setup_isLast(void ** state) {
   if (list == (List *) NULL)
     return -1;
 
-  initList(list, NULL);
-
-  insertLast(list, newObstacle(0, 200, 250, NULL));
-  insertLast(list, newObstacle(1, 200, 250, NULL));
-  insertLast(list, newObstacle(2, 200, 250, NULL));
-  insertLast(list, newObstacle(3, 200, 250, NULL));
-
-  *state = list;
-
-  return 0;
-}
-
-static int setup_isLastEmpty(void ** state) {
-  List * list = malloc(sizeof(List));
-
-  if (list == (List *) NULL)
-    return -1;
-
-  initList(list, NULL);
+  initList(list, NULL, 0);
   *state = list;
 
   return 0;
@@ -588,12 +500,6 @@ static void test_isLast(void ** state) {
   List * list = (List *) (* state);
 
   assert_int_equal(isLast(list), 1);
-}
-
-static void test_isLastEmpty(void ** state) {
-  List * list = (List *) (* state);
-
-  assert_int_equal(isFirst(list), 1);
 }
 
 static int teardown_isLast(void ** state) {
@@ -638,12 +544,8 @@ int main() {
 
     cmocka_unit_test_setup_teardown(test_initList, setup_initList, teardown_initList),
     cmocka_unit_test_setup_teardown(test_isEmpty, setup_isEmpty, teardown_isEmpty),
-    cmocka_unit_test_setup_teardown(test_isEmptyMutipleObstacles, setup_isEmptyMultipleObstacles, teardown_isEmpty),
     cmocka_unit_test_setup_teardown(test_isFirst, setup_isFirst, teardown_isFirst),
-    cmocka_unit_test_setup_teardown(test_isFirstEmpty, setup_isFirstEmpty, teardown_isFirst),
-    cmocka_unit_test_setup_teardown(test_isFirstMultipleObstacles, setup_isFirstMultipleObstacles, teardown_isFirst),
     cmocka_unit_test_setup_teardown(test_isLast, setup_isLast, teardown_isLast),
-    cmocka_unit_test_setup_teardown(test_isLastEmpty, setup_isLastEmpty, teardown_isLast),
   };
 
   return cmocka_run_group_tests(tests, NULL, NULL);

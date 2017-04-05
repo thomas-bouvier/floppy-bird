@@ -118,8 +118,7 @@ int insertLast(List * l, struct Obstacle * obstacle){
 		l->first = obstacle;
 	else
 		l->last->next = obstacle;
-	l->last = obstacle;
+	l->current = l->last = obstacle;
 	l->nbObstacles++;
 	return 1;
 }
-
