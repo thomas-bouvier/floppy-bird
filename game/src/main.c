@@ -55,11 +55,7 @@ int main(int argc, char ** argv)
     {
         char levelPath[100];
         if (readConfig(config, levelPath, "level :\n"))
-        {
-            if (levelPath[strlen(levelPath)-1] == '\n')
-                levelPath[strlen(levelPath)-1] = '\0';
             level = fopen(levelPath, "r");
-        }
         if(level == NULL)
         {
             fprintf(stderr,"Opening level file failure :\n");
@@ -73,8 +69,6 @@ int main(int argc, char ** argv)
     char scorePath[100];
     if (readConfig(config, scorePath, "score :\n"))
     {
-        if (scorePath[strlen(scorePath)-1] == '\n')
-            scorePath[strlen(scorePath)-1] = '\0';
         scoreFile = fopen(scorePath, "r+");
         if (scoreFile == NULL)
             scoreFile = fopen(scorePath, "w+");
@@ -113,23 +107,11 @@ int main(int argc, char ** argv)
 	Mix_Chunk * obstacle_sound;
 	Mix_Chunk * death_sound;
 	char jump_path[100];
-	if (readConfig(config, jump_path, "jump :\n"))
-    {
-        if (jump_path[strlen(jump_path)-1] == '\n')
-            jump_path[strlen(jump_path)-1] = '\0';
-    }
+	readConfig(config, jump_path, "jump :\n");
 	char obstacle_path[100];
-	if (readConfig(config, obstacle_path, "obstacle :\n"))
-    {
-        if (obstacle_path[strlen(obstacle_path)-1] == '\n')
-            obstacle_path[strlen(obstacle_path)-1] = '\0';
-    }
+	readConfig(config, obstacle_path, "obstacle :\n");
 	char death_path[100];
-	if (readConfig(config, death_path, "death :\n"))
-    {
-        if (death_path[strlen(death_path)-1] == '\n')
-            death_path[strlen(death_path)-1] = '\0';
-    }
+	readConfig(config, death_path, "death :\n");
 	jump_sound = Mix_LoadWAV(jump_path);
 	obstacle_sound = Mix_LoadWAV(obstacle_path);
 	death_sound= Mix_LoadWAV(death_path);
@@ -156,11 +138,7 @@ int main(int argc, char ** argv)
    	/* Open a font for text */ 
    	TTF_Font * font = NULL;
    	char fontPath[100];
-	if (readConfig(config, fontPath, "font :\n"))
-    {
-        if (fontPath[strlen(fontPath)-1] == '\n')
-            fontPath[strlen(fontPath)-1] = '\0';
-    }
+	readConfig(config, fontPath, "font :\n");
 	font = TTF_OpenFont(fontPath, 70);
     if(font == NULL)
     {
