@@ -50,20 +50,49 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 }
 
 /*!
-* \brief Display the items of  the game
+* \brief Draw a square with the color of lower pipes and the size of the bird at the center of the screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+*/
+void drawLowForTI(SDL_Renderer * renderer, Camera * camera)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
+    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
+    SDL_RenderPresent(renderer);
+}
+
+/*!
+* \brief Draw a square with the color of upper pipes and the size of the bird at the center of the screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+*/
+void drawUpForTI(SDL_Renderer * renderer, Camera * camera)
+{
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
+    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
+    SDL_RenderPresent(renderer);
+}
+/*!
+* \brief Display the items of the game
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to display
 * \param[in] l the list of obstacle
 * \param[in] camera the view of the scene
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera)
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font)
 {
     int i = 0;
     setOnFirst(l);
-    SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBird(renderer, bird, camera);
-    while (!outOfList(l))
+    while (i < OBSTACLE_NUMBER)
     {
         if (l->current->lower.x != 0){
             drawObstacle(renderer, l->current, camera);
@@ -71,8 +100,9 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
+    displayScore(renderer, score, font);
+    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
     SDL_RenderPresent(renderer);
-    SDL_Delay(30);
 }
 
 /*!
@@ -84,5 +114,26 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+	Mix_CloseAudio();
+    TTF_Quit();
     SDL_Quit();
+}
+
+/*!
+* \brief Display the current score on screen
+* \param[out] renderer the drawing target
+* \param[in] score the current score to be displayed
+* \param[in] config the configuration file to be read in order to have the path of the font
+*/
+int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
+{
+	char scoreString[10];
+	sprintf(scoreString, "%d", score);   
+    SDL_Color color = {0, 0, 0};
+	SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, scoreString, color);
+	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+	SDL_Rect dest = {30, 30, scoreSurface->w, scoreSurface->h};
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
+	SDL_FreeSurface(scoreSurface);
+	return 1;	
 }

@@ -5,12 +5,27 @@
 #include "list.h"
 
 /*!
-* \brief Initialize a list, and fill it with a unique obstacle
+* \brief Initialize a list, and fill it with OBSTACLE_NUMBER obstacles
 * \param[out] l the list to initialize
+* \param[in] level the file that contains the height of the obstacles
+* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+*
+* If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
-void initList(List * l){
+void initList(List * l, FILE * level, int levelFromFile){
+    int  i;
+    l->nbObstacles = 0;
 	l->first = l->current = l->last = NULL;
-    insertLast(l, newObstacle(0, 400, 250, NULL));
+	for (i=0 ; i<OBSTACLE_NUMBER ; ++i)
+    {
+        if(levelFromFile)
+            createObstacleFromFile(level, i, l);
+        else
+        {
+            createObstacleRandomly(i,l);
+        }
+    }
+
 }
 
 /*!
@@ -88,6 +103,7 @@ int deleteFirst(List * l){
 	if(l->first == NULL)
 		l->last = NULL;
 	freeObstacle(to_del);
+	l->nbObstacles--;
 	return 1;
 }
 
@@ -97,12 +113,12 @@ int deleteFirst(List * l){
 * \param[out] obstacle the obstacle to insert
 * \return Return 1 if the obstacle has been added, 0 if not
 */
-int insertLast(List * l, Obstacle * obstacle){
+int insertLast(List * l, struct Obstacle * obstacle){
 	if(isEmpty(l))
 		l->first = obstacle;
 	else
 		l->last->next = obstacle;
-	l->last = obstacle;
+	l->current = l->last = obstacle;
+	l->nbObstacles++;
 	return 1;
 }
-

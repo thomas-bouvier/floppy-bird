@@ -22,6 +22,6 @@ typedef struct{
 } Bird;
 
 void initBird(Bird * new_bird);
-void updateBird(Bird * bird, int t);
+void updateBird(Bird * bird, int t, Sound * sound);
 
 #endif // BIRD_H
