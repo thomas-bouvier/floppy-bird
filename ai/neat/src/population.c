@@ -121,10 +121,13 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
 int generateNewGeneration(MatingPool * pool) {
+  /*
   int i;
   int nb_genomes = 0;
   Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
+  */
 
+  removeStaleSpecies(pool);
   removeWeakSpecies(pool);
 
 /*
@@ -153,7 +156,34 @@ void removeWeakSpecies(MatingPool * pool) {
   for (i = 0; i < pool->nb_species; ++i) {
     breed = pool->species[i].average_fitness / pool->average_fitness * POPULATION;
 
+    printf("species average fitness: %f\n", pool->species[i].average_fitness);
+    printf("pool average fitness: %f\n", pool->average_fitness);
+    printf("breed: %f\n", breed);
+
     if (breed < WEAK_SPECIES_THRESHOLD)
+      removeSpecies(pool, pool->species[i].id);
+  }
+}
+
+/*!
+* \brief Remove stale Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
+* \param[out] pool the MatingPool whose weak Species have to be removed
+*/
+void removeStaleSpecies(MatingPool * pool) {
+  int i;
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    sort(pool->species[i].genomes, compareGenomeFitness);
+
+    setOnFirst(pool->species[i].genomes);
+    if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
+      pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
+      pool->species[i].staleness = 0;
+    }
+    else
+      ++pool->species[i].staleness;
+
+    if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
       removeSpecies(pool, pool->species[i].id);
   }
 }
@@ -305,6 +335,7 @@ void printMatingPool(MatingPool * pool) {
 
   printf("\n");
   printf("nb_species: %d\n", pool->nb_species);
+  printf("generation: %d\n", pool->generation);
 
   for (i = 0; i < pool->nb_species; ++i) {
     printf("\n");

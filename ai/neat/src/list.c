@@ -128,6 +128,7 @@ int add(List * list, void * element) {
   }
 
   new_node->data = element;
+  new_node->next = NULL;
 
   if (emptyList(list))
     list->first = new_node;
@@ -135,12 +136,51 @@ int add(List * list, void * element) {
     list->last->next = new_node;
 
   list->current = list->last = new_node;
-  new_node->next = NULL;
 
   return 1;
 }
 
-static int deleteFirst(List * list) {
+/*!
+* \brief Insert an element before the current position of the List. The current pointer is updated to point to it.
+* \param[out] list the List
+* \param[out] element the element to be inserted before the current element
+* \return int 1 if the element was successfully inserted, 0 otherwise
+*/
+static int insertBeforeCurrent(List * list, void * element) {
+  Node * new_node = NULL;
+  Node * previous_node = NULL;
+  Node * stop = NULL;
+
+  if (!outOfList(list)) {
+    stop = list->current;
+
+    setOnFirst(list);
+    while (list->current != stop) {
+      previous_node = list->current;
+      next(list);
+    }
+
+    if (emptyList(list))
+      add(list, element);
+    else {
+      if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Node\n");
+        return 0;
+      }
+
+      new_node->data = element;
+      new_node->next = list->current;
+
+      previous_node->next = new_node;
+    }
+
+    return 1;
+  }
+
+  return 0;
+}
+
+static int deleteFirst(List * list, void * data) {
   Node * element_to_delete = list->first;
 
   if (!emptyList(list)) {
@@ -150,7 +190,9 @@ static int deleteFirst(List * list) {
     if (list->first == NULL)
       list->last = NULL;
 
-    if (list->free_function)
+    if (data)
+      data = element_to_delete->data;
+    else if (list->free_function)
       list->free_function(element_to_delete->data);
 
     free(element_to_delete);
@@ -161,7 +203,7 @@ static int deleteFirst(List * list) {
   return 0;
 }
 
-static int deleteLast(List * list) {
+static int deleteLast(List * list, void * data) {
   Node * element_to_delete = list->last;
   Node * previous_element = NULL;
 
@@ -184,7 +226,9 @@ static int deleteLast(List * list) {
     if (list->last == NULL)
       list->first = NULL;
 
-    if (list->free_function)
+    if (data)
+      data = element_to_delete->data;
+    else if (list->free_function)
       list->free_function(element_to_delete->data);
 
     free(element_to_delete);
@@ -195,16 +239,16 @@ static int deleteLast(List * list) {
   return 0;
 }
 
-static int deleteCurrent(List * list) {
+static int deleteCurrent(List * list, void * data) {
   Node * previous_element = NULL;
   Node * stop = NULL;
 
   if (!outOfList(list)) {
     if (list->current == list->first)
-      return deleteFirst(list);
+      return deleteFirst(list, data);
 
     else if (list->current == list->last)
-      return deleteLast(list);
+      return deleteLast(list, data);
 
     else {
       stop = list->current;
@@ -217,7 +261,9 @@ static int deleteCurrent(List * list) {
 
       previous_element->next = list->current->next;
 
-      if (list->free_function)
+      if (data)
+        data = list->current->data;
+      else if (list->free_function)
         list->free_function(list->current->data);
 
       free(list->current);
@@ -239,7 +285,7 @@ int delete(List * list, void * element) {
   setOnFirst(list);
   while (!outOfList(list)) {
     if (list->current->data == element) {
-      deleteCurrent(list);
+      deleteCurrent(list, NULL);
       return 1;
     }
 
@@ -247,6 +293,26 @@ int delete(List * list, void * element) {
   }
 
   return 0;
+}
+
+void sort(List * list, int (*f) (void *, void *)) {
+  Node * pos = NULL;
+  void * save = NULL;
+
+  setOnFirst(list);
+  next(list);
+  while (!outOfList(list)) {
+    pos = list->current->next;
+    deleteCurrent(list, save);
+
+    setOnFirst(list);
+    while (list->current != pos && (*f)(save, list->current->data) < 0)
+      next(list);
+
+    insertBeforeCurrent(list, save);
+
+    list->current = pos;
+  }
 }
 
 /*!

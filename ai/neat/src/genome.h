@@ -21,7 +21,7 @@ typedef struct {
   Network * network;                        /*!< the Network attached to this Genome */
   int nb_neurons;                           /*!< te number of Neuron elements contained in this Genome */
   int nb_connection_genes;                  /*!< the number of ConnectionGene elements contained in this Genome */
-  float fitness;                            /*!< the fitness of the Genome */
+  double fitness;                           /*!< the fitness of the Genome */
   float mutation_rates[4];                  /*!< the mutation rates attached to this Genome */
   int global_rank;                          /*!< the global rank of this Genome, including other Species */
   int * innovation;                         /*!< the address of the innovation number of the MatingPool containing this Genome */
@@ -43,6 +43,8 @@ int mutateNode(Genome * genome);
 int mutateEnableFlag(Genome * genome, unsigned char enable);
 
 Genome * crossover(Genome * genome_1, Genome * genome_2);
+
+int compareGenomeFitness(void * genome_1, void * genome_2);
 
 int sameSpecies(Genome * genome_1, Genome * genome_2);
 int linked(Neuron * neurion_in, Neuron * neuron_out);

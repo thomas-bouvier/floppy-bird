@@ -44,6 +44,8 @@ void * getCurrent(List * list);
 int add(List * list, void * element);
 int delete(List * list, void * element);
 
+void sort(List * list, int (*f) (void *, void *));
+
 int find(List * list, void * element);
 int count(List * list);
 

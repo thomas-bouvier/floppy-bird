@@ -24,8 +24,6 @@ int main() {
   if (!populateMatingPool(pool))
     return EXIT_FAILURE;
 
-  printMatingPool(pool);
-
   /* generating genomes */
 
   for (i = 0; i < pool->nb_species; ++i) {
@@ -38,14 +36,9 @@ int main() {
     }
   }
 
-  printf("\n");
-  printf("First genome of first species :\n");
+  generateNewGeneration(pool);
 
-  setOnFirst(pool->species[0].genomes);
-  current_genome = getCurrent(pool->species[0].genomes);
-
-  printf("nb_neurons: %d\n", current_genome->nb_neurons);
-  printf("nb_connection_genes: %d\n", current_genome->nb_connection_genes);
+  //printMatingPool(pool);
 
   /*
   ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, pool->innovation);
@@ -100,9 +93,9 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
-  */
 
   writeGraphVizGenome(current_genome, "graph.dot");
+  */
 
   freeMatingPool(pool);
 

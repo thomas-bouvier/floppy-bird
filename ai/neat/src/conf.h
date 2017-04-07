@@ -31,5 +31,6 @@
 #define DISJOINT_COEFFICIENT          1.5
 
 #define WEAK_SPECIES_THRESHOLD        1.0
+#define STALE_SPECIES_THRESHOLD       10
 
 #endif // CONF_H

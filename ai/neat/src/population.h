@@ -26,6 +26,7 @@ struct Species {
   short int nb_genomes;             /*!< the number of Genome elements contained in this Species */
   double max_fitness;               /*!< the maximum score of all Genome elements in this Species */
   double average_fitness;           /*!< the average score of Genome elements in this Species */
+  int staleness;                    /*!< the staleness of this Species */
   int * innovation;                 /*!< the address of the innovation number of the MatingPool containing this Species */
 };
 
@@ -51,6 +52,7 @@ int removeSpecies(MatingPool * pool, short int id);
 
 int generateNewGeneration(MatingPool * pool);
 void removeWeakSpecies(MatingPool * pool);
+void removeStaleSpecies(MatingPool * pool);
 
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);

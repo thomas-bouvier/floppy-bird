@@ -403,6 +403,19 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
   return genome;
 }
 
+int compareGenomeFitness(void * genome_1, void * genome_2) {
+  float diff = ((Genome *) genome_2)->fitness - ((Genome *) genome_1)->fitness;
+
+  if (diff == 0)
+    return 0;
+  else {
+    if (diff > 0)
+      return 1;
+  }
+
+  return -1;
+}
+
 static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
   double sum = 0.0;
   double sameInnovation = 0.0;
