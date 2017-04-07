@@ -79,6 +79,7 @@ int addSpeciesToMatingPool(MatingPool * pool) {
   pool->species[pool->nb_species].nb_genomes = 0;
   pool->species[pool->nb_species].max_fitness = 0.0;
   pool->species[pool->nb_species].average_fitness = 0.0;
+  pool->species[pool->nb_species].staleness = 0;
   pool->species[pool->nb_species].innovation = &pool->innovation;
 
   ++pool->nb_species;
@@ -127,8 +128,11 @@ int generateNewGeneration(MatingPool * pool) {
   Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
   */
 
+  computeGlobalRanks(pool);
   removeStaleSpecies(pool);
-  removeWeakSpecies(pool);
+
+  //computeGlobalRanks(pool);
+  removeWeakSpecies(pool, 0);
 
 /*
   for (i = 0; i < nb_genomes; ++i)
@@ -144,7 +148,7 @@ int generateNewGeneration(MatingPool * pool) {
 * \brief Remove weak Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
 * \param[out] pool the MatingPool whose weak Species have to be removed
 */
-void removeWeakSpecies(MatingPool * pool) {
+void removeWeakSpecies(MatingPool * pool, int verbose) {
   int i;
   double breed;
 
@@ -156,9 +160,11 @@ void removeWeakSpecies(MatingPool * pool) {
   for (i = 0; i < pool->nb_species; ++i) {
     breed = pool->species[i].average_fitness / pool->average_fitness * POPULATION;
 
-    printf("species average fitness: %f\n", pool->species[i].average_fitness);
-    printf("pool average fitness: %f\n", pool->average_fitness);
-    printf("breed: %f\n", breed);
+    if (verbose) {
+      printf("species average fitness: %f\n", pool->species[i].average_fitness);
+      printf("pool average fitness: %f\n", pool->average_fitness);
+      printf("breed: %f\n", breed);
+    }
 
     if (breed < WEAK_SPECIES_THRESHOLD)
       removeSpecies(pool, pool->species[i].id);
@@ -214,7 +220,7 @@ void computeGlobalRanks(MatingPool * pool) {
   for (i = 0; i < pool->nb_species; ++i) {
     setOnFirst(pool->species[i].genomes);
     while (!outOfList(pool->species[i].genomes)) {
-      genomes[j * pool->nb_species + i] = getCurrent(pool->species[i].genomes);
+      genomes[j] = ((Genome *) getCurrent(pool->species[i].genomes));
 
       ++j;
       next(pool->species[i].genomes);
@@ -223,11 +229,11 @@ void computeGlobalRanks(MatingPool * pool) {
 
   // we're sorting the genomes from their fitness
 
-  qsort(genomes, j * pool->nb_species + i, sizeof(Genome *), compareFitness);
+  qsort(genomes, j, sizeof(Genome *), compareFitness);
 
   // we're calculating the global rank for the current genome
 
-  for (k = 0; k <= j * pool->nb_species + i; ++k)
+  for (k = 0; k < j; ++k)
     genomes[k]->global_rank = k;
 }
 

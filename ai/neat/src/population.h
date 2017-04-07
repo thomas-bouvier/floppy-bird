@@ -51,7 +51,7 @@ int addSpeciesToMatingPool(MatingPool * pool);
 int removeSpecies(MatingPool * pool, short int id);
 
 int generateNewGeneration(MatingPool * pool);
-void removeWeakSpecies(MatingPool * pool);
+void removeWeakSpecies(MatingPool * pool, int verbose);
 void removeStaleSpecies(MatingPool * pool);
 
 void computeGlobalRanks(MatingPool * pool);
