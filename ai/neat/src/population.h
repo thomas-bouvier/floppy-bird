@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "conf.h"
 #include "genome.h"
@@ -51,6 +52,7 @@ int addSpeciesToMatingPool(MatingPool * pool);
 int removeSpecies(MatingPool * pool, short int id);
 
 int generateNewGeneration(MatingPool * pool);
+void cullSpecies(MatingPool * pool, int cut_to_one);
 void removeWeakSpecies(MatingPool * pool, int verbose);
 void removeStaleSpecies(MatingPool * pool);
 

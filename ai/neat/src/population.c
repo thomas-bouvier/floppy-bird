@@ -124,15 +124,56 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
 int generateNewGeneration(MatingPool * pool) {
+  cullSpecies(pool, 0);
+
   computeGlobalRanks(pool);
   removeStaleSpecies(pool);
 
   computeGlobalRanks(pool);
   removeWeakSpecies(pool, 0);
 
+  //cullSpecies(pool, 1);
+
   ++pool->generation;
 
   return 1;
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \Return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+*/
+static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
+  int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
+
+  if (diff == 0.0)
+    return 0;
+  else if (diff < 0.0)
+    return -1;
+
+  return 1;
+}
+
+void cullSpecies(MatingPool * pool, int cut_to_one) {
+  int i;
+  double remaining;
+
+  for (i = 0; i < pool->nb_species; ++i) {
+    sort(pool->species[i].genomes, compareFitnessCulling);
+
+    if (cut_to_one)
+      remaining = 1.0;
+    else
+      remaining = ceil(pool->species[i].nb_genomes / 2.0);
+
+    setOnFirst(pool->species[i].genomes);
+    while (!outOfList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
+      delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
+      --pool->species[i].nb_genomes;
+    }
+  }
 }
 
 /*!
@@ -170,18 +211,20 @@ void removeStaleSpecies(MatingPool * pool) {
   int i;
 
   for (i = 0; i < pool->nb_species; ++i) {
-    sort(pool->species[i].genomes, compareGenomeFitness);
+    if (!emptyList(pool->species[i].genomes)) {
+      sort(pool->species[i].genomes, compareFitnessCulling);
 
-    setOnFirst(pool->species[i].genomes);
-    if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
-      pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
-      pool->species[i].staleness = 0;
+      setOnFirst(pool->species[i].genomes);
+      if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
+        pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
+        pool->species[i].staleness = 0;
+      }
+      else
+        ++pool->species[i].staleness;
+
+      if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
+        removeSpecies(pool, pool->species[i].id);
     }
-    else
-      ++pool->species[i].staleness;
-
-    if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
-      removeSpecies(pool, pool->species[i].id);
   }
 }
 
@@ -191,7 +234,7 @@ void removeStaleSpecies(MatingPool * pool) {
 * \param[in] genome_2 the second Genome to compare
 * \Return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
 */
-static int compareFitness(const void * genome_1, const void * genome_2) {
+static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
   return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
@@ -220,7 +263,7 @@ void computeGlobalRanks(MatingPool * pool) {
 
   // we're sorting the genomes from their fitness
 
-  qsort(genomes, j, sizeof(Genome *), compareFitness);
+  qsort(genomes, j, sizeof(Genome *), compareFitnessGlobalRanks);
 
   // we're calculating the global rank for the current genome
 

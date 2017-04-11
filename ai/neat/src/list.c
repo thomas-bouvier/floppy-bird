@@ -312,23 +312,25 @@ int delete(List * list, void * element) {
   return 0;
 }
 
-void sort(List * list, int (*f) (void *, void *)) {
+void sort(List * list, int (*f) (const void *, const void *)) {
   Node * pos = NULL;
   void * save = NULL;
 
-  setOnFirst(list);
-  next(list);
-  while (!outOfList(list)) {
-    pos = list->current->next;
-    deleteCurrent(list, save);
-
+  if (count(list) > 1) {
     setOnFirst(list);
-    while (list->current != pos && (*f)(save, list->current->data) < 0)
-      next(list);
+    next(list);
+    while (!outOfList(list)) {
+      pos = list->current->next;
+      deleteCurrent(list, save);
 
-    insertBeforeCurrent(list, save);
+      setOnFirst(list);
+      while (list->current != pos && (*f)(save, list->current->data) < 0)
+        next(list);
 
-    list->current = pos;
+      insertBeforeCurrent(list, save);
+
+      list->current = pos;
+    }
   }
 }
 
