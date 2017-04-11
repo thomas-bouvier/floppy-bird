@@ -109,6 +109,8 @@ int removeSpecies(MatingPool * pool, short int id) {
     return 0;
   }
 
+  freeList(pool->species[i].genomes);
+
   for (i = index; i < pool->nb_species - 1; ++i)
     pool->species[i] = pool->species[i + 1];
 
@@ -122,22 +124,11 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
 int generateNewGeneration(MatingPool * pool) {
-  /*
-  int i;
-  int nb_genomes = 0;
-  Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
-  */
-
   computeGlobalRanks(pool);
   removeStaleSpecies(pool);
 
   computeGlobalRanks(pool);
-  //removeWeakSpecies(pool, 0);
-
-/*
-  for (i = 0; i < nb_genomes; ++i)
-    addGenomeToProperSpecies(children[i], pool);
-*/
+  removeWeakSpecies(pool, 0);
 
   ++pool->generation;
 
