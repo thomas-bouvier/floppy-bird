@@ -1,6 +1,24 @@
 #include "list.h"
 
 /*!
+* \brief Create a Node.
+* \return Return a new Node, NULL if error
+*/
+Node * newNode() {
+  Node * new_node = NULL;
+
+  if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Node\n");
+    return NULL;
+  }
+
+  new_node->data = NULL;
+  new_node->next = NULL;
+
+  return new_node;
+}
+
+/*!
 * \brief Create a List.
 * \return Return a new List, NULL if error
 */
@@ -39,8 +57,7 @@ void freeList(List * list) {
     element_to_delete = list->current;
     next(list);
 
-    if (list->free_function)
-      list->free_function(element_to_delete->data);
+    list->free_function(element_to_delete->data);
 
     free(element_to_delete);
   }
@@ -122,7 +139,7 @@ int add(List * list, void * element) {
   if (!element)
     return 0;
 
-  if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
+  if ((new_node = newNode()) == (Node *) NULL) {
     fprintf(stderr, "Error while allocating memory for new Node\n");
     return 0;
   }
@@ -163,7 +180,7 @@ static int insertBeforeCurrent(List * list, void * element) {
     if (emptyList(list))
       add(list, element);
     else {
-      if ((new_node = malloc(sizeof(Node))) == (Node *) NULL) {
+      if ((new_node = newNode()) == (Node *) NULL) {
         fprintf(stderr, "Error while allocating memory for new Node\n");
         return 0;
       }

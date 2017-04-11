@@ -131,8 +131,8 @@ int generateNewGeneration(MatingPool * pool) {
   computeGlobalRanks(pool);
   removeStaleSpecies(pool);
 
-  //computeGlobalRanks(pool);
-  removeWeakSpecies(pool, 0);
+  computeGlobalRanks(pool);
+  //removeWeakSpecies(pool, 0);
 
 /*
   for (i = 0; i < nb_genomes; ++i)
@@ -201,7 +201,7 @@ void removeStaleSpecies(MatingPool * pool) {
 * \Return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
 */
 static int compareFitness(const void * genome_1, const void * genome_2) {
-  return (((Genome*) genome_1)->fitness - ((Genome*) genome_2)->fitness);
+  return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
 /*!

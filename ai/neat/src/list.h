@@ -28,6 +28,8 @@ struct List {
   FreeFunction free_function;
 };
 
+Node * newNode();
+
 List * newList(FreeFunction free_function);
 void initList(List * list);
 void freeList(List * list);
