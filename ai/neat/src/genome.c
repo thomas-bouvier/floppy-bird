@@ -13,7 +13,7 @@ Genome * newGenome(int * innovation) {
     return NULL;
   }
 
-  new_network = newList(freeNeuron);
+  new_network = newList(cloneNeuron, freeNeuron);
   initList(new_network);
 
   new_genome->network = new_network;
@@ -30,6 +30,41 @@ Genome * newGenome(int * innovation) {
 
   new_genome->global_rank = 0;
   new_genome->innovation = innovation;
+  new_genome->nb_mutations = 0;
+
+  return new_genome;
+}
+
+/*!
+* \brief Clone the given Genome
+* \param[in] genome the Genome to clone
+* \return Return a new Genome, or NULL if error
+*/
+void * cloneGenome(void * genome) {
+  Network * new_network = NULL;
+  Genome * new_genome = NULL;
+
+  if ((new_genome = malloc(sizeof(Genome))) == (Genome * ) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Genome\n");
+    return NULL;
+  }
+
+  new_network = cloneList(((Genome *) genome)->network);
+
+  new_genome->network = new_network;
+  new_genome->nb_neurons = ((Genome *) genome)->nb_neurons;
+  new_genome->nb_connection_genes = ((Genome *) genome)->nb_connection_genes;
+  new_genome->fitness = 0.0;
+
+  // initializing mutation rates
+
+  new_genome->mutation_rates[0] = ((Genome *) genome)->mutation_rates[0];
+  new_genome->mutation_rates[1] = ((Genome *) genome)->mutation_rates[1];
+  new_genome->mutation_rates[2] = ((Genome *) genome)->mutation_rates[2];
+  new_genome->mutation_rates[3] = ((Genome *) genome)->mutation_rates[3];
+
+  new_genome->global_rank = 0;
+  new_genome->innovation = ((Genome *) genome)->innovation;
   new_genome->nb_mutations = 0;
 
   return new_genome;

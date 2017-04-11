@@ -40,6 +40,7 @@ struct MatingPool {
   short int nb_species;               /*!< the number of Species contained in this MatingPool */
   short int generation;               /*!< the current number of generations */
   double max_fitness;                 /*!< the maximum score of all Genome elements in this MatingPool */
+  double sum_average_fitnesses;       /*!< the sum of average scores of Species contained in this MatingPool */
   double average_fitness;             /*!< the average score of Species contained in this MatingPool */
   int innovation;                     /*!< the innovation number is used to track the history of a ConnectionGene evolution */
 };
@@ -55,6 +56,8 @@ int generateNewGeneration(MatingPool * pool);
 void cullSpecies(MatingPool * pool, int cut_to_one);
 void removeWeakSpecies(MatingPool * pool, int verbose);
 void removeStaleSpecies(MatingPool * pool);
+
+Genome * breedGenome(Species * species);
 
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);

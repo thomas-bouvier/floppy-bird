@@ -6,24 +6,20 @@
 * \return Return a new Neuron, or NULL if error
 */
 Neuron * newNeuron(NeuronType type) {
-  Neuron * new_neuron = (Neuron *) malloc(sizeof(Neuron));
+  List * connections = NULL;
+  Neuron * new_neuron = NULL;
 
-  if (new_neuron == (Neuron *) NULL) {
+  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
     fprintf(stderr, "Error while allocating memory for new Neuron\n");
     return NULL;
   }
 
-  List * list = newList(freeConnectionGene);
-
-  if (list == (List *) NULL) {
-    fprintf(stderr, "Error while creating List for new Neuron\n");
+  if ((connections = newList(cloneConnectionGene, freeConnectionGene)) == (List *) NULL)
     return NULL;
-  }
 
-  initList(list);
+  initList(connections);
 
-  new_neuron->connections = list;
-  new_neuron->next = NULL;
+  new_neuron->connections = connections;
 
   new_neuron->id = -1;
   new_neuron->type = type;
@@ -32,6 +28,33 @@ Neuron * newNeuron(NeuronType type) {
     new_neuron->value = 1.0;
   else
     new_neuron->value = 0.0;
+
+  return new_neuron;
+}
+
+/*!
+* \brief Clone the given Neuron
+* \param[in] neuron The Neuron to be cloned
+* \return Return a new Neuron, or NULL if error
+*/
+void * cloneNeuron(void * neuron) {
+  List * connections = NULL;
+  Neuron * new_neuron = NULL;
+
+  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Neuron\n");
+    return NULL;
+  }
+
+  if ((connections = cloneList(((Neuron *) neuron)->connections)) == (List *) NULL)
+    return NULL;
+
+  new_neuron->connections = connections;
+
+  new_neuron->id = -1;
+  new_neuron->type = ((Neuron *) neuron)->type;
+
+  new_neuron->value = ((Neuron *) neuron)->value;
 
   return new_neuron;
 }
@@ -71,9 +94,9 @@ int addNeuronToNetwork(Network * network, Neuron * neuron) {
 * \return Return a ConnectionGene, NULL if error
 */
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation) {
-  ConnectionGene * new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene));
+  ConnectionGene * new_connection_gene = NULL;
 
-  if (new_connection_gene == (ConnectionGene *) NULL) {
+  if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
     return NULL;
   }
@@ -90,25 +113,25 @@ ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int inn
 }
 
 /*!
-* \brief Create a ConnectionGene by copying the attributes of the given ConnectionGene
+* \brief Create a ConnectionGene by copying the attributes of the given ConnectionGene.
 * \param[in] connection_gene The ConnectionGene whose atributes have to be copied
 * \return Return a ConnectionGene, NULL if error
 */
-ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene) {
-  ConnectionGene * new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene));
+void * cloneConnectionGene(void * connection_gene) {
+  ConnectionGene * new_connection_gene = NULL;
 
-  if (new_connection_gene == (ConnectionGene *) NULL) {
+  if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
     fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
     return NULL;
   }
 
-  new_connection_gene->weight = connection_gene->weight;
-  new_connection_gene->enabled = connection_gene->enabled;
+  new_connection_gene->weight = ((ConnectionGene *) connection_gene)->weight;
+  new_connection_gene->enabled = ((ConnectionGene *) connection_gene)->enabled;
 
-  new_connection_gene->neuron_in = connection_gene->neuron_in;
-  new_connection_gene->neuron_out = connection_gene->neuron_out;
+  new_connection_gene->neuron_in = ((ConnectionGene *) connection_gene)->neuron_in;
+  new_connection_gene->neuron_out = ((ConnectionGene *) connection_gene)->neuron_out;
 
-  new_connection_gene->innovation = connection_gene->innovation;
+  new_connection_gene->innovation = ((ConnectionGene *) connection_gene)->innovation;
 
   return new_connection_gene;
 }

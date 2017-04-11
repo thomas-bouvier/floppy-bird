@@ -30,6 +30,7 @@ typedef struct {
 } Genome;
 
 Genome * newGenome(int * innovation);
+void * cloneGenome(void * genome);
 void freeGenome(void * genome);
 
 int generateGenome(Genome * genome);

@@ -15,6 +15,7 @@ MatingPool * newMatingPool() {
   new_mating_pool->nb_species = 0;
   new_mating_pool->generation = 0;
   new_mating_pool->max_fitness = 0.0;
+  new_mating_pool->sum_average_fitnesses = 0.0;
   new_mating_pool->average_fitness = 0.0;
   new_mating_pool->innovation = 0;
 
@@ -69,7 +70,7 @@ int addSpeciesToMatingPool(MatingPool * pool) {
     return 0;
   }
 
-  if ((genomes = newList(freeGenome)) == (List *) NULL)
+  if ((genomes = newList(cloneGenome, freeGenome)) == (List *) NULL)
     return 0;
 
   initList(genomes);
@@ -124,6 +125,12 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
 int generateNewGeneration(MatingPool * pool) {
+  int i;
+  int j;
+  int count;
+  double breed;
+  Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
+
   cullSpecies(pool, 0);
 
   computeGlobalRanks(pool);
@@ -132,7 +139,22 @@ int generateNewGeneration(MatingPool * pool) {
   computeGlobalRanks(pool);
   removeWeakSpecies(pool, 0);
 
-  //cullSpecies(pool, 1);
+  /*
+  count = 0;
+  for (i = 0; i < pool->nb_species; ++i) {
+    breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
+
+    for (j = 0; j < breed; ++j) {
+      children[count] = breedGenome(&pool->species[i]);
+      ++count;
+    }
+  }
+
+  cullSpecies(pool, 1);
+
+  for (i = 0; i < count; ++i)
+    addGenomeToProperSpecies(children[i], pool);
+  */
 
   ++pool->generation;
 
@@ -190,7 +212,7 @@ void removeWeakSpecies(MatingPool * pool, int verbose) {
   computeGlobalAverageFitness(pool);
 
   for (i = 0; i < pool->nb_species; ++i) {
-    breed = pool->species[i].average_fitness / pool->average_fitness * POPULATION;
+    breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
 
     if (verbose) {
       printf("species average fitness: %f\n", pool->species[i].average_fitness);
@@ -226,6 +248,25 @@ void removeStaleSpecies(MatingPool * pool) {
         removeSpecies(pool, pool->species[i].id);
     }
   }
+}
+
+Genome * breedGenome(Species * species) {
+  Genome * child = NULL;
+  Genome * genome_1 = NULL;
+  Genome * genome_2 = NULL;
+
+  if (random01() < CROSSOVER_RATE) {
+    genome_1 = getRandomGenome(species);
+    genome_2 = getRandomGenome(species);
+
+    child = crossover(genome_1, genome_2);
+  }
+  else
+    child = cloneGenome(getRandomGenome(species));
+
+  mutate(child);
+
+  return child;
 }
 
 /*!
@@ -282,6 +323,7 @@ void computeGlobalAverageFitness(MatingPool * pool) {
   for (i = 0; i < pool->nb_species; ++i)
     sum += pool->species[i].average_fitness;
 
+  pool->sum_average_fitnesses = sum;
   pool->average_fitness = sum / pool->nb_species;
 }
 

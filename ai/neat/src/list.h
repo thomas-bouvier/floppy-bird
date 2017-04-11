@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef void * (* CloneFunction) (void *);
 typedef void (* FreeFunction) (void *);
 
 typedef struct List List;
@@ -25,13 +26,15 @@ struct List {
   Node * first;                   /*<! the address of the first element of the List */
   Node * current;                 /*<! the address of the current element of the List */
   Node * last;                    /*<! the address of the last element of the List */
+  CloneFunction clone_function;
   FreeFunction free_function;
 };
 
 Node * newNode();
 
-List * newList(FreeFunction free_function);
+List * newList(CloneFunction clone_function, FreeFunction free_function);
 void initList(List * list);
+List * cloneList(List * list);
 void freeList(List * list);
 
 int emptyList(List * list);

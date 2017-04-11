@@ -48,7 +48,6 @@ enum NeuronType {
 */
 struct Neuron {
   List * connections;                 /*!< the successors ConnectionGene linked to this Neuron */
-  struct Neuron * next;               /*!< the address of the next Neuron in the list */
   short int id;                       /*!< the id of this Neuron */
   NeuronType type;                    /*!< the type of this Neuron */
   double value;                       /*!< the value attached to this Neuron */
@@ -60,12 +59,13 @@ struct Neuron {
 typedef List Network;
 
 Neuron * newNeuron(NeuronType type);
+void * cloneNeuron(void * neuron);
 void freeNeuron(void * neuron);
 
 int addNeuronToNetwork(Network * network, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);
-ConnectionGene * cloneConnectionGene(ConnectionGene * connection_gene);
+void * cloneConnectionGene(void * connection_gene);
 void freeConnectionGene(void * connection_gene);
 
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene);
