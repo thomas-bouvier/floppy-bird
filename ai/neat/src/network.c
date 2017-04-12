@@ -51,7 +51,7 @@ void * cloneNeuron(void * neuron) {
 
   new_neuron->connections = connections;
 
-  new_neuron->id = -1;
+  new_neuron->id = ((Neuron *) neuron)->id;
   new_neuron->type = ((Neuron *) neuron)->type;
 
   new_neuron->value = ((Neuron *) neuron)->value;

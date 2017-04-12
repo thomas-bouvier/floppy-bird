@@ -40,7 +40,9 @@ int main() {
 
   //printMatingPool(pool);
 
-  /*
+  setOnFirst(pool->species[0].genomes);
+  current_genome = (Genome *) getCurrent(pool->species[0].genomes);
+
   ConnectionGene * connection_gene_1 = newConnectionGene(34, 2, pool->innovation);
   ConnectionGene * connection_gene_2 = newConnectionGene(12, 4, pool->innovation);
   ConnectionGene * connection_gene_3 = newConnectionGene(45, 5, pool->innovation);
@@ -93,12 +95,15 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
-  */
 
-  //writeGraphVizGenome(pool->species[0].genomes->first->data, "graph.dot");
-  //writeGraphVizGenome(cloneGenome(pool->species[0].genomes->first->data), "clone.dot");
+  Genome * clone = NULL;
 
-  freeGenome(cloneGenome(pool->species[0].genomes->first->data));
+  writeGraphVizGenome(current_genome, "graph.dot");
+
+  clone = cloneGenome(current_genome);
+  writeGraphVizGenome(clone, "clone.dot");
+
+  freeGenome(clone);
 
   freeMatingPool(pool);
 
