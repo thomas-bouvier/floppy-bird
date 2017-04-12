@@ -59,6 +59,30 @@ void * cloneNeuron(void * neuron) {
   return new_neuron;
 }
 
+Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
+  List * connections = NULL;
+  Neuron * new_neuron = NULL;
+
+  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new Neuron\n");
+    return NULL;
+  }
+
+  if ((connections = newList(cloneConnectionGene, freeConnectionGene)) == (List *) NULL)
+    return NULL;
+
+  initList(connections);
+
+  new_neuron->connections = connections;
+
+  new_neuron->id = ((Neuron *) neuron)->id;
+  new_neuron->type = ((Neuron *) neuron)->type;
+
+  new_neuron->value = ((Neuron *) neuron)->value;
+
+  return new_neuron;
+}
+
 /*!
 * \brief Delete the specified Neuron.
 * \param[out] neuron the Neuron to be freed

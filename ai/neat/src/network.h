@@ -60,6 +60,7 @@ typedef List Network;
 
 Neuron * newNeuron(NeuronType type);
 void * cloneNeuron(void * neuron);
+Neuron * cloneNeuronWithoutConnections(Neuron * neuron);
 void freeNeuron(void * neuron);
 
 int addNeuronToNetwork(Network * network, Neuron * neuron);

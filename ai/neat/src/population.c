@@ -252,6 +252,7 @@ void removeStaleSpecies(MatingPool * pool) {
 
 Genome * breedGenome(Species * species) {
   Genome * child = NULL;
+  
   Genome * genome_1 = NULL;
   Genome * genome_2 = NULL;
 
@@ -262,7 +263,7 @@ Genome * breedGenome(Species * species) {
     child = crossover(genome_1, genome_2);
   }
   else
-    child = cloneGenome(getRandomGenome(species));
+    child = (Genome *) cloneGenome(getRandomGenome(species));
 
   mutate(child);
 

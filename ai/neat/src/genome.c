@@ -431,11 +431,114 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 }
 
 Genome * crossover(Genome * genome_1, Genome * genome_2) {
-  Genome * genome = NULL;
+  int i;
+  Genome * child = NULL;
 
+  Neuron * current_neuron_1 = NULL;
+  Neuron * current_neuron_2 = NULL;
 
+  ConnectionGene * current_connection_gene_1 = NULL;
+  ConnectionGene * current_connection_gene_2 = NULL;
 
-  return genome;
+  Neuron * new_neuron_1 = NULL;
+  Neuron * new_neuron_2 = NULL;
+
+  ConnectionGene * new_connection_gene = NULL;
+
+  int break_inner_loop;
+
+  Genome * genome_temp = NULL;
+
+  // genome_1 has to have a greater fitness than genome_2
+
+  if (genome_2->fitness > genome_1->fitness) {
+    genome_temp = genome_1;
+    genome_1 = genome_2;
+    genome_2 = genome_temp;
+  }
+
+  // first connection gene
+
+  setOnFirst(genome_1->network);
+  outer_loop: while (!outOfList(genome_1->network)) {
+    break_inner_loop = 0;
+
+    current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
+    if (current_neuron_1 == (Neuron *) NULL) {
+      fprintf(stderr, "Error in crossover function: current Neuron of genome 1 is NULL\n");
+      return NULL;
+    }
+
+    setOnFirst(current_neuron_1->connections);
+    while (!outOfList(current_neuron_1->connections)) {
+
+      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connections);
+      if (current_connection_gene_1 == (ConnectionGene *) NULL) {
+        fprintf(stderr, "Error in crossover function: current ConnectionGene of genome 1 is NULL\n");
+        return NULL;
+      }
+
+      // second connection gene
+
+      setOnFirst(genome_2->network);
+      while (!outOfList(genome_2->network) && !break_inner_loop) {
+
+        current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
+        if (current_neuron_2 == (Neuron *) NULL) {
+          fprintf(stderr, "Error in crossover function: current Neuron of genome 2 is NULL\n");
+          return NULL;
+        }
+
+        setOnFirst(current_neuron_2->connections);
+        while (!outOfList(current_neuron_2->connections) && !break_inner_loop) {
+
+          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
+          if (current_connection_gene_2 == (ConnectionGene *) NULL) {
+            fprintf(stderr, "Error in crossover function: current ConnectionGene of genome 2 is NULL\n");
+            return NULL;
+          }
+
+          // we finally have current_connection_gene_1 and current_connection_gene_2
+
+          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
+            if (randomBool() && current_connection_gene_2->enabled) {
+              new_neuron_1 = cloneNeuronWithoutConnections(current_connection_gene_2->neuron_in);
+              new_neuron_2 = cloneNeuronWithoutConnections(current_connection_gene_2->neuron_out);
+
+              new_connection_gene = cloneConnectionGene(current_connection_gene_2);
+              addConnectionGeneToGenome(child, new_neuron_1, new_neuron_2, new_connection_gene);
+
+              next(genome_1->network);
+              goto outer_loop;
+            }
+            else
+              break_inner_loop = 1;
+          }
+
+          next(current_neuron_2->connections);
+        }
+
+        next(genome_2->network);
+      }
+
+      new_neuron_1 = cloneNeuronWithoutConnections(current_connection_gene_1->neuron_in);
+      new_neuron_2 = cloneNeuronWithoutConnections(current_connection_gene_1->neuron_out);
+
+      new_connection_gene = cloneConnectionGene(current_connection_gene_1);
+      addConnectionGeneToGenome(child, new_neuron_1, new_neuron_2, new_connection_gene);
+
+      next(current_neuron_1->connections);
+    }
+
+    next(genome_1->network);
+  }
+
+  // finally, we're copying mutation rates from genome_1, which has the greater fitness
+
+  for (i = 0; i < 4; ++i)
+    child->mutation_rates[i] = genome_1->mutation_rates[i];
+
+  return child;
 }
 
 static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
