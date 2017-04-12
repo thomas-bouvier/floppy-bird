@@ -449,6 +449,9 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
   Genome * genome_temp = NULL;
 
+  if ((child = newGenome(genome_1->innovation)) == (Genome *) NULL)
+    return NULL;
+
   // genome_1 has to have a greater fitness than genome_2
 
   if (genome_2->fitness > genome_1->fitness) {
@@ -499,7 +502,6 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
           }
 
           // we finally have current_connection_gene_1 and current_connection_gene_2
-          printf("test\n");
 
           if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
             if (randomBool() && current_connection_gene_2->enabled) {

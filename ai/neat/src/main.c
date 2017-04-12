@@ -36,7 +36,7 @@ int main() {
     }
   }
 
-  printf("%d\n", newGeneration(pool, 1));
+  newGeneration(pool, 1);
 
   //printMatingPool(pool);
 
