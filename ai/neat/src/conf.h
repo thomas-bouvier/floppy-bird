@@ -14,7 +14,7 @@
 #define N_MAX_NETWORK                 50
 #define N_MAX_MUTATIONS               100
 
-#define N_INPUTS                      3
+#define N_INPUTS                      4
 #define N_OUTPUTS                     1
 #define N_BIAS                        1
 

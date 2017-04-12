@@ -22,7 +22,6 @@ typedef struct Neuron Neuron;
 * \brief A ConnectionGene joins Neuron elements in the Network.
 */
 struct ConnectionGene {
-  struct ConnectionGene * next;     /*!< the address of the next ConnectionGene in the list */
   double weight;                    /*!< the weight of the connection gene */
   unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
   Neuron * neuron_in;               /*!< the predecessor Neuron */

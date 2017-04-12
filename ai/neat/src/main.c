@@ -36,7 +36,17 @@ int main() {
     }
   }
 
-  newGeneration(pool, 1);
+  printf("0\n");
+  printMatingPool(pool);
+
+  newGeneration(pool, 0);
+  printf("1\n");
+  printMatingPool(pool);
+
+  //newGeneration(pool, 0);
+  //newGeneration(pool, 0);
+  //newGeneration(pool, 0);
+  //newGeneration(pool, 0);
 
   //printMatingPool(pool);
 

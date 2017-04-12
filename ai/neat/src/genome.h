@@ -13,6 +13,8 @@
 #include "network.h"
 #include "utils.h"
 
+#define fast_sigmoid(x) ((x) / (1 + fabs(x)))
+
 /*!
 * \struct Genome genome.h
 * \brief A Genome contains a Network element.
@@ -46,7 +48,9 @@ int mutateEnableFlag(Genome * genome, unsigned char enable);
 Genome * crossover(Genome * genome_1, Genome * genome_2);
 
 int sameSpecies(Genome * genome_1, Genome * genome_2);
-int linked(Neuron * neurion_in, Neuron * neuron_out);
+int linked(Neuron * neuron_in, Neuron * neuron_out);
+
+double * evaluateGenome(Genome * genome, double * input);
 
 Neuron * getRandomNeuron(Genome * genome);
 

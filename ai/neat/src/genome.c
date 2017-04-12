@@ -430,6 +430,12 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
   return 1;
 }
 
+/*!
+* \brief Create a new Genome resulting of a crossover between the given Genome elements.
+* \param[in] genome_1 the first Genome to cross over
+* \param[in] genome_2 the second Genome to cross over
+* \return a new Genome resulting of a crossover between the given Genome elements, NULL otherwise
+*/
 Genome * crossover(Genome * genome_1, Genome * genome_2) {
   int i;
   Genome * child = NULL;
@@ -725,6 +731,90 @@ int linked(Neuron * neuron_in, Neuron * neuron_out) {
   }
 
   return 0;
+}
+
+double * evaluateGenome(Genome * genome, double * input) {
+  int i;
+  double sum;
+  double * output = NULL;
+
+  Neuron * current_neuron = NULL;
+  Neuron * current_neuron_out = NULL;
+
+  ConnectionGene * current_connection_gene = NULL;
+
+  // updating values of the neurons from the given inputs
+
+  for (i = 0; i < N_INPUTS; ++i) {
+    setOn(genome->network, i);
+    ((Neuron *) getCurrent(genome->network))->value = input[i];
+  }
+
+  // scanning input and output neurons
+
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
+    current_neuron = (Neuron *) getCurrent(genome->network);
+
+    if (current_neuron->id >= N_INPUTS + N_OUTPUTS) {
+
+      sum = 0.0;
+
+      setOnFirst(current_neuron->connections);
+      while (!outOfList(current_neuron->connections)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connections);
+        current_neuron_out = current_connection_gene->neuron_out;
+
+        sum += current_connection_gene->weight * current_neuron_out->value;
+
+        next(current_neuron->connections);
+      }
+
+      if (!emptyList(current_neuron->connections))
+        current_neuron->value = fast_sigmoid(sum);
+    }
+
+    next(genome->network);
+  }
+
+  // scanning output neurons
+
+  setOnFirst(genome->network);
+  while (!outOfList(genome->network)) {
+    current_neuron = (Neuron *) getCurrent(genome->network);
+
+    if (current_neuron->id >= N_INPUTS && current_neuron->id < N_INPUTS + N_OUTPUTS) {
+
+      sum = 0.0;
+
+      setOnFirst(current_neuron->connections);
+      while (!outOfList(current_neuron->connections)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connections);
+        current_neuron_out = current_connection_gene->neuron_out;
+
+        sum += current_connection_gene->weight * current_neuron_out->value;
+
+        next(current_neuron->connections);
+      }
+
+      if (!emptyList(current_neuron->connections))
+        current_neuron->value = fast_sigmoid(sum);
+    }
+
+    next(genome->network);
+  }
+
+  // returning output
+
+  if ((output = malloc(sizeof(double) * N_OUTPUTS)) == NULL)
+    return NULL;
+
+  for (i = 0; i < N_OUTPUTS; ++i) {
+    setOn(genome->network, N_INPUTS + i);
+    output[i] = ((Neuron *) getCurrent(genome->network))->value;
+  }
+
+  return output;
 }
 
 /*!
