@@ -24,7 +24,7 @@ int randomAtMost(int limit) {
 * \return double Return a random number in [0; 1]
 */
 double random01() {
-    return (double) rand() / (double) RAND_MAX;
+    return (double) randomAtMost(RAND_MAX) / (double) RAND_MAX;
 }
 
 /*!

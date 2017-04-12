@@ -124,12 +124,20 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \brief Generate the next generation of Species
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
-int newGeneration(MatingPool * pool) {
+int newGeneration(MatingPool * pool, int verbose) {
   int i;
   int j;
   int count;
   double breed;
   Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
+  Genome * child;
+
+  if (verbose) {
+    printf("==================================\n");
+    printf("==================================\n");
+    printf("==================================\n");
+    printf("New generation...\n");
+  }
 
   cullSpecies(pool, 0);
 
@@ -139,13 +147,22 @@ int newGeneration(MatingPool * pool) {
   computeGlobalRanks(pool);
   removeWeakSpecies(pool, 0);
 
-  /*
   count = 0;
   for (i = 0; i < pool->nb_species; ++i) {
+    if (verbose) {
+      printf("\n\n\n");
+      printf("Species no %d\n", i);
+    }
+
     breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
 
     for (j = 0; j < breed; ++j) {
-      children[count] = breedGenome(&pool->species[i]);
+      child = breedGenome(&pool->species[i], verbose);
+
+      if (!child)
+        return 0;
+
+      children[count] = child;
       ++count;
     }
   }
@@ -153,8 +170,8 @@ int newGeneration(MatingPool * pool) {
   cullSpecies(pool, 1);
 
   for (i = 0; i < count; ++i)
-    addGenomeToProperSpecies(children[i], pool);
-  */
+    if (!addGenomeToProperSpecies(children[i], pool))
+      return 0;
 
   ++pool->generation;
 
@@ -250,20 +267,64 @@ void removeStaleSpecies(MatingPool * pool) {
   }
 }
 
-Genome * breedGenome(Species * species) {
+Genome * breedGenome(Species * species, int verbose) {
+  double p;
   Genome * child = NULL;
-  
+
   Genome * genome_1 = NULL;
   Genome * genome_2 = NULL;
 
-  if (random01() < CROSSOVER_RATE) {
+  if (verbose) {
+    printf("\n");
+    printf("Breeding genome...\n");
+    printf("----------------------------------\n");
+    printf("----------------------------------\n");
+  }
+
+  p = random01();
+
+  if (verbose) {
+    printf("CROSSOVER_RATE: %f\n", CROSSOVER_RATE);
+    printf("prob: %f\n", p);
+  }
+
+  if (p < CROSSOVER_RATE) {
     genome_1 = getRandomGenome(species);
     genome_2 = getRandomGenome(species);
 
+    if (verbose) {
+      printf("\n");
+      printf("Crossover...\n");
+      printf("----------------------------------\n");
+      printf("----------------------------------\n");
+
+      printf("\n");
+      printf("Genome no 1\n");
+      printGenome(genome_1);
+
+      printf("\n");
+      printf("Genome no 2\n");
+      printGenome(genome_2);
+    }
+
     child = crossover(genome_1, genome_2);
   }
-  else
-    child = (Genome *) cloneGenome(getRandomGenome(species));
+  else {
+    genome_1 = getRandomGenome(species);
+
+    if (verbose) {
+        printf("\n");
+        printf("Cloning random genome...\n");
+        printf("----------------------------------\n");
+        printf("----------------------------------\n");
+
+        printf("\n");
+        printf("Genome\n");
+        printGenome(genome_1);
+    }
+
+    child = (Genome *) cloneGenome(genome_1);
+  }
 
   mutate(child);
 
@@ -409,7 +470,6 @@ void printMatingPool(MatingPool * pool) {
   int i;
   int j;
   int k;
-  Genome * current_genome = NULL;
 
   printf("==================================\n");
   printf("==================================\n");
@@ -430,31 +490,8 @@ void printMatingPool(MatingPool * pool) {
     j = 0;
     setOnFirst(pool->species[i].genomes);
     while (!outOfList(pool->species[i].genomes)) {
-      current_genome = (Genome *) getCurrent(pool->species[i].genomes);
+      printGenome((Genome *) getCurrent(pool->species[i].genomes));
 
-      printf("----------------------------------\n");
-      printf("Genome no %d (%p):\n", j, (void *) current_genome);
-
-      printf("\tnb_neurons: %d\n", current_genome->nb_neurons);
-      printf("\tnb_connection_genes: %d\n", current_genome->nb_connection_genes);
-      printf("\n");
-
-      printf("Mutation rates:\n");
-
-      printf("\tPOINT_MUTATION_RATE: %f\n", current_genome->mutation_rates[0]);
-      printf("\tLINK_MUTATION_RATE: %f\n", current_genome->mutation_rates[1]);
-      printf("\tNODE_MUTATION_RATE: %f\n", current_genome->mutation_rates[2]);
-      printf("\tENABLE_DISABLE_MUTATION_RATE: %f\n", current_genome->mutation_rates[3]);
-
-      printf("\n");
-      printf("Mutations history: ");
-
-      for (k = 0; k < current_genome->nb_mutations; ++k)
-        printf("%d ", current_genome->mutations_history[k]);
-
-      printf("\n");
-
-      ++j;
       next(pool->species[i].genomes);
     }
   }

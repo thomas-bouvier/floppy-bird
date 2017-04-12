@@ -36,10 +36,11 @@ int main() {
     }
   }
 
-  //newGeneration(pool);
+  printf("%d\n", newGeneration(pool, 1));
 
   //printMatingPool(pool);
 
+  /*
   setOnFirst(pool->species[0].genomes);
   current_genome = (Genome *) getCurrent(pool->species[0].genomes);
 
@@ -104,6 +105,7 @@ int main() {
   writeGraphVizGenome(clone, "clone.dot");
 
   freeGenome(clone);
+  */
 
   freeMatingPool(pool);
 

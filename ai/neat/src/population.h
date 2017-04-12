@@ -52,12 +52,12 @@ int populateMatingPool(MatingPool * pool);
 int addSpeciesToMatingPool(MatingPool * pool);
 int removeSpecies(MatingPool * pool, short int id);
 
-int newGeneration(MatingPool * pool);
+int newGeneration(MatingPool * pool, int verbose);
 void cullSpecies(MatingPool * pool, int cut_to_one);
 void removeWeakSpecies(MatingPool * pool, int verbose);
 void removeStaleSpecies(MatingPool * pool);
 
-Genome * breedGenome(Species * species);
+Genome * breedGenome(Species * species, int verbose);
 
 void computeGlobalRanks(MatingPool * pool);
 void computeGlobalAverageFitness(MatingPool * pool);

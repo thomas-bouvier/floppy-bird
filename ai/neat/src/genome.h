@@ -51,5 +51,6 @@ int linked(Neuron * neurion_in, Neuron * neuron_out);
 Neuron * getRandomNeuron(Genome * genome);
 
 int writeGraphVizGenome(Genome * genome, char * filename);
+void printGenome(Genome * genome);
 
 #endif // GENOME_H

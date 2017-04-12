@@ -499,6 +499,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
           }
 
           // we finally have current_connection_gene_1 and current_connection_gene_2
+          printf("test\n");
 
           if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
             if (randomBool() && current_connection_gene_2->enabled) {
@@ -806,4 +807,34 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
   fclose(f);
 
   return 1;
+}
+
+/*!
+* \brief Print the given Genome.
+* \param[in] genome the Genome to print
+*/
+void printGenome(Genome * genome) {
+  int k;
+
+  printf("----------------------------------\n");
+  printf("\t%p\n", genome);
+
+  printf("\t\tnb_neurons: %d\n", genome->nb_neurons);
+  printf("\t\tnb_connection_genes: %d\n", genome->nb_connection_genes);
+  printf("\n");
+
+  printf("\tMutation rates:\n");
+
+  printf("\t\tPOINT_MUTATION_RATE: %f\n", genome->mutation_rates[0]);
+  printf("\t\tLINK_MUTATION_RATE: %f\n", genome->mutation_rates[1]);
+  printf("\t\tNODE_MUTATION_RATE: %f\n", genome->mutation_rates[2]);
+  printf("\t\tENABLE_DISABLE_MUTATION_RATE: %f\n", genome->mutation_rates[3]);
+
+  printf("\n");
+  printf("\tMutations history: ");
+
+  for (k = 0; k < genome->nb_mutations; ++k)
+    printf("%d ", genome->mutations_history[k]);
+
+  printf("\n");
 }
