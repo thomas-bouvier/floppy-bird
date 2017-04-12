@@ -36,7 +36,7 @@ int main() {
     }
   }
 
-  generateNewGeneration(pool);
+  //newGeneration(pool);
 
   //printMatingPool(pool);
 
@@ -93,9 +93,12 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
-
-  writeGraphVizGenome(current_genome, "graph.dot");
   */
+
+  //writeGraphVizGenome(pool->species[0].genomes->first->data, "graph.dot");
+  //writeGraphVizGenome(cloneGenome(pool->species[0].genomes->first->data), "clone.dot");
+
+  freeGenome(cloneGenome(pool->species[0].genomes->first->data));
 
   freeMatingPool(pool);
 

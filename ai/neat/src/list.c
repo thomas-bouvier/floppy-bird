@@ -23,9 +23,9 @@ Node * newNode() {
 * \return Return a new List, NULL if error
 */
 List * newList(CloneFunction clone_function, FreeFunction free_function) {
-  List * new_list = (List *) malloc(sizeof(List));
+  List * new_list = NULL;
 
-  if (new_list == (List *) NULL) {
+  if ((new_list = (List *) malloc(sizeof(List))) == (List *) NULL) {
     fprintf(stderr, "Error while allocating memory for new List\n");
     return NULL;
   }
@@ -52,19 +52,13 @@ void initList(List * list) {
 * \return Return a new List, NULL if error
 */
 List * cloneList(List * list) {
-  List * new_list = (List *) malloc(sizeof(List));
+  List * new_list = newList(list->clone_function, list->free_function);
 
-  if (new_list == (List *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new List\n");
-    return NULL;
-  }
-
-  new_list->clone_function = list->clone_function;
-  new_list->free_function = list->free_function;
+  initList(new_list);
 
   setOnFirst(list);
   while(!outOfList(list)) {
-    add(new_list, list->clone_function(getCurrent(list)));
+    add(new_list, new_list->clone_function(getCurrent(list)));
 
     next(list);
   }

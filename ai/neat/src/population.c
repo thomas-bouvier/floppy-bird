@@ -124,7 +124,7 @@ int removeSpecies(MatingPool * pool, short int id) {
 * \brief Generate the next generation of Species
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
 */
-int generateNewGeneration(MatingPool * pool) {
+int newGeneration(MatingPool * pool) {
   int i;
   int j;
   int count;
