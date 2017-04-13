@@ -128,6 +128,35 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 }
 
 /*!
+* \brief A function use to send the height of the bird to the IA
+* \param[in] bird the bird that we seek the informations
+* \return return the ratio of the bird height over the screen height
+*/
+int ratioBirdHeight(Bird * bird)
+{
+    return bird->y / SCREEN_HEIGHT;
+}
+/*!
+* \brief A function use to send the height of the next pipe to the IA
+* \param[in] bird the bird that determines the next obstacle
+* \param[in] l the list of obstacle
+* \return return the ratio of the height of the next obstacle over the screen height
+*/
+int ratioPipeHeight (Bird * bird, List * l)
+{
+    return nextBirdObstacle(l, bird)->lower.y / SCREEN_HEIGHT;
+}
+/*!
+* \brief A function use to send the x position of the next pipe to the IA
+* \param[in] bird the bird that determines the next obstacle
+* \param[in] l the list of obstacle
+* \return return the ratio of the x coordinate of the next obstacle over the screen height
+*/
+int ratioPipeWidth (Bird * bird, List * l)
+{
+    return nextBirdObstacle(l, bird)->lower.x / SCREEN_WIDTH;
+}
+/*!
 * \brief The function called every frame of the running game to update all objects
 * \param[out] bird the bird linked to the running game
 * \param[out] camera the camera linked to the running game
