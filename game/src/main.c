@@ -226,6 +226,7 @@ int main(int argc, char ** argv)
             SDL_Delay(300);
             SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
             SDL_RenderClear(renderer);
+            displayBestScore(renderer, font, scoreFile);
             SDL_RenderPresent(renderer);
             SDL_Delay(600);
         }

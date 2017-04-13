@@ -125,3 +125,24 @@ int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 	SDL_FreeSurface(scoreSurface);
 	return 1;
 }
+
+
+int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile)
+{
+    int best_score;
+    best_score = readBestScore(scoreFile);
+    if (best_score < 0)
+    {
+        fprintf(stderr, "Impossible to display best score");
+        return 0;
+    }
+    char score_string[10];
+	sprintf(score_string, "%d", best_score);
+	SDL_Color color = {0, 0, 0};
+    SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, score_string, color);
+	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+	SDL_Rect dest = {SCREEN_WIDTH/2 - scoreSurface->w/2, SCREEN_HEIGHT/2 - scoreSurface->h/2, scoreSurface->w, scoreSurface->h};
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
+	SDL_FreeSurface(scoreSurface);
+	return 1;
+}
