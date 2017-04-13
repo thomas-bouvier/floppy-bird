@@ -94,6 +94,7 @@ void createObstacleRandomly(int number, List * l)
 * \brief Indicate if the bird passed the next obstacle
 * \param[in] bird the bird that determines the next obstacle
 * \param[in] savedObstacle the obstacle saved previously
+* \param[out] sound the sound played when the bird passes an obstacle
 * \return Return 1 when the bird passed the obstacle (ie if the left side of the bird exceed the right side of the obstacle), 0 else
 */
 int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)

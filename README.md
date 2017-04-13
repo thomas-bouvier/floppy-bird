@@ -6,11 +6,15 @@
 
 #### For Windows (with CodeBlocks) :
 
-Take care to install SDL version 2. 
+Download SDL2 for mingw (in development libraries) from https://www.libsdl.org/download-2.0.php
 
-In order to compile with CodeBlocks, you have to add a PATH environement variable, that leads to the SDL2 folder.
+Extract the folder i686-w64-mingw.
 
-Then open the project with Codeblocks (.cbp file), build, compile and run.
+Download SDL2_ttf and SDL2_mixer the same way.
+
+Create an environment variable named SDLPATH, that contains the path to the SDL folder.
+
+Now you can compile and run the project with the custom Makefile provided.
 
 #### For Linux :
 
@@ -23,6 +27,11 @@ Extract the archive and cd to the folder that got extracted. Then :
 	./configure
 	make
 	sudo make install
+	
+Also install the complementary libraries SDL2_mixer and SDL2_ttf
+
+	apt-get install libsdl2-ttf-dev
+	apt-get install libsdl2-mixer-dev
 
 Now you can compile and run the project with the Makefile provided with the sources.
 

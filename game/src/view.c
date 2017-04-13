@@ -72,6 +72,8 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
 * \param[in] bird the bird to display
 * \param[in] l the list of obstacle
 * \param[in] camera the view of the scene
+* \param[in] score the current score
+* \param[in] font the font used to write text
 */
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font)
 {
@@ -111,7 +113,7 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
 * \brief Display the current score on screen
 * \param[out] renderer the drawing target
 * \param[in] score the current score to be displayed
-* \param[in] config the configuration file to be read in order to have the path of the font
+* \param[in] font the font used to display score
 */
 int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 {
@@ -127,7 +129,7 @@ int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 }
 
 /*!
-* \brief Display the best score at the death of the bord
+* \brief Display the best score at the death of the bird
 * \param[out] renderer the drawing target
 * \param[in] font the font used to write score
 * \param[in] score_file the file where the best score is saved

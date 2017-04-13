@@ -81,6 +81,7 @@ int deleteObstacle(Camera * camera, List * l){
 * \brief Detect the collisions
 * \param[in] bird the bird to test the collision with
 * \param[in] obstacle the next obstacle, the only one that the bird can hit
+* \param[in] sound the sound played when the bird dies
 * \return 1 if the bird hit something 0 in other cases
 *
 * Firstly test if the bottom limit of the bird (bird->y + bird->h/2) is lower than the limit of the screen (SCREEN_HEIGHT)
@@ -115,6 +116,7 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
 * \param[in] score the current score
 * \param[in] bird the bird that determines the next obstacle
 * \param[in] savedObstacle the obstacle saved previously
+* \param[in] sound the sound played when the bird passes an obstacle
 * \return return the updated score
 */
 int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
@@ -166,6 +168,7 @@ int ratioPipeWidth (Bird * bird, List * l)
 * \param[in] number the number of the new obstacle
 * \param[in] savedObstacle the obstacle saved to compare with the next obstacle
 * \param[out] score the score of the player to be updated
+* \param[out] sound the sound played according to the current action
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 * \return Return 1 in case of game over, 0 in the other cases
 */
