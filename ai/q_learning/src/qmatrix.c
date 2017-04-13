@@ -63,12 +63,12 @@ int AddState(State * cur_state, MatrixQ * matrixQ)
 {
 	if((matrixQ->state = (State *) realloc(matrixQ->state ,(matrixQ->nb_states+1)*sizeof(State))) == NULL) 
 	{
-		fprintf(stderr, "Erreur allocation d'un nouvel état: index %d", matrixQ->nb_states);
+		fprintf(stderr, "Error occurred when allocated a new state: index %d", matrixQ->nb_states);
 		return -1;
 	}
-	if((matrixQ->reward = (float *) realloc(matrixQ->reward, 2*(matrixQ->nb_states+1)*sizeof(float))) == NULL) 
+	if((matrixQ->reward = (float *) realloc(matrixQ->reward, NB_ACTIONS*(matrixQ->nb_states+1)*sizeof(float))) == NULL) 
 	{
-		fprintf(stderr, "Erreur allocation d'un nouveau reward: index %d", matrixQ->nb_states);
+		fprintf(stderr, "Error occurred when allocated the reward array: index %d", matrixQ->nb_states);
 		return -1;
 	}
 	

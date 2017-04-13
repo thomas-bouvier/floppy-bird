@@ -32,7 +32,7 @@ int main(int argc, char ** argv)
     Obstacle * savedObstacle = NULL;
 
 	/* Load Q matrix data */
-	MatrixQ * matrixQ = loadQMatrix();
+	MatrixQ * matrixQ = loadQMatrix("../res/test.txt");
 
 	/* Number of last states saved / last actions */
 	int last_states[NB_SAVED_STATES]; /* [0]current_state [1]last_state */
@@ -150,7 +150,7 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-				q_learning_loop(matrixQ, last_states, &last_action, 200, 100, 1);
+				q_learning_loop(matrixQ, last_states, &last_action, 100, 100, 1);
 				/*if(last_states[0] != -1) event = last_action;*/
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);

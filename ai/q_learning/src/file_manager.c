@@ -2,17 +2,60 @@
 #include <string.h>
 
 /*!
-* \brief Get the current state if the bird is alive else the state is not saved
-* \param[in] delta_x the distance between the bird's bottom-right hand corner and the left side of the next pipe
-* \param[in] delta_y the distance between the bird's bottom-right hand corner and the top of the next pipe
-* \param[in] bird_state 0 if the bird is dead, 1 otherwise
-* \return Return a state, distances=-1 if the bird is dead, NULL if error
+* \brief Save the matrixQ from a text file
+* \param[in] filename the filename where data have to be stored
+* \return Return the Q matrix filled, NULL if error
 */
-MatrixQ * loadQMatrix()
+MatrixQ * loadQMatrix(char * filename)
 {
 	MatrixQ * matrixQ = NULL;
 	matrixQ = (MatrixQ *) malloc(sizeof(MatrixQ));
+	FILE * fp = NULL;
+	int i;
 	matrixQ->nb_states = 0;
+
+	if((fp = fopen(filename, "r")) == NULL)
+	{
+		if((fp = fopen(filename, "w+")) == NULL)
+		{
+			fprintf(stderr, "Error occurred when opening file %s.\n", filename);
+			return NULL;
+		}
+		fprintf(fp, "%d ", matrixQ->nb_states);
+	}
+
+	fscanf(fp, "%d", &(matrixQ->nb_states));
+
+	if((matrixQ->state = (State *) realloc(matrixQ->state ,(matrixQ->nb_states+1)*sizeof(State))) == NULL) 
+	{
+		fprintf(stderr, "Error occurred when allocated a new state: index %d", matrixQ->nb_states);
+		return NULL;
+	}
+	if((matrixQ->reward = (float *) realloc(matrixQ->reward, NB_ACTIONS*(matrixQ->nb_states+1)*sizeof(float))) == NULL) 
+	{
+		fprintf(stderr, "Error occurred when allocated the reward array: index %d", matrixQ->nb_states);
+		return NULL;
+	}
+
+	printf("%d", matrixQ->nb_states);
+
+	for(i=0; i<NB_ACTIONS*matrixQ->nb_states; ++i)
+	{
+		fscanf(fp, " %f", &(matrixQ->reward[i]));
+	}
+
+	for(i=0; i<matrixQ->nb_states; ++i)
+	{
+		fscanf(fp, " %hd", &(matrixQ->state[i].delta_x));
+		fscanf(fp, " %hd", &(matrixQ->state[i].delta_y));
+	}
+
+	if(fclose(fp) == EOF)
+	{
+		fprintf(stderr, "Error occurred when closing file %s.\n", filename);
+		return NULL;
+	}
+
 	return matrixQ;
 }
 
@@ -27,18 +70,23 @@ int saveQMatrix(MatrixQ * matrixQ, char * filename)
 	int i=0;
 	FILE * fp = NULL;
 
-	printf("filename");
 	if((fp = fopen(filename, "w+")) == NULL)
 	{
 		fprintf(stderr, "Error occurred when opening file %s.\n", filename);
 		return -1;
 	}
 	
-	fprintf(fp, "%d\n", matrixQ->nb_states);
+	fprintf(fp, "%d ", matrixQ->nb_states);
 
 	for(i=0; i<NB_ACTIONS*matrixQ->nb_states; ++i)
 	{
-		fprintf(fp, "%f\n", matrixQ->reward[i]);
+		fprintf(fp, "%f ", matrixQ->reward[i]);
+	}
+
+	for(i=0; i<matrixQ->nb_states; ++i)
+	{
+		fprintf(fp, "%d ", matrixQ->state[i].delta_x);
+		fprintf(fp, "%d ", matrixQ->state[i].delta_y);
 	}
 
 	if(fclose(fp) == EOF)
