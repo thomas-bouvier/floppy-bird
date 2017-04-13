@@ -49,33 +49,21 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
     drawRectangle(renderer, camera, obsup.x, obsup.y, obsup.w, obsup.h, 0, 255, 0);
 }
 
-/*!
-* \brief Draw a square with the color of lower pipes and the size of the bird at the center of the screen
-* \param[out] renderer the drawing target
-* \param[in] camera the view of the scene
-*/
-void drawLowForTI(SDL_Renderer * renderer, Camera * camera)
-{
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer);
-    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
-    int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
-    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
-    SDL_RenderPresent(renderer);
-}
 
 /*!
-* \brief Draw a square with the color of upper pipes and the size of the bird at the center of the screen
+* \brief Draw two squares with the color of upper and lower pipes and the size of the bird at the center of the screen
 * \param[out] renderer the drawing target
 * \param[in] camera the view of the scene
 */
-void drawUpForTI(SDL_Renderer * renderer, Camera * camera)
+void drawForTI(SDL_Renderer * renderer, Camera * camera)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    int x = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int x1 = SCREEN_WIDTH/2 - 3*BIRD_SIZE/2;
+    int x2 = SCREEN_WIDTH/2 + BIRD_SIZE/2;
     int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
-    drawRectangle(renderer, camera, x, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
+    drawRectangle(renderer, camera, x1, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
+    drawRectangle(renderer, camera, x2, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
     SDL_RenderPresent(renderer);
 }
 /*!
@@ -128,12 +116,12 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
 int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 {
 	char scoreString[10];
-	sprintf(scoreString, "%d", score);   
+	sprintf(scoreString, "%d", score);
     SDL_Color color = {0, 0, 0};
 	SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, scoreString, color);
 	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
 	SDL_Rect dest = {30, 30, scoreSurface->w, scoreSurface->h};
 	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
 	SDL_FreeSurface(scoreSurface);
-	return 1;	
+	return 1;
 }

@@ -93,7 +93,7 @@ int main(int argc, char ** argv)
         fprintf(stderr, "SDL_TTF initialization failure\n");
         return EXIT_FAILURE;
     }
-    
+
 	/* SDL_mixer initialization */
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
     {
@@ -134,8 +134,8 @@ int main(int argc, char ** argv)
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-   
-   	/* Open a font for text */ 
+
+   	/* Open a font for text */
    	TTF_Font * font = NULL;
    	char fontPath[100];
 	readConfig(config, fontPath, "font :\n");
@@ -144,24 +144,21 @@ int main(int argc, char ** argv)
     {
     	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
     	return 0;
-    } 
+    }
 
     while(running)
     {
     	score = 0;
         startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
-        drawLowForTI(renderer, &camera);
+        drawForTI(renderer, &camera);
         running = waitForTI();
-        drawUpForTI(renderer, &camera);
-        if (running)
-            running = waitForTI();
         displayGame(renderer, &bird, &l, &camera, score, font);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
         init = NOTHING;
-        while(init == NOTHING)
+        while(init == NOTHING && running)
         {
             init = detectTouch();
             if(init == JUMP)
