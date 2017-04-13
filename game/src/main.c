@@ -29,10 +29,20 @@ int main(int argc, char ** argv)
     Camera camera;
     List l;
 
-    int levelFromFile = 1;
     FILE * config = NULL;
     FILE * level = NULL;
+    char scorePath[100];
+    FILE * scoreFile = NULL;
+	char jump_path[100];
+	Mix_Chunk * jump_sound;
+	char obstacle_path[100];
+	Mix_Chunk * obstacle_sound;
+	char death_path[100];
+	Mix_Chunk * death_sound;
+	char fontPath[100];
+    TTF_Font * font = NULL;
 
+	int levelFromFile = 1;
     int score;
     Obstacle * savedObstacle = NULL;
 
@@ -65,8 +75,6 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
-    FILE * scoreFile = NULL;
-    char scorePath[100];
     if (readConfig(config, scorePath, "score :\n"))
     {
         scoreFile = fopen(scorePath, "r+");
@@ -103,18 +111,36 @@ int main(int argc, char ** argv)
 
 	/* Setup sounds */
 	Mix_AllocateChannels(3);
-	Mix_Chunk * jump_sound;
-	Mix_Chunk * obstacle_sound;
-	Mix_Chunk * death_sound;
-	char jump_path[100];
-	readConfig(config, jump_path, "jump :\n");
-	char obstacle_path[100];
-	readConfig(config, obstacle_path, "obstacle :\n");
-	char death_path[100];
-	readConfig(config, death_path, "death :\n");
-	jump_sound = Mix_LoadWAV(jump_path);
-	obstacle_sound = Mix_LoadWAV(obstacle_path);
-	death_sound= Mix_LoadWAV(death_path);
+	if (readConfig(config, jump_path, "jump :\n"))
+	{
+	    jump_sound = Mix_LoadWAV(jump_path);
+	    if (jump_sound == NULL)
+        {
+            fprintf(stderr,"Opening jump sound failure :\n");
+            printf("%s\n", jump_path);
+            return EXIT_FAILURE;
+        }
+	}
+     if (readConfig(config, obstacle_path, "obstacle :\n"))
+	{
+	    obstacle_sound = Mix_LoadWAV(obstacle_path);
+	    if (obstacle_sound == NULL)
+        {
+            fprintf(stderr,"Opening obstacle sound failure :\n");
+            printf("%s\n", obstacle_path);
+            return EXIT_FAILURE;
+        }
+	}
+	if (readConfig(config, death_path, "death :\n"))
+	{
+	    death_sound = Mix_LoadWAV(death_path);
+	    if (death_sound == NULL)
+        {
+            fprintf(stderr,"Opening death sound failure :\n");
+            printf("%s\n", death_path);
+            return EXIT_FAILURE;
+        }
+	}
 
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
@@ -136,15 +162,16 @@ int main(int argc, char ** argv)
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
    	/* Open a font for text */
-   	TTF_Font * font = NULL;
-   	char fontPath[100];
-	readConfig(config, fontPath, "font :\n");
-	font = TTF_OpenFont(fontPath, 70);
-    if(font == NULL)
+	if (readConfig(config, fontPath, "font :\n"))
     {
-    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
-    	return 0;
+        font = TTF_OpenFont(fontPath, 70);
+        if(font == NULL)
+        {
+            fprintf(stderr, "Missing font : %s\n", TTF_GetError());
+            return EXIT_FAILURE;
+        }
     }
+
 
     while(running)
     {

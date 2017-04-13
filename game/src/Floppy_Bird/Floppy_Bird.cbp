@@ -16,24 +16,14 @@
 				<Option parameters='&quot;../conf/config.txt&quot;' />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/include" />
-					<Add directory="../../../../../../../../Program Files (x86)/CodeBlocks/SDL2-2.0.5/SDL2_mixer-2.0.1/include" />
-					<Add directory="../../../../../../../../Program Files (x86)/CodeBlocks/SDL2-2.0.5/SDL2_ttf-2.0.14/include" />
 				</Compiler>
-				<Linker>
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libmingw32.a" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib/libSDL2main.a" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib/libSDL2.dll.a" />
-					<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.5/i686-w64-mingw32/lib" />
-					<Add directory="../../../../../../../../Program Files (x86)/CodeBlocks/SDL2-2.0.5/SDL2_mixer-2.0.1/lib" />
-					<Add directory="../../../../../../../../Program Files (x86)/CodeBlocks/SDL2-2.0.5/SDL2_ttf-2.0.14/lib/x64" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="../main" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters="../conf/config.txt" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -81,6 +71,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../pipe.h" />
+		<Unit filename="../sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../sound.h" />
 		<Unit filename="../view.c">
 			<Option compilerVar="CC" />
 		</Unit>
