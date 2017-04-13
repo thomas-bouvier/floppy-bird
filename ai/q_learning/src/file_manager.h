@@ -8,6 +8,6 @@
 #include "qmatrix.h"
 
 MatrixQ * loadQMatrix();
-void saveQMatrix(MatrixQ * matrixQ);
+int saveQMatrix(MatrixQ * matrixQ, char * filename);
 
 #endif

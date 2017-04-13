@@ -7,6 +7,7 @@
 #include "constants.h"
 #include <SDL2/SDL.h>
 #include "../../ai/q_learning/src/q_learning.h"
+#include "../../ai/q_learning/src/game_state.h"
 
 int main(int argc, char ** argv)
 {
@@ -37,6 +38,7 @@ int main(int argc, char ** argv)
 	int last_states[NB_SAVED_STATES]; /* [0]current_state [1]last_state */
 	int last_action = -1;
 	init_array(last_states, NB_SAVED_STATES, -1);
+	srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
@@ -148,28 +150,30 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
+				q_learning_loop(matrixQ, last_states, &last_action, 200, 100, 1);
+				/*if(last_states[0] != -1) event = last_action;*/
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score);
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera);
                 last_frame = SDL_GetTicks();
             }
 			
-			/*q_learning_loop(matrixQ, last_states, &last_action, processing_dxdy(), processing_dxdy(), );*/
 			/*show_matrixQ(matrixQ);*/
             saveScore(scoreFile, score);
         }
         if(hit)
         {
-			saveQMatrix(matrixQ);
             SDL_Delay(300);
             SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
             SDL_RenderClear(renderer);
             SDL_RenderPresent(renderer);
             SDL_Delay(600);
+			saveQMatrix(matrixQ, "../res/test.txt");
         }
     }
-
+	
     /* Quit the game */
+	freeMatrixQ(matrixQ);
     quitGame(window, renderer);
     fclose(config);
     fclose(level);
