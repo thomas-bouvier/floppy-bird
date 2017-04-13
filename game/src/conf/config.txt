@@ -5,7 +5,7 @@ score :
 ../../res/files/score.txt
 
 font :
-../../res/fonts/DejaVuSans.ttf
+../../res/fonts/Floppy.ttf
 
 sounds :
 jump :

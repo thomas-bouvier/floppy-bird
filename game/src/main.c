@@ -228,7 +228,7 @@ int main(int argc, char ** argv)
             SDL_RenderClear(renderer);
             displayBestScore(renderer, font, scoreFile);
             SDL_RenderPresent(renderer);
-            SDL_Delay(600);
+            SDL_Delay(1500);
         }
     }
 

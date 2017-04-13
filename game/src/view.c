@@ -126,11 +126,16 @@ int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 	return 1;
 }
 
-
-int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile)
+/*!
+* \brief Display the best score at the death of the bord
+* \param[out] renderer the drawing target
+* \param[in] font the font used to write score
+* \param[in] score_file the file where the best score is saved
+*/
+int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * score_file)
 {
     int best_score;
-    best_score = readBestScore(scoreFile);
+    best_score = readBestScore(score_file);
     if (best_score < 0)
     {
         fprintf(stderr, "Impossible to display best score");
@@ -139,10 +144,15 @@ int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile)
     char score_string[10];
 	sprintf(score_string, "%d", best_score);
 	SDL_Color color = {0, 0, 0};
-    SDL_Surface * scoreSurface = TTF_RenderText_Blended(font, score_string, color);
-	SDL_Texture * scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
-	SDL_Rect dest = {SCREEN_WIDTH/2 - scoreSurface->w/2, SCREEN_HEIGHT/2 - scoreSurface->h/2, scoreSurface->w, scoreSurface->h};
-	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
-	SDL_FreeSurface(scoreSurface);
+    SDL_Surface * score_surface = TTF_RenderText_Blended(font, score_string, color);
+	SDL_Texture * score_texture = SDL_CreateTextureFromSurface(renderer, score_surface);
+    SDL_Surface * text_surface = TTF_RenderText_Blended(font, "Best score :", color);
+	SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+	SDL_Rect score_dest = {SCREEN_WIDTH/2 - score_surface->w/2, SCREEN_HEIGHT/2 - score_surface->h/2, score_surface->w, score_surface->h};
+	SDL_Rect text_dest = {SCREEN_WIDTH/2 - text_surface->w/2, SCREEN_HEIGHT/2 - score_surface->h/2 - text_surface->h, text_surface->w, text_surface->h};
+	SDL_RenderCopy(renderer, score_texture, NULL, &score_dest);
+	SDL_RenderCopy(renderer, text_texture, NULL, &text_dest);
+	SDL_FreeSurface(score_surface);
+	SDL_FreeSurface(text_surface);
 	return 1;
 }
