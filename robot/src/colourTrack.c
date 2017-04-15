@@ -21,13 +21,24 @@
 int h = 0, s = 0, v = 0, Htolerance = 5, Stolerance = 30;
 IplImage* image;
 
-
-enum {CIRCLE,RECTANGLE};
-
+// Struct to define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined
 struct VolatileRect{
 	CvRect rect;
-	int origineDefined;
+	int originDefined;
 	int rectDefined;
+};
+
+struct ImageBroadcast{
+	IplImage* img;		// The image to show
+	char* windowTitle;	// The title of the window showing the image
+};
+
+struct TrackedObject{
+	boolean computeTracking;	// if false, the tracking is disabled
+	IplImage* img;				// The image in which the tracker is shown
+	CvRect trackingZone;		// The zone in which the object is tracked
+	int shape;					// The shape to draw around the tracked object
+	CvPoint origin;				// The origin of the object (the centre for a circle, the upper left corner for a rectangle)
 };
  
 /*
@@ -118,7 +129,7 @@ CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
  */
 void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, int width, int height, int nbPixels) {
 	
-    // Draw an object (circle) centered on the calculated center of gravity
+    // Draw an object centered on the calculated center of gravity
     if (nbPixels > NB_PIXEL_THRESHOLD){
 		switch (shape){
 			case CIRCLE:
@@ -128,13 +139,8 @@ void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, 
 				cvRectangle(image,origin,cvPoint(origin.x+width,origin.y+height), CV_RGB(255, 0, 0), 1,8,0);	// Draw a rectangle frow the origin
 				break;
 		}
-		cvShowImage(window, image);
+		cvShowImage(window, image);	// We show the image on the window
 	}
-        
- 
-    // We show the image on the window
-    
- 
 }
  
 /*
@@ -171,14 +177,14 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
 
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
 	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
-	if(workingSpace->origineDefined == 1 && event == CV_EVENT_MOUSEMOVE){
+	if(workingSpace->originDefined == 1 && event == CV_EVENT_MOUSEMOVE){
 		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
 		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
 	}
 	
 	if(event == CV_EVENT_LBUTTONUP){
 		printf("click at x=%d \ty=%d\n",x,y);
-		if(workingSpace->origineDefined){
+		if(workingSpace->originDefined){
 			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
 //			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
 			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
@@ -186,7 +192,7 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 		} else {
 			workingSpace->rect.x = x;
 			workingSpace->rect.y = y;
-			workingSpace->origineDefined = 1;
+			workingSpace->originDefined = 1;
 		}
 	}
 }
@@ -215,7 +221,7 @@ void initFont(CvFont * font){
 
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
 	struct VolatileRect workingSpace;
-	workingSpace.origineDefined = 0;
+	workingSpace.originDefined = 0;
 	workingSpace.rectDefined = 0;
 	
 	cvNamedWindow(window, CV_WINDOW_AUTOSIZE);
@@ -224,14 +230,14 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
 	printf("Definition of the working space \n");
 	while(workingSpace.rectDefined == 0) {			// wait for the definition of the workspace
 		image = raspiCamCvQueryFrame(capture);
-		if(workingSpace.origineDefined) {
+		if(workingSpace.originDefined) {
 			cvRectangleR(image,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
 		}
 			cvShowImage(window, image);		
 		char keyPressed = cvWaitKey(30);
 		switch (keyPressed){
 			case 27:				//ESC to reset the rectangle origin
-				workingSpace.origineDefined = 0;
+				workingSpace.originDefined = 0;
 				break;
 		}
 	}
