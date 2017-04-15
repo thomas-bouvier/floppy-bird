@@ -19,60 +19,6 @@ void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, 
 	}
 }
 
-/*
- * Get the color of the pixel where the mouse has clicked
- * We put this color as model color (the color we want to tracked)
- */
-void getObjectColor(int event, int x, int y, int flags, void *param) {
- 
-    // Vars
-    CvScalar pixel;
-    IplImage *hsv;
-    param = NULL;
- 
-    if(event == CV_EVENT_LBUTTONUP) {
- 
-        // Get the hsv image
-        hsv = cvCloneImage(image);
-        cvCvtColor(image, hsv, CV_BGR2HSV);
- 
-        // Get the selected pixel
-        pixel = cvGet2D(hsv, y, x);
- 
-        // Change the value of the tracked color with the color of the selected pixel
-        h = (int)pixel.val[0];
-        s = (int)pixel.val[1];
-        v = (int)pixel.val[2];
- 
-        // Release the memory of the hsv image
-            cvReleaseImage(&hsv);
- 
-    }
- 
-}
-
-void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
-	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
-	if(workingSpace->originDefined == 1 && event == CV_EVENT_MOUSEMOVE){
-		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
-	}
-	
-	if(event == CV_EVENT_LBUTTONUP){
-		printf("click at x=%d \ty=%d\n",x,y);
-		if(workingSpace->originDefined){
-			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-//			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
-			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
-			workingSpace->rectDefined = 1;
-		} else {
-			workingSpace->rect.x = x;
-			workingSpace->rect.y = y;
-			workingSpace->originDefined = 1;
-		}
-	}
-}
-
 void initFont(CvFont * font){
 	double hScale=0.4;
 	double vScale=0.4;

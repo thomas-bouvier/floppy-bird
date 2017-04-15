@@ -19,8 +19,6 @@ struct VolatileRect{
 };
 
 void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, int width, int height, int nbPixels);
-void getObjectColor(int event, int x, int y, int flags, void *param);
-void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param);
 void initFont(CvFont * font);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window);
 
