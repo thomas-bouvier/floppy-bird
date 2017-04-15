@@ -6,21 +6,23 @@
 #ifndef IMAGE_BROADCAST_H
 #define IMAGE_BROADCAST_H
 
+#include <cv.h>
+#include <highgui.h>
+#include "configuration.h"
+#include "tracking.h"
+
 struct ImageBroadcast{
 	IplImage* img;		// The image to show
 	char* windowTitle;	// The title of the window showing the image
+	CvFont * font;		// The font if text on image
 };
 
-// Struct to define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined
-struct VolatileRect{
-	CvRect rect;
-	int originDefined;
-	int rectDefined;
-};
-
-void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, int width, int height, int nbPixels);
-void initFont(CvFont * font);
-CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window);
+void updateImage(ImageBroadcast* flux,IplImage* img);
+void updateImageFromCapture(ImageBroadcast* flux, RaspiCamCvCapture * capture);
+void showImage(ImageBroadcast* flux);
+void initImageBroadcast(ImageBroadcast* flux, IplImage* img, char* windowTitle, CvFont * font);
+void addObjectToVideo(ImageBroadcast* flux, TrackedObject* obj, int nbPixels);
+void initFont(ImageBroadcast* flux, CvFont * font);
 
 
 #endif /*IMAGE_BROADCAST_H*/
