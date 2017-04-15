@@ -13,6 +13,24 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, IplImage* 
 	obj->origin = cvPoint(-1,-1);
 }
 
+void enableTracking(TrackedObject* obj)
+{
+	obj->computeTracking = true;
+}
+
+void disableTracking(TrackedObject* obj)
+{
+	obj->computeTracking = false;
+}
+
+void updateTracking(TrackedObject* obj)
+{
+	if(obj->computeTracking){
+		
+	}
+}
+
+
 /*
  * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
  * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
@@ -28,8 +46,7 @@ CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
 	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
 	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
 	
-    // Create the mask &initialize it to white (no color detected)
-    mask = cvCreateImage(cvGetSize(image), image->depth, 1);
+    mask = cvCreateImage(cvGetSize(image), image->depth, 1);	/* Create the mask &initialize it to white (no color detected) */
 	
     // Create the hsv image
     hsv = cvCloneImage(image);

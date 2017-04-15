@@ -21,6 +21,9 @@ struct TrackedObject{
 };
 
 void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, IplImage* img, CvRect* trackZone, int shape);
+void enableTracking(TrackedObject* obj);
+void disableTracking(TrackedObject* obj);
+void updateTracking(TrackedObject* obj);
 CvPoint binarisation(IplImage* image, int *nbPixels, char* window);
 void getObjectColor(int event, int x, int y, int flags, void *param);
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param);
