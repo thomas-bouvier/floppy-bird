@@ -116,15 +116,16 @@ CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
 /*
  * Add a circle on the video that fellow your colored object
  */
-void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint position, int nbPixels) {
+void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint origin, int width, int height, int nbPixels) {
 	
     // Draw an object (circle) centered on the calculated center of gravity
     if (nbPixels > NB_PIXEL_THRESHOLD){
 		switch (shape){
 			case CIRCLE:
-				cvDrawCircle(image, position, BIRD_CIRCLE_DIAMETER, CV_RGB(255, 0, 0), 1,8,0);
+				cvDrawCircle(image, origin, width, CV_RGB(255, 0, 0), 1,8,0);	// Draw a circle around the origin
 				break;
 			case RECTANGLE:
+				cvRectangle(image,origin,cvPoint(origin.x+width,origin.y+height), CV_RGB(255, 0, 0), 1,8,0);	// Draw a rectangle frow the origin
 				break;
 		}
 		cvShowImage(window, image);
@@ -271,7 +272,7 @@ int main(int argc, char *argv[]){
 		cvSetImageROI(image,workingSpace);
 		
 		CvPoint position = binarisation(image, &nbPixels, maskWindow);
-        addObjectToVideo(colourTrackingWindow, image, CIRCLE, position, nbPixels);
+        addObjectToVideo(colourTrackingWindow, image, RECTANGLE, position,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER, nbPixels);
 		
 		char key = cvWaitKey(1);
 		
