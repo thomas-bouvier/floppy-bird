@@ -81,3 +81,50 @@ CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
     else
         return cvPoint(-1, -1);
 }
+
+/*
+ * Add a circle on the video that follow your colored object
+ */
+void addObjectToVideo(TrackedObject* obj, int nbPixels) {
+	
+    /* Draw an object centered on its origin */
+    if (nbPixels > NB_PIXEL_THRESHOLD){
+		switch (obj->shape){
+			case CIRCLE:
+				cvDrawCircle(obj->rawFlux->img, obj->origin, obj->width, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
+				break;
+			case RECTANGLE:
+				cvRectangle(obj->rawFlux->img,obj->origin,cvPoint(obj->origin.x+obj->width,obj->origin.y+obj->height), TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a rectangle frow the origin */
+				break;
+		}
+	}
+}
+
+CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
+	struct VolatileRect workingSpace;
+	struct ImageBroadcast flux;
+	
+	workingSpace.originDefined = 0;
+	workingSpace.rectDefined = 0;
+	initImageBroadcast(&flux, NULL,window,NULL);
+	
+	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
+	printf("Definition of the working space \n");
+	while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
+		updateImageFromCapture(&flux,capture);
+		if(workingSpace.originDefined) {
+			cvRectangleR(flux.img,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
+		}
+			showImage(&flux);		
+		char keyPressed = cvWaitKey(30);
+		switch (keyPressed){
+			case 27:				/* ESC to reset the rectangle origin */
+				workingSpace.originDefined = 0;
+				break;
+		}
+	}
+	printf("Working space defined\n");
+	cvDestroyWindow(window);
+	return workingSpace.rect;
+}
+

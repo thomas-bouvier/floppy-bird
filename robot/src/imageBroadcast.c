@@ -9,24 +9,6 @@ void initImageBroadcast(ImageBroadcast* flux, IplImage* img, char* windowTitle, 
 	cvNamedWindow(windowTitle, CV_WINDOW_AUTOSIZE);
 }
 
-/*
- * Add a circle on the video that follow your colored object
- */
-void addObjectToVideo(ImageBroadcast* flux, TrackedObject* obj, int nbPixels) {
-	
-    /* Draw an object centered on its origin */
-    if (nbPixels > NB_PIXEL_THRESHOLD){
-		switch (obj->shape){
-			case CIRCLE:
-				cvDrawCircle(flux->img, obj->origin, obj->width, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
-				break;
-			case RECTANGLE:
-				cvRectangle(flux->img,obj->origin,cvPoint(obj->origin.x+obj->width,obj->origin.y+obj->height), TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a rectangle frow the origin */
-				break;
-		}
-	}
-}
-
 void initFont(ImageBroadcast* flux){
 	double hScale=0.4;
 	double vScale=0.4;
@@ -50,3 +32,53 @@ void showImage(ImageBroadcast* flux)
 	cvShowImage(flux->windowTitle,flux->img);
 }
 
+/*
+ * Get the color of the pixel where the mouse has clicked
+ * We put this color as model color (the color we want to tracked)
+ */
+void getObjectColor(int event, int x, int y, int flags, void *param) {
+ 
+    struct TrackedObject* obj = (struct TrackedObject*)param;	/* tracked object is passed through param */
+    CvScalar pixel;
+    IplImage *hsv;
+ 
+    if(event == CV_EVENT_LBUTTONUP) {
+ 
+        /* Get the hsv image */
+        hsv = cvCloneImage(obj->rawFlux->img);
+        cvCvtColor(obj->rawFlux->img), hsv, CV_BGR2HSV);
+ 
+        /* Get the selected pixel */
+        pixel = cvGet2D(hsv, y, x);
+ 
+        /* Change the value of the tracked color with the color of the selected pixel */
+        obj->h = (int)pixel.val[0];
+        obj->s = (int)pixel.val[1];
+        obj->v = (int)pixel.val[2];
+ 
+        /* Release the memory of the hsv image */
+        cvReleaseImage(&hsv);
+ 
+    }
+}
+
+void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
+	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
+	if(workingSpace->originDefined == 1 && event == CV_EVENT_MOUSEMOVE){
+		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
+		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
+	}
+	
+	if(event == CV_EVENT_LBUTTONUP){
+		printf("click at x=%d \ty=%d\n",x,y);
+		if(workingSpace->originDefined){
+			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
+			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
+			workingSpace->rectDefined = 1;
+		} else {
+			workingSpace->rect.x = x;
+			workingSpace->rect.y = y;
+			workingSpace->originDefined = 1;
+		}
+	}
+}
