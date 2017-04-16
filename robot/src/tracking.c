@@ -122,27 +122,26 @@ CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
  */
 void getObjectColor(int event, int x, int y, int flags, void *param) {
  
-    // Vars
+    struct TrackedObject* obj = (struct TrackedObject*)param;	/* tracked object is passed through param */
     CvScalar pixel;
     IplImage *hsv;
-    param = NULL;
  
     if(event == CV_EVENT_LBUTTONUP) {
  
-        // Get the hsv image
-        hsv = cvCloneImage(image);
+        /* Get the hsv image */
+        hsv = cvCloneImage(obj->img);
         cvCvtColor(image, hsv, CV_BGR2HSV);
  
-        // Get the selected pixel
+        /* Get the selected pixel */
         pixel = cvGet2D(hsv, y, x);
  
-        // Change the value of the tracked color with the color of the selected pixel
-        h = (int)pixel.val[0];
-        s = (int)pixel.val[1];
-        v = (int)pixel.val[2];
+        /* Change the value of the tracked color with the color of the selected pixel */
+        obj->h = (int)pixel.val[0];
+        obj->s = (int)pixel.val[1];
+        obj->v = (int)pixel.val[2];
  
-        // Release the memory of the hsv image
-            cvReleaseImage(&hsv);
+        /* Release the memory of the hsv image */
+        cvReleaseImage(&hsv);
  
     }
  
