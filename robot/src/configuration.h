@@ -32,7 +32,7 @@ typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
 /* Tolerances for color analysis (HSV format)*/
 #define Htolerance  5
-#define Stolerance 30
+#define Stolerance 80
 
 /* Maths methods */
 #define max(a, b) ((a) > (b) ? (a) : (b))

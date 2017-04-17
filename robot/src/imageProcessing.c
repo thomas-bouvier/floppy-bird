@@ -86,8 +86,10 @@ void addObjectToVideo(TrackedObject* obj) {
 			case CIRCLE:
 				cvDrawCircle(obj->rawFlux->img, obj->origin, obj->width, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
 				break;
-			case RECTANGLE:
-				cvRectangle(obj->rawFlux->img,obj->origin,cvPoint(obj->origin.x+obj->width,obj->origin.y+obj->height), TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a rectangle frow the origin */
+			case RECTANGLE: ;	/*empty statement needed because of the following declaration*/
+				CvPoint leftUpCorner = cvPoint(obj->origin.x-(obj->width/2),obj->origin.y-(obj->height/2));
+				CvPoint rightDownCorner = cvPoint(obj->origin.x+(obj->width/2),obj->origin.y+(obj->height/2));
+				cvRectangle(obj->rawFlux->img,leftUpCorner,rightDownCorner, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a rectangle frow the origin */
 				break;
 		}
 	}
@@ -106,7 +108,7 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
 	while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
 		loadImage(&flux,capture);
 		if(workingSpace.originDefined) {
-			cvRectangleR(flux.img,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
+			cvRectangleR(flux.img,workingSpace.rect,TRACKED_OBJECT_DEFAULT_COLOR,1,8,0);
 		}
 		showImage(&flux);		
 		char keyPressed = cvWaitKey(30);

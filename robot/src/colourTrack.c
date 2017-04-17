@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
 	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
 	loadImage(&cameraFlux,capture);
 	initImageBroadcast(&processedFlux, NULL, &workingSpace, maskWindow, NULL);
-	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),CIRCLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
+	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
     
     cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 	int exit =0;
