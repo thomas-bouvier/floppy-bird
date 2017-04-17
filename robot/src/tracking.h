@@ -10,6 +10,7 @@
 #include <highgui.h>
 #include "configuration.h"
 #include "imageBroadcast.h"
+#include "imageProcessing.h"
 
 
 struct TrackedObject{
