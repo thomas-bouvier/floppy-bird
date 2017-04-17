@@ -21,7 +21,7 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font);
 void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
-int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
+void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
 int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile);
 
 #endif // VIEW_H

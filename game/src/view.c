@@ -3,7 +3,7 @@
 * \brief File containing the functions relative to the SDL, that display elements on the screen
 */
 #include "view.h"
-#include "camera.h"
+
 
 /*!
 * \brief Color a rectangle
@@ -115,7 +115,7 @@ void quitGame(SDL_Window * window, SDL_Renderer * renderer)
 * \param[in] score the current score to be displayed
 * \param[in] font the font used to display score
 */
-int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
+void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 {
 	char scoreString[10];
 	sprintf(scoreString, "%d", score);
@@ -125,7 +125,7 @@ int displayScore(SDL_Renderer * renderer, int score, TTF_Font * font)
 	SDL_Rect dest = {30, 30, scoreSurface->w, scoreSurface->h};
 	SDL_RenderCopy(renderer, scoreTexture, NULL, &dest);
 	SDL_FreeSurface(scoreSurface);
-	return 1;
+	SDL_DestroyTexture(scoreTexture);
 }
 
 /*!
@@ -156,5 +156,7 @@ int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * score_file
 	SDL_RenderCopy(renderer, text_texture, NULL, &text_dest);
 	SDL_FreeSurface(score_surface);
 	SDL_FreeSurface(text_surface);
+	SDL_DestroyTexture(score_texture);
+	SDL_DestroyTexture(text_texture);
 	return 1;
 }

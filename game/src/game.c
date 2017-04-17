@@ -138,6 +138,7 @@ int ratioBirdHeight(Bird * bird)
 {
     return bird->y / SCREEN_HEIGHT;
 }
+
 /*!
 * \brief A function use to send the height of the next pipe to the IA
 * \param[in] bird the bird that determines the next obstacle
@@ -148,6 +149,7 @@ int ratioPipeHeight (Bird * bird, List * l)
 {
     return nextBirdObstacle(l, bird)->lower.y / SCREEN_HEIGHT;
 }
+
 /*!
 * \brief A function use to send the x position of the next pipe to the IA
 * \param[in] bird the bird that determines the next obstacle
@@ -158,6 +160,7 @@ int ratioPipeWidth (Bird * bird, List * l)
 {
     return nextBirdObstacle(l, bird)->lower.x / SCREEN_WIDTH;
 }
+
 /*!
 * \brief The function called every frame of the running game to update all objects
 * \param[out] bird the bird linked to the running game

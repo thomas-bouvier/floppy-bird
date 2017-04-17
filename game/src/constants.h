@@ -108,7 +108,7 @@ enum Action
 /*!
 * The possible sounds for the bird
 */
-typedef enum  Sound Sound;
+typedef enum Sound Sound;
 
 /*!
 * \enum Sound

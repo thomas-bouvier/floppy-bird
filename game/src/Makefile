@@ -16,7 +16,7 @@ endif
 Release: main
 Debug: main
 
-main: main.o bird.o camera.o control.o file.o game.o list.o obstacle.o pipe.o sound.o view.o
+main: main.o bird.o camera.o control.o file.o game.o list.o menu.o obstacle.o pipe.o sound.o view.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 %.o: %.c

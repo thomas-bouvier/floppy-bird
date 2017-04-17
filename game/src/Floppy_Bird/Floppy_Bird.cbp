@@ -63,6 +63,10 @@
 		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../menu.h" />
 		<Unit filename="../obstacle.c">
 			<Option compilerVar="CC" />
 		</Unit>
