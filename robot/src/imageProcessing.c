@@ -60,9 +60,7 @@ void binarisation(TrackedObject* obj)
     }
 	
 	cvResetImageROI(obj->binFlux->img);
-    /* Show the result of the mask image */
-    if(obj->binFlux->windowTitle != NULL) 
-		cvShowImage(obj->binFlux->windowTitle, obj->binFlux->img);
+    
 	/* Show the tracking zone in the full colored image*/
 	cvRectangleR(obj->rawFlux->img,*(obj->trackingZone),cvScalar(0,0,255,0),1,8,0);
 
@@ -80,10 +78,10 @@ void binarisation(TrackedObject* obj)
 /*
  * Add a circle on the video that follow your colored object
  */
-void addObjectToVideo(TrackedObject* obj, int nbPixels) {
+void addObjectToVideo(TrackedObject* obj) {
 	
     /* Draw an object centered on its origin */
-    if (nbPixels > NB_PIXEL_THRESHOLD){
+    if (obj->nbPixels > NB_PIXEL_THRESHOLD){
 		switch (obj->shape){
 			case CIRCLE:
 				cvDrawCircle(obj->rawFlux->img, obj->origin, obj->width, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */

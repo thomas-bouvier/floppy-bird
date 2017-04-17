@@ -30,7 +30,10 @@ void disableTracking(TrackedObject* obj)
 void updateTracking(TrackedObject* obj)
 {
 	if(obj->computeTracking){
-		//TODO
+		binarisation(obj);
+		addObjectToVideo(obj);
+		showImage(obj->rawFlux);
+		showImage(obj->binFlux);
 	}
 }
 

@@ -1,11 +1,12 @@
 #include "imageBroadcast.h"
 
 
-void initImageBroadcast(ImageBroadcast* flux, IplImage* img, char* windowTitle, CvFont * font)
+void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect workingSpace, char* windowTitle, CvFont * font)
 {
 	flux->img = img;
 	flux->windowTitle = windowTitle;
 	flux->font = font;
+	flux->workingSpace = workingSpace;
 	cvNamedWindow(windowTitle, CV_WINDOW_AUTOSIZE);
 }
 
@@ -13,8 +14,10 @@ void initFont(ImageBroadcast* flux){
 	double hScale=0.4;
 	double vScale=0.4;
 	int    lineWidth=1;
-	
-	cvInitFont(flux->font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
+	if(flux->font != NULL)
+		cvInitFont(flux->font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
+	else 
+		fprintf(stderr,"error in initFont : flux->font NULL\n");
 }
 
 void updateImage(ImageBroadcast* flux,IplImage* img)
@@ -81,4 +84,11 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 			workingSpace->originDefined = 1;
 		}
 	}
+}
+
+void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture)
+{
+	flux->img = raspiCamCvQueryFrame(capture);
+	if(flux->workingSpace != NULL)
+		cvSetImageROI(flux->img,flux->workingSpace);
 }

@@ -10,11 +10,13 @@
 #include <highgui.h>
 #include "configuration.h"
 #include "tracking.h"
+#include "RaspiCamCV.h"
 
 struct ImageBroadcast{
 	IplImage* img;		/* The image to show */
 	char* windowTitle;	/* The title of the window showing the image */
 	CvFont * font;		/* The font if text on image */
+	CvRect workingSpace;
 };
 
 /* Struct to define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined */
@@ -31,6 +33,7 @@ void initImageBroadcast(ImageBroadcast* flux, IplImage* img, char* windowTitle, 
 void initFont(ImageBroadcast* flux, CvFont * font);
 void getObjectColor(int event, int x, int y, int flags, void *param);
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param);
+void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture);
 
 
 #endif /*IMAGE_BROADCAST_H*/

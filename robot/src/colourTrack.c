@@ -10,6 +10,8 @@
 
 #include "configuration.h"
 #include "stylus.h"
+#include "imageBroadcast.h"
+#include "tracking.h"
 
 // Maths methods
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -17,16 +19,13 @@
 #define abs(x) ((x) > 0 ? (x) : -(x))
 #define sign(x) ((x) > 0 ? 1 : -1)
 
-// Color tracked and our tolerance towards it
-int h = 0, s = 0, v = 0;
-IplImage* image;
 
 RaspiCamCvCapture * initCapture(){
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
 	config->width = CAPTURE_WIDTH;
 	config->height = CAPTURE_HEIGHT;
-	config->bitrate = 0;	// zero: leave as default
+	config->bitrate = 0;	/* zero: leave as default */
 	config->framerate = 0;
 	config->monochrome = 0;
 	
@@ -37,37 +36,35 @@ RaspiCamCvCapture * initCapture(){
 
 int main(int argc, char *argv[]){
 	
-	// Variables
-	int nbPixels;
+	/* Variables*/
 	RaspiCamCvCapture * capture = initCapture();
-	CvFont * font = (CvFont *)malloc(sizeof(CvFont));
+	struct TrackedObject birdTracker;
+	struct ImageBroadcast cameraFlux;
+	struct ImageBroadcast processedFlux;
+	//CvFont * font = (CvFont *)malloc(sizeof(CvFont));
 	CvRect workingSpace;
 	Stylus stylus;
 	char colourTrackingWindow[] = "Color Tracking";
 	char maskWindow[] = "Mask";
 	char workSpaceDefWindow[] = "WorkingSpaceDefinition";
 	
-	// Setup
+	/* Setup */
 	wiringPiSetup();	// Setup the GPIO
 	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
 	enable(&stylus);
-	initFont(font);
+	//initFont(font);
 	workingSpace = initWorkSpace(capture, workSpaceDefWindow);
 
-	
-	cvNamedWindow(colourTrackingWindow, CV_WINDOW_AUTOSIZE);
-    cvNamedWindow(maskWindow, CV_WINDOW_AUTOSIZE);
-    cvMoveWindow(maskWindow, 650, 100);
-    cvMoveWindow(colourTrackingWindow, 0, 100);
+	initImageBroadcast(&cameraFlux, NULL, workingSpace, colourTrackingWindow, NULL);
+	loadImage(&cameraFlux,capture);
+	initImageBroadcast(&processedFlux, NULL, workingSpace, maskWindow, NULL);
+	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img-->roi->height),CIRCLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
     
-    cvSetMouseCallback(colourTrackingWindow, getObjectColor,NULL);
+    cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 	int exit =0;
 	do {
-		image = raspiCamCvQueryFrame(capture);
-		cvSetImageROI(image,workingSpace);
-		
-		CvPoint position = binarisation(image, &nbPixels, maskWindow);
-        addObjectToVideo(colourTrackingWindow, image, RECTANGLE, position,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER, nbPixels);
+		loadImage(&cameraFlux,capture);
+		updateTracking(&birdTracker);
 		
 		char key = cvWaitKey(1);
 		

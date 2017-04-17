@@ -8,7 +8,7 @@
 #include "imageBroadcast.h"
 
 void binarisation(TrackedObject* obj)
-void addObjectToVideo(TrackedObject* obj, int nbPixels);
+void addObjectToVideo(TrackedObject* obj);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window);
 
 
