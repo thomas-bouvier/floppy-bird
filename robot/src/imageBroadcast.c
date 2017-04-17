@@ -63,19 +63,15 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
 	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
 	if(workingSpace->originDefined == 1 && event == CV_EVENT_MOUSEMOVE){
-		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
+		workingSpace->rect = cvRect(min(x,workingSpace->origin.x),min(y,workingSpace->origin.y),abs(x-workingSpace->origin.x),abs(y-workingSpace->origin.y));
 	}
 	
 	if(event == CV_EVENT_LBUTTONUP){
-		printf("click at x=%d \ty=%d\n",x,y);
 		if(workingSpace->originDefined){
-			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
+			workingSpace->rect = cvRect(min(x,workingSpace->origin.x),min(y,workingSpace->origin.y),abs(x-workingSpace->origin.x),abs(y-workingSpace->origin.y));
 			workingSpace->rectDefined = 1;
 		} else {
-			workingSpace->rect.x = x;
-			workingSpace->rect.y = y;
+			workingSpace->origin = cvPoint(x,y);
 			workingSpace->originDefined = 1;
 		}
 	}

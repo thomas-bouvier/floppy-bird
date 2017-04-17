@@ -25,6 +25,7 @@ struct ImageBroadcast{
 /* Struct to define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined */
 struct VolatileRect{
 	CvRect rect;
+	CvPoint origin;
 	int originDefined;
 	int rectDefined;
 };
