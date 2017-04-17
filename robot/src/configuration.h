@@ -28,11 +28,18 @@
 #define WIDTH_BIRD_TRACKING_ZONE 50
 
 enum {CIRCLE,RECTANGLE};
-enum boolean{false = 0,true = 1,False = 0,True = 1, FALSE = 0,TRUE = 1};
+typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
 /* Tolerances for color analysis (HSV format)*/
-const int Htolerance = 5;
-const int Stolerance = 30;
+#define Htolerance  5
+#define Stolerance 30
+
+/* Maths methods */
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#define min(a, b) ((a) < (b) ? (a) : (b))  
+#define abs(x) ((x) > 0 ? (x) : -(x))
+#define sign(x) ((x) > 0 ? 1 : -1)
+
 
 
 #endif /*CONFIGURATION_H*/

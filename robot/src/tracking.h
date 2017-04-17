@@ -12,6 +12,8 @@
 #include "imageBroadcast.h"
 #include "imageProcessing.h"
 
+typedef struct ImageBroadcast ImageBroadcast;
+typedef struct TrackedObject TrackedObject;
 
 struct TrackedObject{
 	boolean computeTracking;	/* if false, the tracking is disabled */
@@ -21,14 +23,14 @@ struct TrackedObject{
 	ImageBroadcast* rawFlux;				/* The Full colored image in which the tracker is being displayed */
 	ImageBroadcast* binFlux;				/* The binarised image in which the tracking is being processed */
 	int nbPixels;			/* The number of pixel with the matching colour */
-	CvRect* trackingZone;		/* The zone in which the object is tracked */
+	CvRect trackingZone;		/* The zone in which the object is tracked */
 	int shape;					/* The shape to draw around the tracked object */
 	int width;					/* The width of the shape */
 	int height;					/* The height of the shape */
 	CvPoint origin;				/* The origin of the object (the centre for a circle, the upper left corner for a rectangle) */
 };
 
-void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, IplImage* img, CvRect* trackZone, int shape, int width, int height);
+void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape, int width, int height);
 void enableTracking(TrackedObject* obj);
 void disableTracking(TrackedObject* obj);
 void updateTracking(TrackedObject* obj);

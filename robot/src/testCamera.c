@@ -15,8 +15,8 @@ int main(int argc, char *argv[]){
 	
 	wiringPiSetup();	// Setup the GPIO
 	Stylus stylus;
-  attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
-  enable(&stylus);
+	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
+	enable(&stylus);
 
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 	free(config);
 	
 	
-CvFont font;
+	CvFont font;
 	double hScale=0.4;
 	double vScale=0.4;
 	int    lineWidth=1;

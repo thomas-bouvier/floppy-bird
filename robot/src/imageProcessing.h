@@ -6,8 +6,11 @@
 #include "configuration.h"
 #include "tracking.h"
 #include "imageBroadcast.h"
+#include "RaspiCamCV.h"
 
-void binarisation(TrackedObject* obj)
+typedef struct TrackedObject TrackedObject;
+
+void binarisation(TrackedObject* obj);
 void addObjectToVideo(TrackedObject* obj);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window);
 

@@ -21,8 +21,8 @@ testCamera: testCamera.o stylus.o
 
 testCamera.o: stylus.h configuration.h
 stylus.o: stylus.h configuration.h
-colourTrack.o: stylus.h configuration.h RaspiCamCV.h imageBroadcast.h tracking.h
-imageBroadcast.o: imageBroadcast.h configuration.h tracking.h RaspiCamCV.h
+colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h
+imageBroadcast.o: imageBroadcast.h configuration.h tracking.h 
 imageProcessing.o: imageProcessing.h tracking.h imageBroadcast.h
 tracking.o: tracking.h configuration.h imageBroadcast.h imageProcessing.h
 

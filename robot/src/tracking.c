@@ -1,7 +1,7 @@
-#incude "tracking.h"
+#include "tracking.h"
 
 
-void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect* trackZone, int shape, int width, int height)
+void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape, int width, int height)
 {
 	obj->computeTracking = true;
 	obj->h = hue;

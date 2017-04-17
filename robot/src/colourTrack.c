@@ -13,12 +13,6 @@
 #include "imageBroadcast.h"
 #include "tracking.h"
 
-// Maths methods
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#define min(a, b) ((a) < (b) ? (a) : (b))  
-#define abs(x) ((x) > 0 ? (x) : -(x))
-#define sign(x) ((x) > 0 ? 1 : -1)
-
 
 RaspiCamCvCapture * initCapture(){
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
@@ -55,10 +49,10 @@ int main(int argc, char *argv[]){
 	//initFont(font);
 	workingSpace = initWorkSpace(capture, workSpaceDefWindow);
 
-	initImageBroadcast(&cameraFlux, NULL, workingSpace, colourTrackingWindow, NULL);
+	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
 	loadImage(&cameraFlux,capture);
-	initImageBroadcast(&processedFlux, NULL, workingSpace, maskWindow, NULL);
-	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img-->roi->height),CIRCLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
+	initImageBroadcast(&processedFlux, NULL, &workingSpace, maskWindow, NULL);
+	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),CIRCLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
     
     cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 	int exit =0;
@@ -70,10 +64,10 @@ int main(int argc, char *argv[]){
 		
 		switch(key)	
 		{
-			case 32:		// space to click
+			case 32:		/* space to click */
 				click(&stylus);
 				break;
-			case 27:		// Esc to exit
+			case 27:		/* Esc to exit */
 				exit = 1;
 				break;
 		}

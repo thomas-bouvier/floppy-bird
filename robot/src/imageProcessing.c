@@ -22,7 +22,7 @@ void binarisation(TrackedObject* obj)
     cvCvtColor(obj->rawFlux->img, hsv, CV_BGR2HSV);
 	
     /* We create the mask */
-    cvInRangeS(hsv, cvScalar(h - Htolerance -1, s - Stolerance, 0,0), cvScalar(h + Htolerance -1, s + Stolerance, 255,0), obj->binFlux->img);
+    cvInRangeS(hsv, cvScalar(obj->h - Htolerance -1, obj->s - Stolerance, 0,0), cvScalar(obj->h + Htolerance -1, obj->s + Stolerance, 255,0), obj->binFlux->img);
 	
     /* Create kernels for the morphological operation */
     kernel = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT,NULL);
@@ -30,7 +30,7 @@ void binarisation(TrackedObject* obj)
     /* Morphological opening (inverse because we have white pixels on black background) */
     cvDilate(obj->binFlux->img, obj->binFlux->img, kernel, 2);
     cvErode(obj->binFlux->img, obj->binFlux->img, kernel, 2);  
-    cvSetImageROI(obj->binFlux->img,*(obj->trackingZone));
+    cvSetImageROI(obj->binFlux->img,obj->trackingZone);
 	
     /* We go through the mask to look for the tracked object and get its gravity center */
     for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width + obj->binFlux->img->roi->xOffset; x++) {
@@ -62,15 +62,15 @@ void binarisation(TrackedObject* obj)
 	cvResetImageROI(obj->binFlux->img);
     
 	/* Show the tracking zone in the full colored image*/
-	cvRectangleR(obj->rawFlux->img,*(obj->trackingZone),cvScalar(0,0,255,0),1,8,0);
+	cvRectangleR(obj->rawFlux->img,obj->trackingZone,cvScalar(0,0,255,0),1,8,0);
 
 	/* Release memory */
     cvReleaseStructuringElement(&kernel);
     cvReleaseImage(&hsv);
  
     // If there is no pixel, we return a center outside the image, else we return the center of gravity
-    if(*nbPixels > 0)
-        obj->origin = cvPoint((int)(sommeX / (*nbPixels)), (int)(sommeY / (*nbPixels)));
+    if(obj->nbPixels > 0)
+        obj->origin = cvPoint((int)(sumX / (obj->nbPixels)), (int)(sumY / (obj->nbPixels)));
     else
         obj->origin = cvPoint(-1, -1);
 }
@@ -99,7 +99,7 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
 	
 	workingSpace.originDefined = 0;
 	workingSpace.rectDefined = 0;
-	initImageBroadcast(&flux, NULL,window,NULL);
+	initImageBroadcast(&flux, NULL, NULL, window, NULL);
 	
 	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
 	printf("Definition of the working space \n");

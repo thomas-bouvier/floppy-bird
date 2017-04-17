@@ -1,7 +1,7 @@
 #include "imageBroadcast.h"
 
 
-void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect workingSpace, char* windowTitle, CvFont * font)
+void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpace, char* windowTitle, CvFont * font)
 {
 	flux->img = img;
 	flux->windowTitle = windowTitle;
@@ -49,7 +49,7 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
  
         /* Get the hsv image */
         hsv = cvCloneImage(obj->rawFlux->img);
-        cvCvtColor(obj->rawFlux->img), hsv, CV_BGR2HSV);
+        cvCvtColor(obj->rawFlux->img, hsv, CV_BGR2HSV);
  
         /* Get the selected pixel */
         pixel = cvGet2D(hsv, y, x);
@@ -90,5 +90,5 @@ void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture)
 {
 	flux->img = raspiCamCvQueryFrame(capture);
 	if(flux->workingSpace != NULL)
-		cvSetImageROI(flux->img,flux->workingSpace);
+		cvSetImageROI(flux->img,*(flux->workingSpace));
 }
