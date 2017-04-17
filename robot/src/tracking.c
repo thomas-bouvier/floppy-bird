@@ -9,6 +9,7 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 	obj->v = val;
 	obj->rawFlux = rawFlux;
 	obj->binFlux = binFlux;
+	obj->nbPixels = 0;
 	obj->trackingZone = trackZone;
 	obj->shape = shape;
 	obj->origin = cvPoint(-1,-1);

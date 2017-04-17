@@ -4,82 +4,77 @@
  * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
  * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
  */
-CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
- 
+void binarisation(TrackedObject* obj) 
+{ 
     int x, y;
-    IplImage *hsv, *mask;
+    IplImage *hsv;
     IplConvKernel *kernel;
-    int sommeX = 0, sommeY = 0;
-    *nbPixels = 0;
+    int sumX = 0, sumY = 0;
+    obj->nbPixels = 0;
 	
-	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
-	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
+	//int zoneWidth = 50;		// The zone width in wich the colour will be tracked
+	//CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
 	
-    mask = cvCreateImage(cvGetSize(image), image->depth, 1);	/* Create the mask &initialize it to white (no color detected) */
+    obj->binFlux->img = cvCreateImage(cvGetSize(obj->rawFlux->img), obj->rawFlux->img->depth, 1);	/* Create the mask &initialize it to white (no color detected) */
 	
-    // Create the hsv image
-    hsv = cvCloneImage(image);
-    cvCvtColor(image, hsv, CV_BGR2HSV);
- 
+    /* Create the hsv image */
+    hsv = cvCloneImage(obj->rawFlux->img);
+    cvCvtColor(obj->rawFlux->img, hsv, CV_BGR2HSV);
 	
+    /* We create the mask */
+    cvInRangeS(hsv, cvScalar(h - Htolerance -1, s - Stolerance, 0,0), cvScalar(h + Htolerance -1, s + Stolerance, 255,0), obj->binFlux->img);
 	
-    // We create the mask
-    cvInRangeS(hsv, cvScalar(h - Htolerance -1, s - Stolerance, 0,0), cvScalar(h + Htolerance -1, s + Stolerance, 255,0), mask);
-	
-    // Create kernels for the morphological operation
+    /* Create kernels for the morphological operation */
     kernel = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT,NULL);
  
-    // Morphological opening (inverse because we have white pixels on black background)
-    cvDilate(mask, mask, kernel, 2);
-    cvErode(mask, mask, kernel, 2);  
-    cvSetImageROI(mask,roi);
+    /* Morphological opening (inverse because we have white pixels on black background) */
+    cvDilate(obj->binFlux->img, obj->binFlux->img, kernel, 2);
+    cvErode(obj->binFlux->img, obj->binFlux->img, kernel, 2);  
+    cvSetImageROI(obj->binFlux->img,*(obj->trackingZone));
 	
-    // We go through the mask to look for the tracked object and get its gravity center
-    for(x = mask->roi->xOffset; x < mask->roi->width + mask->roi->xOffset; x++) {
-        for(y = mask->roi->yOffset; y < mask->roi->height + mask->roi->yOffset ; y++) { 
+    /* We go through the mask to look for the tracked object and get its gravity center */
+    for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width + obj->binFlux->img->roi->xOffset; x++) {
+        for(y = obj->binFlux->img->roi->yOffset; y < obj->binFlux->img->roi->height + obj->binFlux->img->roi->yOffset ; y++) { 
  
-            // If its a tracked pixel, count it to the center of gravity's calcul
-            if((mask->imageData[x+ y*mask->widthStep]) == 255) {
-                sommeX += x;
-                sommeY += y;
-                (*nbPixels)++;
+            /* If its a tracked pixel, count it to the center of gravity's calcul */
+            if((obj->binFlux->img->imageData[x+ y*obj->binFlux->img->widthStep]) == 255) {
+                sumX += x;
+                sumY += y;
+                (obj->nbPixels)++;
             }
         }
     }
     
     
     
-      for(x = mask->roi->xOffset; x < mask->roi->width - mask->roi->xOffset; x++) {
-        for(y = mask->roi->yOffset; y < mask->roi->height - mask->roi->yOffset ; y++) { 
+      for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width - obj->binFlux->img->roi->xOffset; x++) {
+        for(y = obj->binFlux->img->roi->yOffset; y < obj->binFlux->img->roi->height - obj->binFlux->img->roi->yOffset ; y++) { 
  
-            // If its a tracked pixel, count it to the center of gravity's calcul
-            if(((uchar *)(mask->imageData + y*mask->widthStep))[x] == 255) {
-                sommeX += x;
-                sommeY += y;
-                (*nbPixels)++;
+            /* If its a tracked pixel, count it to the center of gravity's calcul */
+            if(((uchar *)(obj->binFlux->img->imageData + y*obj->binFlux->img->widthStep))[x] == 255) {
+                sumX += x;
+                sumY += y;
+                (obj->nbPixels)++;
             }
         }
     }
 	
-	cvResetImageROI(mask);
-    // Show the result of the mask image
-    if(window != NULL) 
-		cvShowImage(window, mask);
-   
-	cvRectangleR(image,roi,cvScalar(0,0,255,0),1,8,0);
-    // We release the memory of kernels
+	cvResetImageROI(obj->binFlux->img);
+    /* Show the result of the mask image */
+    if(obj->binFlux->windowTitle != NULL) 
+		cvShowImage(obj->binFlux->windowTitle, obj->binFlux->img);
+	/* Show the tracking zone in the full colored image*/
+	cvRectangleR(obj->rawFlux->img,*(obj->trackingZone),cvScalar(0,0,255,0),1,8,0);
+
+	/* Release memory */
     cvReleaseStructuringElement(&kernel);
- 
-    // We release the memory of the mask
-    cvReleaseImage(&mask);
-    // We release the memory of the hsv image
     cvReleaseImage(&hsv);
  
     // If there is no pixel, we return a center outside the image, else we return the center of gravity
     if(*nbPixels > 0)
-        return cvPoint((int)(sommeX / (*nbPixels)), (int)(sommeY / (*nbPixels)));
+        obj->origin = cvPoint((int)(sommeX / (*nbPixels)), (int)(sommeY / (*nbPixels)));
     else
-        return cvPoint(-1, -1);
+        obj->origin = cvPoint(-1, -1);
 }
 
 /*

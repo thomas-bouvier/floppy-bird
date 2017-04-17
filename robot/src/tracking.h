@@ -19,6 +19,7 @@ struct TrackedObject{
 	int v;		/* Value of the color to track */
 	ImageBroadcast* rawFlux;				/* The Full colored image in which the tracker is being displayed */
 	ImageBroadcast* binFlux;				/* The binarised image in which the tracking is being processed */
+	int nbPixels;			/* The number of pixel with the matching colour */
 	CvRect* trackingZone;		/* The zone in which the object is tracked */
 	int shape;					/* The shape to draw around the tracked object */
 	int width;					/* The width of the shape */
