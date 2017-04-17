@@ -24,6 +24,7 @@ int main(int argc, char ** argv)
     int running = 1;
     Action init;
 	Sound sound;
+	Mode mode;
     int number;
 
     Bird bird;
@@ -173,14 +174,16 @@ int main(int argc, char ** argv)
         }
     }
 
-    init = NOTHING;
-    while(init == NOTHING)
+    mode = WAIT;
+    while(mode != PLAY && init != QUIT)
     {
-        mainMenu(renderer, font);
+        mode = mainMenu(renderer, font);
         init = detectTouch();
     }
 
-    running = 1;
+    if(init == QUIT)
+        running = 0;
+
     while(running)
     {
     	score = 0;

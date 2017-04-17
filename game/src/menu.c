@@ -17,7 +17,7 @@ void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * fo
 	SDL_DestroyTexture(text_texture);
 }
 
-void mainMenu(SDL_Renderer * renderer, TTF_Font * font)
+int  mainMenu(SDL_Renderer * renderer, TTF_Font * font)
 {
     SDL_RenderClear(renderer);
     SDL_Event event;
@@ -32,4 +32,21 @@ void mainMenu(SDL_Renderer * renderer, TTF_Font * font)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     printText(renderer, "IA2 Demo", 600, font);
     SDL_RenderPresent(renderer);
+    return actionOnMenu(event);
+}
+
+
+int actionOnMenu(SDL_Event event)
+{
+    if (event.type == SDL_MOUSEBUTTONDOWN)
+    {
+        if(event.button.x > 437 && event.button.x < 587 && event.button.y > 200 && event.button.y < 271)
+            return PLAY;
+        if(event.button.x > 365 && event.button.x < 659 && event.button.y > 400 && event.button.y < 471)
+            return IA1;
+        if(event.button.x > 357 && event.button.x < 667 && event.button.y > 600 && event.button.y < 671)
+            return IA2;
+
+    }
+    return WAIT;
 }

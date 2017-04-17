@@ -122,5 +122,22 @@ enum Sound
     DEATH               /*! sound when the bird die */
 };
 
+/*!
+* The possible modes of game
+*/
+typedef enum Mode Mode;
+
+/*!
+* \enum Mode
+* \brief The possible modes of game
+*/
+enum Mode
+{
+    WAIT,               /*! waiting for a choice */
+    PLAY,               /*! game played normally, with the user */
+    IA1,                /*! game played with the first IA (Q learning) */
+    IA2                 /*! game played with the second IA (NEAT) */
+};
+
 
 #endif // CONSTANTS_H
