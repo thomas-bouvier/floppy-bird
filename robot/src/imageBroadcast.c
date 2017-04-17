@@ -25,11 +25,6 @@ void updateImage(ImageBroadcast* flux,IplImage* img)
 	flux->img = img;
 }
 
-void updateImageFromCapture(ImageBroadcast* flux, RaspiCamCvCapture * capture)
-{
-	flux->img = raspiCamCvQueryFrame(capture);
-}
-
 void showImage(ImageBroadcast* flux)
 {
 	cvShowImage(flux->windowTitle,flux->img);

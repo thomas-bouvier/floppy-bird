@@ -104,11 +104,11 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
 	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
 	printf("Definition of the working space \n");
 	while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
-		updateImageFromCapture(&flux,capture);
+		loadImage(&flux,capture);
 		if(workingSpace.originDefined) {
 			cvRectangleR(flux.img,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
 		}
-			showImage(&flux);		
+		showImage(&flux);		
 		char keyPressed = cvWaitKey(30);
 		switch (keyPressed){
 			case 27:				/* ESC to reset the rectangle origin */

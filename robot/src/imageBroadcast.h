@@ -30,7 +30,6 @@ struct VolatileRect{
 };
 
 void updateImage(ImageBroadcast* flux,IplImage* img);
-void updateImageFromCapture(ImageBroadcast* flux, RaspiCamCvCapture * capture);
 void showImage(ImageBroadcast* flux);
 void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpace, char* windowTitle, CvFont * font);
 void initFont(ImageBroadcast* flux);
