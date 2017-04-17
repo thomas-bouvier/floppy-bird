@@ -19,5 +19,8 @@
 #define CAPTURE_WIDTH 960/2		// Must be a multiple of 32
 #define CAPTURE_HEIGHT 720/2	// Must be a multiple of 32
 
+enum {CIRCLE,RECTANGLE};
+enum boolean{false = 0,true = 1,False = 0,True = 1, FALSE = 0,TRUE = 1};
+
 
 #endif //CONFIGURATION_H
