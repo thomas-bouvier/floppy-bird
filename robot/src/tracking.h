@@ -34,6 +34,8 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 void enableTracking(TrackedObject* obj);
 void disableTracking(TrackedObject* obj);
 void updateTracking(TrackedObject* obj);
+void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux,FILE * loadFile);
+void saveTrackedObject(TrackedObject* obj,FILE * saveFile);
 
 
 

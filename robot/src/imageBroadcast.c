@@ -53,6 +53,7 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
         obj->h = (int)pixel.val[0];
         obj->s = (int)pixel.val[1];
         obj->v = (int)pixel.val[2];
+        printf("color selected : h=%d s=%d v=%d\n",obj->h,obj->s,obj->v);
  
         /* Release the memory of the hsv image */
         cvReleaseImage(&hsv);

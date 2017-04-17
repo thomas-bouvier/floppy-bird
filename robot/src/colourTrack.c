@@ -42,17 +42,48 @@ int main(int argc, char *argv[]){
 	char maskWindow[] = "Mask";
 	char workSpaceDefWindow[] = "WorkingSpaceDefinition";
 	
+	int c;
+	FILE* loadFile = NULL;
+	FILE* saveFile = NULL;
+	
+	while((c = getopt(argc,argv,"l:s:")) != -1)
+		switch(c){
+			case 'l':
+				loadFile = fopen(optarg,"rb");
+				if(saveFile!=NULL){
+					fprintf(stderr,"cannot load and save a file at the same time");
+					return 1;
+				}
+				break;
+			case 's':
+				saveFile = fopen(optarg,"wb");
+				if(loadFile!=NULL){
+					fprintf(stderr,"cannot load and save a file at the same time");
+					return 1;
+				}
+				break;
+			default:
+				printf("Unknown option :\nUsage : -l loadFileName OR -s saveFileName\n");
+				return 1;
+		}
+	
+	
 	/* Setup */
-	wiringPiSetup();	// Setup the GPIO
+	wiringPiSetup();	/* Setup the GPIO */
 	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
 	enable(&stylus);
 	//initFont(font);
-	workingSpace = initWorkSpace(capture, workSpaceDefWindow);
+	workingSpace = initWorkSpace(capture, workSpaceDefWindow,loadFile);
 
 	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
 	loadImage(&cameraFlux,capture);
 	initImageBroadcast(&processedFlux, NULL, &workingSpace, maskWindow, NULL);
-	initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
+	if(loadFile == NULL){
+		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
+    } else {		/* We load data form the file */
+		loadTrackedObject(&birdTracker,&cameraFlux,&processedFlux,loadFile);
+	}
+    
     
     cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 	int exit =0;
@@ -75,7 +106,12 @@ int main(int argc, char *argv[]){
 		
 	} while (!exit);
 
-	
+	if(loadFile != NULL)
+		fclose(loadFile);
+	if(saveFile != NULL){
+		saveTrackedObject(&birdTracker,saveFile);
+		fclose(saveFile);
+	}
     cvDestroyAllWindows();
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);

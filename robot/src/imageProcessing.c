@@ -95,31 +95,37 @@ void addObjectToVideo(TrackedObject* obj) {
 	}
 }
 
-CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
-	struct VolatileRect workingSpace;
-	struct ImageBroadcast flux;
-	
-	workingSpace.originDefined = 0;
-	workingSpace.rectDefined = 0;
-	initImageBroadcast(&flux, NULL, NULL, window, NULL);
-	
-	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
-	printf("Definition of the working space \n");
-	while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
-		loadImage(&flux,capture);
-		if(workingSpace.originDefined) {
-			cvRectangleR(flux.img,workingSpace.rect,TRACKED_OBJECT_DEFAULT_COLOR,1,8,0);
+CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
+	if(loadFile==NULL){
+		struct VolatileRect workingSpace;
+		struct ImageBroadcast flux;
+		
+		workingSpace.originDefined = 0;
+		workingSpace.rectDefined = 0;
+		initImageBroadcast(&flux, NULL, NULL, window, NULL);
+		
+		cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
+		printf("Definition of the working space \n");
+		while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
+			loadImage(&flux,capture);
+			if(workingSpace.originDefined) {
+				cvRectangleR(flux.img,workingSpace.rect,TRACKED_OBJECT_DEFAULT_COLOR,1,8,0);
+			}
+			showImage(&flux);		
+			char keyPressed = cvWaitKey(30);
+			switch (keyPressed){
+				case 27:				/* ESC to reset the rectangle origin */
+					workingSpace.originDefined = 0;
+					break;
+			}
 		}
-		showImage(&flux);		
-		char keyPressed = cvWaitKey(30);
-		switch (keyPressed){
-			case 27:				/* ESC to reset the rectangle origin */
-				workingSpace.originDefined = 0;
-				break;
-		}
+		printf("Working space defined\n");
+		cvDestroyWindow(window);
+		return workingSpace.rect;
+	} else {		/* else loading file */
+		CvRect workSpaceRect;
+		fread(&workSpaceRect,sizeof(CvRect),1,loadFile);
+		return workSpaceRect;
 	}
-	printf("Working space defined\n");
-	cvDestroyWindow(window);
-	return workingSpace.rect;
 }
 
