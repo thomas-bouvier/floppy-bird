@@ -6,6 +6,7 @@
 #include "control.h"
 #include "file.h"
 #include "sound.h"
+#include "menu.h"
 #include "constants.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -172,7 +173,14 @@ int main(int argc, char ** argv)
         }
     }
 
+    init = NOTHING;
+    while(init == NOTHING)
+    {
+        mainMenu(renderer, font);
+        init = detectTouch();
+    }
 
+    running = 1;
     while(running)
     {
     	score = 0;

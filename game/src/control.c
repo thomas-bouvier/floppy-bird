@@ -14,7 +14,7 @@
 Action detectTouch()
 {
     SDL_Event event;
-    while( SDL_PollEvent(&event))
+    while(SDL_PollEvent(&event))
         {
             switch (event.type)
             {
@@ -81,7 +81,7 @@ int waitForTI()
             return 0;
         if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
-                run = 0;
+            run = 0;
         }
     }
     return 1;
