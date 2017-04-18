@@ -58,9 +58,9 @@ int populateMatingPool(MatingPool * pool) {
 }
 
 /*!
-* \brief Add the given Species to the given MatingPool
-* \param[out] pool the MatingPool where to insert the Species
-* \return int 1 if the Species was successfully added to the MatingPool, 0 otherwise
+* \brief Add a new blank Species to the given MatingPool
+* \param[out] pool the MatingPool where to insert a new blank Species
+* \return int 1 if the new blank Species was successfully added to the MatingPool, 0 otherwise
 */
 int addSpeciesToMatingPool(MatingPool * pool) {
   List * genomes = NULL;
@@ -123,6 +123,11 @@ int removeSpecies(MatingPool * pool, short int id) {
 /*!
 * \brief Generate the next generation of Species
 * \param[out] pool the MatingPool whose next generation of Species has to be generated
+* \param[in] verbose bool value indicating whether an output has to be printed in the console
+* \return int 1 if the new generation was successfully created, 0 otherwise
+*
+* A new generation is created by culling Species elements which contain weak Genome elements,
+* before breeding each remaining Species and keeping the stronger Genome element.
 */
 int newGeneration(MatingPool * pool, int verbose) {
   int i;
@@ -182,7 +187,7 @@ int newGeneration(MatingPool * pool, int verbose) {
 * \brief Compare two Genome elements based on their fitness
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
-* \Return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+* \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
 */
 static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
   int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
@@ -218,6 +223,10 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
 /*!
 * \brief Remove weak Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
 * \param[out] pool the MatingPool whose weak Species have to be removed
+* \param[in] verbose bool value indicating whether an output has to be printed in the console
+*
+* A Species is considered as weak when the ratio its average fitness to the average fitness of the MatingPool,
+* times the number of Genome elements in a Species ie. POPULATION is lower than WEAK_SPECIES_THRESHOLD.
 */
 void removeWeakSpecies(MatingPool * pool, int verbose) {
   int i;
@@ -244,7 +253,9 @@ void removeWeakSpecies(MatingPool * pool, int verbose) {
 
 /*!
 * \brief Remove stale Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
-* \param[out] pool the MatingPool whose weak Species have to be removed
+* \param[out] pool the MatingPool whose stale Species have to be removed
+*
+* A Species is considered as stale when
 */
 void removeStaleSpecies(MatingPool * pool) {
   int i;
@@ -267,6 +278,11 @@ void removeStaleSpecies(MatingPool * pool) {
   }
 }
 
+/*!
+* \brief Breed a new Genome element by randomly selecting Genome elements in the given MatingPool
+* \param[out] species
+* \param[in] verbose bool value indicating whether an output has to be printed in the console
+*/
 Genome * breedGenome(Species * species, int verbose) {
   double p;
   Genome * child = NULL;
@@ -335,7 +351,7 @@ Genome * breedGenome(Species * species, int verbose) {
 * \brief Compare two Genome elements based on their fitness
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
-* \Return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
+* \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
 */
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
   return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
@@ -376,7 +392,7 @@ void computeGlobalRanks(MatingPool * pool) {
 
 /*!
 * \brief Compute the average fitness of the given MatingPool
-* \param[out] pool The MatingPool whose the average fitness has to be calculated
+* \param[out] pool the MatingPool whose the average fitness has to be calculated
 */
 void computeGlobalAverageFitness(MatingPool * pool) {
   int i;
@@ -409,6 +425,12 @@ static int addGenomeToSpecies(Genome * genome, Species * species) {
 * \param[in] genome the Genome to add
 * \param[out] pool the MatingPool where Genome elements are added
 * \return int 1 if the Genome was successfully added to the Species, 0 otherwise
+*
+* The advantage of splitting the Genome elements into Species is that during the genetic evolution
+* step where weak Genome elements are culled, each Genome element has to fight against Genome
+* elements of the same Species, rather than against every other Genome elements in the entire
+* MatingPool. This way Species which form a new topological innovation that might not have a high
+* fitness yet due to not having its weights optimised will survive the culling.
 */
 int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
   int i;
@@ -437,7 +459,7 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
 /*!
 * \brief Compute the average fitness of the given Species
-* \param[out] species The Species whose the average fitness has to be calculated
+* \param[out] species the Species whose the average fitness has to be calculated
 */
 void computeAverageFitness(Species * species) {
   double sum = 0.0;
@@ -453,9 +475,9 @@ void computeAverageFitness(Species * species) {
 }
 
 /*!
-* \brief Return a random Genome from the given Species.
+* \brief Return a random Genome from the given Species
 * \param[in] species the Species to choose a Genome from
-* \return Return a random Genome
+* \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
   setOn(species->genomes, randomAtMost(species->nb_genomes));
@@ -463,7 +485,7 @@ Genome * getRandomGenome(Species * species) {
 }
 
 /*!
-* \brief Print the given MatingPool.
+* \brief Print the given MatingPool
 * \param[in] pool the MatingPool to print
 */
 void printMatingPool(MatingPool * pool) {
