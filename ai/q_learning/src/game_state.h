@@ -24,5 +24,6 @@ void freeState(State * state);
 int getCurrentReward(int bird_state);
 
 int processing_dxdy(int initial_d);
+int processing_birdstate(int initial_bird_state);
 
 #endif

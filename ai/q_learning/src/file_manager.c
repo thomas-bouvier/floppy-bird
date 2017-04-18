@@ -26,15 +26,18 @@ MatrixQ * loadQMatrix(char * filename)
 
 	fscanf(fp, "%d", &(matrixQ->nb_states));
 
-	if((matrixQ->state = (State *) realloc(matrixQ->state ,(matrixQ->nb_states+1)*sizeof(State))) == NULL) 
+	if(matrixQ->nb_states != 0)
 	{
-		fprintf(stderr, "Error occurred when allocated a new state: index %d", matrixQ->nb_states);
-		return NULL;
-	}
-	if((matrixQ->reward = (float *) realloc(matrixQ->reward, NB_ACTIONS*(matrixQ->nb_states+1)*sizeof(float))) == NULL) 
-	{
-		fprintf(stderr, "Error occurred when allocated the reward array: index %d", matrixQ->nb_states);
-		return NULL;
+		if((matrixQ->state = (State *) malloc((matrixQ->nb_states)*sizeof(State))) == NULL) 
+		{
+			fprintf(stderr, "Error occurred when allocated a new state: index %d", matrixQ->nb_states);
+			return NULL;
+		}
+		if((matrixQ->reward = (float *) malloc(NB_ACTIONS*(matrixQ->nb_states)*sizeof(float))) == NULL) 
+		{
+			fprintf(stderr, "Error occurred when allocated the reward array: index %d", matrixQ->nb_states);
+			return NULL;
+		}
 	}
 
 	printf("%d", matrixQ->nb_states);

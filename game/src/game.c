@@ -136,7 +136,7 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 */
 int ratioBirdHeight(Bird * bird)
 {
-    return bird->y / SCREEN_HEIGHT;
+    return bird->y;
 }
 
 /*!
@@ -147,7 +147,7 @@ int ratioBirdHeight(Bird * bird)
 */
 int ratioPipeHeight (Bird * bird, List * l)
 {
-    return nextBirdObstacle(l, bird)->lower.y / SCREEN_HEIGHT;
+    return nextBirdObstacle(l, bird)->lower.y;
 }
 
 /*!
@@ -158,7 +158,7 @@ int ratioPipeHeight (Bird * bird, List * l)
 */
 int ratioPipeWidth (Bird * bird, List * l)
 {
-    return nextBirdObstacle(l, bird)->lower.x / SCREEN_WIDTH;
+    return nextBirdObstacle(l, bird)->lower.x-bird->x;
 }
 
 /*!

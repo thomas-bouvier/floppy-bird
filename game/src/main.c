@@ -35,8 +35,8 @@ int main(int argc, char ** argv)
 
     FILE * config = NULL;
     FILE * level = NULL;
-    char scorePath[100];
     FILE * scoreFile = NULL;
+
 	char jump_path[100];
 	Mix_Chunk * jump_sound;
 	char obstacle_path[100];
@@ -50,13 +50,12 @@ int main(int argc, char ** argv)
     int score;
     Obstacle * savedObstacle = NULL;
 
-	/* Load Q matrix data */
-	MatrixQ * matrixQ = loadQMatrix("../res/test.txt");
-
-	/* Number of last states saved / last actions */
-	int last_states[NB_SAVED_STATES]; /* [0]current_state [1]last_state */
-	int last_action = -1;
-	init_array(last_states, NB_SAVED_STATES, -1);
+	/* Initialization IA1 */
+	MatrixQ * matrixQ = NULL;
+	int last_states[NB_SAVED_STATES];
+	int last_action[NB_SAVED_ACTIONS];
+	char qmatrixPath[100];
+	int hit_saved=0;
 	srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
@@ -90,7 +89,6 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
-    FILE * scoreFile = NULL;
     char * scorePath = malloc(sizeof(char)*100);
     if (readConfig(config, scorePath, "score :\n"))
     {
@@ -192,14 +190,30 @@ int main(int argc, char ** argv)
     }
 
     mode = WAIT;
-    while(mode != PLAY && init != QUIT)
+    while(mode != PLAY && mode != IA1 && init != QUIT)
     {
         mode = mainMenu(renderer, font);
         init = detectTouch();
     }
-
     if(init == QUIT)
         running = 0;
+
+	/* Setup IA1 */
+	if(mode == IA1)
+	{
+
+		/* Open the file that contains qMatrix data */
+		if (readConfig(config, qmatrixPath, "qMatrix :\n"))
+		{
+		    if (qmatrixPath[strlen(qmatrixPath)-1] == '\n')
+		        qmatrixPath[strlen(qmatrixPath)-1] = '\0';
+		}
+
+		matrixQ = loadQMatrix(qmatrixPath);
+		init_array(last_states, NB_SAVED_STATES, -1);
+		init_array(last_action, NB_SAVED_ACTIONS, -1);
+	}
+
 
     while(running)
     {
@@ -207,23 +221,26 @@ int main(int argc, char ** argv)
         startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
         drawForTI(renderer, &camera);
-        running = waitForTI();
+        if(mode == PLAY) running = waitForTI();
+		if(mode == IA1) running = 1;
         displayGame(renderer, &bird, &l, &camera, score, font);
 
-        /* Wait the first jump to start the game*/
-        emptyEvent();
-        init = NOTHING;
-        while(init == NOTHING && running)
-        {
-            init = detectTouch();
-            if(init == JUMP)
-            {
-                bird.dir_y = BIRD_JUMP;
-                playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
-            }
-            if(init == QUIT)
-                running = 0;
-        }
+        if(mode == PLAY) /* Wait the first jump to start the game*/
+		{        
+			emptyEvent();
+		    init = NOTHING;
+		    while(init == NOTHING && running)
+		    {
+		        init = detectTouch();
+		        if(init == JUMP)
+		        {
+		            bird.dir_y = BIRD_JUMP;
+		            playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
+		        }
+		        if(init == QUIT)
+		            running = 0;
+		    }
+		}
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
@@ -233,7 +250,7 @@ int main(int argc, char ** argv)
 
         while(!hit && running)
         {
-
+			
             for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
             {
                 Action event = detectTouch();
@@ -242,19 +259,22 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-				q_learning_loop(matrixQ, last_states, &last_action, 100, 100, 1);
-				/*if(last_states[0] != -1) event = last_action;*/
+
+				if(last_states[0] != -1) event = last_action[0];
+				
+				if(mode == IA1) q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &l), ratioPipeHeight(&bird, &l), hit_saved);
+
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
-                savedObstacle = nextBirdObstacle(&l, &bird);
+                hit_saved = hit;
+				savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera, score, font);
                 playSound(sound, jump_sound, obstacle_sound, death_sound);
                 lastFrame = SDL_GetTicks();
             }
 			
-			/*show_matrixQ(matrixQ);*/
             saveScore(scoreFile, score);
         }
-        if(hit)
+        if(hit && mode == PLAY)
         {
             SDL_Delay(300);
             SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
@@ -262,12 +282,15 @@ int main(int argc, char ** argv)
             displayBestScore(renderer, font, scoreFile);
             SDL_RenderPresent(renderer);
             SDL_Delay(1500);
-			saveQMatrix(matrixQ, "../res/test.txt");
         }
+		if(hit && mode == IA1) 
+		{
+			saveQMatrix(matrixQ, qmatrixPath);
+		}
     }
 
     /* Quit the game */
-	freeMatrixQ(matrixQ);
+	if(mode == IA1) freeMatrixQ(matrixQ);
     quitGame(window, renderer);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);

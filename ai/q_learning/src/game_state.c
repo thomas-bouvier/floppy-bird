@@ -70,3 +70,13 @@ int processing_dxdy(int initial_d)
 	return initial_d/DISTANCE_ACCURACY;
 }
 
+/*!
+* \brief Adapt the value of the bird_state variable coming from the game to ai1 algorithm
+* \param[in] initial_bird_state variable coming from the game
+* \return Return a a new value to fit with the q_learning algorithm 
+*/
+int processing_birdstate(int initial_bird_state)
+{
+	return (initial_bird_state)? 0:1;
+}
+
