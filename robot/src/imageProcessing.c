@@ -46,18 +46,18 @@ void binarisation(TrackedObject* obj)
     }
     
     
-    
+    /*
       for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width - obj->binFlux->img->roi->xOffset; x++) {
         for(y = obj->binFlux->img->roi->yOffset; y < obj->binFlux->img->roi->height - obj->binFlux->img->roi->yOffset ; y++) { 
  
-            /* If its a tracked pixel, count it to the center of gravity's calcul */
+            /* If its a tracked pixel, count it to the center of gravity's calcul 
             if(((uchar *)(obj->binFlux->img->imageData + y*obj->binFlux->img->widthStep))[x] == 255) {
                 sumX += x;
                 sumY += y;
                 (obj->nbPixels)++;
             }
         }
-    }
+    }*/
 	
 	cvResetImageROI(obj->binFlux->img);
     
