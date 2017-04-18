@@ -14,15 +14,13 @@
 Action detectTouch()
 {
     SDL_Event event;
-    while( SDL_PollEvent(&event))
+    while(SDL_PollEvent(&event))
         {
             switch (event.type)
             {
                 case SDL_KEYDOWN:
                     if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    {
                         return QUIT;
-                    }
                     if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
                     {
                         return PAUSE;
@@ -35,7 +33,10 @@ Action detectTouch()
                 case SDL_MOUSEBUTTONDOWN:
                     if(event.button.button == SDL_BUTTON_LEFT)
                     {
-                        return JUMP;
+                        if(event.button.x >= SCREEN_WIDTH - 50 && event.button.y <= 50)
+                            return PAUSE;
+                        else
+                            return JUMP;
                     }
                     break;
             }
@@ -62,4 +63,26 @@ Action waiting()
         a = detectTouch();
     }
     return a;
+}
+/*!
+* \brief wait a left click on a square at the center of the screen
+* \return return 0 if the game have to be stop and 1 if all went good
+*/
+int waitForTI()
+{
+    int run = 1;
+    SDL_Event event;
+    while(run)
+    {
+        SDL_PollEvent(&event);
+        if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+            return 0;
+        if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+            return 0;
+        if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        {
+            run = 0;
+        }
+    }
+    return 1;
 }

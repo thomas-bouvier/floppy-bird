@@ -10,12 +10,18 @@
 #include "obstacle.h"
 #include "camera.h"
 #include "list.h"
+#include "file.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera);
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font);
+void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
+void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
+int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile);
 
 #endif // VIEW_H

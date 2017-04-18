@@ -21,6 +21,7 @@ void initBird(Bird * new_bird)
 *\brief Update the ordinate of the bird and the direction of its next move
 *\param[out] bird the bird to be updated
 *\param[in] t the detection of the touch that imply a jump
+*\param[in] sound the sound played when the bird jump
 *
 * if the parameter t is equal to the constant JUMP then bird_y, the speed on the y axis of the bird take the value BIRD_JUMP
 * in others cases bird_y take is increase by GRAVITY (increase because the value max on the y axis is the bottom of the screen)
@@ -28,10 +29,13 @@ void initBird(Bird * new_bird)
 * of the bird (bird->y - BIRD_SIZE/2) is higher than the limit of the screen (0), the bird is replace at the limit
 * of the screen, and same for the bottom.
 */
-void updateBird(Bird * bird, int t)
+void updateBird(Bird * bird, int t, Sound * sound)
 {
-    if( t == JUMP)
+    if(t == JUMP)
+	{
         bird->dir_y = BIRD_JUMP;
+        (*sound) = JUMPSOUND;
+    }
     else
     {
         bird->dir_y += GRAVITY;

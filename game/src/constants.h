@@ -63,6 +63,16 @@
 */
 #define OBSTACLE_GAP 200
 
+/*! \def MIN_HEIGHT_LOWER
+* \brief The minimum height of the lower pipe of an obstacle
+*/
+#define MIN_HEIGHT_LOWER 100
+
+/*! \def MAX_HEIGHT_LOWER
+* \brief The maximum height of the lower pipe of an obstacle
+*/
+#define MAX_HEIGHT_LOWER 500
+
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
 */
@@ -72,11 +82,6 @@
 * \brief The number of obstacles maximum in the list
 */
 #define OBSTACLE_NUMBER (PIPES_ON_SCREEN + 1)
-
-/*! \def LEVEL_FROM_FILE
-* \brief Select if the level is generated from a file or randomly
-*/
-#define LEVEL_FROM_FILE 0
 
 /*! \def FRAME_PER_SECOND
 * \brief the number of frame max per second
@@ -98,6 +103,40 @@ enum Action
     JUMP,               /*! make the bird jump */
     QUIT,               /*! quit the game */
     PAUSE               /*! pause the game */
+};
+
+/*!
+* The possible sounds for the bird
+*/
+typedef enum Sound Sound;
+
+/*!
+* \enum Sound
+* \brief The possible sounds for the bird
+*/
+enum Sound
+{
+    NOSOUND,            /*! nothing to be played */
+    JUMPSOUND,        	/*! sound when the bird jump */
+    OBSTACLE,           /*! sound when the bird pass an obstacle */
+    DEATH               /*! sound when the bird die */
+};
+
+/*!
+* The possible modes of game
+*/
+typedef enum Mode Mode;
+
+/*!
+* \enum Mode
+* \brief The possible modes of game
+*/
+enum Mode
+{
+    WAIT,               /*! waiting for a choice */
+    PLAY,               /*! game played normally, with the user */
+    IA1,                /*! game played with the first IA (Q learning) */
+    IA2                 /*! game played with the second IA (NEAT) */
 };
 
 

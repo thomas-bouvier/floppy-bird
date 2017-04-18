@@ -1,5 +1,17 @@
 level :
-../res/files/level.txt
+../../res/files/level.txt
 
 score :
-../res/files/score.txt
+../../res/files/score.txt
+
+font :
+../../res/fonts/Floppy.ttf
+
+sounds :
+jump :
+../../res/sounds/jump.wav
+obstacle :
+../../res/sounds/obstacle.wav
+death :
+../../res/sounds/death.wav
+
