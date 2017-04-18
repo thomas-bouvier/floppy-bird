@@ -28,7 +28,7 @@
 #define BIRD_TRACK_COLOR CV_RGB(0, 255, 0)
 #define PIPE_TRACK_COLOR CV_RGB(255, 0, 0)
 #define WIDTH_BIRD_TRACKING_ZONE 50
-#define WIDTH_PIPE_TRACKING_ZONE 150
+#define WIDTH_PIPE_TRACKING_ZONE 115
 
 enum {ELLIPSE,RECTANGLE};
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;

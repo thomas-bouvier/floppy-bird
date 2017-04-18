@@ -12,6 +12,7 @@
 #include "stylus.h"
 #include "imageBroadcast.h"
 #include "tracking.h"
+#include "imageProcessing.h"
 
 
 RaspiCamCvCapture * initCapture(){
@@ -122,6 +123,7 @@ int main(int argc, char *argv[]){
 	if(loadFile != NULL)
 		fclose(loadFile);
 	if(saveFile != NULL){
+		saveWorkingSpace(&workingSpace,saveFile);
 		saveTrackedObject(&birdTracker,saveFile);
 		saveTrackedObject(&pipeTracker,saveFile);
 		fclose(saveFile);

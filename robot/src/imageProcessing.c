@@ -133,3 +133,9 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 	}
 }
 
+void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile)
+{
+	if(saveFile != NULL && workingSpace!=NULL)
+		fwrite(workingSpace,sizeof(CvRect),1,saveFile);
+}
+

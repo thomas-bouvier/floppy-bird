@@ -54,13 +54,14 @@ void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcas
 
 void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 {
-	/* File : workingspace,hue,sat,val,trackingZone,shape,width,height */
-	fwrite(obj->rawFlux->workingSpace,sizeof(CvRect),1,saveFile);
-	fwrite(&(obj->h),sizeof(int),1,saveFile);
-	fwrite(&(obj->s),sizeof(int),1,saveFile);
-	fwrite(&(obj->v),sizeof(int),1,saveFile);
-	fwrite(&(obj->trackingZone),sizeof(CvRect),1,saveFile);
-	fwrite(&(obj->shape),sizeof(int),1,saveFile);
-	fwrite(&(obj->width),sizeof(int),1,saveFile);
-	fwrite(&(obj->width),sizeof(int),1,saveFile);
+	/* File : workingspace,hue,sat,val,trackingZone,shape,width,height,hue,sat,val,... */
+	if(saveFile != NULL){
+		fwrite(&(obj->h),sizeof(int),1,saveFile);
+		fwrite(&(obj->s),sizeof(int),1,saveFile);
+		fwrite(&(obj->v),sizeof(int),1,saveFile);
+		fwrite(&(obj->trackingZone),sizeof(CvRect),1,saveFile);
+		fwrite(&(obj->shape),sizeof(int),1,saveFile);
+		fwrite(&(obj->width),sizeof(int),1,saveFile);
+		fwrite(&(obj->width),sizeof(int),1,saveFile);
+	}
 }
