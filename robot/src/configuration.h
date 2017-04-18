@@ -27,7 +27,7 @@
 #define TRACKED_OBJECT_DEFAULT_COLOR CV_RGB(255, 0, 0)
 #define WIDTH_BIRD_TRACKING_ZONE 50
 
-enum {CIRCLE,RECTANGLE};
+enum {ELLIPSE,RECTANGLE};
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
 /* Tolerances for color analysis (HSV format)*/

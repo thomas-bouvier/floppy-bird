@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
 	loadImage(&cameraFlux,capture);
 	initImageBroadcast(&processedFlux, NULL, &workingSpace, maskWindow, NULL);
 	if(loadFile == NULL){
-		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
+		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),ELLIPSE,BIRD_CIRCLE_DIAMETER,BIRD_CIRCLE_DIAMETER);
     } else {		/* We load data form the file */
 		loadTrackedObject(&birdTracker,&cameraFlux,&processedFlux,loadFile);
 	}

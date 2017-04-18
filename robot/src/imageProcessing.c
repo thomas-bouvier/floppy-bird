@@ -83,8 +83,8 @@ void addObjectToVideo(TrackedObject* obj) {
     /* Draw an object centered on its origin */
     if (obj->nbPixels > NB_PIXEL_THRESHOLD){
 		switch (obj->shape){
-			case CIRCLE:
-				cvDrawCircle(obj->rawFlux->img, obj->origin, obj->width, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
+			case ELLIPSE:
+				cvDrawEllipse(obj->rawFlux->img, obj->origin, cvSize(obj->height/2,obj->width/2), 0, 0, 360, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
 				break;
 			case RECTANGLE: ;	/*empty statement needed because of the following declaration*/
 				CvPoint leftUpCorner = cvPoint(obj->origin.x-(obj->width/2),obj->origin.y-(obj->height/2));
