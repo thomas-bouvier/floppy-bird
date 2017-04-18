@@ -1,7 +1,7 @@
 #include "tracking.h"
 
 
-void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape, int width, int height)
+void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape)
 {
 	obj->computeTracking = true;
 	obj->h = hue;
@@ -13,8 +13,8 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 	obj->trackingZone = trackZone;
 	obj->shape = shape;
 	obj->origin = cvPoint(-1,-1);
-	obj->width = width;
-	obj->height = height;
+	obj->width = 0;
+	obj->height = 0;
 }
 
 void enableTracking(TrackedObject* obj)

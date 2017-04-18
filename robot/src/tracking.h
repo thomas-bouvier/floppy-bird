@@ -30,7 +30,7 @@ struct TrackedObject{
 	CvPoint origin;				/* The origin of the object (the centre for a circle, the upper left corner for a rectangle) */
 };
 
-void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape, int width, int height);
+void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape);
 void enableTracking(TrackedObject* obj);
 void disableTracking(TrackedObject* obj);
 void updateTracking(TrackedObject* obj);

@@ -11,9 +11,7 @@ void binarisation(TrackedObject* obj)
     IplConvKernel *kernel;
     int sumX = 0, sumY = 0;
     obj->nbPixels = 0;
-	
-	//int zoneWidth = 50;		// The zone width in wich the colour will be tracked
-	//CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
+    
 	
     obj->binFlux->img = cvCreateImage(cvGetSize(obj->rawFlux->img), obj->rawFlux->img->depth, 1);	/* Create the mask &initialize it to white (no color detected) */
 	
@@ -45,22 +43,6 @@ void binarisation(TrackedObject* obj)
         }
     }
     
-    
-    /*
-      for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width - obj->binFlux->img->roi->xOffset; x++) {
-        for(y = obj->binFlux->img->roi->yOffset; y < obj->binFlux->img->roi->height - obj->binFlux->img->roi->yOffset ; y++) { 
- 
-            /* If its a tracked pixel, count it to the center of gravity's calcul 
-            if(((uchar *)(obj->binFlux->img->imageData + y*obj->binFlux->img->widthStep))[x] == 255) {
-                sumX += x;
-                sumY += y;
-                (obj->nbPixels)++;
-            }
-        }
-    }*/
-	
-	cvResetImageROI(obj->binFlux->img);
-    
 	/* Show the tracking zone in the full colored image*/
 	cvRectangleR(obj->rawFlux->img,obj->trackingZone,cvScalar(0,0,255,0),1,8,0);
 
@@ -69,14 +51,36 @@ void binarisation(TrackedObject* obj)
     cvReleaseImage(&hsv);
  
     // If there is no pixel, we return a center outside the image, else we return the center of gravity
-    if(obj->nbPixels > 0)
-        obj->origin = cvPoint((int)(sumX / (obj->nbPixels)), (int)(sumY / (obj->nbPixels)));
-    else
+    if(obj->nbPixels > 0){
+		obj->origin = cvPoint((int)(sumX / (obj->nbPixels)), (int)(sumY / (obj->nbPixels)));
+        /* Getting the width of the tracked object */
+        sumX = 0;
+        y = obj->origin.y;
+        for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width + obj->binFlux->img->roi->xOffset; x++){
+			if((obj->binFlux->img->imageData[x+ y*obj->binFlux->img->widthStep]) == 255) {
+                sumX ++;
+            }
+		}
+		obj->width = sumX;
+        /* Getting the height of the tracked object */
+        sumY = 0;
+        x = obj->origin.x;
+        for(y = obj->binFlux->img->roi->yOffset; y < obj->binFlux->img->roi->height + obj->binFlux->img->roi->yOffset ; y++){
+			if((obj->binFlux->img->imageData[x+ y*obj->binFlux->img->widthStep]) == 255) {
+                sumY ++;
+            }
+		}
+		obj->height = sumY;
+        
+	} else {
         obj->origin = cvPoint(-1, -1);
+	}
+	
+	cvResetImageROI(obj->binFlux->img);
 }
 
 /*
- * Add a circle on the video that follow your colored object
+ * Add a shape on the video that follow your colored object
  */
 void addObjectToVideo(TrackedObject* obj) {
 	
