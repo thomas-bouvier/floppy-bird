@@ -33,13 +33,16 @@ int main(int argc, char *argv[]){
 	/* Variables*/
 	RaspiCamCvCapture * capture = initCapture();
 	struct TrackedObject birdTracker;
+	struct TrackedObject pipeTracker;
 	struct ImageBroadcast cameraFlux;
-	struct ImageBroadcast processedFlux;
+	struct ImageBroadcast birdBinFlux;
+	struct ImageBroadcast pipeBinFlux;
 	//CvFont * font = (CvFont *)malloc(sizeof(CvFont));
 	CvRect workingSpace;
 	Stylus stylus;
 	char colourTrackingWindow[] = "Color Tracking";
-	char maskWindow[] = "Mask";
+	char birdWindow[] = "Bird tracking";
+	char pipeWindow[] = "Pipe tracking";
 	char workSpaceDefWindow[] = "WorkingSpaceDefinition";
 	
 	int c;
@@ -77,24 +80,34 @@ int main(int argc, char *argv[]){
 
 	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
 	loadImage(&cameraFlux,capture);
-	initImageBroadcast(&processedFlux, NULL, &workingSpace, maskWindow, NULL);
+	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, birdWindow, NULL);
+	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, pipeWindow, NULL);
 	if(loadFile == NULL){
-		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&processedFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE);
+		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&birdBinFlux,cvRect(((cameraFlux.img->roi->width/3) - (WIDTH_BIRD_TRACKING_ZONE/2)),0,WIDTH_BIRD_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE);
+		initTrackedObject(&pipeTracker,0,0,0,&cameraFlux,&pipeBinFlux,cvRect((cameraFlux.img->roi->width/3),0,WIDTH_PIPE_TRACKING_ZONE,cameraFlux.img->roi->height),RECTANGLE);
     } else {		/* We load data form the file */
-		loadTrackedObject(&birdTracker,&cameraFlux,&processedFlux,loadFile);
+		loadTrackedObject(&birdTracker,&cameraFlux,&birdBinFlux,loadFile);
+		loadTrackedObject(&pipeTracker,&cameraFlux,&pipeBinFlux,loadFile);
 	}
     
     
-    cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 	int exit =0;
 	do {
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
+		updateTracking(&pipeTracker);
+		showImage(&cameraFlux);
 		
 		char key = cvWaitKey(1);
 		
 		switch(key)	
 		{
+			case 'b':		/* b to select the color of the bird */
+				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
+				break;
+			case 'p':		/* p to select the color of the pipe */
+				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&pipeTracker);
+				break;
 			case 32:		/* space to click */
 				click(&stylus);
 				break;
@@ -110,6 +123,7 @@ int main(int argc, char *argv[]){
 		fclose(loadFile);
 	if(saveFile != NULL){
 		saveTrackedObject(&birdTracker,saveFile);
+		saveTrackedObject(&pipeTracker,saveFile);
 		fclose(saveFile);
 	}
     cvDestroyAllWindows();

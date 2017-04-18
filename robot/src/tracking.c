@@ -32,7 +32,6 @@ void updateTracking(TrackedObject* obj)
 	if(obj->computeTracking){
 		binarisation(obj);
 		addObjectToVideo(obj);
-		showImage(obj->rawFlux);
 		showImage(obj->binFlux);
 	}
 }
