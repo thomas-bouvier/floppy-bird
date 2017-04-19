@@ -6,9 +6,9 @@ LDFLAGS= -lwiringPi
 LDFLAGS_PI =  -L$(HOME)/git/raspberrypi/userland/build/lib -lmmal_core -lmmal -l mmal_util -lvcos -lbcm_host	
 
 
-DEBUG=no
+DEBUG=yes
 ifeq ($(DEBUG),yes)
-CFLAGS+=-g
+CFLAGS+=-g -funwind-tables
 endif
 
 all: testCamera colourTrack

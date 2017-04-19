@@ -33,6 +33,7 @@ void updateTracking(TrackedObject* obj)
 		binarisation(obj);
 		addObjectToVideo(obj);
 		showImage(obj->binFlux);
+		cvReleaseImage(&(obj->binFlux->img));
 	}
 }
 

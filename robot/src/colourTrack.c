@@ -30,7 +30,6 @@ RaspiCamCvCapture * initCapture(){
 }
 
 int main(int argc, char *argv[]){
-	
 	/* Variables*/
 	RaspiCamCvCapture * capture = initCapture();
 	struct TrackedObject birdTracker;
@@ -131,6 +130,7 @@ int main(int argc, char *argv[]){
     cvDestroyAllWindows();
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);
+	printf("hello\n");
 	
 	return 0; 
 }
