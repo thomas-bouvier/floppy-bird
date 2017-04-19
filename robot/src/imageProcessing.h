@@ -15,6 +15,7 @@ void binarisation(TrackedObject* obj);
 void addObjectToVideo(TrackedObject* obj);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile);
 void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile);
+CvScalar reverse(CvScalar colour);
 
 
 #endif /*IMAGE_PROCESSING_H*/

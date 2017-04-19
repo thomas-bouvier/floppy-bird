@@ -44,7 +44,7 @@ void binarisation(TrackedObject* obj)
     }
     
 	/* Show the tracking zone in the full colored image*/
-	cvRectangleR(obj->rawFlux->img,obj->trackingZone,cvScalar(0,0,255,0),1,8,0);
+	cvRectangleR(obj->rawFlux->img,obj->trackingZone,obj->trackerColor,1,8,0);
 
 	/* Release memory */
     cvReleaseStructuringElement(&kernel);
@@ -88,12 +88,12 @@ void addObjectToVideo(TrackedObject* obj) {
     if (obj->nbPixels > NB_PIXEL_THRESHOLD){
 		switch (obj->shape){
 			case ELLIPSE:
-				cvDrawEllipse(obj->rawFlux->img, obj->origin, cvSize(obj->height/2,obj->width/2), 0, 0, 360, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a circle around the origin */
+				cvDrawEllipse(obj->rawFlux->img, obj->origin, cvSize(obj->height/2,obj->width/2), 0, 0, 360, reverse(obj->trackerColor), 1,8,0);	/* Draw a circle around the origin */
 				break;
 			case RECTANGLE: ;	/*empty statement needed because of the following declaration*/
 				CvPoint leftUpCorner = cvPoint(obj->origin.x-(obj->width/2),obj->origin.y-(obj->height/2));
 				CvPoint rightDownCorner = cvPoint(obj->origin.x+(obj->width/2),obj->origin.y+(obj->height/2));
-				cvRectangle(obj->rawFlux->img,leftUpCorner,rightDownCorner, TRACKED_OBJECT_DEFAULT_COLOR, 1,8,0);	/* Draw a rectangle frow the origin */
+				cvRectangle(obj->rawFlux->img,leftUpCorner,rightDownCorner, reverse(obj->trackerColor), 1,8,0);	/* Draw a rectangle frow the origin */
 				break;
 		}
 	}
@@ -113,7 +113,7 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 		while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
 			loadImage(&flux,capture);
 			if(workingSpace.originDefined) {
-				cvRectangleR(flux.img,workingSpace.rect,TRACKED_OBJECT_DEFAULT_COLOR,1,8,0);
+				cvRectangleR(flux.img,workingSpace.rect,WORKSPACE_DEF_COLOR,1,8,0);
 			}
 			showImage(&flux);		
 			char keyPressed = cvWaitKey(30);
@@ -139,3 +139,7 @@ void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile)
 		fwrite(workingSpace,sizeof(CvRect),1,saveFile);
 }
 
+CvScalar reverse(CvScalar colour)
+{
+	return cvScalar(255-colour.val[0],255-colour.val[1],255-colour.val[2],0);
+}

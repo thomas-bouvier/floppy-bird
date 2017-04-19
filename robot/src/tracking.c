@@ -15,6 +15,7 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 	obj->origin = cvPoint(-1,-1);
 	obj->width = 0;
 	obj->height = 0;
+	obj->trackerColor = DEFAULT_TRACKER_COLOR;
 }
 
 void enableTracking(TrackedObject* obj)
@@ -51,11 +52,12 @@ void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcas
 	obj->origin = cvPoint(-1,-1);
 	fread(&(obj->width),sizeof(int),1,loadFile);
 	fread(&(obj->height),sizeof(int),1,loadFile);
+	fread(&(obj->trackerColor),sizeof(CvScalar),1,loadFile);
 }
 
 void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 {
-	/* File : workingspace,hue,sat,val,trackingZone,shape,width,height,hue,sat,val,... */
+	/* File : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... */
 	if(saveFile != NULL){
 		fwrite(&(obj->h),sizeof(int),1,saveFile);
 		fwrite(&(obj->s),sizeof(int),1,saveFile);
@@ -64,5 +66,6 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 		fwrite(&(obj->shape),sizeof(int),1,saveFile);
 		fwrite(&(obj->width),sizeof(int),1,saveFile);
 		fwrite(&(obj->width),sizeof(int),1,saveFile);
+		fwrite(&(obj->trackerColor),sizeof(CvScalar),1,saveFile);
 	}
 }

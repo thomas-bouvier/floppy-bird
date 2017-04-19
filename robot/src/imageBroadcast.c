@@ -41,9 +41,11 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
     IplImage *hsv;
  
     if(event == CV_EVENT_LBUTTONUP) {
- 
+		
         /* Get the hsv image */
         hsv = cvCloneImage(obj->rawFlux->img);
+        /* Save the new color for the tracker */
+		obj->trackerColor = cvGet2D(hsv, y, x);
         cvCvtColor(obj->rawFlux->img, hsv, CV_BGR2HSV);
  
         /* Get the selected pixel */

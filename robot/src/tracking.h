@@ -28,6 +28,7 @@ struct TrackedObject{
 	int width;					/* The width of the shape */
 	int height;					/* The height of the shape */
 	CvPoint origin;				/* The origin of the object (the centre for a circle, the upper left corner for a rectangle) */
+	CvScalar trackerColor;		/* The color of the tracker */
 };
 
 void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape);
