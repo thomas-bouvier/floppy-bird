@@ -110,7 +110,7 @@ int findBestAction(int state_index, MatrixQ * matrixQ)
 }
 
 /*!
-* \brief update each Q reward for every state_index given (currently only one state)
+* \brief Update each Q reward for every state_index given (currently only one state)
 * \param[in] matrixQ matrix of every known state
 * \param[in] state_index index from the last state to the older one to find them in the Q matrix
 * \param[in] last_action last_action performed
@@ -123,7 +123,8 @@ void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action
 	{
 		if(last_states_index[i+1] != -1)
 		{
-			matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[0], last_states_index[i+1], last_action[i], i+1);
+			if(last_states_index[0] != -1) matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[0], last_states_index[i+1], last_action[i], i+1, 1);
+			else matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[1], last_states_index[i+1], last_action[i], i, -1);
 		}
 	}
 }
@@ -136,7 +137,7 @@ void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action
 * \param[in] state_index index of the state where change the Q reward
 * \param[in] action action performed when the bird was in the state corresponding to index_state
 */
-float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int increment)
+float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int increment, int reward_value)
 {
 	float optimal_nextvalue, old_value, new_value;
 
@@ -144,7 +145,8 @@ float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int a
 
 	old_value = (float) matrixQ->reward[state_index*2+action];
 
-	new_value = old_value + powerOf(LEARNING_RATE, increment) * (getCurrentReward(current_index) + DISCOUNT * optimal_nextvalue - old_value);
-			if(new_value < HIGHER_QREWARD_LIMIT && new_value > LOWER_QREWARD_LIMIT)  return new_value;
-			else return old_value;
+	new_value = old_value + powerOf(LEARNING_RATE, increment) * (getCurrentReward(reward_value) + DISCOUNT * optimal_nextvalue - old_value);
+			if(new_value < LOWER_QREWARD_LIMIT) return LOWER_QREWARD_LIMIT;
+			if(new_value > HIGHER_QREWARD_LIMIT) return HIGHER_QREWARD_LIMIT;
+			else return new_value;
 }

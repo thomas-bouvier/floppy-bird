@@ -158,7 +158,7 @@ int ratioPipeHeight (Bird * bird, List * l)
 */
 int ratioPipeWidth (Bird * bird, List * l)
 {
-    return nextBirdObstacle(l, bird)->lower.x-bird->x;
+    return nextBirdObstacle(l, bird)->lower.x - bird->x;
 }
 
 /*!

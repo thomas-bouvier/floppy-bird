@@ -235,7 +235,7 @@ int main(int argc, char ** argv)
 		        if(init == JUMP)
 		        {
 		            bird.dir_y = BIRD_JUMP;
-		            playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
+		            /*playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);*/
 		        }
 		        if(init == QUIT)
 		            running = 0;
@@ -247,7 +247,7 @@ int main(int argc, char ** argv)
         score = 0;
         hit = 0;
         lastFrame = SDL_GetTicks();
-
+		int action_break = 0;
         while(!hit && running)
         {
 			
@@ -259,16 +259,18 @@ int main(int argc, char ** argv)
                      running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-
-				if(last_states[0] != -1) event = last_action[0];
-				
-				if(mode == IA1) q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &l), ratioPipeHeight(&bird, &l), hit_saved);
+				if(mode == IA1 && (action_break == 0 || hit_saved == 1))
+				{
+					q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
+					if(last_action[0] != -1) event = last_action[0];
+				}
+				if(++action_break >= NB_FPS_BEFORE_NEXT_ACTION) action_break=0;
 
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
                 hit_saved = hit;
 				savedObstacle = nextBirdObstacle(&l, &bird);
                 displayGame(renderer, &bird, &l, &camera, score, font);
-                playSound(sound, jump_sound, obstacle_sound, death_sound);
+                /*playSound(sound, jump_sound, obstacle_sound, death_sound);*/
                 lastFrame = SDL_GetTicks();
             }
 			
