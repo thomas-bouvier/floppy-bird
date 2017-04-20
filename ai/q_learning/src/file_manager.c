@@ -2,8 +2,8 @@
 #include <string.h>
 
 /*!
-* \brief Save the matrixQ from a text file
-* \param[in] filename the filename where data have to be stored
+* \brief Load the Q matrix from a text file
+* \param[in] filename the filename where data are stored
 * \return Return the Q matrix filled, NULL if error
 */
 MatrixQ * loadQMatrix(char * filename)
@@ -63,10 +63,10 @@ MatrixQ * loadQMatrix(char * filename)
 }
 
 /*!
-* \brief Save the matrixQ in a text file and free the matrixQ
+* \brief Save the Q matrix in a text file
 * \param[in] matrixQ the matrix to be saved
 * \param[in] filename the filename where data have to be stored
-* \return Return -1 if error
+* \return Return -1 if error, otherwise 1
 */
 int saveQMatrix(MatrixQ * matrixQ, char * filename)
 {
@@ -97,6 +97,5 @@ int saveQMatrix(MatrixQ * matrixQ, char * filename)
 		fprintf(stderr, "Error occurred when closing file %s.\n", filename);
 		return -1;
 	}
-	/*freeMatrixQ(matrixQ);*/
 	return 1;
 }

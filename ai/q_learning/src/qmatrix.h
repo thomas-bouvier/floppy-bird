@@ -11,28 +11,15 @@
 #include "game_state.h"
 #include "utils.h"
 
-
-/*typedef struct Actions Actions;*/
-typedef struct MatrixQ MatrixQ;
-
-
-/*!
-* \struct Actions qlearning.h
-* \brief Actions contains every actions that the bird can perform.
-*/
-/*struct Actions {
-  char jump;	!< jump is equal to zero if no jump otherwise one 
-};*/
-
 /*!
 * \struct MatrixQ qlearning.h
 * \brief MatrixQ linked a state with an action to a reward
 */
-struct MatrixQ {
-	int nb_states; 
-	State *state;
-	float *reward; /*!< Q(state, action) array */
-};
+typedef struct{
+	int nb_states; /*!< Quantity of states */
+	State *state; /*!< Known states array */
+	float *reward; /*!< Q(state, action) (Q-values) array */
+} MatrixQ;
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ);
 int AddState(State * cur_state, MatrixQ * matrixQ);

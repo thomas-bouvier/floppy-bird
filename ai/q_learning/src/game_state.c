@@ -13,8 +13,8 @@ void freeState(State * state)
 
 /*!
 * \brief Get the current state if the bird is alive else the state is not saved
-* \param[in] delta_x the distance between the bird's bottom-right hand corner and the left side of the next pipe
-* \param[in] delta_y the distance between the bird's bottom-right hand corner and the top of the next pipe
+* \param[in] delta_x the distance between the left side of the camera and the left side of the next pipe
+* \param[in] delta_y the distance between the bird's upper side and the top of the next pipe
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 * \return Return a state, distances=-1 if the bird is dead, NULL if error
 */
@@ -71,9 +71,9 @@ int processing_dxdy(int initial_d)
 }
 
 /*!
-* \brief Adapt the value of the bird_state variable coming from the game to ai1 algorithm
+* \brief Adapt the value of the bird_state variable coming from the game to the q_learning algorithm
 * \param[in] initial_bird_state variable coming from the game
-* \return Return a a new value to fit with the q_learning algorithm 
+* \return Return a new value to fit with the q_learning algorithm 
 */
 int processing_birdstate(int initial_bird_state)
 {

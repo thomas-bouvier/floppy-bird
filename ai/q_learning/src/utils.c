@@ -5,7 +5,7 @@
 /*!
 * \brief Return a random number between 0 and the specified parameter
 * \param[in] limit the upper limit
-* \return Return a random number in [0; limit]
+* \return Return a random number in the interval [0; limit]
 */
 int randomAtMost(int limit) {
   	int r;
@@ -24,10 +24,10 @@ int randomAtMost(int limit) {
 }
 
 /*!
-* \brief Return the power of a value
-* \param[in] value value to compute
-* \param[in] power power to apply 
-* \return Return the value at the given power
+* \brief Give the value raised at the power
+* \param[in] value value to raise at
+* \param[in] power power
+* \return Return the value raised at the power given
 */
 float powerOf(float value, int power)
 {
@@ -49,7 +49,7 @@ void shift_array(int * array, int size)
 }
 
 /*!
-* \brief Initialize array at the given value
+* \brief Initialize an array at the given value
 * \param[in] array array to be initialized
 * \param[in] size size of the array
 * \param[in] value initialization value
@@ -62,7 +62,7 @@ void init_array(int * array, int size, int value)
 
 /*!
 * \brief Wait during the given value in ms
-* \param[in] mseconds waiting value
+* \param[in] mseconds waiting duration
 */
 void delay(unsigned int mseconds)
 {
