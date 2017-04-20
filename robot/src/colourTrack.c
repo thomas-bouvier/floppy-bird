@@ -97,6 +97,9 @@ int main(int argc, char *argv[]){
 		updateTracking(&birdTracker);
 		updateTracking(&pipeTracker);
 		showImage(&cameraFlux);
+		printf("pipe : h%f w%f ; bird : h%f,w%f\n",getRelativeDistance(&pipeTracker,UP),getRelativeDistance(&pipeTracker,LEFT)/getRelativeDistance(&birdTracker,RIGHT),getRelativeDistance(&birdTracker,UP),getRelativeDistance(&birdTracker,LEFT));
+		releaseTrackingImageMemory(&birdTracker);
+		releaseTrackingImageMemory(&pipeTracker);
 		
 		char key = cvWaitKey(1);
 		
@@ -110,6 +113,7 @@ int main(int argc, char *argv[]){
 				break;
 			case 32:		/* space to click */
 				click(&stylus);
+				printf("click\n");
 				break;
 			case 27:		/* Esc to exit */
 				exit = 1;
@@ -130,7 +134,6 @@ int main(int argc, char *argv[]){
     cvDestroyAllWindows();
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);
-	printf("hello\n");
 	
 	return 0; 
 }

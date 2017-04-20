@@ -37,6 +37,8 @@ void disableTracking(TrackedObject* obj);
 void updateTracking(TrackedObject* obj);
 void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux,FILE * loadFile);
 void saveTrackedObject(TrackedObject* obj,FILE * saveFile);
+float getRelativeDistance(TrackedObject* obj, int nature);
+void releaseTrackingImageMemory(TrackedObject* obj);
 
 
 

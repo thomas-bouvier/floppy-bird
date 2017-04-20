@@ -34,8 +34,12 @@ void updateTracking(TrackedObject* obj)
 		binarisation(obj);
 		addObjectToVideo(obj);
 		showImage(obj->binFlux);
-		cvReleaseImage(&(obj->binFlux->img));
 	}
+}
+
+void releaseTrackingImageMemory(TrackedObject* obj)
+{
+	cvReleaseImage(&(obj->binFlux->img));
 }
 
 void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux,FILE * loadFile)
@@ -68,4 +72,22 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 		fwrite(&(obj->width),sizeof(int),1,saveFile);
 		fwrite(&(obj->trackerColor),sizeof(CvScalar),1,saveFile);
 	}
+}
+
+float getRelativeDistance(TrackedObject* obj, int nature)
+{
+	cvSetImageROI(obj->binFlux->img,obj->trackingZone);
+	switch(nature){
+		case UP :
+			return 1-((float)(obj->origin.y-(obj->height/2))/(obj->binFlux->img->roi->height)); 
+			break;
+		case LEFT :
+			return (float)(obj->origin.x-(obj->height/2))/(obj->binFlux->img->roi->width);
+			break;
+		case RIGHT :
+			return (float)(obj->origin.x+(obj->height/2))/(obj->binFlux->img->roi->width);
+			break;
+	}
+	cvResetImageROI(obj->binFlux->img);
+	return 0;
 }
