@@ -261,7 +261,7 @@ int main(int argc, char ** argv)
                     running = (waiting() != QUIT);
 				if(mode == IA1 && (action_break == 0 || hit_saved == 1))
 				{
-					q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
+					q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
 					if(last_action[0] != -1) event = last_action[0];
 				}
 				if(++action_break >= NB_FPS_BEFORE_NEXT_ACTION) action_break=0;

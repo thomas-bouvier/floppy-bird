@@ -151,14 +151,15 @@ int ratioPipeHeight (Bird * bird, List * l)
 }
 
 /*!
-* \brief A function use to send the x position of the next pipe to the IA
-* \param[in] bird the bird that determines the next obstacle
+* \brief A function use to send the distance between the left side of the camera and the next pipe to the IA
+* \param[in] bird the bird current properties 
+* \param[in] camera the display current properties 
 * \param[in] l the list of obstacle
-* \return return the ratio of the x coordinate of the next obstacle over the screen height
+* \return return the distance between the left side of the camera and the ?pipe
 */
-int ratioPipeWidth (Bird * bird, List * l)
+int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 {
-    return nextBirdObstacle(l, bird)->lower.x - bird->x;
+    return nextBirdObstacle(l, bird)->lower.x - camera->x;
 }
 
 /*!

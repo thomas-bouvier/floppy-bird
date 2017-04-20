@@ -44,3 +44,14 @@ cleanDebug:
 clean:
 	rm -f *.o *~
 	rm -f main
+
+perso_theo: clean
+	make 
+	./main &
+
+perso_theo_launch:
+	./main &
+	./main &
+	./main &
+	./main &
+	./main & 
