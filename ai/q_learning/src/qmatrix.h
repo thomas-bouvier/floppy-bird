@@ -19,7 +19,7 @@ typedef struct{
 } MatrixQ;
 
 int findStateIndex(State * cur_state, MatrixQ * matrixQ);
-int AddState(State * cur_state, MatrixQ * matrixQ);
+int addState(State * cur_state, MatrixQ * matrixQ);
 void updateQReward(MatrixQ *matrixQ, int * last_states_index, int * last_action);
 float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int increment, int reward_value);
 

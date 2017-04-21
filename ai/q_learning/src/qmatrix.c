@@ -50,7 +50,7 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 			}
 			break;
 	}
-	return AddState(cur_state, matrixQ);
+	return addState(cur_state, matrixQ);
 }
 
 /*!
@@ -59,7 +59,7 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 * \param[out] matrixQ matrix of every known state
 * \return Return an index of the matrix corresponding to the current state, -1 if error
 */
-int AddState(State * cur_state, MatrixQ * matrixQ)
+int addState(State * cur_state, MatrixQ * matrixQ)
 {
 	if(matrixQ->nb_states == 0)
 	{

@@ -221,6 +221,230 @@ static void test_processing_dxdyError(void ** state)
 	assert_int_equal(-1, processing_birdstate(3));
 }
 
+/** qmatrix.c **/
+/* findStateIndex */
+typedef struct {
+	State * new_state;
+	MatrixQ * matrixq;
+}State_Matrix;
+
+static int setup_findStateIndex(void ** state)
+{
+	State_Matrix * new_statematrix = (State_Matrix*) malloc(sizeof(State_Matrix));
+	if(new_statematrix == NULL)
+		return -1;
+	new_statematrix->new_state = (State*) malloc(sizeof(State));
+	if(new_statematrix->new_state == NULL)
+		return -1;
+	new_statematrix->matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(new_statematrix->matrixq == NULL)
+		return -1;
+	
+	new_statematrix->new_state->delta_x = 150;
+	new_statematrix->new_state->delta_y = 151;
+	
+	new_statematrix->matrixq->nb_states = 1;
+	new_statematrix->matrixq->state = (State*) malloc(new_statematrix->matrixq->nb_states * sizeof(State));
+	new_statematrix->matrixq->reward = (float*) malloc(new_statematrix->matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	new_statematrix->matrixq->state[0].delta_x = 150;
+	new_statematrix->matrixq->state[0].delta_y = 151;
+	new_statematrix->matrixq->reward[0] = 1;
+	new_statematrix->matrixq->reward[1] = 2;
+
+	*state = new_statematrix;
+	return 0;
+}
+
+static void test_findStateIndexAlreadyExist(void ** state)
+{
+	State_Matrix * new_statematrix = (State_Matrix*) (*state);
+	assert_int_equal(0, findStateIndex(new_statematrix->new_state, new_statematrix->matrixq));
+}
+
+static void test_findStateIndexStateUnknown(void ** state)
+{
+	State_Matrix * new_statematrix = (State_Matrix*) (*state);
+	new_statematrix->new_state->delta_x = 153;
+
+	assert_int_equal(1, findStateIndex(new_statematrix->new_state, new_statematrix->matrixq));
+}
+
+static int teardown_findStateIndex(void ** state)
+{
+	free(((State_Matrix*)*state)->matrixq->state);
+	free(((State_Matrix*)*state)->matrixq->reward);
+	free(*state);
+	return 0;
+}
+
+/* addState */
+static int setup_addState(void ** state)
+{
+	State_Matrix * new_statematrix = (State_Matrix*) malloc(sizeof(State_Matrix));
+	if(new_statematrix == NULL)
+		return -1;
+	new_statematrix->new_state = (State*) malloc(sizeof(State));
+	if(new_statematrix->new_state == NULL)
+		return -1;
+	new_statematrix->matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(new_statematrix->matrixq == NULL)
+		return -1;
+	
+	new_statematrix->new_state->delta_x = 153;
+	new_statematrix->new_state->delta_y = 151;
+	
+	new_statematrix->matrixq->nb_states = 1;
+	new_statematrix->matrixq->state = (State*) malloc(new_statematrix->matrixq->nb_states * sizeof(State));
+	new_statematrix->matrixq->reward = (float*) malloc(new_statematrix->matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	new_statematrix->matrixq->state[0].delta_x = 150;
+	new_statematrix->matrixq->state[0].delta_y = 151;
+	new_statematrix->matrixq->reward[0] = 1;
+	new_statematrix->matrixq->reward[1] = 2;
+
+	*state = new_statematrix;
+	return 0;
+}
+
+static void test_addState(void ** state)
+{
+	State_Matrix * new_statematrix = (State_Matrix*) (*state);
+
+	assert_int_equal(1, addState(new_statematrix->new_state, new_statematrix->matrixq));
+}
+
+static int teardown_addState(void ** state)
+{
+	free(((State_Matrix*)*state)->matrixq->state);
+	free(((State_Matrix*)*state)->matrixq->reward);
+	free(*state);
+	return 0;
+}
+
+/* findBestAction */
+static int setup_findBestAction(void ** state)
+{
+	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(matrixq == NULL)
+		return -1;
+
+	matrixq->nb_states = 1;
+	matrixq->state = (State*) malloc(matrixq->nb_states * sizeof(State));
+	matrixq->reward = (float*) malloc(matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	matrixq->state[0].delta_x = 150;
+	matrixq->state[0].delta_y = 151;
+	matrixq->reward[0] = 0;
+	matrixq->reward[1] = 1;
+
+	*state = matrixq;
+	return 0;
+}
+
+static void test_findBestActionDoNothing(void ** state)
+{
+	MatrixQ * matrixq = (MatrixQ*) (*state);
+
+	matrixq->reward[0] = 0;
+	matrixq->reward[1] = 1;
+
+	assert_int_equal(1, findBestAction(0, matrixq));
+}
+
+static void test_findBestActionJump(void ** state)
+{
+	MatrixQ * matrixq = (MatrixQ*) (*state);
+
+	matrixq->reward[0] = 1;
+	matrixq->reward[1] = 0;
+
+	assert_int_equal(0, findBestAction(0, matrixq));
+}
+
+static void test_findBestActionEqual(void ** state)
+{
+	MatrixQ * matrixq = (MatrixQ*) (*state);
+
+	matrixq->reward[0] = 1;
+	matrixq->reward[1] = 1;
+
+	assert_in_range(findBestAction(0, matrixq),0,1);
+}
+
+static int teardown_findBestAction(void ** state)
+{
+	free(((MatrixQ*)*state)->state);
+	free(((MatrixQ*)*state)->reward);
+	free(*state);
+	return 0;
+}
+
+/* updateQReward */
+typedef struct {
+	MatrixQ * matrixq;
+	int * last_index;
+	int * last_action;
+}UpdateQValues;
+
+static int setup_updateQReward(void ** state)
+{
+	int i;
+
+	UpdateQValues * upd_qvalues = (UpdateQValues*) malloc(sizeof(UpdateQValues));
+	if(upd_qvalues == NULL)
+		return -1;
+	upd_qvalues->matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(upd_qvalues->matrixq == NULL)
+		return -1;
+	
+	upd_qvalues->matrixq->nb_states = 1;
+	upd_qvalues->matrixq->state = (State*) malloc(upd_qvalues->matrixq->nb_states * sizeof(State));
+	upd_qvalues->matrixq->reward = (float*) malloc(upd_qvalues->matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	upd_qvalues->matrixq->state[0].delta_x = 10;
+	upd_qvalues->matrixq->state[0].delta_y = 10;
+	upd_qvalues->matrixq->reward[0*NB_ACTIONS] = 100;
+	upd_qvalues->matrixq->reward[0*NB_ACTIONS+1] = 100;
+
+	upd_qvalues->last_index = (int*) malloc(NB_SAVED_STATES * sizeof(int));
+	upd_qvalues->last_action = (int*) malloc(NB_SAVED_ACTIONS * sizeof(int));
+	for(i=0; i<NB_SAVED_STATES; ++i) upd_qvalues->last_index[i] = 0;
+	for(i=0; i<NB_SAVED_ACTIONS; ++i) upd_qvalues->last_action[i] = 1;
+
+	*state = upd_qvalues;
+	return 0;
+}
+
+static void setup_updateQRewardPositive(void ** state)
+{
+	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
+
+	updateQReward(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action);
+
+	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
+}
+
+static void setup_updateQRewardNegative(void ** state)
+{
+	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
+
+	upd_qvalues->last_index[0] = -1;
+
+	updateQReward(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action);
+
+	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
+}
+
+static int teardown_updateQReward(void ** state)
+{
+	free(((UpdateQValues*)*state)->matrixq->state);
+	free(((UpdateQValues*)*state)->matrixq->reward);
+	free(*state);
+	return 0;
+}
+
+
 int main() {
   const struct CMUnitTest tests_q_learning[] = {
 	cmocka_unit_test(test_randomAtMostpositiveLimit),
@@ -239,6 +463,15 @@ int main() {
 	cmocka_unit_test(test_processing_dxdyUn),
 	cmocka_unit_test(test_processing_dxdyZero),
 	cmocka_unit_test(test_processing_dxdyError),
+	cmocka_unit_test_setup_teardown(test_findStateIndexAlreadyExist, setup_findStateIndex, teardown_findStateIndex),
+	cmocka_unit_test_setup_teardown(test_findStateIndexStateUnknown, setup_findStateIndex, teardown_findStateIndex),
+	cmocka_unit_test_setup_teardown(test_findStateIndexStateUnknown, setup_findStateIndex, teardown_findStateIndex),
+	cmocka_unit_test_setup_teardown(test_addState, setup_addState, teardown_addState),
+	cmocka_unit_test_setup_teardown(test_findBestActionDoNothing, setup_findBestAction, teardown_findBestAction),
+	cmocka_unit_test_setup_teardown(test_findBestActionJump, setup_findBestAction, teardown_findBestAction),
+	cmocka_unit_test_setup_teardown(test_findBestActionEqual, setup_findBestAction, teardown_findBestAction),
+	cmocka_unit_test_setup_teardown(setup_updateQRewardPositive, setup_updateQReward, teardown_updateQReward),
+	cmocka_unit_test_setup_teardown(setup_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
   };
 
   return cmocka_run_group_tests_name("Q-Learning Tests", tests_q_learning, NULL, NULL);
