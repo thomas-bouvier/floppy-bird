@@ -28,6 +28,8 @@ void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * fo
 * \brief Write the content of the main menu, and start the game in function of the click of the player
 * \param[out] renderer the drawing target
 * \param[in] font the font used
+* \param[out] levelFromFile allow to choose if the obstacles are predefined are random
+* \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \return the choice of mode wanted by the player
 */
 int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int * simplifiedMode)
@@ -48,14 +50,14 @@ int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     printText(renderer, "IA2 Demo", 450, font);
     /* Simplified/Normal Mode */
-    if(event.motion.x > 357 && event.motion.x < 667 && event.motion.y > 600 && event.motion.y < 671)
+    if(event.motion.x > 237 && event.motion.x < 787 && event.motion.y > 600 && event.motion.y < 671)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     if((*simplifiedMode) == 1)
         printText(renderer, "Simplified Mode", 600, font);
     else
         printText(renderer, "Normal Mode", 600, font);
     /* Predefined/Random Level */
-    if(event.motion.x > 357 && event.motion.x < 667 && event.motion.y > 750 && event.motion.y < 821)
+    if(event.motion.x > 222 && event.motion.x < 802 && event.motion.y > 750 && event.motion.y < 821)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     if((*levelFromFile) == 1)
         printText(renderer, "Predefined Level", 750, font);
@@ -69,6 +71,8 @@ int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int
 /*!
 * \brief Select the mode of game of the player by a click on the options displayed by the menu
 * \param[in] event the current event for the SDL
+* \param[out] levelFromFile allow to choose if the obstacles are predefined are random
+* \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \return the choice of mode wanted by the player (WAIT, PLAY, IA1 or IA2)
 */
 int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
@@ -81,9 +85,9 @@ int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
             return IA1;
         if(event.button.x > 357 && event.button.x < 667 && event.button.y > 450 && event.button.y < 521)
             return IA2;
-        if(event.button.x > 357 && event.button.x < 667 && event.button.y > 600 && event.button.y < 671)
+        if(event.button.x > 237 && event.button.x < 787 && event.button.y > 600 && event.button.y < 671)
             *simplifiedMode = (*simplifiedMode != 1);
-        if(event.button.x > 357 && event.button.x < 667 && event.button.y > 750 && event.button.y < 821)
+        if(event.button.x > 222 && event.button.x < 802 && event.button.y > 750 && event.button.y < 821)
             *levelFromFile = (*levelFromFile != 1);
         SDL_Delay(200);
     }
