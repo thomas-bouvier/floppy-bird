@@ -16,5 +16,5 @@ death :
 ../res/sounds/death.wav
 
 qMatrix :
-../res/files/q_learning/qmatrix_data.txt
+../res/files/q_learning/saved_data/tmp.tmp:tmp.27/qmatrix_data.txt
 

@@ -5,9 +5,6 @@
 #ifndef QMATRIX_H
 #define QMATRIX_H
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "game_state.h"
 #include "utils.h"
 

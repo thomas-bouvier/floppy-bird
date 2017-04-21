@@ -1,5 +1,7 @@
 #include "file_manager.h"
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 /*!
 * \brief Load the Q matrix from a text file
@@ -99,3 +101,4 @@ int saveQMatrix(MatrixQ * matrixQ, char * filename)
 	}
 	return 1;
 }
+

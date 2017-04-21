@@ -9,7 +9,7 @@ S is a set of states
 A is a set of actions
 Q[S,A] contains Q-values
 y is the discount
-a is the learning rate
+alpha is the learning rate
 #LOOP#
 s' = previous_state
 a' = previous_action
@@ -17,11 +17,12 @@ a' = previous_action
 s = current_state
 
 r = compute_reward
-a = action_to_perform
 
 optimal_next_reward = max(a)Q[s,a]
 
-Q[s',a'] = Q[s',a'] + a * (r + y * optimal_next_reward - Q[s',a'])
+Q[s',a'] = Q[s',a'] + alpha * (r + y * optimal_next_reward - Q[s',a'])
+
+perform_next_action
 ```
 We can manage a more complex algorithm in order to converge faster to a state-action matrix fully completed thanks to few upgrades :
 

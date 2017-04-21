@@ -22,15 +22,15 @@ Debug: main
 main: main.o bird.o camera.o control.o file.o game.o list.o menu.o obstacle.o pipe.o sound.o view.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-main.o: $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)game_state.h $(Q_LEARNING_PATH)conf.h
-q_learning.o: $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)game_state.h $(Q_LEARNING_PATH)conf.h
+main.o: $(Q_LEARNING_PATH)q_learning.h $(Q_LEARNING_PATH)conf.h
+q_learning.o: $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)file_manager.h $(Q_LEARNING_PATH)utils.h $(Q_LEARNING_PATH)conf.h
 qmatrix.o: $(Q_LEARNING_PATH)game_state.h $(Q_LEARNING_PATH)utils.h $(Q_LEARNING_PATH)conf.h
 file_manager.o: $(Q_LEARNING_PATH)qmatrix.h
 game_state.o: $(Q_LEARNING_PATH)conf.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -c
-%.o:  $(Q_LEARNING_PATH)/%.c
+%.o:  $(Q_LEARNING_PATH)%.c
 	$(CC) $(CFLAGS) $< -c
 
 

@@ -5,6 +5,8 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "conf.h"
 
 /*!

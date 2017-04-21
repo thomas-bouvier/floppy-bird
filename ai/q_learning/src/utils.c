@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 
 /*!
 * \brief Return a random number between 0 and the specified parameter

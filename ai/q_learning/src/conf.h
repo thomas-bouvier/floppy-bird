@@ -10,15 +10,15 @@
 #define DISCOUNT 1 /*!< Changed the weight of future rewards in the computation of the best action to make */
 
 #define LEARNING_RATE 1 /*!< Changed the percentage of the result of the last action in the computation of the new reward */
-#define DEATH_REWARD -1 /*!< Reward when the bird died */
+#define DEATH_REWARD -10 /*!< Reward when the bird died */
 
 #define LIFE_REWARD +1 /*!< Reward when the bird is alive */
 
-#define RANDOM_INIT_REWARD 5 /*!< Limit of the random reward initialization */
+#define RANDOM_INIT_REWARD 3 /*!< Limit of the random reward initialization */
 
-#define HIGHER_QREWARD_LIMIT 10000 /*!< Higher limit of the computation of the Q reward */
+#define HIGHER_QREWARD_LIMIT 30000 /*!< Higher limit of the computation of the Q reward */
 
-#define LOWER_QREWARD_LIMIT -10000  /*!< Higher limit of the computation of the Q reward */
+#define LOWER_QREWARD_LIMIT -30000  /*!< Higher limit of the computation of the Q reward */
 
 #define DISTANCE_ACCURACY 1 /*!< Accuracy of the distance to process less states, an higher value reduce the accuracy and raise the collision risk */
 
