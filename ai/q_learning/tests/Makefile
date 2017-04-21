@@ -6,7 +6,7 @@ Q_LEARNING_PATH=../src/
 main: main.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-main.o: main.c
+main.o: main.c $(Q_LEARNING_PATH)conf.h
 	$(CC) $(CFLAGS) $< -c
 
 q_learning.o: $(Q_LEARNING_PATH)q_learning.c $(Q_LEARNING_PATH)file_manager.h $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)conf.h

@@ -33,7 +33,6 @@ State * getCurrentState(int delta_x, int delta_y, int bird_state)
 				return new_state;
 		default:
 			freeState(new_state);
-			return NULL;
 			break;
 	}
 	return NULL;
@@ -71,10 +70,11 @@ int processing_dxdy(int initial_d)
 /*!
 * \brief Adapt the value of the bird_state variable coming from the game to the q_learning algorithm
 * \param[in] initial_bird_state variable coming from the game
-* \return Return a new value to fit with the q_learning algorithm 
+* \return Return a new value to fit with the q_learning algorithm, -1 if incorrect input
 */
 int processing_birdstate(int initial_bird_state)
 {
+	if(initial_bird_state!=1 && initial_bird_state!=0) return -1;
 	return (initial_bird_state)? 0:1;
 }
 

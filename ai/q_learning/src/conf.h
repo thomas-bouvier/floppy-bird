@@ -10,7 +10,7 @@
 #define DISCOUNT 1 /*!< Changed the weight of future rewards in the computation of the best action to make */
 
 #define LEARNING_RATE 1 /*!< Changed the percentage of the result of the last action in the computation of the new reward */
-#define DEATH_REWARD -10 /*!< Reward when the bird died */
+#define DEATH_REWARD -15 /*!< Reward when the bird died */
 
 #define LIFE_REWARD +1 /*!< Reward when the bird is alive */
 
