@@ -27,6 +27,6 @@ int findBestAction(int state_index, MatrixQ * matrixQ);
 
 void freeMatrixQ(MatrixQ * matrixQ);
 
-void show_matrixQ(MatrixQ * matrixQ);
+/*void show_matrixQ(MatrixQ * matrixQ);*/
 
 #endif

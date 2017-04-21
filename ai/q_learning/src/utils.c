@@ -48,6 +48,7 @@ void shift_array(int * array, int size)
 {
 	int i;
 	for(i=size-1; i>0; --i) array[i]=array[i-1];
+	array[0]=0;
 }
 
 /*!
@@ -66,17 +67,17 @@ void init_array(int * array, int size, int value)
 * \brief Wait during the given value in ms
 * \param[in] mseconds waiting duration
 */
-void delay(unsigned int mseconds)
+/*void delay(unsigned int mseconds)
 {
     clock_t goal = mseconds + clock();
     while (goal > clock());
-}
+}*/
 
 /*!
 * \brief Clear the terminal screen (for debug purpose)
 */
-void clearScreen()
+/*void clearScreen()
 {
   const char *CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
   write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
-}
+}*/

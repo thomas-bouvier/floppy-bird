@@ -1,6 +1,6 @@
 CC=gcc -g
-CFLAGS=-Wall
-LDFLAGS=-lcmocka
+CFLAGS=-Wall -fprofile-arcs -ftest-coverage
+LDFLAGS=-lcmocka -fprofile-arcs -ftest-coverage
 Q_LEARNING_PATH=../src/
 
 main: main.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o
@@ -30,3 +30,6 @@ clean:
 
 mrproper: clean
 	rm -f main
+	rm -f *.gcda
+	rm -f *.gcno
+	rm -f *.gcov

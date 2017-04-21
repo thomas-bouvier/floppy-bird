@@ -15,13 +15,13 @@ void freeMatrixQ(MatrixQ * matrixQ)
 * \brief Print the Q matrix in the terminal (for debug purpose)
 * \param[in] matrixQ matrix of every known state
 */
-void show_matrixQ(MatrixQ * matrixQ)
+/*void show_matrixQ(MatrixQ * matrixQ)
 {
 	clearScreen();
 	int i;
 	printf("	| Action 0		| Action 1\n");
 	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %f		| %f	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
-}
+}*/
 
 /*!
 * \brief Search and return the index of the current state in the MatrixQ, create if not found
