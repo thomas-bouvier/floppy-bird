@@ -90,19 +90,19 @@ int deleteObstacle(Camera * camera, List * l){
 int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
 {
     int h = 0;
-    if(bird->y + bird->h/2 >= SCREEN_HEIGHT)
+    if(bird->y + BIRD_SIZE/2 >= SCREEN_HEIGHT)
     {
         h = 1;              /* Collision with the ground */
         (*sound) = DEATH;
     }
-    if(bird->x + bird->w/2 >= obstacle->lower.x)
+    if(bird->x + BIRD_SIZE/2 >= obstacle->lower.x)
     {
-        if(bird->y - bird->h/2 <= obstacle->upper.y + obstacle->upper.h)
+        if(bird->y - BIRD_SIZE/2 <= obstacle->upper.y + obstacle->upper.h)
         {
             h = 1;          /* Collision with the upper pipe */
         	(*sound) = DEATH;
         }
-        if(bird->y + bird->h/2 >= obstacle->lower.y)
+        if(bird->y + BIRD_SIZE/2 >= obstacle->lower.y)
         {
             h = 1;          /* Collision with the lower pipe */
             (*sound) = DEATH;

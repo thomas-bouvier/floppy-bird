@@ -32,7 +32,7 @@ void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w
 */
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera)
 {
-    drawRectangle(renderer, camera, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, bird->w, bird->h, 255, 0, 0);
+    drawRectangle(renderer, camera, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE, 255, 0, 0);
 }
 
 /*!
@@ -48,8 +48,48 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
     drawRectangle(renderer, camera, obslow.x, obslow.y, obslow.w, obslow.h, 0, 0, 255);
     drawRectangle(renderer, camera, obsup.x, obsup.y, obsup.w, obsup.h, 0, 255, 0);
 }
+/**/
+void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Surface * surface, int x, int y, int w, int h)
+{
+    SDL_Rect rect = {x - camera->x, y, w, h};
+    /*SDL_Surface * image = IMG_Load(path);*/
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    /*SDL_FreeSurface (image);*/
+    SDL_DestroyTexture(texture);
+}
 
 
+void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
+{
+    /*char * path = NULL;
+    if(readConfig(f, path, "background :\n"))
+        drawSprite(renderer, camera, path, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+    else
+        printf("Fail to draw the background");*/
+        drawSprite(renderer, camera, sprites->background, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites)
+{
+    drawSprite(renderer, camera, sprites->pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, SCREEN_HEIGHT-obstacle->lower.y);
+    drawSprite(renderer, camera, sprites->pipe1, obstacle->upper.x, 0, PIPE_WIDTH, obstacle->upper.h);
+}
+
+void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites)
+{
+    SDL_Surface * bird_surface = NULL;
+    if(bird->dir_y > 5)
+        bird_surface = sprites->bird1;
+    else
+    {
+        if(bird->dir_y < 5)
+            bird_surface = sprites->bird3;
+        else
+            bird_surface = sprites->bird2;
+    }
+    drawSprite(renderer, camera, bird_surface, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE);
+}
 /*!
 * \brief Draw two squares with the color of upper and lower pipes and the size of the bird at the center of the screen
 * \param[out] renderer the drawing target
@@ -95,6 +135,26 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
     SDL_RenderPresent(renderer);
 }
 
+void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
+{
+    int i = 0;
+    setOnFirst(l);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
+    drawBackground(renderer, camera, sprites);
+    drawRealBird(renderer, bird, camera, sprites);
+    while (i < OBSTACLE_NUMBER)
+    {
+        if (l->current->lower.x != 0){
+            drawRealObstacle(renderer, l->current, camera, sprites);
+            next(l);
+            ++i;
+        }
+    }
+    displayScore(renderer, score, font);
+    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
+    SDL_RenderPresent(renderer);
+}
 /*!
 * \brief Quit the SDL and destroy renderer and window
 * \param[out] window the window to destroy

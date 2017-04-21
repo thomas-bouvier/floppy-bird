@@ -33,16 +33,28 @@ int main(int argc, char ** argv)
 
     FILE * config = NULL;
     FILE * level = NULL;
+
     char scorePath[100];
     FILE * scoreFile = NULL;
+
 	char jump_path[100];
 	Mix_Chunk * jump_sound;
 	char obstacle_path[100];
 	Mix_Chunk * obstacle_sound;
 	char death_path[100];
 	Mix_Chunk * death_sound;
+
 	char fontPath[100];
     TTF_Font * font = NULL;
+
+    char bird1_path[100];
+    char bird2_path[100];
+    char bird3_path[100];
+    char pipe1_path[100];
+    char pipe2_path[100];
+    char background_path[100];
+    char ground_path[100];
+    Sprites sprites;
 
 	int levelFromFile = 1;
     int score;
@@ -143,7 +155,77 @@ int main(int argc, char ** argv)
             return EXIT_FAILURE;
         }
 	}
-
+    /* Setup sprites */
+    if (readConfig(config, bird1_path, "bird1 :\n"))
+    {
+        sprites.bird1=IMG_Load(bird1_path);
+        if(!sprites.bird1)
+        {
+            fprintf(stderr, "Opening bird1 sprite failure :\n");
+            printf("%s\n", bird1_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, bird2_path, "bird2 :\n"))
+    {
+        sprites.bird2=IMG_Load(bird2_path);
+        if(!sprites.bird2)
+        {
+            fprintf(stderr, "Opening bird2 sprite failure :\n");
+            printf("%s\n", bird2_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, bird3_path, "bird3 :\n"))
+    {
+        sprites.bird3=IMG_Load(bird3_path);
+        if(!sprites.bird3)
+        {
+            fprintf(stderr, "Opening bird3 sprite failure :\n");
+            printf("%s\n", bird3_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, pipe1_path, "pipe1 :\n"))
+    {
+        sprites.pipe1=IMG_Load(pipe1_path);
+        if(!sprites.pipe1)
+        {
+            fprintf(stderr, "Opening pipe1 sprite failure :\n");
+            printf("%s\n", pipe1_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, pipe2_path, "pipe2 :\n"))
+    {
+        sprites.pipe2=IMG_Load(pipe2_path);
+        if(!sprites.pipe2)
+        {
+            fprintf(stderr, "Opening pipe2 sprite failure :\n");
+            printf("%s\n", pipe2_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, background_path, "background :\n"))
+    {
+        sprites.background=IMG_Load(background_path);
+        if(!sprites.background)
+        {
+            fprintf(stderr, "Opening background sprite failure :\n");
+            printf("%s\n", background_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, ground_path, "ground :\n"))
+    {
+        sprites.ground=IMG_Load(ground_path);
+        if(!sprites.ground)
+        {
+            fprintf(stderr, "Opening ground sprite failure :\n");
+            printf("%s\n", ground_path);
+            return EXIT_FAILURE;
+        }
+    }
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -191,7 +273,7 @@ int main(int argc, char ** argv)
         savedObstacle = nextBirdObstacle(&l, &bird);
         drawForTI(renderer, &camera);
         running = waitForTI();
-        displayGame(renderer, &bird, &l, &camera, score, font);
+        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
 
         /* Wait the first jump to start the game*/
         emptyEvent();
@@ -218,6 +300,7 @@ int main(int argc, char ** argv)
 
             for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
             {
+                /*printf("%d\n", 1000/(SDL_GetTicks()-lastFrame));*/
                 Action event = detectTouch();
                 sound = NOSOUND;
                 if(event == QUIT)
@@ -226,7 +309,7 @@ int main(int argc, char ** argv)
                     running = (waiting() != QUIT);
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                displayGame(renderer, &bird, &l, &camera, score, font);
+                displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
                 playSound(sound, jump_sound, obstacle_sound, death_sound);
                 lastFrame = SDL_GetTicks();
             }

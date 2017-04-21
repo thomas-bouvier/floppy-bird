@@ -35,7 +35,7 @@
 /*! \def BIRD_SIZE
 * \brief The size of a bird in pixels
 */
-#define BIRD_SIZE 30
+#define BIRD_SIZE 40
 
 /*! \def BIRD_MAX_FALL_SPEED
 * \brief The maximum speed of fall of the bird

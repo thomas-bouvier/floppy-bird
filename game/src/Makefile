@@ -5,7 +5,7 @@ CC = gcc
 ifeq ($(OS),Windows_NT)
 	# SDL inclusion and link for Windows
 	CFLAGS = -Wall -g -I$(SDLPATH)\include
-	LDFLAGS = -L$(SDLPATH)\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer
+	LDFLAGS = -L$(SDLPATH)\lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 else
 	# SDL inclusion and link for Linux
 	CFLAGS = -Wall -g $(shell sdl2-config --cflags)

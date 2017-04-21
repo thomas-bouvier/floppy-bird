@@ -14,11 +14,27 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_Image.h>
+
+typedef struct{
+    SDL_Surface * bird1;
+    SDL_Surface * bird2;
+    SDL_Surface * bird3;
+    SDL_Surface * pipe1;
+    SDL_Surface * pipe2;
+    SDL_Surface * background;
+    SDL_Surface * ground;
+}Sprites;
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);
+void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Surface * surface, int x, int y, int w, int h);
+void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
+void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites);
+void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites);
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font);
+void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
 void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
 void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
