@@ -501,6 +501,87 @@ static int teardown_q_learning_loop(void ** state)
 	return 0;
 }
 
+/** file_manager.c **/
+/* loadQMatrix */
+static int setup_loadQMatrixEmpty(void ** state) {
+
+	char * filename = "test_qmatrixdata.txt";
+	*state = filename;
+	return 0;
+}
+
+static int setup_loadQMatrix(void ** state) {
+	
+	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	char * filename = "test_qmatrixdata.txt";
+	if(matrixq == NULL)
+		return -1;
+
+	matrixq->nb_states = 1;
+	matrixq->state = (State*) malloc(matrixq->nb_states * sizeof(State));
+	matrixq->reward = (float*) malloc(matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	matrixq->state[0].delta_x = 10;
+	matrixq->state[0].delta_y = 10;
+	matrixq->reward[0*NB_ACTIONS] = 100;
+	matrixq->reward[0*NB_ACTIONS+1] = 100;
+
+	saveQMatrix(matrixq, filename);	
+	
+	*state = filename;
+	return 0;
+}
+
+static void test_loadQMatrixEmpty(void ** state) {
+
+	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	matrixq = loadQMatrix((*state));
+	assert_int_equal(0, matrixq->nb_states);
+}
+
+static void test_loadQMatrix(void ** state) {
+
+	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	matrixq = loadQMatrix((*state));
+	assert_int_equal(1, matrixq->nb_states);
+}
+
+static int teardown_loadQMatrix(void ** state) {
+
+  return remove("test_qmatrixdata.txt");
+}
+
+/* saveQMatrix */
+static int setup_saveQMatrix(void ** state) {
+
+	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(matrixq == NULL)
+		return -1;
+
+	matrixq->nb_states = 1;
+	matrixq->state = (State*) malloc(matrixq->nb_states * sizeof(State));
+	matrixq->reward = (float*) malloc(matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	matrixq->state[0].delta_x = 10;
+	matrixq->state[0].delta_y = 10;
+	matrixq->reward[0*NB_ACTIONS] = 100;
+	matrixq->reward[0*NB_ACTIONS+1] = 100;
+
+	*state = matrixq;
+	return 0;
+}
+
+static void test_saveQMatrix(void ** state) {
+
+	MatrixQ * matrixq = (MatrixQ*) (*state);
+	assert_int_equal(1, saveQMatrix(matrixq, "test_qmatrixdata.txt"));
+}
+
+static int teardown_saveQMatrix(void ** state) {
+
+  return remove("test_qmatrixdata.txt");
+}
+
 int main() {
   const struct CMUnitTest tests_q_learning[] = {
 	cmocka_unit_test(test_randomAtMostpositiveLimit),
@@ -530,6 +611,9 @@ int main() {
 	cmocka_unit_test_setup_teardown(test_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
 	cmocka_unit_test_setup_teardown(test_q_learning_loop, setup_q_learning_loop, teardown_q_learning_loop),
 	cmocka_unit_test_setup_teardown(test_q_learning_loopReset, setup_q_learning_loop, teardown_q_learning_loop),
+	cmocka_unit_test_setup_teardown(test_loadQMatrix, setup_loadQMatrix, teardown_loadQMatrix),
+	cmocka_unit_test_setup_teardown(test_loadQMatrixEmpty, setup_loadQMatrixEmpty, teardown_loadQMatrix),
+	cmocka_unit_test_setup_teardown(test_saveQMatrix, setup_saveQMatrix, teardown_saveQMatrix),
   };
 
   return cmocka_run_group_tests_name("Q-Learning Tests", tests_q_learning, NULL, NULL);

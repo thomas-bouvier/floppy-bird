@@ -42,8 +42,6 @@ MatrixQ * loadQMatrix(char * filename)
 		}
 	}
 
-	printf("%d", matrixQ->nb_states);
-
 	for(i=0; i<NB_ACTIONS*matrixQ->nb_states; ++i)
 	{
 		fscanf(fp, " %f", &(matrixQ->reward[i]));

@@ -10,7 +10,7 @@
 #define DISCOUNT 1 /*!< Changed the weight of future rewards in the computation of the best action to make */
 
 #define LEARNING_RATE 1 /*!< Changed the percentage of the result of the last action in the computation of the new reward */
-#define DEATH_REWARD -15 /*!< Reward when the bird died */
+#define DEATH_REWARD -10 /*!< Reward when the bird died */
 
 #define LIFE_REWARD +1 /*!< Reward when the bird is alive */
 
@@ -24,7 +24,7 @@
 
 #define NB_SAVED_STATES 2 /*!< Number of saved states to compute the new reward */
 
-#define NB_SAVED_ACTIONS 1 /*!< Number of saved states to compute the new reward */
+#define NB_SAVED_ACTIONS (NB_SAVED_STATES-1) /*!< Number of saved states to compute the new reward */
 
 #define NB_FPS_BEFORE_NEXT_ACTION 8 /*!< Number of FPS between two actions */
 
