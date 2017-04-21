@@ -44,7 +44,10 @@ int main(int argc, char ** argv)
 	char fontPath[100];
     TTF_Font * font = NULL;
 
+    /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
 	int levelFromFile = 1;
+	/* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
+	int simplifiedMode = 1;
     int score;
     Obstacle * savedObstacle = NULL;
 
@@ -63,18 +66,16 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the level */
-    if(levelFromFile)
+    char levelPath[100];
+    if (readConfig(config, levelPath, "level :\n"))
+        level = fopen(levelPath, "r");
+    if(level == NULL)
     {
-        char levelPath[100];
-        if (readConfig(config, levelPath, "level :\n"))
-            level = fopen(levelPath, "r");
-        if(level == NULL)
-        {
-            fprintf(stderr,"Opening level file failure :\n");
-            printf("%s\n", levelPath);
-            return EXIT_FAILURE;
-        }
+        fprintf(stderr,"Opening level file failure :\n");
+        printf("%s\n", levelPath);
+        return EXIT_FAILURE;
     }
+
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
     if (readConfig(config, scorePath, "score :\n"))
@@ -177,7 +178,7 @@ int main(int argc, char ** argv)
     mode = WAIT;
     while(mode != PLAY && init != QUIT)
     {
-        mode = mainMenu(renderer, font);
+        mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
         init = detectTouch();
     }
 

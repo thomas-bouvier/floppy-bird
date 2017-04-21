@@ -11,7 +11,7 @@
 #include <SDL2/SDL_mixer.h>
 
 void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * font);
-int mainMenu(SDL_Renderer * renderer, TTF_Font * font);
-int actionOnMenu(SDL_Event event);
+int mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int * simplifiedMode);
+int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode);
 
 #endif // MENU_H
