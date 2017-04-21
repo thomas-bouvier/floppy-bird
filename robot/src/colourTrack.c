@@ -14,7 +14,9 @@
 #include "tracking.h"
 #include "imageProcessing.h"
 
-
+/*!
+* \brief init capture function : init and configure the capture
+*/
 RaspiCamCvCapture * initCapture(){
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
 	

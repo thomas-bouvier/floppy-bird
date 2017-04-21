@@ -1,6 +1,16 @@
 #include "tracking.h"
 
-
+/*!
+* \brief Init TrackedObject function : init and configure a TrackedObject
+* \param[in] address of the TrackedObject 
+* \param[in] The hue to track
+* \param[in] The sat to track
+* \param[in] The val to track
+* \param[in] The address of the flux in which we want to track the object
+* \param[in] The address of the flux in which we want save results of the tracking
+* \param[in] The zone in which we want to track the object
+* \param[in] The shape of the tracker being displayed
+*/
 void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape)
 {
 	obj->computeTracking = true;
@@ -18,16 +28,28 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 	obj->trackerColor = DEFAULT_TRACKER_COLOR;
 }
 
+/*!
+* \brief enable the tracking of a TrackedObject
+* \param[in] address of the TrackedObject 
+*/
 void enableTracking(TrackedObject* obj)
 {
 	obj->computeTracking = true;
 }
 
+/*!
+* \brief disable the tracking of a TrackedObject
+* \param[in] address of the TrackedObject 
+*/
 void disableTracking(TrackedObject* obj)
 {
 	obj->computeTracking = false;
 }
 
+/*!
+* \brief Update the tracking of a TrackedObject : computes the tracking and dispays it in the tracking window
+* \param[in] address of the TrackedObject 
+*/
 void updateTracking(TrackedObject* obj)
 {
 	if(obj->computeTracking){
@@ -37,12 +59,24 @@ void updateTracking(TrackedObject* obj)
 	}
 }
 
+/*!
+* \brief Release the memory of the last tracking image
+* \param[in] address of the TrackedObject 
+*/
 void releaseTrackingImageMemory(TrackedObject* obj)
 {
 	cvReleaseImage(&(obj->binFlux->img));
 }
 
-void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux,FILE * loadFile)
+/*!
+* \brief Load TrackedObject function : init and configure a TrackedObject from a config file
+* \ Config file must be organized like this : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... 
+* \param[in] address of the TrackedObject 
+* \param[in] The address of the flux in which we want to track the object
+* \param[in] The address of the flux in which we want save results of the tracking
+* \param[in] The config file to load from
+*/
+void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux, FILE * loadFile)
 {
 	obj->computeTracking = true;
 	fread(&(obj->h),sizeof(int),1,loadFile);
@@ -59,9 +93,14 @@ void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcas
 	fread(&(obj->trackerColor),sizeof(CvScalar),1,loadFile);
 }
 
+/*!
+* \brief Save TrackedObject function : save a TrackedObject in a config file
+* \ Config file must be organized like this : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... 
+* \param[in] address of the TrackedObject 
+* \param[in] The config file to save in
+*/
 void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 {
-	/* File : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... */
 	if(saveFile != NULL){
 		fwrite(&(obj->h),sizeof(int),1,saveFile);
 		fwrite(&(obj->s),sizeof(int),1,saveFile);
@@ -74,6 +113,11 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 	}
 }
 
+/*!
+* \brief get a relative distance between the working space and an element of the tracker
+* \param[in] address of the TrackedObject 
+* \param[in] The nature of the distance (UP,LEFT,RIGHT)
+*/
 float getRelativeDistance(TrackedObject* obj, int nature)
 {
 	cvSetImageROI(obj->binFlux->img,obj->trackingZone);

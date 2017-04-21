@@ -15,19 +15,27 @@
 
 typedef struct ImageBroadcast ImageBroadcast;
 
+/*!
+* \struct ImageBroadcast 
+* \brief ImageBroadcast is used to cast an image on the computer
+*/
 struct ImageBroadcast{
-	IplImage* img;		/* The image to show */
-	char* windowTitle;	/* The title of the window showing the image */
-	CvFont * font;		/* The font if text on image */
-	CvRect* workingSpace;	/* The working space if defined */
+	IplImage* img;		/*!< The image to show */
+	char* windowTitle;	/*!< The title of the window showing the image */
+	CvFont * font;		/*!< The font if text on image */
+	CvRect* workingSpace;	/*!< The working space if defined */
 };
 
-/* Struct to define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined */
+
+/*!
+* \struct VolatileRect 
+* \brief define a volatile rectangle => tells if the rectangle is defined / completely defined/ not defined
+*/
 struct VolatileRect{
-	CvRect rect;
-	CvPoint origin;
-	int originDefined;
-	int rectDefined;
+	CvRect rect;			/*!< The rect being defined */
+	CvPoint origin;			/*!< The origin of the rectangle (left up corner) */
+	int originDefined;		/*!< Tells if origin is defined or not */
+	int rectDefined;		/*!< Tells if the rect is completely defined or not */
 };
 
 void updateImage(ImageBroadcast* flux,IplImage* img);

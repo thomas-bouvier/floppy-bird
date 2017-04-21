@@ -1,9 +1,11 @@
 #include "imageProcessing.h"
 
-/*
- * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
- * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
- */
+
+/*!
+* \brief Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
+* From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
+* \param[in] address of the TrackedObject 
+*/
 void binarisation(TrackedObject* obj) 
 { 
     int x, y;
@@ -79,9 +81,11 @@ void binarisation(TrackedObject* obj)
 	cvResetImageROI(obj->binFlux->img);
 }
 
-/*
- * Add a shape on the video that follow your colored object
- */
+
+/*!
+* \brief Add a shape on the video that follow your colored object
+* \param[in] address of the TrackedObject 
+*/
 void addObjectToVideo(TrackedObject* obj) {
 	
     /* Draw an object centered on its origin */
@@ -99,6 +103,12 @@ void addObjectToVideo(TrackedObject* obj) {
 	}
 }
 
+/*!
+* \brief start the init work space procedure
+* \param[in] (optional if tere loading from a file) address of the capture
+* \param[in] name of the window
+* \param[in] (optional) the load file
+*/
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 	if(loadFile==NULL){
 		struct VolatileRect workingSpace;
@@ -133,13 +143,22 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 	}
 }
 
+/*!
+* \brief save the work space in a file
+* \param[in] the working space
+* \param[in] the save file
+*/
 void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile)
 {
 	if(saveFile != NULL && workingSpace!=NULL)
 		fwrite(workingSpace,sizeof(CvRect),1,saveFile);
 }
 
-CvScalar reverse(CvScalar colour)
+/*!
+* \brief reverse a color
+* \param[in] the color to reverse
+*/
+CvScalar reverse(CvScalar color)
 {
-	return cvScalar(255-colour.val[0],255-colour.val[1],255-colour.val[2],0);
+	return cvScalar(255-color.val[0],255-color.val[1],255-color.val[2],0);
 }

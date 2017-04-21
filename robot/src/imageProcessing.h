@@ -1,3 +1,8 @@
+/*!
+* \file tracking.h
+* \brief File containing structures and prototypes of functions related to image processing
+*/
+
 #ifndef IMAGE_PROCESSING_H
 #define IMAGE_PROCESSING_H
 

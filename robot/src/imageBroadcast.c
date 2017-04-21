@@ -1,6 +1,13 @@
 #include "imageBroadcast.h"
 
-
+/*!
+* \brief Init image broadcast function : init an ImageBroadcast and create the associated window
+* \param[in] address of the ImageBroadcast 
+* \param[in] The image to show 
+* \param[in] The working space if defined 
+* \param[in] The title of the window showing the image 
+* \param[in] The font if text on image
+*/
 void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpace, char* windowTitle, CvFont * font)
 {
 	flux->img = img;
@@ -10,6 +17,10 @@ void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpac
 	cvNamedWindow(windowTitle, CV_WINDOW_AUTOSIZE);
 }
 
+/*!
+* \brief Init font function : init the font of an ImageBroadcast
+* \param[in] address of the ImageBroadcast 
+*/
 void initFont(ImageBroadcast* flux){
 	double hScale=0.4;
 	double vScale=0.4;
@@ -20,11 +31,20 @@ void initFont(ImageBroadcast* flux){
 		fprintf(stderr,"error in initFont : flux->font NULL\n");
 }
 
+/*!
+* \brief Update image function : update the image associated with an ImageBroadcast
+* \param[in] address of the ImageBroadcast 
+* \param[in] The image to update 
+*/
 void updateImage(ImageBroadcast* flux,IplImage* img)
 {
 	flux->img = img;
 }
 
+/*!
+* \brief Show image function : show the ImageBroadcast image in the associated window
+* \param[in] address of the ImageBroadcast 
+*/
 void showImage(ImageBroadcast* flux)
 {
 	cvShowImage(flux->windowTitle,flux->img);
@@ -34,6 +54,15 @@ void showImage(ImageBroadcast* flux)
  * Get the color of the pixel where the mouse has clicked
  * We put this color as model color (the color we want to tracked)
  */
+/*!
+* \brief Get the color of the pixel where the mouse has clicked
+* \ We put this color as model color (the color we want to tracked)
+* \param[in] type of event
+* \param[in] The abscise of the point
+* \param[in] The ordonate of the point
+* \param[in] flags : not used here
+* \param[in] The TrackedObject associated with the event
+*/
 void getObjectColor(int event, int x, int y, int flags, void *param) {
  
     struct TrackedObject* obj = (struct TrackedObject*)param;	/* tracked object is passed through param */
@@ -63,6 +92,14 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
     }
 }
 
+/*!
+* \brief Get the current point coordinates to define a VolatileRect
+* \param[in] type of event
+* \param[in] The abscise of the point
+* \param[in] The ordonate of the point
+* \param[in] flags : not used here
+* \param[in] The VolatileRect associated with the event
+*/
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
 	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
 	if(workingSpace->originDefined == 1 && event == CV_EVENT_MOUSEMOVE){
@@ -80,6 +117,12 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 	}
 }
 
+
+/*!
+* \brief Load image function : load the ImageBroadcast associated image 
+* \param[in] address of the ImageBroadcast 
+* \param[in] address of the capture
+*/
 void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture)
 {
 	flux->img = raspiCamCvQueryFrame(capture);
