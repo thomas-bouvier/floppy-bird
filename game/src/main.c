@@ -263,7 +263,7 @@ int main(int argc, char ** argv)
     }
 
     mode = WAIT;
-    while(mode != PLAY && init != QUIT)
+    while((mode != PLAY && mode != IA1) && init != QUIT)
     {
         mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
         init = detectTouch();
@@ -297,7 +297,7 @@ int main(int argc, char ** argv)
         {
             drawForTI(renderer, &camera);
             if(mode == PLAY) running = waitForTI();
-	    if(mode == IA1) running = 1;
+	    	if(mode == IA1) running = 1;
             displayGame(renderer, &bird, &l, &camera, score, font);
         }
         else
