@@ -1,11 +1,11 @@
 CC=gcc
 CFLAGS=-W -Wall -pedantic
 LDFLAGS=
-EXEC=main
+EXEC=q_learning
 
 all: $(EXEC)
 
-main: main.o qmatrix.o game_state.o utils.o file_manager.o
+q_learning: q_learning.o qmatrix.o game_state.o utils.o file_manager.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 qmatrix.o: game_state.h utils.h conf.h
@@ -20,4 +20,4 @@ clean:
 
 mrproper: clean
 	rm -rf $(EXEC)
-
+	rm -rf *.*.gch

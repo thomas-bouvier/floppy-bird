@@ -7,7 +7,7 @@
 
 #include "qmatrix.h"
 
-MatrixQ * loadQMatrix();
-void saveQMatrix(MatrixQ * matrixQ);
+MatrixQ * loadQMatrix(char * filename);
+int saveQMatrix(MatrixQ * matrixQ, char * filename);
 
 #endif

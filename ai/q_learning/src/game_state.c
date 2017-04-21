@@ -1,6 +1,4 @@
 #include "game_state.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 /*!
 * \brief Deallocated a state
@@ -13,8 +11,8 @@ void freeState(State * state)
 
 /*!
 * \brief Get the current state if the bird is alive else the state is not saved
-* \param[in] delta_x the distance between the bird's bottom-right hand corner and the left side of the next pipe
-* \param[in] delta_y the distance between the bird's bottom-right hand corner and the top of the next pipe
+* \param[in] delta_x the distance between the left side of the camera and the left side of the next pipe
+* \param[in] delta_y the distance between the bird's upper side and the top of the next pipe
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 * \return Return a state, distances=-1 if the bird is dead, NULL if error
 */
@@ -35,7 +33,6 @@ State * getCurrentState(int delta_x, int delta_y, int bird_state)
 				return new_state;
 		default:
 			freeState(new_state);
-			return NULL;
 			break;
 	}
 	return NULL;
@@ -58,5 +55,26 @@ int getCurrentReward(int bird_state)
 			break;
 	}
 	return 0;
+}
+
+/*!
+* \brief Approximate a distance dx or dy to get less different states
+* \param[in] initial_d initial distance dx or dy
+* \return Return a new distance 
+*/
+int processing_dxdy(int initial_d)
+{
+	return initial_d/DISTANCE_ACCURACY;
+}
+
+/*!
+* \brief Adapt the value of the bird_state variable coming from the game to the q_learning algorithm
+* \param[in] initial_bird_state variable coming from the game
+* \return Return a new value to fit with the q_learning algorithm, -1 if incorrect input
+*/
+int processing_birdstate(int initial_bird_state)
+{
+	if(initial_bird_state!=1 && initial_bird_state!=0) return -1;
+	return (initial_bird_state)? 0:1;
 }
 
