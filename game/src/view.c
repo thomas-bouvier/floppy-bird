@@ -83,7 +83,7 @@ void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites
         bird_surface = sprites->bird1;
     else
     {
-        if(bird->dir_y < 5)
+        if(bird->dir_y < 0)
             bird_surface = sprites->bird3;
         else
             bird_surface = sprites->bird2;

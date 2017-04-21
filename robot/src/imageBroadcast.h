@@ -38,5 +38,4 @@ void getObjectColor(int event, int x, int y, int flags, void *param);
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param);
 void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture);
 
-
 #endif /*IMAGE_BROADCAST_H*/

@@ -56,7 +56,10 @@ int main(int argc, char ** argv)
     char ground_path[100];
     Sprites sprites;
 
+    /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
 	int levelFromFile = 1;
+	/* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
+	int simplifiedMode = 1;
     int score;
     Obstacle * savedObstacle = NULL;
 
@@ -75,18 +78,16 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the level */
-    if(levelFromFile)
+    char levelPath[100];
+    if (readConfig(config, levelPath, "level :\n"))
+        level = fopen(levelPath, "r");
+    if(level == NULL)
     {
-        char levelPath[100];
-        if (readConfig(config, levelPath, "level :\n"))
-            level = fopen(levelPath, "r");
-        if(level == NULL)
-        {
-            fprintf(stderr,"Opening level file failure :\n");
-            printf("%s\n", levelPath);
-            return EXIT_FAILURE;
-        }
+        fprintf(stderr,"Opening level file failure :\n");
+        printf("%s\n", levelPath);
+        return EXIT_FAILURE;
     }
+
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
     if (readConfig(config, scorePath, "score :\n"))
@@ -259,7 +260,7 @@ int main(int argc, char ** argv)
     mode = WAIT;
     while(mode != PLAY && init != QUIT)
     {
-        mode = mainMenu(renderer, font);
+        mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
         init = detectTouch();
     }
 
@@ -271,9 +272,15 @@ int main(int argc, char ** argv)
     	score = 0;
         startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
-        drawForTI(renderer, &camera);
-        running = waitForTI();
-        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+        if (simplifiedMode)
+        {
+            drawForTI(renderer, &camera);
+            running = waitForTI();
+            displayGame(renderer, &bird, &l, &camera, score, font);
+        }
+        else
+            displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+
 
         /* Wait the first jump to start the game*/
         emptyEvent();
@@ -309,7 +316,10 @@ int main(int argc, char ** argv)
                     running = (waiting() != QUIT);
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
                 savedObstacle = nextBirdObstacle(&l, &bird);
-                displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                if(simplifiedMode)
+                    displayGame(renderer, &bird, &l, &camera, score, font);
+                else
+                    displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
                 playSound(sound, jump_sound, obstacle_sound, death_sound);
                 lastFrame = SDL_GetTicks();
             }
