@@ -9,7 +9,7 @@
 * \param[in] dy the distance between the bird's upper side and the top of the next pipe
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 */
-void q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int dx, int dy, int bird_state)
+int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int dx, int dy, int bird_state)
 {
 	/* Shift for the new state */
 	shift_array(last_states, NB_SAVED_STATES);
@@ -32,4 +32,5 @@ void q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, in
 		init_array(last_states, NB_SAVED_STATES, -1); /* RESET GAME */
 		init_array(last_action, NB_SAVED_ACTIONS, -1); /* RESET GAME */
 	}
+	return 1;
 }

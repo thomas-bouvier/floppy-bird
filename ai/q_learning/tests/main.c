@@ -416,7 +416,7 @@ static int setup_updateQReward(void ** state)
 	return 0;
 }
 
-static void setup_updateQRewardPositive(void ** state)
+static void test_updateQRewardPositive(void ** state)
 {
 	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
 
@@ -425,7 +425,7 @@ static void setup_updateQRewardPositive(void ** state)
 	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
 }
 
-static void setup_updateQRewardNegative(void ** state)
+static void test_updateQRewardNegative(void ** state)
 {
 	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
 
@@ -444,6 +444,62 @@ static int teardown_updateQReward(void ** state)
 	return 0;
 }
 
+/** q_learning.c **/
+/* q_learning_loop */
+static int setup_q_learning_loop(void ** state)
+{
+	int i;
+
+	UpdateQValues * upd_qvalues = (UpdateQValues*) malloc(sizeof(UpdateQValues));
+	if(upd_qvalues == NULL)
+		return -1;
+	upd_qvalues->matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
+	if(upd_qvalues->matrixq == NULL)
+		return -1;
+	
+	upd_qvalues->matrixq->nb_states = 1;
+	upd_qvalues->matrixq->state = (State*) malloc(upd_qvalues->matrixq->nb_states * sizeof(State));
+	upd_qvalues->matrixq->reward = (float*) malloc(upd_qvalues->matrixq->nb_states * NB_ACTIONS * sizeof(float));
+
+	upd_qvalues->matrixq->state[0].delta_x = 10;
+	upd_qvalues->matrixq->state[0].delta_y = 10;
+	upd_qvalues->matrixq->reward[0*NB_ACTIONS] = 100;
+	upd_qvalues->matrixq->reward[0*NB_ACTIONS+1] = 100;
+
+	upd_qvalues->last_index = (int*) malloc(NB_SAVED_STATES * sizeof(int));
+	upd_qvalues->last_action = (int*) malloc(NB_SAVED_ACTIONS * sizeof(int));
+	for(i=0; i<NB_SAVED_STATES; ++i) upd_qvalues->last_index[i] = 0;
+	for(i=0; i<NB_SAVED_ACTIONS; ++i) upd_qvalues->last_action[i] = 1;
+
+	*state = upd_qvalues;
+	return 0;
+}
+
+static void test_q_learning_loop(void ** state)
+{
+	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
+
+	upd_qvalues->last_index[0] = 0;
+
+	assert_int_equal(1, q_learning_loop(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action, 101, 102, 1));
+}
+
+static void test_q_learning_loopReset(void ** state)
+{
+	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
+
+	upd_qvalues->last_index[0] = -1;
+
+	assert_int_equal(1, q_learning_loop(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action, 101, 102, 0));
+}
+
+static int teardown_q_learning_loop(void ** state)
+{
+	free(((UpdateQValues*)*state)->matrixq->state);
+	free(((UpdateQValues*)*state)->matrixq->reward);
+	free(*state);
+	return 0;
+}
 
 int main() {
   const struct CMUnitTest tests_q_learning[] = {
@@ -470,8 +526,10 @@ int main() {
 	cmocka_unit_test_setup_teardown(test_findBestActionDoNothing, setup_findBestAction, teardown_findBestAction),
 	cmocka_unit_test_setup_teardown(test_findBestActionJump, setup_findBestAction, teardown_findBestAction),
 	cmocka_unit_test_setup_teardown(test_findBestActionEqual, setup_findBestAction, teardown_findBestAction),
-	cmocka_unit_test_setup_teardown(setup_updateQRewardPositive, setup_updateQReward, teardown_updateQReward),
-	cmocka_unit_test_setup_teardown(setup_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
+	cmocka_unit_test_setup_teardown(test_updateQRewardPositive, setup_updateQReward, teardown_updateQReward),
+	cmocka_unit_test_setup_teardown(test_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
+	cmocka_unit_test_setup_teardown(test_q_learning_loop, setup_q_learning_loop, teardown_q_learning_loop),
+	cmocka_unit_test_setup_teardown(test_q_learning_loopReset, setup_q_learning_loop, teardown_q_learning_loop),
   };
 
   return cmocka_run_group_tests_name("Q-Learning Tests", tests_q_learning, NULL, NULL);
