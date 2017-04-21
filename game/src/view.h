@@ -14,7 +14,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_Image.h>
+#include <SDL2/SDL_image.h>
 
 typedef struct{
     SDL_Surface * bird1;
