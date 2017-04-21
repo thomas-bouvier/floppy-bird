@@ -14,11 +14,11 @@
 
 #define LIFE_REWARD +1 /*!< Reward when the bird is alive */
 
-#define RANDOM_INIT_REWARD 3 /*!< Limit of the random reward initialization */
+#define RANDOM_INIT_REWARD 2 /*!< Limit of the random reward initialization */
 
-#define HIGHER_QREWARD_LIMIT 30000 /*!< Higher limit of the computation of the Q reward */
+#define HIGHER_QREWARD_LIMIT 10000 /*!< Higher limit of the computation of the Q reward */
 
-#define LOWER_QREWARD_LIMIT -30000  /*!< Higher limit of the computation of the Q reward */
+#define LOWER_QREWARD_LIMIT -10000  /*!< Higher limit of the computation of the Q reward */
 
 #define DISTANCE_ACCURACY 1 /*!< Accuracy of the distance to process less states, an higher value reduce the accuracy and raise the collision risk */
 
@@ -26,7 +26,7 @@
 
 #define NB_SAVED_ACTIONS 1 /*!< Number of saved states to compute the new reward */
 
-#define NB_FPS_BEFORE_NEXT_ACTION 6 /*!< Number of FPS between two actions */
+#define NB_FPS_BEFORE_NEXT_ACTION 1 /*!< Number of FPS between two actions */
 
 /* FIXED PARAMETERS */
 

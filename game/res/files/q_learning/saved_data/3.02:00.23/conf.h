@@ -26,7 +26,7 @@
 
 #define NB_SAVED_ACTIONS 1 /*!< Number of saved states to compute the new reward */
 
-#define NB_FPS_BEFORE_NEXT_ACTION 6 /*!< Number of FPS between two actions */
+#define NB_FPS_BEFORE_NEXT_ACTION 8 /*!< Number of FPS between two actions */
 
 /* FIXED PARAMETERS */
 
