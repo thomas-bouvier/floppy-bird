@@ -16,7 +16,7 @@ typedef struct ImageBroadcast ImageBroadcast;
 typedef struct TrackedObject TrackedObject;
 
 /*!
-* \enum  
+* \enum  type of distances
 * \brief Define the differents type of distance
 */
 enum {UP,LEFT,RIGHT};

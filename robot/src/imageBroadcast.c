@@ -2,11 +2,11 @@
 
 /*!
 * \brief Init image broadcast function : init an ImageBroadcast and create the associated window
-* \param[in] address of the ImageBroadcast 
-* \param[in] The image to show 
-* \param[in] The working space if defined 
-* \param[in] The title of the window showing the image 
-* \param[in] The font if text on image
+* \param[in] flux : address of the ImageBroadcast 
+* \param[in] img : The image to show 
+* \param[in] workingSpace : The working space if defined 
+* \param[in] windowTitle : The title of the window showing the image 
+* \param[in] font : The font if text on image
 */
 void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpace, char* windowTitle, CvFont * font)
 {
@@ -19,7 +19,7 @@ void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpac
 
 /*!
 * \brief Init font function : init the font of an ImageBroadcast
-* \param[in] address of the ImageBroadcast 
+* \param[in] flux : address of the ImageBroadcast 
 */
 void initFont(ImageBroadcast* flux){
 	double hScale=0.4;
@@ -33,8 +33,8 @@ void initFont(ImageBroadcast* flux){
 
 /*!
 * \brief Update image function : update the image associated with an ImageBroadcast
-* \param[in] address of the ImageBroadcast 
-* \param[in] The image to update 
+* \param[in] flux : address of the ImageBroadcast 
+* \param[in] img : The image to update 
 */
 void updateImage(ImageBroadcast* flux,IplImage* img)
 {
@@ -43,7 +43,7 @@ void updateImage(ImageBroadcast* flux,IplImage* img)
 
 /*!
 * \brief Show image function : show the ImageBroadcast image in the associated window
-* \param[in] address of the ImageBroadcast 
+* \param[in] flux : address of the ImageBroadcast 
 */
 void showImage(ImageBroadcast* flux)
 {
@@ -57,11 +57,11 @@ void showImage(ImageBroadcast* flux)
 /*!
 * \brief Get the color of the pixel where the mouse has clicked
 * \ We put this color as model color (the color we want to tracked)
-* \param[in] type of event
-* \param[in] The abscise of the point
-* \param[in] The ordonate of the point
+* \param[in] event : type of event
+* \param[in] x : The abscise of the point
+* \param[in] y : The ordonate of the point
 * \param[in] flags : not used here
-* \param[in] The TrackedObject associated with the event
+* \param[in] param : The TrackedObject associated with the event
 */
 void getObjectColor(int event, int x, int y, int flags, void *param) {
  
@@ -94,11 +94,11 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
 
 /*!
 * \brief Get the current point coordinates to define a VolatileRect
-* \param[in] type of event
-* \param[in] The abscise of the point
-* \param[in] The ordonate of the point
+* \param[in] event : type of event
+* \param[in] x : The abscise of the point
+* \param[in] y : The ordonate of the point
 * \param[in] flags : not used here
-* \param[in] The VolatileRect associated with the event
+* \param[in] param : The VolatileRect associated with the event
 */
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
 	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
@@ -120,8 +120,8 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 
 /*!
 * \brief Load image function : load the ImageBroadcast associated image 
-* \param[in] address of the ImageBroadcast 
-* \param[in] address of the capture
+* \param[in] flux : address of the ImageBroadcast 
+* \param[in] capture : address of the capture
 */
 void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture)
 {

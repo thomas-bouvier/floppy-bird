@@ -2,14 +2,14 @@
 
 /*!
 * \brief Init TrackedObject function : init and configure a TrackedObject
-* \param[in] address of the TrackedObject 
-* \param[in] The hue to track
-* \param[in] The sat to track
-* \param[in] The val to track
-* \param[in] The address of the flux in which we want to track the object
-* \param[in] The address of the flux in which we want save results of the tracking
-* \param[in] The zone in which we want to track the object
-* \param[in] The shape of the tracker being displayed
+* \param[in] obj : address of the TrackedObject 
+* \param[in] hue : The hue to track
+* \param[in] sat : The sat to track
+* \param[in] val : The val to track
+* \param[in] rawFlux : The address of the flux in which we want to track the object
+* \param[in] binFlux : The address of the flux in which we want save results of the tracking
+* \param[in] trackZone : a CvRect of the zone in which we want to track the object
+* \param[in] shape : The shape of the tracker being displayed
 */
 void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroadcast* rawFlux, ImageBroadcast* binFlux, CvRect trackZone, int shape)
 {
@@ -30,7 +30,7 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 
 /*!
 * \brief enable the tracking of a TrackedObject
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void enableTracking(TrackedObject* obj)
 {
@@ -39,7 +39,7 @@ void enableTracking(TrackedObject* obj)
 
 /*!
 * \brief disable the tracking of a TrackedObject
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void disableTracking(TrackedObject* obj)
 {
@@ -48,7 +48,7 @@ void disableTracking(TrackedObject* obj)
 
 /*!
 * \brief Update the tracking of a TrackedObject : computes the tracking and dispays it in the tracking window
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void updateTracking(TrackedObject* obj)
 {
@@ -61,7 +61,7 @@ void updateTracking(TrackedObject* obj)
 
 /*!
 * \brief Release the memory of the last tracking image
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void releaseTrackingImageMemory(TrackedObject* obj)
 {
@@ -71,10 +71,10 @@ void releaseTrackingImageMemory(TrackedObject* obj)
 /*!
 * \brief Load TrackedObject function : init and configure a TrackedObject from a config file
 * \ Config file must be organized like this : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... 
-* \param[in] address of the TrackedObject 
-* \param[in] The address of the flux in which we want to track the object
-* \param[in] The address of the flux in which we want save results of the tracking
-* \param[in] The config file to load from
+* \param[in] obj : address of the TrackedObject 
+* \param[in] rawFlux : The address of the flux in which we want to track the object
+* \param[in] binFlux : The address of the flux in which we want save results of the tracking
+* \param[in] loadFile : The config file to load from
 */
 void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcast* binFlux, FILE * loadFile)
 {
@@ -96,8 +96,8 @@ void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcas
 /*!
 * \brief Save TrackedObject function : save a TrackedObject in a config file
 * \ Config file must be organized like this : workingspace,hue,sat,val,trackingZone,shape,width,height,trackerColor,hue,sat,val,... 
-* \param[in] address of the TrackedObject 
-* \param[in] The config file to save in
+* \param[in] obj : address of the TrackedObject 
+* \param[in] saveFile : The config file to save in
 */
 void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 {
@@ -115,8 +115,8 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 
 /*!
 * \brief get a relative distance between the working space and an element of the tracker
-* \param[in] address of the TrackedObject 
-* \param[in] The nature of the distance (UP,LEFT,RIGHT)
+* \param[in] obj : address of the TrackedObject 
+* \param[in] nature : The nature of the distance (UP,LEFT,RIGHT)
 */
 float getRelativeDistance(TrackedObject* obj, int nature)
 {

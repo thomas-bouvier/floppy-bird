@@ -4,7 +4,7 @@
 /*!
 * \brief Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
 * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void binarisation(TrackedObject* obj) 
 { 
@@ -84,7 +84,7 @@ void binarisation(TrackedObject* obj)
 
 /*!
 * \brief Add a shape on the video that follow your colored object
-* \param[in] address of the TrackedObject 
+* \param[in] obj : address of the TrackedObject 
 */
 void addObjectToVideo(TrackedObject* obj) {
 	
@@ -105,9 +105,9 @@ void addObjectToVideo(TrackedObject* obj) {
 
 /*!
 * \brief start the init work space procedure
-* \param[in] (optional if tere loading from a file) address of the capture
-* \param[in] name of the window
-* \param[in] (optional) the load file
+* \param[in] capture : (optional if tere loading from a file) address of the capture
+* \param[in] window : name of the window
+* \param[in] loadFile : (optional) the load file
 */
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 	if(loadFile==NULL){
@@ -145,8 +145,8 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 
 /*!
 * \brief save the work space in a file
-* \param[in] the working space
-* \param[in] the save file
+* \param[in] workingSpace : the working space
+* \param[in] saveFile : the save file
 */
 void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile)
 {
@@ -156,7 +156,7 @@ void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile)
 
 /*!
 * \brief reverse a color
-* \param[in] the color to reverse
+* \param[in] color : a CvScalar of the color to reverse
 */
 CvScalar reverse(CvScalar color)
 {
