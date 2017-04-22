@@ -35,7 +35,7 @@ void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, long i
 
 /*!
 * \brief Time managment function : Update the stylus position depending on the delays
-* \param[in] styus : address of the stylus 
+* \param[in] stylus : address of the stylus 
 */
 void update(Stylus* stylus)
 {
