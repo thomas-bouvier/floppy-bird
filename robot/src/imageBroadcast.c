@@ -47,7 +47,8 @@ void updateImage(ImageBroadcast* flux,IplImage* img)
 */
 void showImage(ImageBroadcast* flux)
 {
-	cvShowImage(flux->windowTitle,flux->img);
+	if(flux->windowTitle != NULL) 
+		cvShowImage(flux->windowTitle,flux->img);
 }
 
 /*
@@ -125,7 +126,11 @@ void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param)
 */
 void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture)
 {
-	flux->img = raspiCamCvQueryFrame(capture);
-	if(flux->workingSpace != NULL)
-		cvSetImageROI(flux->img,*(flux->workingSpace));
+	if(capture != NULL){	
+		flux->img = raspiCamCvQueryFrame(capture);
+		if(flux->workingSpace != NULL)
+			cvSetImageROI(flux->img,*(flux->workingSpace));
+	} else {	/* capture NULL */
+		fprintf(stderr,"Error : capture NULL");
+	}
 }

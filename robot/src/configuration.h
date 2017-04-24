@@ -30,8 +30,6 @@
 #define WIDTH_BIRD_TRACKING_ZONE 50
 #define WIDTH_PIPE_TRACKING_ZONE 115
 
-enum {ELLIPSE,RECTANGLE};
-
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
 /* Tolerances for color analysis (HSV format)*/
