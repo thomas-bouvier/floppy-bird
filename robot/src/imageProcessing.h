@@ -16,6 +16,11 @@
 
 typedef struct TrackedObject TrackedObject;
 
+/*!
+* \brief Define the differents type of object we can ADD to an image
+*/
+enum {ELLIPSE,RECTANGLE,NONE};
+
 void binarisation(TrackedObject* obj);
 void addObjectToVideo(TrackedObject* obj);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile);

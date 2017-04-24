@@ -100,8 +100,6 @@ int main(int argc, char *argv[]){
 		updateTracking(&pipeTracker);
 		showImage(&cameraFlux);
 		printf("pipe : h%f w%f ; bird : h%f,w%f\n",getRelativeDistance(&pipeTracker,UP),getRelativeDistance(&pipeTracker,LEFT)/getRelativeDistance(&birdTracker,RIGHT),getRelativeDistance(&birdTracker,UP),getRelativeDistance(&birdTracker,LEFT));
-		releaseTrackingImageMemory(&birdTracker);
-		releaseTrackingImageMemory(&pipeTracker);
 		
 		char key = cvWaitKey(1);
 		
@@ -134,7 +132,12 @@ int main(int argc, char *argv[]){
 		fclose(saveFile);
 	}
     cvDestroyAllWindows();
+    /* Release memory */
+    releaseTrackingImageMemory(&birdTracker);
+	releaseTrackingImageMemory(&pipeTracker);
 	raspiCamCvReleaseCapture(&capture);
+	
+	/* disabling servomotor */
 	disable(&stylus);
 	
 	return 0; 

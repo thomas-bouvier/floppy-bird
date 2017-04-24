@@ -34,8 +34,8 @@ struct ImageBroadcast{
 struct VolatileRect{
 	CvRect rect;			/*!< The rect being defined */
 	CvPoint origin;			/*!< The origin of the rectangle (left up corner) */
-	int originDefined;		/*!< Tells if origin is defined or not */
-	int rectDefined;		/*!< Tells if the rect is completely defined or not */
+	boolean originDefined;		/*!< Tells if origin is defined or not */
+	boolean rectDefined;		/*!< Tells if the rect is completely defined or not */
 };
 
 void updateImage(ImageBroadcast* flux,IplImage* img);

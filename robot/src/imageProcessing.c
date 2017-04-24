@@ -14,7 +14,8 @@ void binarisation(TrackedObject* obj)
     int sumX = 0, sumY = 0;
     obj->nbPixels = 0;
     
-	
+	if(obj->binFlux->img != NULL)
+		releaseTrackingImageMemory(obj);
     obj->binFlux->img = cvCreateImage(cvGetSize(obj->rawFlux->img), obj->rawFlux->img->depth, 1);	/* Create the mask &initialize it to white (no color detected) */
 	
     /* Create the hsv image */
@@ -99,6 +100,8 @@ void addObjectToVideo(TrackedObject* obj) {
 				CvPoint rightDownCorner = cvPoint(obj->origin.x+(obj->width/2),obj->origin.y+(obj->height/2));
 				cvRectangle(obj->rawFlux->img,leftUpCorner,rightDownCorner, reverse(obj->trackerColor), 1,8,0);	/* Draw a rectangle frow the origin */
 				break;
+			case NONE:
+				break;
 		}
 	}
 }
@@ -114,13 +117,13 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 		struct VolatileRect workingSpace;
 		struct ImageBroadcast flux;
 		
-		workingSpace.originDefined = 0;
-		workingSpace.rectDefined = 0;
+		workingSpace.originDefined = false;
+		workingSpace.rectDefined = false;
 		initImageBroadcast(&flux, NULL, NULL, window, NULL);
 		
 		cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
 		printf("Definition of the working space \n");
-		while(workingSpace.rectDefined == 0) {			/* wait for the definition of the workspace */
+		while(workingSpace.rectDefined == false) {			/* wait for the definition of the workspace */
 			loadImage(&flux,capture);
 			if(workingSpace.originDefined) {
 				cvRectangleR(flux.img,workingSpace.rect,WORKSPACE_DEF_COLOR,1,8,0);
@@ -129,7 +132,7 @@ CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile){
 			char keyPressed = cvWaitKey(30);
 			switch (keyPressed){
 				case 27:				/* ESC to reset the rectangle origin */
-					workingSpace.originDefined = 0;
+					workingSpace.originDefined = false;
 					break;
 			}
 		}
