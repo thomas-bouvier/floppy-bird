@@ -120,18 +120,16 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 */
 float getRelativeDistance(TrackedObject* obj, int nature)
 {
-	cvSetImageROI(obj->binFlux->img,obj->trackingZone);
 	switch(nature){
 		case UP :
-			return 1-((float)(obj->origin.y-(obj->height/2))/(obj->binFlux->img->roi->height)); 
+			return 1-((float)(obj->origin.y-(obj->height/2))/(obj->binFlux->img->height)); 
 			break;
 		case LEFT :
-			return (float)(obj->origin.x-(obj->height/2))/(obj->binFlux->img->roi->width);
+			return (float)(obj->origin.x-(obj->width/2))/(obj->binFlux->img->width);
 			break;
 		case RIGHT :
-			return (float)(obj->origin.x+(obj->height/2))/(obj->binFlux->img->roi->width);
+			return (float)(obj->origin.x+(obj->width/2))/(obj->binFlux->img->width);
 			break;
 	}
-	cvResetImageROI(obj->binFlux->img);
 	return 0;
 }
