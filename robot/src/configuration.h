@@ -27,9 +27,10 @@
 #define WORKSPACE_DEF_COLOR CV_RGB(255, 0, 0)
 #define DEFAULT_TRACKER_COLOR CV_RGB(255, 0, 0)
 
-#define WIDTH_BIRD_TRACKING_ZONE 50
-#define WIDTH_PIPE_TRACKING_ZONE 115
-
+#define WIDTH_BIRD_TRACKING_ZONE 50			/* relative width = 1/7.56 */
+#define RELATIVE_WIDTH_BIRD_TRACKING_ZONE (1/7.56)
+#define WIDTH_PIPE_TRACKING_ZONE 115		/* relative width  = 1/2.52*/
+#define RELATIVE_WIDTH_PIPE_TRACKING_ZONE (1/3.20)
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
 /* Tolerances for color analysis (HSV format)*/
