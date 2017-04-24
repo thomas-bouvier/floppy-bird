@@ -38,31 +38,31 @@ int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int
     SDL_Event event;
     SDL_PollEvent(&event);
     /* Play */
-    if(event.motion.x > 437 && event.motion.x < 587 && event.motion.y > 150 && event.motion.y < 221)
+    if(event.motion.x > 437 && event.motion.x < 587 && event.motion.y > 100 && event.motion.y < 171)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
-    printText(renderer, "Play", 150, font);
+    printText(renderer, "Play", 100, font);
     /* IA1 Demo */
-    if(event.motion.x > 365 && event.motion.x < 659 && event.motion.y > 300 && event.motion.y < 371)
+    if(event.motion.x > 365 && event.motion.x < 659 && event.motion.y > 230 && event.motion.y < 301)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
-    printText(renderer, "IA1 Demo", 300, font);
+    printText(renderer, "IA1 Demo", 230, font);
     /* IA2 Demo */
-    if(event.motion.x > 357 && event.motion.x < 667 && event.motion.y > 450 && event.motion.y < 521)
+    if(event.motion.x > 357 && event.motion.x < 667 && event.motion.y > 360 && event.motion.y < 431)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
-    printText(renderer, "IA2 Demo", 450, font);
+    printText(renderer, "IA2 Demo", 360, font);
     /* Simplified/Normal Mode */
-    if(event.motion.x > 237 && event.motion.x < 787 && event.motion.y > 600 && event.motion.y < 671)
+    if(event.motion.x > 237 && event.motion.x < 787 && event.motion.y > 490 && event.motion.y < 561)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     if((*simplifiedMode) == 1)
-        printText(renderer, "Simplified Mode", 600, font);
+        printText(renderer, "Simplified Mode", 490, font);
     else
-        printText(renderer, "Normal Mode", 600, font);
+        printText(renderer, "Normal Mode", 490, font);
     /* Predefined/Random Level */
-    if(event.motion.x > 222 && event.motion.x < 802 && event.motion.y > 750 && event.motion.y < 821)
+    if(event.motion.x > 222 && event.motion.x < 802 && event.motion.y > 620 && event.motion.y < 691)
         TTF_SetFontStyle(font, TTF_STYLE_ITALIC);
     if((*levelFromFile) == 1)
-        printText(renderer, "Predefined Level", 750, font);
+        printText(renderer, "Predefined Level", 620, font);
     else
-        printText(renderer, "Random Level", 750, font);
+        printText(renderer, "Random Level", 620, font);
     /* Displaying */
     SDL_RenderPresent(renderer);
     return actionOnMenu(event, levelFromFile, simplifiedMode);
@@ -79,15 +79,15 @@ int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
-        if(event.button.x > 437 && event.button.x < 587 && event.button.y > 150 && event.button.y < 221)
+        if(event.button.x > 437 && event.button.x < 587 && event.button.y > 100 && event.button.y < 171)
             return PLAY;
-        if(event.button.x > 365 && event.button.x < 659 && event.button.y > 300 && event.button.y < 371)
+        if(event.button.x > 365 && event.button.x < 659 && event.button.y > 230 && event.button.y < 301)
             return IA1;
-        if(event.button.x > 357 && event.button.x < 667 && event.button.y > 450 && event.button.y < 521)
+        if(event.button.x > 357 && event.button.x < 667 && event.button.y > 360 && event.button.y < 431)
             return IA2;
-        if(event.button.x > 237 && event.button.x < 787 && event.button.y > 600 && event.button.y < 671)
+        if(event.button.x > 237 && event.button.x < 787 && event.button.y > 490 && event.button.y < 561)
             *simplifiedMode = (*simplifiedMode != 1);
-        if(event.button.x > 222 && event.button.x < 802 && event.button.y > 750 && event.button.y < 821)
+        if(event.button.x > 222 && event.button.x < 802 && event.button.y > 620 && event.button.y < 691)
             *levelFromFile = (*levelFromFile != 1);
         SDL_Delay(200);
     }
