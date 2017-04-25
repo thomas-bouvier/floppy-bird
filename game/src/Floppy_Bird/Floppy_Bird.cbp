@@ -13,7 +13,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='&quot;../conf/config.txt&quot;' />
+				<Option parameters='&quot;../conf/configWindows.txt&quot;' />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

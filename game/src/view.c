@@ -48,34 +48,55 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
     drawRectangle(renderer, camera, obslow.x, obslow.y, obslow.w, obslow.h, 0, 0, 255);
     drawRectangle(renderer, camera, obsup.x, obsup.y, obsup.w, obsup.h, 0, 255, 0);
 }
-/**/
+/*!
+* \brief Draw a given sprite on a renderer
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+* \param[in] surface the image to draw
+* \param[in] x the x-coordinate for the image on the window
+* \param[in] y the y-coordinate for the image on the window
+* \param[in] w the width of the image
+* \param[in] h the height of the image
+*/
 void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Surface * surface, int x, int y, int w, int h)
 {
     SDL_Rect rect = {x - camera->x, y, w, h};
-    /*SDL_Surface * image = IMG_Load(path);*/
     SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
-    /*SDL_FreeSurface (image);*/
     SDL_DestroyTexture(texture);
 }
 
-
+/*!
+* \brief Draw the background image on all the screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+* \param[in] sprites the structure containing all the image of the game
+*/
 void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 {
-    /*char * path = NULL;
-    if(readConfig(f, path, "background :\n"))
-        drawSprite(renderer, camera, path, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-    else
-        printf("Fail to draw the background");*/
         drawSprite(renderer, camera, sprites->background, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
+/*!
+* \brief Draw a given obstacle
+* \param[out] renderer the drawing target
+* \param[in] obstacle the obstacle to draw
+* \param[in] camera the view of the scene
+* \param[in] sprites the structure containing all the image of the game
+*/
 void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites)
 {
     drawSprite(renderer, camera, sprites->pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, SCREEN_HEIGHT-obstacle->lower.y);
     drawSprite(renderer, camera, sprites->pipe1, obstacle->upper.x, 0, PIPE_WIDTH, obstacle->upper.h);
 }
 
+/*!
+* \brief Draw a given bird
+* \param[out] renderer the drawing target
+* \param[in] bird the bird to draw
+* \param[in] camera the view of the scene
+* \param[in] sprites the structure containing all the image of the game
+*/
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites)
 {
     SDL_Surface * bird_surface = NULL;
