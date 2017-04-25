@@ -5,6 +5,9 @@
 #ifndef DYNAMIC_TRACKING_H
 #define DYNAMIC_TRACKING_H
 
+#include <cv.h>
+#include "configuration.h"
+
 /*!
 * \struct DynamicTrackedObject 
 * \brief Rely all dynamic tracker specific informations 
@@ -14,6 +17,6 @@ struct DynamicTrackedObject{
 	boolean trackingRunning;		/*!<  if true, tracking is running */
 };
 
-
+boolean intersectRect(CvRect rect1, CvRect rect2);
 
 #endif /* DYNAMIC_TRACKING_H */
