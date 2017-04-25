@@ -33,6 +33,8 @@
 #define RELATIVE_WIDTH_PIPE_TRACKING_ZONE (1/3.20)
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
+#define NB_PIPE_TRACKER 3
+
 /* Tolerances for color analysis (HSV format)*/
 #define Htolerance  5
 #define Stolerance 80
