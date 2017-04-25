@@ -6,6 +6,7 @@
 #include <cv.h>
 #include <highgui.h>
 #include <sys/time.h>
+#include <time.h>
 #include "RaspiCamCV.h"
 
 #include "configuration.h"
@@ -106,21 +107,24 @@ int main(int argc, char *argv[]){
 	}
     
     if(logFile != NULL){
-		fprintf(logFile,"Bird height;Pipe height;Bird - Pipe relative distance\n");
+		fprintf(logFile,"Time (us);Bird height;Pipe height;Bird - Pipe relative distance\n");
 	}
 	int exit =0;
+	struct timeval startTime, currentTime;
+	gettimeofday(&startTime,NULL);
 	do {
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
 		updateTracking(&pipeTracker1);
 		updateTracking(&pipeTracker2);
+		gettimeofday(&currentTime,NULL);		/* update the time */
 		showImage(&cameraFlux);
 		float birdHeight =getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);
 		float pipeBirdDist = getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT);
 		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
 		if(logFile != NULL){
-			fprintf(logFile,"%f;%f;%f\n",birdHeight,pipeHeight,pipeBirdDist);
+			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
 		}
 		
 		char key = cvWaitKey(1);
