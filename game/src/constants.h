@@ -140,5 +140,22 @@ enum Mode
     QUITGAME            /*! quit the game */
 };
 
+/*!
+* The speed of scrolling of the game
+*/
+typedef enum  Speed Speed;
+
+/*!
+* \enum Speed
+* \brief The speed of scrolling of the game
+*/
+enum Speed
+{
+    LOW = 5,            /*! low speed */
+    NORMAL = 6,         /*! normal speed */
+    HIGH = 7,           /*! high speed */
+    EXTREME = 8,        /*! extreme speed */
+};
+
 
 #endif // CONSTANTS_H

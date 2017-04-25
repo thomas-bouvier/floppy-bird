@@ -15,7 +15,7 @@
 void startGame(Bird * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
 {
     initBird(bird);
-    initCamera(camera, 0, CAMERA_SPEED);
+    initCamera(camera, 0, LOW);
     initList(l, level, levelFromFile);
 }
 
@@ -30,6 +30,19 @@ void cameraScrolling(Camera * camera, Bird * bird)
 {
     camera->x += camera->speed;
     bird->x += camera->speed;
+}
+
+
+void modifySpeed(int number, Camera * camera)
+{
+    if(number > 10)
+        camera->speed = EXTREME;
+    else if(number > 5)
+        camera->speed = HIGH;
+    else if(number > 3)
+        camera->speed = NORMAL;
+    else
+        camera->speed = LOW;
 }
 
 /*!
@@ -152,8 +165,8 @@ int ratioPipeHeight (Bird * bird, List * l)
 
 /*!
 * \brief A function use to send the distance between the left side of the camera and the next pipe to the IA
-* \param[in] bird the bird current properties 
-* \param[in] camera the display current properties 
+* \param[in] bird the bird current properties
+* \param[in] camera the display current properties
 * \param[in] l the list of obstacle
 * \return return the distance between the left side of the camera and the ?pipe
 */
@@ -183,6 +196,7 @@ int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * 
     if (createObstacle(camera, l, level, *number, levelFromFile))
         (*number)++;
     *score = updateScore(*score, bird, savedObstacle, sound);
+    //modifySpeed(*number, camera);
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird), sound);
 }
