@@ -10,9 +10,11 @@ Download SDL2 for mingw (in development libraries) from https://www.libsdl.org/d
 
 Extract the folder i686-w64-mingw.
 
-Download SDL2_ttf and SDL2_mixer the same way.
+Download SDL2_ttf, SDL2_mixer and SDL2_image the same way.
 
 Create an environment variable named SDLPATH, that contains the path to the SDL folder.
+
+Don't forget to add the necessary .dll files in your project directory (SDL2.dll, SDL2_ttf.dll, SDL2_mixer.dll, SDL2_image.dll, libfreetype-6.dll and libpng16-16.dll)
 
 Now you can compile and run the project with the custom Makefile provided.
 
@@ -28,18 +30,19 @@ Extract the archive and cd to the folder that got extracted. Then :
 	make
 	sudo make install
 	
-Also install the complementary libraries SDL2_mixer and SDL2_ttf
+Also install the complementary libraries SDL2_mixer, SDL2_ttf and SDL2_image
 
 	apt-get install libsdl2-ttf-dev
 	apt-get install libsdl2-mixer-dev
+	apt-get install libsdl2-image-dev
 
 Now you can compile and run the project with the Makefile provided with the sources.
 
 ### Configuration
 
-A configuration file is provided in game/src/conf.
+Two configuration file is provided in game/src/conf.
 
-The paths for the game (level, sprites...) are made by default for CodeBlocks, but feel free to modify these paths if you use an other configuration.
+One is made for Windows with Codeblocks, the other for Linux, but feel free to modify these paths if you change anything.
 
 ## Robot
 
