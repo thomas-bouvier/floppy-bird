@@ -51,8 +51,9 @@ int main(int argc, char *argv[]){
 	int c;
 	FILE* loadFile = NULL;
 	FILE* saveFile = NULL;
+	FILE* logFile = NULL;
 	
-	while((c = getopt(argc,argv,"l:s:")) != -1)
+	while((c = getopt(argc,argv,"l:s:d:")) != -1)
 		switch(c){
 			case 'l':
 				loadFile = fopen(optarg,"rb");
@@ -65,6 +66,13 @@ int main(int argc, char *argv[]){
 				saveFile = fopen(optarg,"wb");
 				if(loadFile!=NULL){
 					fprintf(stderr,"cannot load and save a file at the same time");
+					return 1;
+				}
+				break;
+			case 'd':		/* Save data into a log file */
+				logFile = fopen(optarg,"w");
+				if(logFile==NULL){
+					fprintf(stderr,"cannot open logfile %s\n",optarg);
 					return 1;
 				}
 				break;
@@ -97,7 +105,9 @@ int main(int argc, char *argv[]){
 		loadTrackedObject(&pipeTracker2,&cameraFlux,&pipeBinFlux,loadFile);
 	}
     
-    
+    if(logFile != NULL){
+		fprintf(logFile,"Bird height;Pipe height;Bird - Pipe relative distance\n");
+	}
 	int exit =0;
 	do {
 		loadImage(&cameraFlux,capture);
@@ -105,7 +115,13 @@ int main(int argc, char *argv[]){
 		updateTracking(&pipeTracker1);
 		updateTracking(&pipeTracker2);
 		showImage(&cameraFlux);
-		printf("pipe : h%f w%f ; bird : h%f,w%f\n",getRelativeDistance(&pipeTracker1,UP),getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT),getRelativeDistance(&birdTracker,UP),getRelativeDistance(&birdTracker,LEFT));
+		float birdHeight =getRelativeDistance(&birdTracker,UP);
+		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);
+		float pipeBirdDist = getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT);
+		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
+		if(logFile != NULL){
+			fprintf(logFile,"%f;%f;%f\n",birdHeight,pipeHeight,pipeBirdDist);
+		}
 		
 		char key = cvWaitKey(1);
 		
@@ -141,6 +157,8 @@ int main(int argc, char *argv[]){
 		saveTrackedObject(&pipeTracker2,saveFile);
 		fclose(saveFile);
 	}
+	if(logFile != NULL)
+		fclose(logFile);
     cvDestroyAllWindows();
     /* Release memory */
     releaseTrackingImageMemory(&birdTracker);
