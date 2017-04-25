@@ -6,6 +6,7 @@
 #include <cv.h>
 #include <highgui.h>
 #include <sys/time.h>
+#include <time.h>
 #include "RaspiCamCV.h"
 
 #include "configuration.h"
@@ -51,8 +52,9 @@ int main(int argc, char *argv[]){
 	int c;
 	FILE* loadFile = NULL;
 	FILE* saveFile = NULL;
+	FILE* logFile = NULL;
 	
-	while((c = getopt(argc,argv,"l:s:")) != -1)
+	while((c = getopt(argc,argv,"l:s:d:")) != -1)
 		switch(c){
 			case 'l':
 				loadFile = fopen(optarg,"rb");
@@ -65,6 +67,13 @@ int main(int argc, char *argv[]){
 				saveFile = fopen(optarg,"wb");
 				if(loadFile!=NULL){
 					fprintf(stderr,"cannot load and save a file at the same time");
+					return 1;
+				}
+				break;
+			case 'd':		/* Save data into a log file */
+				logFile = fopen(optarg,"w");
+				if(logFile==NULL){
+					fprintf(stderr,"cannot open logfile %s\n",optarg);
 					return 1;
 				}
 				break;
@@ -97,15 +106,26 @@ int main(int argc, char *argv[]){
 		loadTrackedObject(&pipeTracker2,&cameraFlux,&pipeBinFlux,loadFile);
 	}
     
-    
+    if(logFile != NULL){
+		fprintf(logFile,"Time (us);Bird height;Pipe height;Bird - Pipe relative distance\n");
+	}
 	int exit =0;
+	struct timeval startTime, currentTime;
+	gettimeofday(&startTime,NULL);
 	do {
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
 		updateTracking(&pipeTracker1);
 		updateTracking(&pipeTracker2);
+		gettimeofday(&currentTime,NULL);		/* update the time */
 		showImage(&cameraFlux);
-		printf("pipe : h%f w%f ; bird : h%f,w%f\n",getRelativeDistance(&pipeTracker1,UP),getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT),getRelativeDistance(&birdTracker,UP),getRelativeDistance(&birdTracker,LEFT));
+		float birdHeight =getRelativeDistance(&birdTracker,UP);
+		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);
+		float pipeBirdDist = getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT);
+		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
+		if(logFile != NULL){
+			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
+		}
 		
 		char key = cvWaitKey(1);
 		
@@ -141,6 +161,8 @@ int main(int argc, char *argv[]){
 		saveTrackedObject(&pipeTracker2,saveFile);
 		fclose(saveFile);
 	}
+	if(logFile != NULL)
+		fclose(logFile);
     cvDestroyAllWindows();
     /* Release memory */
     releaseTrackingImageMemory(&birdTracker);
