@@ -1,4 +1,4 @@
-#include "dynamicTracking.h"
+#include "pipeTracking.h"
 
 /*!
 * \brief Tell if the two rectangles are currently intersecting each other
@@ -30,3 +30,21 @@ boolean intersectRect(CvRect rect1, CvRect rect2)
 		return intersectRect(rect2,rect1);
 	}
 }
+
+/*!
+* \brief Init a pipeDynamicTracker struct
+* \param[in] pipeDynamicTracker : the addrss of the struct to initialise
+* \param[in] pipeTracker : an array of TrackedObject (size = NB_PIPE_TRACKER)
+*/
+void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER])
+{
+	int i;
+	pipeDynamicTracker->pipeTracker = pipeTracker;
+	pipeDynamicTracker->trackingRunning[0] = true;
+	for(i = 1; i < NB_PIPE_TRACKER;i++){
+		pipeDynamicTracker->trackingRunning[i] = false;
+	}
+}
+
+
+void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
