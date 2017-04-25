@@ -59,6 +59,7 @@ void updateTracking(TrackedObject* obj)
 	}
 }
 
+
 /*!
 * \brief Release the memory of the last tracking image
 * \param[in] obj : address of the TrackedObject 

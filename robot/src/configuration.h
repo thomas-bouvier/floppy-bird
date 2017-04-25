@@ -21,8 +21,8 @@
 #define NB_PIXEL_THRESHOLD 10
 #define BIRD_CIRCLE_DIAMETER 15
 
-#define CAPTURE_WIDTH 960/2		/* Must be a multiple of 32 */
-#define CAPTURE_HEIGHT 720/2	/* Must be a multiple of 32 */
+#define CAPTURE_WIDTH 	960/2 //256		/* Must be a multiple of 32 */
+#define CAPTURE_HEIGHT 	720/2 //192		/* Must be a multiple of 32 */
 
 #define WORKSPACE_DEF_COLOR CV_RGB(255, 0, 0)
 #define DEFAULT_TRACKER_COLOR CV_RGB(255, 0, 0)
