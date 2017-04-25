@@ -336,8 +336,6 @@ int main(int argc, char ** argv)
                     running = 0;
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
-
-
                 if(mode == IA1 && (action_break == 0 || hit_saved == 1))
                 {
                     q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
