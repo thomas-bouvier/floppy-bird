@@ -136,7 +136,8 @@ enum Mode
     WAIT,               /*! waiting for a choice */
     PLAY,               /*! game played normally, with the user */
     IA1,                /*! game played with the first IA (Q learning) */
-    IA2                 /*! game played with the second IA (NEAT) */
+    IA2,                /*! game played with the second IA (NEAT) */
+    QUITGAME            /*! quit the game */
 };
 
 

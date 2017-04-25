@@ -267,6 +267,8 @@ int main(int argc, char ** argv)
     {
         mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
         init = detectTouch();
+        if(mode == QUITGAME)
+            init = QUIT;
     }
 
     if(init == QUIT)
@@ -290,8 +292,10 @@ int main(int argc, char ** argv)
         if (simplifiedMode)
         {
             drawForTI(renderer, &camera);
-            if(mode == PLAY) running = waitForTI();
-	    	if(mode == IA1) running = 1;
+            if(mode == PLAY)
+                running = waitForTI();
+	    	if(mode == IA1)
+                running = 1;
             displayGame(renderer, &bird, &l, &camera, score, font);
         }
         else
@@ -365,22 +369,20 @@ int main(int argc, char ** argv)
             SDL_Delay(1500);
         }
 		if(hit && mode == IA1)
-		{
 			saveQMatrix(matrixQ, qmatrixPath);
-		}
     }
 
     /* Quit the game */
-	if(mode == IA1) freeMatrixQ(matrixQ);
+	if(mode == IA1)
+        freeMatrixQ(matrixQ);
 
-    quitGame(window, renderer);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);
     fclose(config);
-    if(levelFromFile)
-		fclose(level);
+    fclose(level);
     fclose(scoreFile);
+    quitGame(window, renderer);
 
     return EXIT_SUCCESS;
 }
