@@ -1,16 +1,21 @@
 Floppy_Bird/
 <<<<<<< HEAD
+<<<<<<< HEAD
 html/
 =======
+=======
+bin/
+build/
+main
+>>>>>>> neat
 *.dot
 >>>>>>> q_learning
+
+doc/
 
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-Makefile
-main
 
 # Code::Blocks
 *.depend
