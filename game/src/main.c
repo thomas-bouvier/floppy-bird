@@ -56,20 +56,20 @@ int main(int argc, char ** argv)
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
-	int levelFromFile = 1;
-	/* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
-	int simplifiedMode = 1;
+    int levelFromFile = 1;
+    /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
+    int simplifiedMode = 1;
     int score;
     Obstacle * savedObstacle = NULL;
 
-	/* Initialization IA1 */
-	MatrixQ * matrixQ = NULL;
-	int last_states[NB_SAVED_STATES];
-	int last_action[NB_SAVED_ACTIONS];
-	char qmatrixPath[100];
-	int hit_saved=0;
-	int action_break=0;
-	srand(time(NULL));
+    /* Initialization IA1 */
+    MatrixQ * matrixQ = NULL;
+    int last_states[NB_SAVED_STATES];
+    int last_action[NB_SAVED_ACTIONS];
+    char qmatrixPath[100];
+    int hit_saved=0;
+    int action_break=0;
+    srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
     according to the parameter passed to main (or not) */
@@ -115,7 +115,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-	/* SDL_TTF initialization */
+    /* SDL_TTF initialization */
     if (TTF_Init() != 0)
     {
         fprintf(stderr, "SDL_TTF initialization failure\n");
@@ -274,49 +274,49 @@ int main(int argc, char ** argv)
     if(init == QUIT)
         running = 0;
 
-	/* Setup IA1 */
-	if(mode == IA1)
-	{
-		/* Open the file that contains qMatrix data */
-		readConfig(config, qmatrixPath, "qMatrix :\n");
-		matrixQ = loadQMatrix(qmatrixPath);
-		init_array(last_states, NB_SAVED_STATES, -1);
-		init_array(last_action, NB_SAVED_ACTIONS, -1);
-	}
+    /* Setup IA1 */
+    if(mode == IA1)
+    {
+        /* Open the file that contains qMatrix data */
+        readConfig(config, qmatrixPath, "qMatrix :\n");
+        matrixQ = loadQMatrix(qmatrixPath);
+        init_array(last_states, NB_SAVED_STATES, -1);
+        init_array(last_action, NB_SAVED_ACTIONS, -1);
+    }
 
     while(running)
     {
-    	score = 0;
+        score = 0;
         startGame(&bird, &camera, &l, level, levelFromFile);
         savedObstacle = nextBirdObstacle(&l, &bird);
         if (simplifiedMode)
         {
             drawForTI(renderer, &camera);
-            if(mode == PLAY)
-                running = waitForTI();
-	    	if(mode == IA1)
-                running = 1;
+                if(mode == PLAY)
+                    running = waitForTI();
+                if(mode == IA1)
+                    running = 1;
             displayGame(renderer, &bird, &l, &camera, score, font);
         }
         else
             displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
 
         if(mode == PLAY) /* Wait the first jump to start the game*/
-		{
-			emptyEvent();
-		    init = NOTHING;
-		    while(init == NOTHING && running)
-		    {
-		        init = detectTouch();
-		        if(init == JUMP)
-		        {
-		            bird.dir_y = BIRD_JUMP;
-		            playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
-		        }
-		        if(init == QUIT)
-		            running = 0;
-		    }
-		}
+        {
+            emptyEvent();
+            init = NOTHING;
+            while(init == NOTHING && running)
+            {
+                init = detectTouch();
+                if(init == JUMP)
+                {
+                    bird.dir_y = BIRD_JUMP;
+                    playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
+                }
+                if(init == QUIT)
+                running = 0;
+            }
+        }
 
         /* Loop of game */
         number = OBSTACLE_NUMBER;
@@ -337,14 +337,13 @@ int main(int argc, char ** argv)
                 if(event == PAUSE)
                     running = (waiting() != QUIT);
 
-
-				if(mode == IA1 && (action_break == 0 || hit_saved == 1))
-				{
-					q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
-					if(last_action[0] != -1)
-                        event = last_action[0];
-				}
-				if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
+                if(mode == IA1 && (action_break == 0 || hit_saved == 1))
+                {
+                    q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
+                    if(last_action[0] != -1)
+                    event = last_action[0];
+                }
+                if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
                     action_break=0;
 
                 hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
@@ -368,12 +367,12 @@ int main(int argc, char ** argv)
             SDL_RenderPresent(renderer);
             SDL_Delay(1500);
         }
-		if(hit && mode == IA1)
-			saveQMatrix(matrixQ, qmatrixPath);
+        if(hit && mode == IA1)
+            saveQMatrix(matrixQ, qmatrixPath);
     }
 
     /* Quit the game */
-	if(mode == IA1)
+    if(mode == IA1)
         freeMatrixQ(matrixQ);
 
     Mix_FreeChunk(jump_sound);
