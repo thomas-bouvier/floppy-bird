@@ -1,9 +1,8 @@
 Floppy_Bird/
-<<<<<<< HEAD
 html/
-=======
+
+score.txt
 *.dot
->>>>>>> q_learning
 
 .DS_Store
 Thumbs.db
