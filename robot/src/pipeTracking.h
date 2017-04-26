@@ -25,5 +25,6 @@ boolean intersectRect(CvRect rect1, CvRect rect2);
 void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER]);
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
 boolean centerTrackingZoneOnTracker(TrackedObject* obj);
+CvPoint nextPipe(PipeDynamicTracker* pipeDynamicTracker, int minPosition);
 
 #endif /* DYNAMIC_TRACKING_H */

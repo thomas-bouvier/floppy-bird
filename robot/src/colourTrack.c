@@ -129,16 +129,17 @@ int main(int argc, char *argv[]){
 		long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
 		gettimeofday(&lastTime,NULL);
 		float frameRate = 1000000.0/frameTime;
-		printf("FPS : %f \n",frameRate);
+		printf("FPS : %f \t",frameRate);
 		showImage(&cameraFlux);
-		/*float birdHeight =getRelativeDistance(&birdTracker,UP);
-		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);
-		float pipeBirdDist = getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT);
+		CvPoint pipe = nextPipe(&pipeDynTracker,birdTracker.origin.x - birdTracker.width/2);
+		float birdHeight = getRelativeDistance(&birdTracker,UP);
+		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height)); 
+		float pipeBirdDist = (float)pipe.x/birdTracker.origin.x;
 		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
 		if(logFile != NULL){
 			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
 		}
-		*/
+		
 		char key = cvWaitKey(1);
 		
 		switch(key)	

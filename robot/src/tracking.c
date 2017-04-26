@@ -54,7 +54,8 @@ void disableTracking(TrackedObject* obj)
 void updateTracking(TrackedObject* obj)
 {
 	if(obj->computeTracking){
-		binarisation(obj,true);
+		binarisation(obj);
+		findObject(obj,true);
 		addObjectToVideo(obj);
 		showImage(obj->binFlux);
 	}
@@ -93,6 +94,7 @@ void loadTrackedObject(TrackedObject* obj,ImageBroadcast* rawFlux, ImageBroadcas
 	fread(&(obj->width),sizeof(int),1,loadFile);
 	fread(&(obj->height),sizeof(int),1,loadFile);
 	fread(&(obj->trackerColor),sizeof(CvScalar),1,loadFile);
+	printf("TrackedObject loaded : ct%d, h%d, s%d, v%d, x%d, y%d, w%d, h%d\n",obj->computeTracking,obj->h,obj->h,obj->h,obj->trackingZone.x,obj->trackingZone.y,obj->trackingZone.width,obj->trackingZone.height);
 }
 
 /*!
@@ -113,6 +115,8 @@ void saveTrackedObject(TrackedObject* obj,FILE * saveFile)
 		fwrite(&(obj->width),sizeof(int),1,saveFile);
 		fwrite(&(obj->trackerColor),sizeof(CvScalar),1,saveFile);
 	}
+	printf("TrackedObject saved : ct%d, h%d, s%d, v%d, x%d, y%d, w%d, h%d\n",obj->computeTracking,obj->h,obj->h,obj->h,obj->trackingZone.x,obj->trackingZone.y,obj->trackingZone.width,obj->trackingZone.height);
+
 }
 
 /*!

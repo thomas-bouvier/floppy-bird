@@ -3,16 +3,13 @@
 
 /*!
 * \brief Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
-* From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
+* From this image, we 
 * \param[in] obj : address of the TrackedObject 
 */
-void binarisation(TrackedObject* obj, boolean displayTrackZone) 
+void binarisation(TrackedObject* obj) 
 { 
-    int x, y;
     IplImage *hsv;
     IplConvKernel *kernel;
-    int sumX = 0, sumY = 0;
-    obj->nbPixels = 0;
     
 	if(obj->binFlux->img != NULL)
 		releaseTrackingImageMemory(obj);
@@ -31,7 +28,24 @@ void binarisation(TrackedObject* obj, boolean displayTrackZone)
     /* Morphological opening (inverse because we have white pixels on black background) */
     cvDilate(obj->binFlux->img, obj->binFlux->img, kernel, 2);
     cvErode(obj->binFlux->img, obj->binFlux->img, kernel, 2);  
-    cvSetImageROI(obj->binFlux->img,obj->trackingZone);
+    
+    /* Release memory */
+    cvReleaseStructuringElement(&kernel);
+    cvReleaseImage(&hsv);
+}
+
+/*!
+* \brief get the number of pixel detected and the center of gravity of these pixel + display the tracking zone eventualy
+* From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
+* \param[in] obj : address of the TrackedObject 
+* \param[in] displayTrackZone : true if you want to display the trakingZone
+*/
+void findObject(TrackedObject * obj, boolean displayTrackZone)
+{
+	int x, y;
+	int sumX = 0, sumY = 0;
+    obj->nbPixels = 0;
+	cvSetImageROI(obj->binFlux->img,obj->trackingZone);
 	
     /* We go through the mask to look for the tracked object and get its gravity center */
     for(x = obj->binFlux->img->roi->xOffset; x < obj->binFlux->img->roi->width + obj->binFlux->img->roi->xOffset; x++) {
@@ -49,10 +63,6 @@ void binarisation(TrackedObject* obj, boolean displayTrackZone)
 	/* Show the tracking zone in the full colored image*/
 	if(displayTrackZone)
 		cvRectangleR(obj->rawFlux->img,obj->trackingZone,obj->trackerColor,1,8,0);
-
-	/* Release memory */
-    cvReleaseStructuringElement(&kernel);
-    cvReleaseImage(&hsv);
  
     // If there is no pixel, we return a center outside the image, else we return the center of gravity
     if(obj->nbPixels > 0){

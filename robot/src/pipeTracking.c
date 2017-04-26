@@ -52,11 +52,12 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 */
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 	int i, j;	
+	binarisation(pipeDynamicTracker->pipeTracker[0]);
 	for(i = 0; i < NB_PIPE_TRACKER;i++){
 		TrackedObject* obj = pipeDynamicTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
 		if(pipeDynamicTracker->trackingRunning[i]){
 			if(obj->computeTracking){
-				binarisation(obj,true);
+				findObject(obj,true);
 				addObjectToVideo(obj);
 				pipeDynamicTracker->trackingRunning[i] = centerTrackingZoneOnTracker(obj);
 			}
@@ -95,7 +96,27 @@ boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 	}
 }
 
-
+/*!
+* \brief search the next pipe
+* \param[in] pipeDynamicTracker : the address of the struct to compute
+* \param[in] minPosition : the low limit before which a pipe is not considered anymore
+* \return the origin (upper left corner) of the pipe
+*/
+CvPoint nextPipe(PipeDynamicTracker* pipeDynamicTracker, int minPosition)
+{
+	int i;
+	int minX = pipeDynamicTracker->pipeTracker[0]->binFlux->img->width;
+	int y = 0;
+	for(i = 0; i < NB_PIPE_TRACKER;i++){
+		TrackedObject* obj = pipeDynamicTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
+		int x = obj->origin.x-(obj->width/2);
+		if(x > minPosition && x < minX){
+			minX = x;
+			y = obj->origin.y-(obj->height/2);
+		}
+	}
+	return cvPoint(minX,y);
+}
 
 
 
