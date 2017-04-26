@@ -42,7 +42,7 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 	pipeDynamicTracker->pipeTracker = pipeTracker;
 	pipeDynamicTracker->trackingRunning[0] = true;
 	for(i = 1; i < NB_PIPE_TRACKER;i++){
-		pipeDynamicTracker->trackingRunning[i] = false;
+		pipeDynamicTracker->trackingRunning[i] = true;
 	}
 }
 
@@ -51,16 +51,23 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 * \param[in] pipeDynamicTracker : the addrss of the struct to initialise
 */
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
-	int i;
+	int i, j;
 	for(i = 0; i < NB_PIPE_TRACKER;i++){
 		TrackedObject* obj = pipeDynamicTracker->pipeTracker[i];
 		if(pipeDynamicTracker->trackingRunning[i]){
 			if(obj->computeTracking){
 				binarisation(obj,true);
 				addObjectToVideo(obj);
-				centerTrackingZoneOnTracker(obj);
+				pipeDynamicTracker->trackingRunning[i] = centerTrackingZoneOnTracker(obj);
 			}
-		} else 
+		} else {
+			boolean beginTrack = false;
+			for(j = 0; j < NB_PIPE_TRACKER;j++){	/* Search if a tracker is running the the same zone */
+				if(j != i){
+					beginTrack = pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->workingSpace,pipeDynamicTracker->pipeTracker[j]);
+				}
+			}
+		}
 	}
 	showImage(pipeDynamicTracker->pipeTracker[0]->binFlux);
 }
@@ -68,16 +75,19 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 /*!
 * \brief shift the tracking zone to center it on the tracker
 * \param[in] obj : the addrss of the TrackedObject 
+* \return trackingRunning
 */
-void centerTrackingZoneOnTracker(TrackedObject* obj)
+boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 {
 	if(obj->nbPixels > THRESHOLD_NB_PIXELS_PIPE){
 		int newOriginX = obj->origin.x - obj->trackingZone->width/2;
 		if(newOriginX < 0)
 			newOriginX = 0;
 		obj->trackingZone.x = newOriginX;
+		return true;
 	} else {
 		obj->trackingZone.x = obj->binFlux->width - obj->trackingZone->width;
+		return false;
 	}
 }
 

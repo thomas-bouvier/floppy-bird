@@ -22,6 +22,6 @@ struct PipeDynamicTracker{
 boolean intersectRect(CvRect rect1, CvRect rect2);
 void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER]);
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
-void centerTrackingZoneOnTracker(TrackedObject* obj);
+boolean centerTrackingZoneOnTracker(TrackedObject* obj);
 
 #endif /* DYNAMIC_TRACKING_H */
