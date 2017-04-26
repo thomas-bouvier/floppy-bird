@@ -11,7 +11,7 @@ boolean intersectRect(CvRect rect1, CvRect rect2)
 	if(rect1.x<= rect2.x){
 		if(rect2.x <= rect1.x + rect1.width){
 			if(rect1.y<= rect2.y){
-				if(rect2.y <= rect1.y + rect1.width{
+				if(rect2.y <= rect1.y + rect1.width){
 					return true;
 				} else {
 					return false;
@@ -64,9 +64,10 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 			boolean beginTrack = false;
 			for(j = 0; j < NB_PIPE_TRACKER;j++){	/* Search if a tracker is running the the same zone */
 				if(j != i){
-					beginTrack = pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->workingSpace,pipeDynamicTracker->pipeTracker[j]);
+					beginTrack = !(pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->trackingZone,pipeDynamicTracker->pipeTracker[j]->trackingZone));
 				}
 			}
+			pipeDynamicTracker->trackingRunning[i] = beginTrack;
 		}
 	}
 	showImage(pipeDynamicTracker->pipeTracker[0]->binFlux);
@@ -80,13 +81,13 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 {
 	if(obj->nbPixels > THRESHOLD_NB_PIXELS_PIPE){
-		int newOriginX = obj->origin.x - obj->trackingZone->width/2;
+		int newOriginX = obj->origin.x - obj->trackingZone.width/2;
 		if(newOriginX < 0)
 			newOriginX = 0;
 		obj->trackingZone.x = newOriginX;
 		return true;
 	} else {
-		obj->trackingZone.x = obj->binFlux->width - obj->trackingZone->width;
+		obj->trackingZone.x = obj->binFlux->img->width - obj->trackingZone.width;
 		return false;
 	}
 }

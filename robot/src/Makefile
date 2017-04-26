@@ -13,7 +13,7 @@ endif
 
 all: testCamera colourTrack
 
-colourTrack: colourTrack.o stylus.o imageBroadcast.o imageProcessing.o tracking.o
+colourTrack: colourTrack.o stylus.o imageBroadcast.o imageProcessing.o tracking.o pipeTracking.o
 	$(CC) $^ $(LDFLAGS) $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -L./lib/ lib/libraspicamcv.a -o $@
 
 testCamera: testCamera.o stylus.o
@@ -21,10 +21,11 @@ testCamera: testCamera.o stylus.o
 
 testCamera.o: stylus.h configuration.h
 stylus.o: stylus.h configuration.h
-colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h imageProcessing.h
-imageBroadcast.o: imageBroadcast.h configuration.h tracking.h 
+colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h imageProcessing.h pipeTracking.h
+imageBroadcast.o: imageBroadcast.h configuration.h tracking.h pipeTracking.h
 imageProcessing.o: imageProcessing.h tracking.h imageBroadcast.h
 tracking.o: tracking.h configuration.h imageBroadcast.h imageProcessing.h
+pipeTracking.o: pipeTracking.h configuration.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CFLAGS_OPENCV) -c $< -o $@

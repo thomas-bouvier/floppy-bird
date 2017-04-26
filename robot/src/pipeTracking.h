@@ -7,7 +7,9 @@
 
 #include <cv.h>
 #include "configuration.h"
+#include "tracking.h"
 
+typedef struct PipeDynamicTracker PipeDynamicTracker;
 typedef struct TrackedObject TrackedObject;
 
 /*!
@@ -15,7 +17,7 @@ typedef struct TrackedObject TrackedObject;
 * \brief struct specific to the tracking of pipes (dynamic tracking) 
 */
 struct PipeDynamicTracker{
-	TrackedObject* pipeTracker[NB_PIPE_TRACKER];		/*!<  pipe trackers */
+	TrackedObject** pipeTracker;		/*!<  array of pipe trackers */
 	boolean trackingRunning[NB_PIPE_TRACKER];			/*!<  for each tracker, if true, tracking is running */
 };
 

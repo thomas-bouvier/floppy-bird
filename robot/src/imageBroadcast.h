@@ -12,6 +12,7 @@
 #include "configuration.h"
 #include "tracking.h"
 #include "RaspiCamCV.h"
+#include "pipeTracking.h"
 
 typedef struct ImageBroadcast ImageBroadcast;
 
@@ -43,6 +44,7 @@ void showImage(ImageBroadcast* flux);
 void initImageBroadcast(ImageBroadcast* flux, IplImage* img, CvRect* workingSpace, char* windowTitle, CvFont * font);
 void initFont(ImageBroadcast* flux);
 void getObjectColor(int event, int x, int y, int flags, void *param);
+void getPipeColor(int event, int x, int y, int flags, void *param);
 void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param);
 void loadImage(ImageBroadcast* flux,RaspiCamCvCapture * capture);
 
