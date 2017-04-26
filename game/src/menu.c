@@ -34,6 +34,7 @@ void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * fo
 */
 int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int * simplifiedMode)
 {
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     SDL_Event event;
     SDL_PollEvent(&event);
