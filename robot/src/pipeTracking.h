@@ -8,6 +8,8 @@
 #include <cv.h>
 #include "configuration.h"
 
+typedef struct TrackedObject TrackedObject;
+
 /*!
 * \struct PipeDynamicTracker 
 * \brief struct specific to the tracking of pipes (dynamic tracking) 
@@ -20,5 +22,6 @@ struct PipeDynamicTracker{
 boolean intersectRect(CvRect rect1, CvRect rect2);
 void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER]);
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
+void centerTrackingZoneOnTracker(TrackedObject* obj);
 
 #endif /* DYNAMIC_TRACKING_H */

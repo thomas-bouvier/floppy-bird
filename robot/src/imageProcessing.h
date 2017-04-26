@@ -21,7 +21,7 @@ typedef struct TrackedObject TrackedObject;
 */
 enum {ELLIPSE,RECTANGLE,NONE};
 
-void binarisation(TrackedObject* obj);
+void binarisation(TrackedObject* obj, boolean displayTrackZone);
 void addObjectToVideo(TrackedObject* obj);
 CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window, FILE* loadFile);
 void saveWorkingSpace(CvRect* workingSpace, FILE* saveFile);

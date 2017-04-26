@@ -46,5 +46,42 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 	}
 }
 
+/*!
+* \brief update a pipeDynamicTracker
+* \param[in] pipeDynamicTracker : the addrss of the struct to initialise
+*/
+void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
+	int i;
+	for(i = 0; i < NB_PIPE_TRACKER;i++){
+		TrackedObject* obj = pipeDynamicTracker->pipeTracker[i];
+		if(pipeDynamicTracker->trackingRunning[i]){
+			if(obj->computeTracking){
+				binarisation(obj,true);
+				addObjectToVideo(obj);
+				centerTrackingZoneOnTracker(obj);
+			}
+		} else 
+	}
+	showImage(pipeDynamicTracker->pipeTracker[0]->binFlux);
+}
 
-void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
+/*!
+* \brief shift the tracking zone to center it on the tracker
+* \param[in] obj : the addrss of the TrackedObject 
+*/
+void centerTrackingZoneOnTracker(TrackedObject* obj)
+{
+	if(obj->nbPixels > THRESHOLD_NB_PIXELS_PIPE){
+		int newOriginX = obj->origin.x - obj->trackingZone->width/2;
+		if(newOriginX < 0)
+			newOriginX = 0;
+		obj->trackingZone.x = newOriginX;
+	} else {
+		obj->trackingZone.x = obj->binFlux->width - obj->trackingZone->width;
+	}
+}
+
+
+
+
+

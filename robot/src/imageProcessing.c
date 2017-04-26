@@ -6,7 +6,7 @@
 * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
 * \param[in] obj : address of the TrackedObject 
 */
-void binarisation(TrackedObject* obj) 
+void binarisation(TrackedObject* obj, boolean displayTrackZone) 
 { 
     int x, y;
     IplImage *hsv;
@@ -47,7 +47,8 @@ void binarisation(TrackedObject* obj)
     }
     
 	/* Show the tracking zone in the full colored image*/
-	cvRectangleR(obj->rawFlux->img,obj->trackingZone,obj->trackerColor,1,8,0);
+	if(displayTrackZone)
+		cvRectangleR(obj->rawFlux->img,obj->trackingZone,obj->trackerColor,1,8,0);
 
 	/* Release memory */
     cvReleaseStructuringElement(&kernel);
