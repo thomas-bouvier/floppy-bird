@@ -154,7 +154,7 @@ enum Speed
     LOW = 5,            /*! low speed */
     NORMAL = 6,         /*! normal speed */
     HIGH = 7,           /*! high speed */
-    EXTREME = 8,        /*! extreme speed */
+    EXTREME = 8         /*! extreme speed */
 };
 
 

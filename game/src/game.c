@@ -32,14 +32,18 @@ void cameraScrolling(Camera * camera, Bird * bird)
     bird->x += camera->speed;
 }
 
-
-void modifySpeed(int number, Camera * camera)
+/*!
+* \brief Modifiy the speed of game if it is run in normal mode
+* \param[in] score the score of the player
+* \param[out] camera the camera whose speed is changed
+*/
+void modifySpeed(int score, Camera * camera)
 {
-    if(number > 10)
+    if(score > 60)
         camera->speed = EXTREME;
-    else if(number > 5)
+    else if(score > 40)
         camera->speed = HIGH;
-    else if(number > 3)
+    else if(score > 20)
         camera->speed = NORMAL;
     else
         camera->speed = LOW;
@@ -187,16 +191,18 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 * \param[out] score the score of the player to be updated
 * \param[out] sound the sound played according to the current action
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+* \param[in] simplifiedMode if simplifiedMode == 1, the game is played in simplified mode, so it does not accelerate
 * \return Return 1 in case of game over, 0 in the other cases
 */
-int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, Sound * sound, int levelFromFile)
+int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, Sound * sound, int levelFromFile, int simplifiedMode)
 {
     updateBird(bird, event, sound);
     deleteObstacle(camera, l);
     if (createObstacle(camera, l, level, *number, levelFromFile))
         (*number)++;
     *score = updateScore(*score, bird, savedObstacle, sound);
-    //modifySpeed(*number, camera);
+    if(simplifiedMode == 0)
+        modifySpeed(*score, camera);
     cameraScrolling(camera, bird);
     return detectHit(bird, nextBirdObstacle(l, bird), sound);
 }

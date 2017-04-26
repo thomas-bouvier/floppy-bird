@@ -345,7 +345,7 @@ int main(int argc, char ** argv)
                 if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
                     action_break=0;
 
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
+                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile, simplifiedMode);
                 hit_saved = hit;
                 savedObstacle = nextBirdObstacle(&l, &bird);
                 if(simplifiedMode)
