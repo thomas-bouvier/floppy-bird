@@ -31,10 +31,10 @@
 #define WIDTH_BIRD_TRACKING_ZONE 50			/* relative width = 1/7.56 */
 #define RELATIVE_WIDTH_BIRD_TRACKING_ZONE (1/7.56)
 #define WIDTH_PIPE_TRACKING_ZONE 115		/* relative width  = 1/2.52*/
-#define RELATIVE_WIDTH_PIPE_TRACKING_ZONE (1/3.20)
+#define RELATIVE_WIDTH_PIPE_TRACKING_ZONE (1/6)		//(1/3.20)
 typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 
-#define NB_PIPE_TRACKER 3
+#define NB_PIPE_TRACKER 2
 
 /* Tolerances for color analysis (HSV format)*/
 #define Htolerance  5

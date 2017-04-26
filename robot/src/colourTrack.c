@@ -14,6 +14,7 @@
 #include "imageBroadcast.h"
 #include "tracking.h"
 #include "imageProcessing.h"
+#include "pipeTracking.h"
 
 /*!
 * \brief init capture function : init and configure the capture
@@ -36,8 +37,8 @@ int main(int argc, char *argv[]){
 	/* Variables*/
 	RaspiCamCvCapture * capture = initCapture();
 	struct TrackedObject birdTracker;
-	struct TrackedObject pipeTracker1;
-	struct TrackedObject pipeTracker2;
+	struct TrackedObject* pipeTracker = (struct TrackedObject *)malloc(NB_PIPE_TRACKER*sizeof(struct TrackedObject));
+	struct PipeDynamicTracker pipeDynTracker;
 	struct ImageBroadcast cameraFlux;
 	struct ImageBroadcast birdBinFlux;
 	struct ImageBroadcast pipeBinFlux;
@@ -94,16 +95,21 @@ int main(int argc, char *argv[]){
 	loadImage(&cameraFlux,capture);
 	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, birdWindow, NULL);
 	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, pipeWindow, NULL);
+	int i;
 	if(loadFile == NULL){
 		int width = cameraFlux.img->roi->width;
 		int height = cameraFlux.img->roi->height;
 		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&birdBinFlux,cvRect(((width/3) - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2)),0,width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE,height),RECTANGLE);
-		initTrackedObject(&pipeTracker1,0,0,0,&cameraFlux,&pipeBinFlux,cvRect((width/3) - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2),0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
-		initTrackedObject(&pipeTracker2,0,0,0,&cameraFlux,&pipeBinFlux,cvRect(pipeTracker1.trackingZone.x + pipeTracker1.trackingZone.width - (int)(width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2),0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
+		for(i = 0; i < NB_PIPE_TRACKER; i++){
+			initTrackedObject(&pipeTracker[i],0,0,0,&cameraFlux,&pipeBinFlux,cvRect((width/3) - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2),0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
+		}
+		initPipeDynamicTracker(&pipeDynTracker, &pipeTracker);
     } else {		/* We load data form the file */
 		loadTrackedObject(&birdTracker,&cameraFlux,&birdBinFlux,loadFile);
-		loadTrackedObject(&pipeTracker1,&cameraFlux,&pipeBinFlux,loadFile);
-		loadTrackedObject(&pipeTracker2,&cameraFlux,&pipeBinFlux,loadFile);
+		for(i = 0; i < NB_PIPE_TRACKER; i++){
+			loadTrackedObject(&pipeTracker[i],&cameraFlux,&pipeBinFlux,loadFile);
+		}
+		initPipeDynamicTracker(&pipeDynTracker, &pipeTracker);
 	}
     
     if(logFile != NULL){
@@ -115,18 +121,17 @@ int main(int argc, char *argv[]){
 	do {
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
-		updateTracking(&pipeTracker1);
-		updateTracking(&pipeTracker2);
+		updatePipeDynamicTracker(&pipeDynTracker);
 		gettimeofday(&currentTime,NULL);		/* update the time */
 		showImage(&cameraFlux);
-		float birdHeight =getRelativeDistance(&birdTracker,UP);
+		/*float birdHeight =getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);
 		float pipeBirdDist = getRelativeDistance(&pipeTracker1,LEFT)/getRelativeDistance(&birdTracker,RIGHT);
 		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
 		if(logFile != NULL){
 			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
 		}
-		
+		*/
 		char key = cvWaitKey(1);
 		
 		switch(key)	
@@ -135,10 +140,7 @@ int main(int argc, char *argv[]){
 				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
 				break;
 			case 'p':		/* p to select the color of the pipe */
-				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&pipeTracker1);
-				break;
-			case 'q':		/* q to select the color of the pipe */
-				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&pipeTracker2);
+				cvSetMouseCallback(colourTrackingWindow, getPipeColor,&pipeDynTracker);
 				break;
 			case 32:		/* space to click */
 				click(&stylus);
@@ -157,8 +159,9 @@ int main(int argc, char *argv[]){
 	if(saveFile != NULL){
 		saveWorkingSpace(&workingSpace,saveFile);
 		saveTrackedObject(&birdTracker,saveFile);
-		saveTrackedObject(&pipeTracker1,saveFile);
-		saveTrackedObject(&pipeTracker2,saveFile);
+		for(i = 0; i < NB_PIPE_TRACKER; i++){
+			saveTrackedObject(&pipeTracker[i],saveFile);
+		}
 		fclose(saveFile);
 	}
 	if(logFile != NULL)
@@ -166,8 +169,10 @@ int main(int argc, char *argv[]){
     cvDestroyAllWindows();
     /* Release memory */
     releaseTrackingImageMemory(&birdTracker);
-	releaseTrackingImageMemory(&pipeTracker1);
-	releaseTrackingImageMemory(&pipeTracker2);
+    for(i = 0; i < NB_PIPE_TRACKER; i++){
+		releaseTrackingImageMemory(&pipeTracker[i]);
+	}
+	free(pipeTracker);
 	raspiCamCvReleaseCapture(&capture);
 	
 	/* disabling servomotor */

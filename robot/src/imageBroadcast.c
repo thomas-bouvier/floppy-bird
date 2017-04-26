@@ -51,10 +51,6 @@ void showImage(ImageBroadcast* flux)
 		cvShowImage(flux->windowTitle,flux->img);
 }
 
-/*
- * Get the color of the pixel where the mouse has clicked
- * We put this color as model color (the color we want to tracked)
- */
 /*!
 * \brief Get the color of the pixel where the mouse has clicked
 * \ We put this color as model color (the color we want to tracked)
@@ -86,6 +82,45 @@ void getObjectColor(int event, int x, int y, int flags, void *param) {
         obj->s = (int)pixel.val[1];
         obj->v = (int)pixel.val[2];
         printf("color selected : h=%d s=%d v=%d\n",obj->h,obj->s,obj->v);
+ 
+        /* Release the memory of the hsv image */
+        cvReleaseImage(&hsv);
+ 
+    }
+}
+
+/*!
+* \brief Get the color of the pixel where the mouse has clicked and set it in a PipeDynamicTracker
+* \ We put this color as model color (the color we want to tracked)
+* \param[in] event : type of event
+* \param[in] x : The abscise of the point
+* \param[in] y : The ordonate of the point
+* \param[in] flags : not used here
+* \param[in] param : The PipeDynamicTracker associated with the event
+*/
+void getPipeColor(int event, int x, int y, int flags, void *param) {
+	int i;
+    struct PipeDynamicTracker* pipeDynTracker = (struct PipeDynamicTracker*)param;	/* PipeDynamicTracker is passed through param */
+    CvScalar pixel;
+    IplImage *hsv;
+ 
+    if(event == CV_EVENT_LBUTTONUP) {
+		
+        /* Get the hsv image */
+        hsv = cvCloneImage(pipeDynTracker->pipeTracker[0]->rawFlux->img);
+        /* Save the new color for the tracker */
+		pipeDynTracker->pipeTracker[0]->trackerColor = cvGet2D(hsv, y, x);
+        cvCvtColor(pipeDynTracker->pipeTracker[0]->rawFlux->img, hsv, CV_BGR2HSV);
+ 
+        /* Get the selected pixel */
+        pixel = cvGet2D(hsv, y, x);
+ 
+        /* Change the value of the tracked color with the color of the selected pixel */
+        for(i = 0; i < NB_PIPE_TRACKER; i++){
+			pipeDynTracker->pipeTracker[i]->h = (int)pixel.val[0];
+			pipeDynTracker->pipeTracker[i]->s = (int)pixel.val[1];
+			pipeDynTracker->pipeTracker[i]->v = (int)pixel.val[2];
+		}
  
         /* Release the memory of the hsv image */
         cvReleaseImage(&hsv);
