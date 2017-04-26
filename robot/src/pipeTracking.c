@@ -42,18 +42,18 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 	pipeDynamicTracker->pipeTracker = pipeTracker;
 	pipeDynamicTracker->trackingRunning[0] = true;
 	for(i = 1; i < NB_PIPE_TRACKER;i++){
-		pipeDynamicTracker->trackingRunning[i] = true;
+		pipeDynamicTracker->trackingRunning[i] = false;
 	}
 }
 
 /*!
 * \brief update a pipeDynamicTracker
-* \param[in] pipeDynamicTracker : the addrss of the struct to initialise
+* \param[in] pipeDynamicTracker : the address of the struct to initialise
 */
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
-	int i, j;
+	int i, j;	
 	for(i = 0; i < NB_PIPE_TRACKER;i++){
-		TrackedObject* obj = pipeDynamicTracker->pipeTracker[i];
+		TrackedObject* obj = pipeDynamicTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
 		if(pipeDynamicTracker->trackingRunning[i]){
 			if(obj->computeTracking){
 				binarisation(obj,true);
@@ -61,10 +61,11 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 				pipeDynamicTracker->trackingRunning[i] = centerTrackingZoneOnTracker(obj);
 			}
 		} else {
-			boolean beginTrack = false;
-			for(j = 0; j < NB_PIPE_TRACKER;j++){	/* Search if a tracker is running the the same zone */
+			boolean beginTrack = true;
+			for(j = 0; j < NB_PIPE_TRACKER;j++){	/* Search if a tracker is running in the the same zone */
 				if(j != i){
-					beginTrack = !(pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->trackingZone,pipeDynamicTracker->pipeTracker[j]->trackingZone));
+					TrackedObject* obj2 = pipeDynamicTracker->pipeTracker[0] + j*sizeof(TrackedObject*);
+					beginTrack &= !(pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->trackingZone,obj2->trackingZone));
 				}
 			}
 			pipeDynamicTracker->trackingRunning[i] = beginTrack;
@@ -81,13 +82,13 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 {
 	if(obj->nbPixels > THRESHOLD_NB_PIXELS_PIPE){
-		int newOriginX = obj->origin.x - obj->trackingZone.width/2;
+		int newOriginX = obj->origin.x - obj->trackingZone.width/2-1;
 		if(newOriginX < 0)
 			newOriginX = 0;
 		obj->trackingZone.x = newOriginX;
 		return true;
 	} else {
-		obj->trackingZone.x = obj->binFlux->img->width - obj->trackingZone.width;
+		obj->trackingZone.x = obj->binFlux->img->width - obj->trackingZone.width-1;
 		return false;
 	}
 }

@@ -26,6 +26,7 @@ void initTrackedObject(TrackedObject* obj, int hue, int sat, int val, ImageBroad
 	obj->width = 0;
 	obj->height = 0;
 	obj->trackerColor = DEFAULT_TRACKER_COLOR;
+	printf("new tracker : x%d,y%d,w%d,h%d,...",obj->trackingZone.x,obj->trackingZone.y,obj->trackingZone.width,obj->trackingZone.height);
 }
 
 /*!

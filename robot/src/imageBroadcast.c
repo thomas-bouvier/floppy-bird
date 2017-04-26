@@ -109,7 +109,10 @@ void getPipeColor(int event, int x, int y, int flags, void *param) {
         /* Get the hsv image */
         hsv = cvCloneImage(pipeDynTracker->pipeTracker[0]->rawFlux->img);
         /* Save the new color for the tracker */
-		pipeDynTracker->pipeTracker[0]->trackerColor = cvGet2D(hsv, y, x);
+        for(i = 0; i < NB_PIPE_TRACKER; i++){
+			TrackedObject* obj = pipeDynTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
+			obj->trackerColor = cvGet2D(hsv, y, x);
+		}
         cvCvtColor(pipeDynTracker->pipeTracker[0]->rawFlux->img, hsv, CV_BGR2HSV);
  
         /* Get the selected pixel */
@@ -117,9 +120,10 @@ void getPipeColor(int event, int x, int y, int flags, void *param) {
  
         /* Change the value of the tracked color with the color of the selected pixel */
         for(i = 0; i < NB_PIPE_TRACKER; i++){
-			pipeDynTracker->pipeTracker[i]->h = (int)pixel.val[0];
-			pipeDynTracker->pipeTracker[i]->s = (int)pixel.val[1];
-			pipeDynTracker->pipeTracker[i]->v = (int)pixel.val[2];
+			TrackedObject* obj = pipeDynTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
+			obj->h = (int)pixel.val[0];
+			obj->s = (int)pixel.val[1];
+			obj->v = (int)pixel.val[2];
 		}
  
         /* Release the memory of the hsv image */
