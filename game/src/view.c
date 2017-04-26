@@ -156,6 +156,16 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
     SDL_RenderPresent(renderer);
 }
 
+/*!
+* \brief Display the items of the game with their real sprites
+* \param[out] renderer the drawing target
+* \param[in] bird the bird to display
+* \param[in] l the list of obstacle
+* \param[in] camera the view of the scene
+* \param[in] score the current score
+* \param[in] font the font used to write text
+* \param[in] sprites the structure containing all the image of the game
+*/
 void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;

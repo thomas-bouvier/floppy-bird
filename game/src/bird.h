@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 /*!
-* \struct Bird game.h
+* \struct Bird bird.h
 * \brief The bird that the player controls by taping on the screen or clicking on the mouse
 */
 typedef struct{
