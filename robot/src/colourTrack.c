@@ -116,14 +116,20 @@ int main(int argc, char *argv[]){
 		fprintf(logFile,"Time (us);Bird height;Pipe height;Bird - Pipe relative distance\n");
 	}
 	int exit =0;
-	struct timeval startTime, currentTime;
+	struct timeval startTime, lastTime, currentTime;
 	gettimeofday(&startTime,NULL);
+	gettimeofday(&lastTime,NULL);
 	printf("initOK\n");
 	do {
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
 		updatePipeDynamicTracker(&pipeDynTracker);
+		/* Time computing */
 		gettimeofday(&currentTime,NULL);		/* update the time */
+		long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
+		gettimeofday(&lastTime,NULL);
+		float frameRate = 1000000.0/frameTime;
+		printf("FPS : %f \n",frameRate);
 		showImage(&cameraFlux);
 		/*float birdHeight =getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = getRelativeDistance(&pipeTracker1,UP);

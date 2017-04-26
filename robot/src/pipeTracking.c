@@ -83,8 +83,10 @@ boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 {
 	if(obj->nbPixels > THRESHOLD_NB_PIXELS_PIPE){
 		int newOriginX = obj->origin.x - obj->trackingZone.width/2-1;
-		if(newOriginX < 0)
-			newOriginX = 0;
+		if(newOriginX < 0){
+			obj->trackingZone.x = obj->binFlux->img->width - obj->trackingZone.width-1;
+			return false;
+		}
 		obj->trackingZone.x = newOriginX;
 		return true;
 	} else {
