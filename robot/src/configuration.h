@@ -22,8 +22,8 @@
 #define THRESHOLD_NB_PIXELS_PIPE 200
 #define BIRD_CIRCLE_DIAMETER 15
 
-#define CAPTURE_WIDTH 	960/2 //256		/* Must be a multiple of 32 */
-#define CAPTURE_HEIGHT 	720/2 //192		/* Must be a multiple of 32 */
+#define CAPTURE_WIDTH 	960/2//(32*10)//960/2 //256		/* Must be a multiple of 32 */
+#define CAPTURE_HEIGHT 	720/2//(32*8)//720/2 //192		/* Must be a multiple of 32 */
 
 #define WORKSPACE_DEF_COLOR CV_RGB(255, 0, 0)
 #define DEFAULT_TRACKER_COLOR CV_RGB(255, 0, 0)
@@ -37,8 +37,8 @@ typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 #define NB_PIPE_TRACKER 3
 
 /* Tolerances for color analysis (HSV format)*/
-#define Htolerance  5
-#define Stolerance 200
+#define Htolerance 5 //2
+#define Stolerance 200//5
 
 /* Maths methods */
 #define max(a, b) ((a) > (b) ? (a) : (b))

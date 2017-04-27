@@ -17,12 +17,12 @@ typedef struct TrackedObject TrackedObject;
 * \brief struct specific to the tracking of pipes (dynamic tracking) 
 */
 struct PipeDynamicTracker{
-	TrackedObject** pipeTracker;		/*!<  array of pipe trackers */
+	TrackedObject* pipeTracker;		/*!<  array of pipe trackers */
 	boolean trackingRunning[NB_PIPE_TRACKER];			/*!<  for each tracker, if true, tracking is running */
 };
 
 boolean intersectRect(CvRect rect1, CvRect rect2);
-void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER]);
+void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, struct TrackedObject* pipeTracker);
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker);
 boolean centerTrackingZoneOnTracker(TrackedObject* obj);
 CvPoint nextPipe(PipeDynamicTracker* pipeDynamicTracker, int minPosition);
