@@ -14,7 +14,7 @@
 Action detectTouch()
 {
     SDL_Event event;
-    while( SDL_PollEvent(&event))
+    while(SDL_PollEvent(&event))
         {
             switch (event.type)
             {
@@ -81,14 +81,7 @@ int waitForTI()
             return 0;
         if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
         {
-            int x = event.button.x;
-            int y = event.button.y;
-            int x_max = SCREEN_WIDTH/2 + BIRD_SIZE/2;
-            int x_min = SCREEN_WIDTH/2 - BIRD_SIZE/2;
-            int y_max = SCREEN_HEIGHT/2 + BIRD_SIZE/2;
-            int y_min = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
-            if(x <= x_max && x >= x_min && y <= y_max && y >= y_min)
-                run = 0;
+            run = 0;
         }
     }
     return 1;

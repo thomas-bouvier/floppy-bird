@@ -6,14 +6,24 @@ LDFLAGS= -lwiringPi
 LDFLAGS_PI =  -L$(HOME)/git/raspberrypi/userland/build/lib -lmmal_core -lmmal -l mmal_util -lvcos -lbcm_host	
 
 
+<<<<<<< HEAD
 DEBUG=no
 ifeq ($(DEBUG),yes)
 CFLAGS+=-g
+=======
+DEBUG=yes
+ifeq ($(DEBUG),yes)
+CFLAGS+=-g -funwind-tables
+>>>>>>> develop
 endif
 
 all: testCamera colourTrack
 
+<<<<<<< HEAD
 colourTrack: colourTrack.o stylus.o
+=======
+colourTrack: colourTrack.o stylus.o imageBroadcast.o imageProcessing.o tracking.o pipeTracking.o
+>>>>>>> develop
 	$(CC) $^ $(LDFLAGS) $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -L./lib/ lib/libraspicamcv.a -o $@
 
 testCamera: testCamera.o stylus.o
@@ -21,7 +31,15 @@ testCamera: testCamera.o stylus.o
 
 testCamera.o: stylus.h configuration.h
 stylus.o: stylus.h configuration.h
+<<<<<<< HEAD
 colourTrack.o: stylus.h configuration.h
+=======
+colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h imageProcessing.h pipeTracking.h
+imageBroadcast.o: imageBroadcast.h configuration.h tracking.h pipeTracking.h
+imageProcessing.o: imageProcessing.h tracking.h imageBroadcast.h
+tracking.o: tracking.h configuration.h imageBroadcast.h imageProcessing.h
+pipeTracking.o: pipeTracking.h configuration.h
+>>>>>>> develop
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CFLAGS_OPENCV) -c $< -o $@

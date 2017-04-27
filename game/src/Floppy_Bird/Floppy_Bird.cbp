@@ -3,10 +3,16 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="Floppy_Bird" />
+<<<<<<< HEAD
+=======
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="../../src" />
+>>>>>>> develop
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
+<<<<<<< HEAD
 				<Option output="bin/Debug/Floppy_Bird" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
@@ -28,6 +34,23 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+=======
+				<Option output="../main" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters='&quot;../conf/configWindows.txt&quot;' />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="../main" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="../conf/config.txt" />
+>>>>>>> develop
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -67,6 +90,13 @@
 		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+<<<<<<< HEAD
+=======
+		<Unit filename="../menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../menu.h" />
+>>>>>>> develop
 		<Unit filename="../obstacle.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -75,6 +105,13 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../pipe.h" />
+<<<<<<< HEAD
+=======
+		<Unit filename="../sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../sound.h" />
+>>>>>>> develop
 		<Unit filename="../view.c">
 			<Option compilerVar="CC" />
 		</Unit>

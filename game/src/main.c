@@ -6,8 +6,11 @@
 #include "control.h"
 #include "file.h"
 #include "sound.h"
+#include "menu.h"
 #include "constants.h"
 #include <SDL2/SDL.h>
+#include "../../ai/q_learning/src/q_learning.h"
+#include "../../ai/q_learning/src/game_state.h"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -21,21 +24,52 @@ int main(int argc, char ** argv)
 
     int hit;
     int running = 1;
+    int menu_loop = 1;
     Action init;
-	Sound sound;
+    Sound sound;
+    Mode mode;
     int number;
 
     Bird bird;
     Camera camera;
     List l;
 
-    int levelFromFile = 1;
     FILE * config = NULL;
     FILE * level = NULL;
+    char scorePath[100];
+    FILE * scoreFile = NULL;
+    char jump_path[100];
+    Mix_Chunk * jump_sound;
+    char obstacle_path[100];
+    Mix_Chunk * obstacle_sound;
+    char death_path[100];
+    Mix_Chunk * death_sound;
+    char fontPath[100];
+    TTF_Font * font = NULL;
 
+    char bird1_path[100];
+    char bird2_path[100];
+    char bird3_path[100];
+    char pipe1_path[100];
+    char pipe2_path[100];
+    char background_path[100];
+    char ground_path[100];
+    Sprites sprites;
+
+    /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
+    int levelFromFile = 1;
+    /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
+    int simplifiedMode = 1;
     int score;
     Obstacle * savedObstacle = NULL;
 
+    /* Initialization IA1 */
+    MatrixQ * matrixQ = NULL;
+    int last_states[NB_SAVED_STATES];
+    int last_action[NB_SAVED_ACTIONS];
+    char qmatrixPath[100];
+    int hit_saved=0;
+    int action_break=0;
     srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
@@ -51,22 +85,17 @@ int main(int argc, char ** argv)
     }
 
     /* Open the file that contains the save of the level */
-    if(levelFromFile)
+    char levelPath[100];
+    if (readConfig(config, levelPath, "level :\n"))
+        level = fopen(levelPath, "r");
+    if(level == NULL)
     {
-        char levelPath[100];
-        if (readConfig(config, levelPath, "level :\n"))
-            level = fopen(levelPath, "r");
-        if(level == NULL)
-        {
-            fprintf(stderr,"Opening level file failure :\n");
-            printf("%s\n", levelPath);
-            return EXIT_FAILURE;
-        }
+        fprintf(stderr,"Opening level file failure :\n");
+        printf("%s\n", levelPath);
+        return EXIT_FAILURE;
     }
 
     /* Open the file that contains the save of the best score : create it if it does not exist yet */
-    FILE * scoreFile = NULL;
-    char scorePath[100];
     if (readConfig(config, scorePath, "score :\n"))
     {
         scoreFile = fopen(scorePath, "r+");
@@ -87,34 +116,123 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-	/* SDL_TTF initialization */
+    /* SDL_TTF initialization */
     if (TTF_Init() != 0)
     {
         fprintf(stderr, "SDL_TTF initialization failure\n");
         return EXIT_FAILURE;
     }
-    
-	/* SDL_mixer initialization */
+
+    /* SDL_mixer initialization */
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
     {
         fprintf(stderr, "SDL_mixer initialization failure\n");
         return EXIT_FAILURE;
     }
 
-	/* Setup sounds */
-	Mix_AllocateChannels(3);
-	Mix_Chunk * jump_sound;
-	Mix_Chunk * obstacle_sound;
-	Mix_Chunk * death_sound;
-	char jump_path[100];
-	readConfig(config, jump_path, "jump :\n");
-	char obstacle_path[100];
-	readConfig(config, obstacle_path, "obstacle :\n");
-	char death_path[100];
-	readConfig(config, death_path, "death :\n");
-	jump_sound = Mix_LoadWAV(jump_path);
-	obstacle_sound = Mix_LoadWAV(obstacle_path);
-	death_sound= Mix_LoadWAV(death_path);
+    /* Setup sounds */
+    Mix_AllocateChannels(3);
+    if (readConfig(config, jump_path, "jump :\n"))
+    {
+        jump_sound = Mix_LoadWAV(jump_path);
+        if (jump_sound == NULL)
+        {
+            fprintf(stderr,"Opening jump sound failure :\n");
+            printf("%s\n", jump_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, obstacle_path, "obstacle :\n"))
+    {
+        obstacle_sound = Mix_LoadWAV(obstacle_path);
+        if (obstacle_sound == NULL)
+        {
+            fprintf(stderr,"Opening obstacle sound failure :\n");
+            printf("%s\n", obstacle_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, death_path, "death :\n"))
+    {
+        death_sound = Mix_LoadWAV(death_path);
+        if (death_sound == NULL)
+        {
+            fprintf(stderr,"Opening death sound failure :\n");
+            printf("%s\n", death_path);
+            return EXIT_FAILURE;
+        }
+    }
+    /* Setup sprites */
+    if (readConfig(config, bird1_path, "bird1 :\n"))
+    {
+        sprites.bird1=IMG_Load(bird1_path);
+        if(!sprites.bird1)
+        {
+            fprintf(stderr, "Opening bird1 sprite failure :\n");
+            printf("%s\n", bird1_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, bird2_path, "bird2 :\n"))
+    {
+        sprites.bird2=IMG_Load(bird2_path);
+        if(!sprites.bird2)
+        {
+            fprintf(stderr, "Opening bird2 sprite failure :\n");
+            printf("%s\n", bird2_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, bird3_path, "bird3 :\n"))
+    {
+        sprites.bird3=IMG_Load(bird3_path);
+        if(!sprites.bird3)
+        {
+            fprintf(stderr, "Opening bird3 sprite failure :\n");
+            printf("%s\n", bird3_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, pipe1_path, "pipe1 :\n"))
+    {
+        sprites.pipe1=IMG_Load(pipe1_path);
+        if(!sprites.pipe1)
+        {
+            fprintf(stderr, "Opening pipe1 sprite failure :\n");
+            printf("%s\n", pipe1_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, pipe2_path, "pipe2 :\n"))
+    {
+        sprites.pipe2=IMG_Load(pipe2_path);
+        if(!sprites.pipe2)
+        {
+            fprintf(stderr, "Opening pipe2 sprite failure :\n");
+            printf("%s\n", pipe2_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, background_path, "background :\n"))
+    {
+        sprites.background=IMG_Load(background_path);
+        if(!sprites.background)
+        {
+            fprintf(stderr, "Opening background sprite failure :\n");
+            printf("%s\n", background_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, ground_path, "ground :\n"))
+    {
+        sprites.ground=IMG_Load(ground_path);
+        if(!sprites.ground)
+        {
+            fprintf(stderr, "Opening ground sprite failure :\n");
+            printf("%s\n", ground_path);
+            return EXIT_FAILURE;
+        }
+    }
 
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
@@ -134,88 +252,144 @@ int main(int argc, char ** argv)
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-   
-   	/* Open a font for text */ 
-   	TTF_Font * font = NULL;
-   	char fontPath[100];
-	readConfig(config, fontPath, "font :\n");
-	font = TTF_OpenFont(fontPath, 70);
-    if(font == NULL)
-    {
-    	fprintf(stderr, "Missing font : %s\n", TTF_GetError());
-    	return 0;
-    } 
 
-    while(running)
+    /* Open a font for text */
+    if (readConfig(config, fontPath, "font :\n"))
     {
-    	score = 0;
-        startGame(&bird, &camera, &l, level, levelFromFile);
-        savedObstacle = nextBirdObstacle(&l, &bird);
-        drawLowForTI(renderer, &camera);
-        running = waitForTI();
-        drawUpForTI(renderer, &camera);
-        if (running)
-            running = waitForTI();
-        displayGame(renderer, &bird, &l, &camera, score, font);
+        font = TTF_OpenFont(fontPath, 70);
+        if(font == NULL)
+        {
+            fprintf(stderr, "Missing font : %s\n", TTF_GetError());
+            return EXIT_FAILURE;
+        }
+    }
 
-        /* Wait the first jump to start the game*/
-        emptyEvent();
+    while(menu_loop)
+    {
+        mode = WAIT;
         init = NOTHING;
-        while(init == NOTHING)
+        running = 1;
+        while((mode != PLAY && mode != IA1) && init != QUIT)
         {
+            mode = WAIT;
+            mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
             init = detectTouch();
-            if(init == JUMP)
-            {
-                bird.dir_y = BIRD_JUMP;
-                playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
-            }
+            if(mode == QUITGAME)
+                init = QUIT;
             if(init == QUIT)
-                running = 0;
+                menu_loop = 0;
         }
 
-        /* Loop of game */
-        number = OBSTACLE_NUMBER;
-        hit = 0;
-        lastFrame = SDL_GetTicks();
+        if(init == QUIT)
+            running = 0;
 
-        while(!hit && running)
+        /* Setup IA1 */
+        if(mode == IA1)
         {
+            /* Open the file that contains qMatrix data */
+            readConfig(config, qmatrixPath, "qMatrix :\n");
+            matrixQ = loadQMatrix(qmatrixPath);
+            init_array(last_states, NB_SAVED_STATES, -1);
+            init_array(last_action, NB_SAVED_ACTIONS, -1);
+        }
 
-            for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
+        while(running)
+        {
+            score = 0;
+            startGame(&bird, &camera, &l, level, levelFromFile);
+            savedObstacle = nextBirdObstacle(&l, &bird);
+            if (simplifiedMode)
             {
-                Action event = detectTouch();
-                sound = NOSOUND;
-                if(event == QUIT)
-                     running = 0;
-                if(event == PAUSE)
-                    running = (waiting() != QUIT);
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
-                savedObstacle = nextBirdObstacle(&l, &bird);
+                drawForTI(renderer, &camera);
+                if(mode == PLAY)
+                    running = waitForTI();
+                if(mode == IA1)
+                    running = 1;
                 displayGame(renderer, &bird, &l, &camera, score, font);
-                playSound(sound, jump_sound, obstacle_sound, death_sound);
-                lastFrame = SDL_GetTicks();
             }
-            saveScore(scoreFile, score);
-        }
-        if(hit)
-        {
-            SDL_Delay(300);
-            SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
-            SDL_RenderClear(renderer);
-            SDL_RenderPresent(renderer);
-            SDL_Delay(600);
+            else
+                displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+
+            if(mode == PLAY) /* Wait the first jump to start the game*/
+            {
+                emptyEvent();
+                init = NOTHING;
+                while(init == NOTHING && running)
+                {
+                    init = detectTouch();
+                    if(init == JUMP)
+                    {
+                        bird.dir_y = BIRD_JUMP;
+                        playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
+                    }
+                    if(init == QUIT)
+                        running = 0;
+                }
+            }
+
+            /* Loop of game */
+            number = OBSTACLE_NUMBER;
+            hit = 0;
+            lastFrame = SDL_GetTicks();
+            if(mode == IA1)
+                action_break = 0;
+
+            while(!hit && running)
+            {
+                for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
+                {
+                    /*printf("%d\n", 1000/(SDL_GetTicks()-lastFrame));*/
+                    Action event = detectTouch();
+                    sound = NOSOUND;
+                    if(event == QUIT)
+                        running = 0;
+                    if(event == PAUSE)
+                        running = (waiting() != QUIT);
+                    if(mode == IA1 && (action_break == 0 || hit_saved == 1))
+                    {
+                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
+                        if(last_action[0] != -1)
+                            event = last_action[0];
+                    }
+                    if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
+                        action_break=0;
+
+                    hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile, simplifiedMode);
+                    hit_saved = hit;
+                    savedObstacle = nextBirdObstacle(&l, &bird);
+                    if(simplifiedMode)
+                        displayGame(renderer, &bird, &l, &camera, score, font);
+                    else
+                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    playSound(sound, jump_sound, obstacle_sound, death_sound);
+                    lastFrame = SDL_GetTicks();
+                }
+                saveScore(scoreFile, score);
+            }
+            if(hit && mode == PLAY)
+            {
+                SDL_Delay(300);
+                SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
+                SDL_RenderClear(renderer);
+                displayBestScore(renderer, font, scoreFile);
+                SDL_RenderPresent(renderer);
+                SDL_Delay(1500);
+            }
+            if(hit && mode == IA1)
+                saveQMatrix(matrixQ, qmatrixPath);
         }
     }
 
     /* Quit the game */
-    quitGame(window, renderer);
+    if(mode == IA1)
+        freeMatrixQ(matrixQ);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);
     fclose(config);
-    if(levelFromFile)
-		fclose(level);
+    fclose(level);
     fclose(scoreFile);
+    quitGame(window, renderer);
 
     return EXIT_SUCCESS;
 }

@@ -9,12 +9,12 @@ static void moveStylus(Stylus* stylus, int targetPos);
 
 /*!
 * \brief Attach a stylus with its physical parameters
-* \param[in] address of the stylus 
-* \param[in] physical pin for the servomotor
-* \param[in] the position (in uS*10) of the servomotor to press the stylus on the screen
-* \param[in] the position (in uS*10) of the servomotor to put the stylus out of the screen
-* \param[in] the delay needed by the device to take the click into account
-* \param[in] the delay needed etween 2 clicks
+* \param[in] stylus : address of the stylus
+* \param[in] pin : physical pin for the servomotor
+* \param[in] clickPosition : the position (in uS*10) of the servomotor to press the stylus on the screen
+* \param[in] restPosition : the position (in uS*10) of the servomotor to put the stylus out of the screen
+* \param[in] pressDelay : the delay needed by the device to take the click into account
+* \param[in] restDelay : the delay needed etween 2 clicks
 */
 void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, long int pressDelay, long int restDelay)
 {
@@ -35,7 +35,7 @@ void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, long i
 
 /*!
 * \brief Time managment function : Update the stylus position depending on the delays
-* \param[in] address of the stylus 
+* \param[in] stylus : address of the stylus
 */
 void update(Stylus* stylus)
 {
@@ -64,7 +64,7 @@ void update(Stylus* stylus)
 
 /*!
 * \brief disable the servomotor
-* \param[in] address of the stylus 
+* \param[in] stylus : address of the stylus
 */
 void disable(Stylus* stylus)
 {
@@ -73,7 +73,7 @@ void disable(Stylus* stylus)
 
 /*!
 * \brief enable the servomotor
-* \param[in] address of the stylus 
+* \param[in] stylus : address of the stylus
 */
 void enable(Stylus* stylus)
 {
@@ -84,7 +84,7 @@ void enable(Stylus* stylus)
 
 /*!
 * \brief Manage the click action
-* \param[in] address of the stylus 
+* \param[in] stylus : address of the stylus
 */
 void click(Stylus* stylus)
 {
@@ -93,8 +93,8 @@ void click(Stylus* stylus)
 
 /*!
 * \brief Update the stylus target position
-* \param[in] address of the stylus 
-* \param[in] target position msut be included between MIN_PWM_PULSE_DURATION and MAX_PWM_PULSE_DURATION
+* \param[in] stylus : address of the stylus
+* \param[in] targetPos : target position msut be included between MIN_PWM_PULSE_DURATION and MAX_PWM_PULSE_DURATION
 */
 static void moveStylus(Stylus* stylus, int targetPos)
 {
@@ -104,10 +104,3 @@ static void moveStylus(Stylus* stylus, int targetPos)
 		targetPos = MIN_PWM_PULSE_DURATION;
 	pwmWrite(stylus->pin,targetPos);
 }
-
-
-
-
-
-
-

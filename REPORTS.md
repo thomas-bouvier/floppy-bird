@@ -1,9 +1,20 @@
 ﻿# reports
 
+## Compte-rendu réunion n°5 (05/04/2017)
+
+Une fuite mémoire n'a toujours pas été corrigée.
+
+Il reste encore quelques warning dans le doxyfile.
+
+Le makefile est a modifié pour qu'il s'adapte au systême d'exploitation.
+
+Les 100% de couverture du code par les tests unitaires pour la version 2 sont aussi à atteindre pour la prochaine fois.
+
+
 ## Compte-rendu réunion n°4 (22/03/2017)
 
 La version 1 du jeu ne compile pas automatiquement. Des ajustements sont a effectuer dans le projet code::blocks et dans le Makefile :
-- Tous les LDFLAGS pour la SDL devront ^être remplacés par une lige générique
+- Tous les LDFLAGS pour la SDL devront être remplacés par une lige générique
 - Un fichier de configuration devra être crée afin de permettre, via des chemins relatifs, de retrouver automatiquement les chemins des différents fichiers (fichier de sauvegarde du niveau, sprites...)
 
 Un fichier doxyfile permettant de générer automatiquement la documentation du projet sera ajouté.
@@ -25,7 +36,7 @@ Les documents du robots, à savoir le matériel, sa fabrication, ses fichiers m�
 
 Un fichier sera ajouté, décrivant le rôle de chacun dans le projet, puisque ceux-ci ne figurent pas dans le Gantt.
 
-Avant la prochaine réunion, le fichier .cpb de Codeblocks sera déposé sur git, afin de compiler directement le jeu, puisque la V1 sera normalement finie. 
+Avant la prochaine réunion, le fichier .cpb de Codeblocks sera déposé sur git, afin de compiler directement le jeu, puisque la V1 sera normalement finie.
 
 Prochaine réunion le mercredi 22/03/2017 à 16h30.
 

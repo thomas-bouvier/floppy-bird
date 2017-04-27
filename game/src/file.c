@@ -78,5 +78,21 @@ int saveScore(FILE * f, int score)
     return 0;
 }
 
+/*!
+* \brief Read the best score in a file
+* \param[in] f the file that contains the score
+* \return Return the best score saved, -1 if failure
+*/
+int readBestScore(FILE * f)
+{
+    if (f == NULL)
+    {
+        fprintf(stderr, "Reading best score failure");
+        return -1;
+    }
+    int best_score = 0;
+    fseek(f, 0, SEEK_SET);
+    fscanf(f, "%d", &best_score);
+    return best_score;
 
-
+}

@@ -5,7 +5,7 @@ score :
 ../res/files/score.txt
 
 font :
-../res/fonts/DejaVuSans.ttf
+../res/fonts/Floppy.TTF
 
 sounds :
 jump :
@@ -15,3 +15,21 @@ obstacle :
 death :
 ../res/sounds/death.wav
 
+qMatrix :
+../res/files/qlearning_data/qmatrix_data.txt
+
+sprites :
+background :
+../res/sprites/bg.png
+pipe1 :
+../res/sprites/tube1.png
+pipe2 :
+../res/sprites/tube2.png
+ground :
+../res/sprites/ground.png
+bird1 :
+../res/sprites/bird1.png
+bird2 :
+../res/sprites/bird2.png
+bird3 :
+../res/sprites/bird3.png

@@ -12,25 +12,25 @@
 #include "stylus.h"
 
 int main(int argc, char *argv[]){
-	
+
 	wiringPiSetup();	// Setup the GPIO
 	Stylus stylus;
-  attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
-  enable(&stylus);
+
+	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
+	enable(&stylus);
 
 	RASPIVID_CONFIG * config = (RASPIVID_CONFIG*)malloc(sizeof(RASPIVID_CONFIG));
-	
+
 	config->width=960;
 	config->height=720;
 	config->bitrate=0;	// zero: leave as default
 	config->framerate=0;
 	config->monochrome=0;
-	
-	RaspiCamCvCapture * capture = (RaspiCamCvCapture *) raspiCamCvCreateCameraCapture2(0, config); 
+
+	RaspiCamCvCapture * capture = (RaspiCamCvCapture *) raspiCamCvCreateCameraCapture2(0, config);
 	free(config);
-	
-	
-CvFont font;
+
+	CvFont font;
 	double hScale=0.4;
 	double vScale=0.4;
 	int    lineWidth=1;
@@ -41,7 +41,7 @@ CvFont font;
 	int exit =0;
 	do {
 		IplImage* image = raspiCamCvQueryFrame(capture);
-		
+
 		char text[200];
 		sprintf(
 			text
@@ -53,15 +53,15 @@ CvFont font;
 			, raspiCamCvGetCaptureProperty(capture, RPI_CAP_PROP_MONOCHROME)
 		);
 		cvPutText (image, text, cvPoint(05, 40), &font, cvScalar(255, 255, 0, 0));
-		
+
 		sprintf(text, "Press ESC to exit");
 		cvPutText (image, text, cvPoint(05, 80), &font, cvScalar(255, 255, 0, 0));
-		
+
 		cvShowImage("RaspiCamTest", image);
-		
+
 		char key = cvWaitKey(1);
-		
-		switch(key)	
+
+		switch(key)
 		{
 			case 32:		// space to click
 				click(&stylus);
@@ -78,14 +78,12 @@ CvFont font;
 				break;
 		}
 		update(&stylus);
-		
+
 	} while (!exit);
 
 	cvDestroyWindow("RaspiCamTest");
 	raspiCamCvReleaseCapture(&capture);
 	disable(&stylus);
-	
-	return 0; 
+
+	return 0;
 }
-
-

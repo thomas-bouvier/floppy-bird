@@ -6,11 +6,17 @@
 
 #### For Windows (with CodeBlocks) :
 
-Take care to install SDL version 2. 
+Download SDL2 for mingw (in development libraries) from https://www.libsdl.org/download-2.0.php
 
-In order to compile with CodeBlocks, you have to add a PATH environement variable, that leads to the SDL2 folder.
+Extract the folder i686-w64-mingw.
 
-Then open the project with Codeblocks (.cbp file), build, compile and run.
+Download SDL2_ttf, SDL2_mixer and SDL2_image the same way.
+
+Create an environment variable named SDLPATH, that contains the path to the SDL folder.
+
+Don't forget to add the necessary .dll files in your project directory (SDL2.dll, SDL2_ttf.dll, SDL2_mixer.dll, SDL2_image.dll, libfreetype-6.dll and libpng16-16.dll)
+
+Now you can compile and run the project with the custom Makefile provided.
 
 #### For Linux :
 
@@ -24,13 +30,19 @@ Extract the archive and cd to the folder that got extracted. Then :
 	make
 	sudo make install
 
+Also install the complementary libraries SDL2_mixer, SDL2_ttf and SDL2_image
+
+	apt-get install libsdl2-ttf-dev
+	apt-get install libsdl2-mixer-dev
+	apt-get install libsdl2-image-dev
+
 Now you can compile and run the project with the Makefile provided with the sources.
 
 ### Configuration
 
-A configuration file is provided in game/src/conf.
+Two configuration file is provided in game/src/conf.
 
-The paths for the game (level, sprites...) are made by default for CodeBlocks, but feel free to modify these paths if you use an other configuration.
+One is made for Windows with Codeblocks, the other for Linux, but feel free to modify these paths if you change anything.
 
 ## Robot
 
@@ -50,7 +62,7 @@ To build the robot, you need the following parts :
 * M3 screw 22mm x2
 * M3 nut x2
 
-**Printing parameters :** 
+**Printing parameters :**
 * Material : PLA
 * Layer height : 0,2mm
 * Supports : yes
@@ -83,5 +95,3 @@ The raspberry pi needs some libraries to get all the programs running properly. 
     cd robidouille/raspicam_cv
     mkdir objs
     make
-
-
