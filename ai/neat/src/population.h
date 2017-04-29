@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "conf.h"
+#include "neat_conf.h"
 #include "genome.h"
-#include "list.h"
+#include "generic_list.h"
 
 typedef struct Species Species;
 
@@ -22,7 +22,7 @@ typedef struct MatingPool MatingPool;
 * \brief A Species contains Genome elements which have similar characteristics.
 */
 struct Species {
-  List * genomes;                   /*!< Genomes elements contained in this Species */
+  GenericList * genomes;                   /*!< Genomes elements contained in this Species */
   short int id;                     /*!< the id of this Species */
   short int nb_genomes;             /*!< the number of Genome elements contained in this Species */
   double max_fitness;               /*!< the maximum score of all Genome elements in this Species */

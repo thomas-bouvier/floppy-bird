@@ -10,8 +10,9 @@
 #include <math.h>
 #include <float.h>
 
+#include "neat_conf.h"
 #include "network.h"
-#include "utils.h"
+#include "neat_utils.h"
 
 #define fast_sigmoid(x) ((x) / (1 + fabs(x)))
 

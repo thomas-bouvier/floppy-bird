@@ -6,7 +6,7 @@
 * \return Return a new Neuron, or NULL if error
 */
 Neuron * newNeuron(NeuronType type) {
-  List * connections = NULL;
+  GenericList * connections = NULL;
   Neuron * new_neuron = NULL;
 
   if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
@@ -14,10 +14,10 @@ Neuron * newNeuron(NeuronType type) {
     return NULL;
   }
 
-  if ((connections = newList(cloneConnectionGene, freeConnectionGene)) == (List *) NULL)
+  if ((connections = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
     return NULL;
 
-  initList(connections);
+  initGenericList(connections);
 
   new_neuron->connections = connections;
 
@@ -38,7 +38,7 @@ Neuron * newNeuron(NeuronType type) {
 * \return Return a new Neuron, or NULL if error
 */
 void * cloneNeuron(void * neuron) {
-  List * connections = NULL;
+  GenericList * connections = NULL;
   Neuron * new_neuron = NULL;
 
   if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
@@ -46,7 +46,7 @@ void * cloneNeuron(void * neuron) {
     return NULL;
   }
 
-  if ((connections = cloneList(((Neuron *) neuron)->connections)) == (List *) NULL)
+  if ((connections = cloneGenericList(((Neuron *) neuron)->connections)) == (GenericList *) NULL)
     return NULL;
 
   new_neuron->connections = connections;
@@ -60,7 +60,7 @@ void * cloneNeuron(void * neuron) {
 }
 
 Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
-  List * connections = NULL;
+  GenericList * connections = NULL;
   Neuron * new_neuron = NULL;
 
   if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
@@ -68,10 +68,10 @@ Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
     return NULL;
   }
 
-  if ((connections = newList(cloneConnectionGene, freeConnectionGene)) == (List *) NULL)
+  if ((connections = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
     return NULL;
 
-  initList(connections);
+  initGenericList(connections);
 
   new_neuron->connections = connections;
 
@@ -88,7 +88,7 @@ Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(void * neuron) {
-  freeList(((Neuron *) neuron)->connections);
+  freeGenericList(((Neuron *) neuron)->connections);
   free(neuron);
 }
 

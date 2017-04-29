@@ -1,4 +1,4 @@
-#include "list.h"
+#include "generic_list.h"
 
 /*!
 * \brief Create a Node.
@@ -19,14 +19,14 @@ Node * newNode() {
 }
 
 /*!
-* \brief Create a List.
-* \return Return a new List, NULL if error
+* \brief Create a GenericGenericList.
+* \return Return a new GenericGenericList, NULL if error
 */
-List * newList(CloneFunction clone_function, FreeFunction free_function) {
-  List * new_list = NULL;
+GenericList * newGenericList(CloneFunction clone_function, FreeFunction free_function) {
+  GenericList * new_list = NULL;
 
-  if ((new_list = (List *) malloc(sizeof(List))) == (List *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new List\n");
+  if ((new_list = (GenericList *) malloc(sizeof(GenericList))) == (GenericList *) NULL) {
+    fprintf(stderr, "Error while allocating memory for new GenericList\n");
     return NULL;
   }
 
@@ -37,30 +37,30 @@ List * newList(CloneFunction clone_function, FreeFunction free_function) {
 }
 
 /*!
-* \brief Initialize the List structure members to be consistent with an empty list.
-* \param[out] list the List to be initialized
+* \brief Initialize the GenericList structure members to be consistent with an empty list.
+* \param[out] list the GenericList to be initialized
 */
-void initList(List * list) {
+void initGenericList(GenericList * list) {
   list->first = NULL;
   list->current = NULL;
   list->last = NULL;
 }
 
 /*!
-* \brief Clone the given List.
-* \param[out] list the List to clone
-* \return Return a new List, NULL if error
+* \brief Clone the given GenericList.
+* \param[out] list the GenericList to clone
+* \return Return a new GenericList, NULL if error
 */
-List * cloneList(List * list) {
-  List * new_list = newList(list->clone_function, list->free_function);
+GenericList * cloneGenericList(GenericList * list) {
+  GenericList * new_list = newGenericList(list->clone_function, list->free_function);
 
-  initList(new_list);
+  initGenericList(new_list);
 
-  setOnFirst(list);
-  while(!outOfList(list)) {
+  setOnFirstElement(list);
+  while(!outOfGenericList(list)) {
     add(new_list, new_list->clone_function(getCurrent(list)));
 
-    next(list);
+    nextElement(list);
   }
 
   new_list->current = new_list->first;
@@ -69,16 +69,16 @@ List * cloneList(List * list) {
 }
 
 /*!
-* \brief Suppress all elements from the List.
-* \param[out] list the List to be emptied
+* \brief Suppress all elements from the GenericList.
+* \param[out] list the GenericList to be emptied
 */
-void freeList(List * list) {
+void freeGenericList(GenericList * list) {
   Node * element_to_delete = NULL;
 
-  setOnFirst(list);
-  while(!outOfList(list)) {
+  setOnFirstElement(list);
+  while(!outOfGenericList(list)) {
     element_to_delete = list->current;
-    next(list);
+    nextElement(list);
 
     list->free_function(element_to_delete->data);
 
@@ -89,74 +89,74 @@ void freeList(List * list) {
 }
 
 /*!
-* \brief Check if the List is empty.
-* \param[in] list the List to check
-* \return int 1 if the List is empty, 0 otherwise
+* \brief Check if the GenericList is empty.
+* \param[in] list the GenericList to check
+* \return int 1 if the GenericList is empty, 0 otherwise
 */
-int emptyList(List * list) {
+int emptyGenericList(GenericList * list) {
   return list->first == NULL;
 }
 
 /*!
 * \brief Check if the current element is not valid (ie. NULL).
-* \param[in] list the List to check
+* \param[in] list the GenericList to check
 * \return int 1 if the current element is not valid, 0 otherwise
 */
-int outOfList(List * list) {
+int outOfGenericList(GenericList * list) {
   return list->current == NULL;
 }
 
 /*!
-* \brief Set the current element on the first one of the List.
-* \param[out] list the List to be modified
+* \brief Set the current element on the first one of the GenericList.
+* \param[out] list the GenericList to be modified
 */
-void setOnFirst(List * list) {
+void setOnFirstElement(GenericList * list) {
   list->current = list->first;
 }
 
 /*!
-* \brief Set the current element on the given index of the List.
-* \param[out] list the List to be modified
+* \brief Set the current element on the given index of the GenericList.
+* \param[out] list the GenericList to be modified
 * \param[in] index the index to set the current element on
 */
-void setOn(List * list, int index) {
+void setOn(GenericList * list, int index) {
   int i = 0;
 
-  setOnFirst(list);
-  while (!outOfList(list) && i != index) {
-    next(list);
+  setOnFirstElement(list);
+  while (!outOfGenericList(list) && i != index) {
+    nextElement(list);
     ++i;
   }
 }
 
 /*!
 * \brief Set the current element on the next one, if the current element is not NULL.
-* \param[out] list the List to be modified
+* \param[out] list the GenericList to be modified
 */
-void next(List * list) {
-  if (!outOfList(list))
+void nextElement(GenericList * list) {
+  if (!outOfGenericList(list))
     list->current = list->current->next;
 }
 
 /*!
 * \brief Retrieve the element pointed by current pointer in the current element.
-* \param[in] list the List
+* \param[in] list the GenericList
 * \return the element of the current element if valid, NULL otherwise
 */
-void * getCurrent(List * list) {
-  if (!outOfList(list))
+void * getCurrent(GenericList * list) {
+  if (!outOfGenericList(list))
     return list->current->data;
 
   return NULL;
 }
 
 /*!
-* \brief Insert an element at the tail of the List. The current pointer is updated to point to it.
-* \param[out] list the List
+* \brief Insert an element at the tail of the GenericList. The current pointer is updated to point to it.
+* \param[out] list the GenericList
 * \param[out] element the element to be inserted
 * \return int 1 if the element was successfully inserted, 0 otherwise
 */
-int add(List * list, void * element) {
+int add(GenericList * list, void * element) {
   Node * new_node = NULL;
 
   if (!element)
@@ -170,7 +170,7 @@ int add(List * list, void * element) {
   new_node->data = element;
   new_node->next = NULL;
 
-  if (emptyList(list))
+  if (emptyGenericList(list))
     list->first = new_node;
   else
     list->last->next = new_node;
@@ -181,26 +181,26 @@ int add(List * list, void * element) {
 }
 
 /*!
-* \brief Insert an element before the current position of the List. The current pointer is updated to point to it.
-* \param[out] list the List
+* \brief Insert an element before the current position of the GenericList. The current pointer is updated to point to it.
+* \param[out] list the GenericList
 * \param[out] element the element to be inserted before the current element
 * \return int 1 if the element was successfully inserted, 0 otherwise
 */
-static int insertBeforeCurrent(List * list, void * element) {
+static int insertBeforeCurrent(GenericList * list, void * element) {
   Node * new_node = NULL;
   Node * previous_node = NULL;
   Node * stop = NULL;
 
-  if (!outOfList(list)) {
+  if (!outOfGenericList(list)) {
     stop = list->current;
 
-    setOnFirst(list);
+    setOnFirstElement(list);
     while (list->current != stop) {
       previous_node = list->current;
-      next(list);
+      nextElement(list);
     }
 
-    if (emptyList(list))
+    if (emptyGenericList(list))
       add(list, element);
     else {
       if ((new_node = newNode()) == (Node *) NULL) {
@@ -220,12 +220,12 @@ static int insertBeforeCurrent(List * list, void * element) {
   return 0;
 }
 
-static int deleteFirst(List * list, void * data) {
+static int deleteFirst(GenericList * list, void * data) {
   Node * element_to_delete = list->first;
 
-  if (!emptyList(list)) {
+  if (!emptyGenericList(list)) {
     list->first = list->first->next;
-    setOnFirst(list);
+    setOnFirstElement(list);
 
     if (list->first == NULL)
       list->last = NULL;
@@ -243,19 +243,19 @@ static int deleteFirst(List * list, void * data) {
   return 0;
 }
 
-static int deleteLast(List * list, void * data) {
+static int deleteLast(GenericList * list, void * data) {
   Node * element_to_delete = list->last;
   Node * previous_element = NULL;
 
-  if (!emptyList(list)) {
-    setOnFirst(list);
+  if (!emptyGenericList(list)) {
+    setOnFirstElement(list);
     if (list->current == element_to_delete)
       list->first = NULL;
 
     else {
       while (list->current != list->last) {
         previous_element = list->current;
-        next(list);
+        nextElement(list);
       }
 
       previous_element->next = NULL;
@@ -279,11 +279,11 @@ static int deleteLast(List * list, void * data) {
   return 0;
 }
 
-static int deleteCurrent(List * list, void * data) {
+static int deleteCurrent(GenericList * list, void * data) {
   Node * previous_element = NULL;
   Node * stop = NULL;
 
-  if (!outOfList(list)) {
+  if (!outOfGenericList(list)) {
     if (list->current == list->first)
       return deleteFirst(list, data);
 
@@ -293,10 +293,10 @@ static int deleteCurrent(List * list, void * data) {
     else {
       stop = list->current;
 
-      setOnFirst(list);
+      setOnFirstElement(list);
       while (list->current != stop) {
         previous_element = list->current;
-        next(list);
+        nextElement(list);
       }
 
       previous_element->next = list->current->next;
@@ -316,39 +316,39 @@ static int deleteCurrent(List * list, void * data) {
 }
 
 /*!
-* \brief Delete the given element from the List.
-* \param[out] list the List
+* \brief Delete the given element from the GenericList.
+* \param[out] list the GenericList
 * \param[out] element the element to delete
 * \return int 1 if the element was successfully deleted, 0 otherwise
 */
-int delete(List * list, void * element) {
-  setOnFirst(list);
-  while (!outOfList(list)) {
+int delete(GenericList * list, void * element) {
+  setOnFirstElement(list);
+  while (!outOfGenericList(list)) {
     if (list->current->data == element) {
       deleteCurrent(list, NULL);
       return 1;
     }
 
-    next(list);
+    nextElement(list);
   }
 
   return 0;
 }
 
-void sort(List * list, int (*f) (const void *, const void *)) {
+void sort(GenericList * list, int (*f) (const void *, const void *)) {
   Node * pos = NULL;
   void * save = NULL;
 
   if (count(list) > 1) {
-    setOnFirst(list);
-    next(list);
-    while (!outOfList(list)) {
+    setOnFirstElement(list);
+    nextElement(list);
+    while (!outOfGenericList(list)) {
       pos = list->current->next;
       deleteCurrent(list, save);
 
-      setOnFirst(list);
+      setOnFirstElement(list);
       while (list->current != pos && (*f)(save, list->current->data) < 0)
-        next(list);
+        nextElement(list);
 
       insertBeforeCurrent(list, save);
 
@@ -358,34 +358,34 @@ void sort(List * list, int (*f) (const void *, const void *)) {
 }
 
 /*!
-* \brief Check if the given element is stored in the List.
-* \param[in] list the List
+* \brief Check if the given element is stored in the GenericList.
+* \param[in] list the GenericList
 * \param[in] element the element to be found
 * \return int 1 if the element was found, 0 otherwise
 */
-int find(List * list, void * element) {
-  setOnFirst(list);
-  while (!outOfList(list)) {
+int find(GenericList * list, void * element) {
+  setOnFirstElement(list);
+  while (!outOfGenericList(list)) {
     if (list->current->data == element)
       return 1;
 
-    next(list);
+    nextElement(list);
   }
 
   return 0;
 }
 
 /*!
-* \brief Count the number of elements in the given List.
-* \param[in] list the List to scan
+* \brief Count the number of elements in the given GenericList.
+* \param[in] list the GenericList to scan
 */
-int count(List * list) {
+int count(GenericList * list) {
   int count = 0;
 
-  setOnFirst(list);
-  while (!outOfList(list)) {
+  setOnFirstElement(list);
+  while (!outOfGenericList(list)) {
     ++count;
-    next(list);
+    nextElement(list);
   }
 
   return count;

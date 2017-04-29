@@ -1,15 +1,15 @@
 /*!
-* \file utils.h
+* \file neat_utils.h
 * \brief File containing utility functions
 */
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef NEAT_UTILS_H
+#define NEAT_UTILS_H
 
 #include <stdlib.h>
 #include <stdio.h>
 
-int randomAtMost(int limit);
+int randomLimit(int limit);
 double random01();
 int randomBool();
 
-#endif // UTILS_H
+#endif // NEAT_UTILS_H

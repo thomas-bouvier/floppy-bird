@@ -1,9 +1,9 @@
 /*!
-* \file conf.h
+* \file neat_conf.h
 * \brief File containing neural network parameters.
 */
-#ifndef CONF_H
-#define CONF_H
+#ifndef NEAT_CONF_H
+#define NEAT_CONF_H
 
 #define POPULATION                    20
 
@@ -35,4 +35,4 @@
 #define WEAK_SPECIES_THRESHOLD        1.0
 #define STALE_SPECIES_THRESHOLD       10
 
-#endif // CONF_H
+#endif // NEAT_CONF_H

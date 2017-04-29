@@ -1,11 +1,11 @@
-#include "utils.h"
+#include "neat_utils.h"
 
 /*!
 * \brief Return a random number between 0 and the specified parameter
 * \param[in] limit the upper limit
 * \return int Return a random number in [0; limit[
 */
-int randomAtMost(int limit) {
+int randomLimit(int limit) {
   if ((limit - 1) == RAND_MAX) {
     return rand();
   } else {
@@ -24,7 +24,7 @@ int randomAtMost(int limit) {
 * \return double Return a random number in [0; 1]
 */
 double random01() {
-    return (double) randomAtMost(RAND_MAX) / (double) RAND_MAX;
+    return (double) randomLimit(RAND_MAX) / (double) RAND_MAX;
 }
 
 /*!
@@ -32,5 +32,5 @@ double random01() {
 * \return int 0 or 1
 */
 int randomBool() {
-  return randomAtMost(2);
+  return randomLimit(2);
 }

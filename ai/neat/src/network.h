@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "conf.h"
-#include "list.h"
+#include "neat_conf.h"
+#include "generic_list.h"
 
 typedef struct ConnectionGene ConnectionGene;
 
@@ -46,16 +46,16 @@ enum NeuronType {
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
 struct Neuron {
-  List * connections;                 /*!< the successors ConnectionGene linked to this Neuron */
+  GenericList * connections;                 /*!< the successors ConnectionGene linked to this Neuron */
   short int id;                       /*!< the id of this Neuron */
   NeuronType type;                    /*!< the type of this Neuron */
   double value;                       /*!< the value attached to this Neuron */
 };
 
 /*!
-* \brief The Network type is actually a neuron List.
+* \brief The Network type is actually a neuron GenericList.
 */
-typedef List Network;
+typedef GenericList Network;
 
 Neuron * newNeuron(NeuronType type);
 void * cloneNeuron(void * neuron);

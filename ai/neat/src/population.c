@@ -30,7 +30,7 @@ void freeMatingPool(MatingPool * pool) {
   int i;
 
   for (i = 0; i < pool->nb_species; ++i)
-    freeList(pool->species[i].genomes);
+    freeGenericList(pool->species[i].genomes);
 
   free(pool);
 }
@@ -63,17 +63,17 @@ int populateMatingPool(MatingPool * pool) {
 * \return int 1 if the new blank Species was successfully added to the MatingPool, 0 otherwise
 */
 int addSpeciesToMatingPool(MatingPool * pool) {
-  List * genomes = NULL;
+  GenericList * genomes = NULL;
 
   if (pool->nb_species == N_MAX_SPECIES) {
     fprintf(stderr, "Can't add new Species to MatingPool : reached limit (max=%d)\n", N_MAX_SPECIES);
     return 0;
   }
 
-  if ((genomes = newList(cloneGenome, freeGenome)) == (List *) NULL)
+  if ((genomes = newGenericList(cloneGenome, freeGenome)) == (GenericList *) NULL)
     return 0;
 
-  initList(genomes);
+  initGenericList(genomes);
   pool->species[pool->nb_species].genomes = genomes;
 
   pool->species[pool->nb_species].id = pool->nb_species;
@@ -110,7 +110,7 @@ int removeSpecies(MatingPool * pool, short int id) {
     return 0;
   }
 
-  freeList(pool->species[i].genomes);
+  freeGenericList(pool->species[i].genomes);
 
   for (i = index; i < pool->nb_species - 1; ++i)
     pool->species[i] = pool->species[i + 1];
@@ -212,8 +212,8 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
     else
       remaining = ceil(pool->species[i].nb_genomes / 2.0);
 
-    setOnFirst(pool->species[i].genomes);
-    while (!outOfList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
+    setOnFirstElement(pool->species[i].genomes);
+    while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
       delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
       --pool->species[i].nb_genomes;
     }
@@ -261,10 +261,10 @@ void removeStaleSpecies(MatingPool * pool) {
   int i;
 
   for (i = 0; i < pool->nb_species; ++i) {
-    if (!emptyList(pool->species[i].genomes)) {
+    if (!emptyGenericList(pool->species[i].genomes)) {
       sort(pool->species[i].genomes, compareFitnessCulling);
 
-      setOnFirst(pool->species[i].genomes);
+      setOnFirstElement(pool->species[i].genomes);
       if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
         pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
         pool->species[i].staleness = 0;
@@ -371,12 +371,12 @@ void computeGlobalRanks(MatingPool * pool) {
 
   j = 0;
   for (i = 0; i < pool->nb_species; ++i) {
-    setOnFirst(pool->species[i].genomes);
-    while (!outOfList(pool->species[i].genomes)) {
+    setOnFirstElement(pool->species[i].genomes);
+    while (!outOfGenericList(pool->species[i].genomes)) {
       genomes[j] = ((Genome *) getCurrent(pool->species[i].genomes));
 
       ++j;
-      next(pool->species[i].genomes);
+      nextElement(pool->species[i].genomes);
     }
   }
 
@@ -464,11 +464,11 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 void computeAverageFitness(Species * species) {
   double sum = 0.0;
 
-  setOnFirst(species->genomes);
-  while (!outOfList(species->genomes)) {
+  setOnFirstElement(species->genomes);
+  while (!outOfGenericList(species->genomes)) {
     sum += ((Genome *) species->genomes->current->data)->global_rank;
 
-    next(species->genomes);
+    nextElement(species->genomes);
   }
 
   species->average_fitness = sum / species->nb_genomes;
@@ -480,7 +480,7 @@ void computeAverageFitness(Species * species) {
 * \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
-  setOn(species->genomes, randomAtMost(species->nb_genomes));
+  setOn(species->genomes, randomLimit(species->nb_genomes));
   return getCurrent(species->genomes);
 }
 
@@ -510,11 +510,11 @@ void printMatingPool(MatingPool * pool) {
     printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
 
     j = 0;
-    setOnFirst(pool->species[i].genomes);
-    while (!outOfList(pool->species[i].genomes)) {
+    setOnFirstElement(pool->species[i].genomes);
+    while (!outOfGenericList(pool->species[i].genomes)) {
       printGenome((Genome *) getCurrent(pool->species[i].genomes));
 
-      next(pool->species[i].genomes);
+      nextElement(pool->species[i].genomes);
     }
   }
 }
