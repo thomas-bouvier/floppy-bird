@@ -1,5 +1,21 @@
 ﻿# reports
 
+## Compte-rendu réunion n°6 (27/04/2017)
+
+La fuite mémoire peut-être liée à la version d'Ubuntu utilisée, pas de fuite avec la 14.04.
+
+La couverture gcov 100% est toujours à atteindre.
+
+Le Makefile est à tester avec la méthode du cours, noter les erreurs si cette méthode ne fonctionne pas.
+
+Les vidéos doivent être ajouter au git dans une branche Annexe.
+Il est possible d'optimiser le traitement d'images en utilisant la librairie ROS.
+
+Le rapport est à réaliser pour la prochaine réunion.
+
+Prochaine réunion le mardi 16/05/2017 à 10H.
+
+
 ## Compte-rendu réunion n°5 (05/04/2017)
 
 Une fuite mémoire n'a toujours pas été corrigée.
