@@ -22,6 +22,8 @@
 #include "../../ai/neat/src/neat_conf.h"
 #include "../../ai/neat/src/population.h"
 
+int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight);
+
 int main(int argc, char ** argv)
 {
     SDL_Window * window = NULL;
@@ -29,6 +31,7 @@ int main(int argc, char ** argv)
 
     Uint32 lastFrame;
     int i;
+    int j;
 
     int hit;
     int running = 1;
@@ -277,7 +280,7 @@ int main(int argc, char ** argv)
     }
 
     mode = WAIT;
-    while((mode != PLAY && mode != IA1) && init != QUIT)
+    while((mode != PLAY && mode != IA1 && mode != IA2) && init != QUIT)
     {
         mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
         init = detectTouch();
@@ -337,6 +340,8 @@ int main(int argc, char ** argv)
                 running = waitForTI();
             if(mode == IA1)
                 running = 1;
+            if (mode == IA2)
+                running = 1;
             displayGame(renderer, &bird, &l, &camera, score, font);
         }
         else
@@ -388,15 +393,28 @@ int main(int argc, char ** argv)
                 if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
                     action_break=0;
 
-                hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
-                hit_saved = hit;
-                savedObstacle = nextBirdObstacle(&l, &bird);
-                if(simplifiedMode)
-                    displayGame(renderer, &bird, &l, &camera, score, font);
-                else
-                    displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
-                playSound(sound, jump_sound, obstacle_sound, death_sound);
-                lastFrame = SDL_GetTicks();
+                if (mode == IA2) {
+                    hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
+                    hit_saved = hit;
+                    savedObstacle = nextBirdObstacle(&l, &bird);
+                    if(simplifiedMode)
+                        displayGame(renderer, &bird, &l, &camera, score, font);
+                    else
+                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    playSound(sound, jump_sound, obstacle_sound, death_sound);
+                    lastFrame = SDL_GetTicks();
+                }
+                else {
+                    hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile);
+                    hit_saved = hit;
+                    savedObstacle = nextBirdObstacle(&l, &bird);
+                    if(simplifiedMode)
+                        displayGame(renderer, &bird, &l, &camera, score, font);
+                    else
+                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    playSound(sound, jump_sound, obstacle_sound, death_sound);
+                    lastFrame = SDL_GetTicks();
+                }
             }
             saveScore(scoreFile, score);
         }
@@ -426,4 +444,18 @@ int main(int argc, char ** argv)
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;
+}
+
+int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight) {
+    double input[N_INPUTS];
+    double * output;
+
+    input[0] = ratioBirdHeight;
+    input[1] = ratioPipeWidth;
+    input[2] = ratioPipeHeight;
+    input[3] = 1.0;
+
+    output = evaluateGenome(genome, input);
+
+    return (*output > 0.5);
 }
