@@ -284,7 +284,7 @@ int main(int argc, char ** argv)
         while((mode != PLAY && mode != IA1) && init != QUIT)
         {
             mode = WAIT;
-            mode = mainMenu(renderer, font, &levelFromFile, &simplifiedMode);
+            mode = mainMenu(renderer, &camera, font, &levelFromFile, &simplifiedMode, &sprites);
             init = detectTouch();
             if(mode == QUITGAME)
                 init = QUIT;

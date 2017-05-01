@@ -28,14 +28,17 @@ void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * fo
 * \brief Write the content of the main menu, and start the game in function of the click of the player
 * \param[out] renderer the drawing target
 * \param[in] font the font used
+* \param[in] camera the view of the scene
 * \param[out] levelFromFile allow to choose if the obstacles are predefined are random
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
+* \param[in] sprites the structure containing all the image of the game
 * \return the choice of mode wanted by the player
 */
-int  mainMenu(SDL_Renderer * renderer, TTF_Font * font, int * levelFromFile, int * simplifiedMode)
+int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * font, int * levelFromFile, int * simplifiedMode, Sprites * sprites)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
+    drawBackground(renderer, camera, sprites);
     SDL_Event event;
     SDL_PollEvent(&event);
     /* Play */

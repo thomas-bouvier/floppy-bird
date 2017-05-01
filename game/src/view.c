@@ -252,7 +252,12 @@ int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * score_file
 	return 1;
 }
 
-
+/*!
+* \brief Draw the tip to start the game on screen
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+* \param[in] sprites the structure containing all the image of the game
+*/
 void tapToPlay(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 {
     drawSprite(renderer, camera, sprites->tap_to_play, SCREEN_WIDTH/2 - sprites->tap_to_play->w/2, SCREEN_HEIGHT/2 - sprites->tap_to_play->h, 150, 150);
