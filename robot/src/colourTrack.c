@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 	raspiCamCvReleaseCapture(&capture);
 	cvDestroyAllWindows();
 	
-	/* disabling servo */
+	/* disable servo */
 	disable(&stylus);
 	
 	return 0; 
