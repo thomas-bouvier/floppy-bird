@@ -73,7 +73,7 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * font, int * l
     printText(renderer, "Quit game", 600, font);
     /* Displaying */
     SDL_RenderPresent(renderer);
-    return actionOnMenu(event, levelFromFile, simplifiedMode);
+    return actionOnMainMenu(event, levelFromFile, simplifiedMode);
 }
 
 /*!
@@ -83,7 +83,7 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * font, int * l
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \return the choice of mode wanted by the player (WAIT, PLAY, IA1 or IA2)
 */
-int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
@@ -102,4 +102,27 @@ int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
         SDL_Delay(200);
     }
     return WAIT;
+}
+
+
+void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
+{
+    drawSprite(renderer, camera, sprites->play, camera->x + 300, SCREEN_HEIGHT/2 - 75, 150, 150);
+    drawSprite(renderer, camera, sprites->quit, camera->x + 600, SCREEN_HEIGHT/2 - 75, 150, 150);
+    SDL_RenderPresent(renderer);
+}
+
+int actionOnPauseMenu()
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    {
+        if(event.button.x > 300 && event.button.x < 450 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
+            return RESUME;
+        if(event.button.x > 600 && event.button.x < 750 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
+            return QUIT;
+        //SDL_Delay(200);
+    }
+    return PAUSE;
 }

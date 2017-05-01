@@ -35,3 +35,7 @@ bird3 :
 ../res/sprites/bird3.png
 tap :
 ../res/sprites/tap.png
+play :
+../res/sprites/play.png
+quit :
+../res/sprites/quit.png

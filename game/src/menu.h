@@ -13,6 +13,8 @@
 
 void printText(SDL_Renderer * renderer, char * text, int position, TTF_Font * font);
 int mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * font, int * levelFromFile, int * simplifiedMode, Sprites * Sprites);
-int actionOnMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode);
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode);
+void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * Sprites);
+int actionOnPauseMenu();
 
 #endif // MENU_H

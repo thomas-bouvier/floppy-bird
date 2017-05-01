@@ -102,7 +102,8 @@ enum Action
     NOTHING,            /*! nothing to be done */
     JUMP,               /*! make the bird jump */
     QUIT,               /*! quit the game */
-    PAUSE               /*! pause the game */
+    PAUSE,              /*! pause the game */
+    RESUME              /*! resume game when it was paused */
 };
 
 /*!

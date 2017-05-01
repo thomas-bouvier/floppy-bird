@@ -55,6 +55,8 @@ int main(int argc, char ** argv)
     char background_path[100];
     char ground_path[100];
     char tap_path[100];
+    char play_path[100];
+    char quit_path[100];
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
@@ -245,6 +247,26 @@ int main(int argc, char ** argv)
             return EXIT_FAILURE;
         }
     }
+    if (readConfig(config, play_path, "play :\n"))
+    {
+        sprites.play=IMG_Load(play_path);
+        if(!sprites.play)
+        {
+            fprintf(stderr, "Opening play sprite failure :\n");
+            printf("%s\n", play_path);
+            return EXIT_FAILURE;
+        }
+    }
+    if (readConfig(config, quit_path, "quit :\n"))
+    {
+        sprites.quit=IMG_Load(quit_path);
+        if(!sprites.quit)
+        {
+            fprintf(stderr, "Opening quit sprite failure :\n");
+            printf("%s\n", quit_path);
+            return EXIT_FAILURE;
+        }
+    }
 
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
@@ -355,10 +377,17 @@ int main(int argc, char ** argv)
                     /*printf("%d\n", 1000/(SDL_GetTicks()-lastFrame));*/
                     Action event = detectTouch();
                     sound = NOSOUND;
+                    if(event == PAUSE)
+                    {
+                        while(event == PAUSE)
+                        {
+                            pauseMenu(renderer, &camera, &sprites);
+                            event = actionOnPauseMenu();
+                        }
+                    }
                     if(event == QUIT)
                         running = 0;
-                    if(event == PAUSE)
-                        running = (waiting() != QUIT);
+
 
 
                     if(mode == IA1 && (action_break == 0 || hit_saved == 1))

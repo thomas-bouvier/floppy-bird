@@ -29,6 +29,8 @@ typedef struct{
     SDL_Surface * background;   /*!< The image of the background */
     SDL_Surface * ground;       /*!< The image of the ground */
     SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
+    SDL_Surface * play;         /*!< The image in menu to resume game */
+    SDL_Surface * quit;         /*!< The image in menu to quit game */
 }Sprites;
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
