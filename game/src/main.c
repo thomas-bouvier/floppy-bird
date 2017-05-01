@@ -70,6 +70,7 @@ int main(int argc, char ** argv)
     char qmatrixPath[100];
     int hit_saved=0;
     int action_break=0;
+    int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
     srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites),
@@ -345,14 +346,20 @@ int main(int argc, char ** argv)
                         running = 0;
                     if(event == PAUSE)
                         running = (waiting() != QUIT);
+
+
                     if(mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
                         q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
                         if(last_action[0] != -1)
                             event = last_action[0];
                     }
-                    if(mode == IA1 && ++action_break >= NB_FPS_BEFORE_NEXT_ACTION)
+                    if(mode == IA1 && ++action_break >= nb_fps_before_next_action)
+                    {
                         action_break=0;
+                        nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
+                    }
+
 
                     hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile, simplifiedMode);
                     hit_saved = hit;

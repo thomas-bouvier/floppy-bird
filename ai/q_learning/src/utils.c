@@ -26,6 +26,27 @@ int randomAtMost(int limit) {
 }
 
 /*!
+* \brief Return a random number in a range given
+* \param[in] limit_min the lower limit
+* \param[in] limit_max the upper limit
+* \return Return a random number in the interval [limit_min; limit_max]
+*/
+int randomInRange(int limit_min, int limit_max) {
+  	int range= 1 + limit_max - limit_min;
+  	int d=RAND_MAX / range;
+    int limit= range*d;
+    int r;
+
+    if (limit_max == 0) return 0;
+
+  	do {
+    	r = rand();
+  	} while (r >= limit);
+    
+  	return limit_min+ (r/d);
+}
+
+/*!
 * \brief Give the value raised at the power
 * \param[in] value value to raise at
 * \param[in] power power
