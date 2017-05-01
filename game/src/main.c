@@ -54,6 +54,7 @@ int main(int argc, char ** argv)
     char pipe2_path[100];
     char background_path[100];
     char ground_path[100];
+    char tap_path[100];
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
@@ -234,6 +235,16 @@ int main(int argc, char ** argv)
             return EXIT_FAILURE;
         }
     }
+    if (readConfig(config, tap_path, "tap :\n"))
+    {
+        sprites.tap_to_play=IMG_Load(tap_path);
+        if(!sprites.tap_to_play)
+        {
+            fprintf(stderr, "Opening tap sprite failure :\n");
+            printf("%s\n", tap_path);
+            return EXIT_FAILURE;
+        }
+    }
 
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
@@ -315,6 +326,9 @@ int main(int argc, char ** argv)
             {
                 emptyEvent();
                 init = NOTHING;
+                tapToPlay(renderer, &camera, &sprites);
+                SDL_RenderPresent(renderer);
+
                 while(init == NOTHING && running)
                 {
                     init = detectTouch();
@@ -328,7 +342,6 @@ int main(int argc, char ** argv)
                 }
             }
 
-            /* Loop of game */
             number = OBSTACLE_NUMBER;
             hit = 0;
             lastFrame = SDL_GetTicks();

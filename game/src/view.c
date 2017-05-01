@@ -251,3 +251,9 @@ int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * score_file
 	SDL_DestroyTexture(text_texture);
 	return 1;
 }
+
+
+void tapToPlay(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
+{
+    drawSprite(renderer, camera, sprites->tap_to_play, SCREEN_WIDTH/2 - sprites->tap_to_play->w/2, SCREEN_HEIGHT/2 - sprites->tap_to_play->h, 150, 150);
+}

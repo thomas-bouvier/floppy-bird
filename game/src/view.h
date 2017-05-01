@@ -28,6 +28,7 @@ typedef struct{
     SDL_Surface * pipe2;        /*!< The image of the lower pipe */
     SDL_Surface * background;   /*!< The image of the background */
     SDL_Surface * ground;       /*!< The image of the ground */
+    SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
 }Sprites;
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
@@ -43,5 +44,6 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
 void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
 int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * scoreFile);
+void tapToPlay(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 
 #endif // VIEW_H
