@@ -23,7 +23,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="../conf/config.txt" />
+				<Option parameters="../conf/configWindows.txt" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>

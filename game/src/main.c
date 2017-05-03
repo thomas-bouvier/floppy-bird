@@ -336,7 +336,7 @@ int main(int argc, char ** argv)
             {
                 drawForTI(renderer, &camera);
                 if(mode == PLAY)
-                    running = waitForTI();
+                    running = waitClick();
                 if(mode == IA1)
                     running = 1;
                 displayGame(renderer, &bird, &l, &camera, score, font);
@@ -415,14 +415,23 @@ int main(int argc, char ** argv)
                 }
                 saveScore(scoreFile, score);
             }
+
             if(hit && mode == PLAY)
             {
-                SDL_Delay(300);
+                if(!simplifiedMode)
+                {
+                    while(bird.y < SCREEN_HEIGHT)
+                    {
+                        bird.y+=10;
+                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                        SDL_Delay(16);
+                    }
+                }
                 SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
                 SDL_RenderClear(renderer);
                 displayBestScore(renderer, font, scoreFile);
                 SDL_RenderPresent(renderer);
-                SDL_Delay(1500);
+                running=waitClick();
             }
             if(hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);

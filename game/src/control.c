@@ -68,7 +68,7 @@ Action waiting()
 * \brief wait a left click on a square at the center of the screen
 * \return return 0 if the game have to be stop and 1 if all went good
 */
-int waitForTI()
+int waitClick()
 {
     int run = 1;
     SDL_Event event;
