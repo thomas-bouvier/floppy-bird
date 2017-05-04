@@ -48,7 +48,7 @@ int mutateEnableFlag(Genome * genome, unsigned char enable);
 
 Genome * crossover(Genome * genome_1, Genome * genome_2);
 
-int sameSpecies(Genome * genome_1, Genome * genome_2);
+double sameSpecies(Genome * genome_1, Genome * genome_2);
 int linked(Neuron * neuron_in, Neuron * neuron_out);
 
 double * evaluateGenome(Genome * genome, double * input);

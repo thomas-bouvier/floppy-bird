@@ -174,6 +174,10 @@ int newGeneration(MatingPool * pool, int verbose) {
 
   cullSpecies(pool, 1);
 
+  while (count + pool->nb_species < POPULATION) {
+      
+  }
+
   for (i = 0; i < count; ++i)
     if (!addGenomeToProperSpecies(children[i], pool))
       return 0;
@@ -204,6 +208,9 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
   int i;
   double remaining;
 
+  printf("cullSpecies-------------------------------\n");
+  printf("%d, %d\n", pool->nb_species, cut_to_one);
+
   for (i = 0; i < pool->nb_species; ++i) {
     sort(pool->species[i].genomes, compareFitnessCulling);
 
@@ -215,6 +222,7 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
     setOnFirstElement(pool->species[i].genomes);
     while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
       delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
+      setOnFirstElement(pool->species[i].genomes);
       --pool->species[i].nb_genomes;
     }
   }

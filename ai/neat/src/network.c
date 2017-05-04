@@ -23,11 +23,7 @@ Neuron * newNeuron(NeuronType type) {
 
   new_neuron->id = -1;
   new_neuron->type = type;
-
-  if (type == BIAS)
-    new_neuron->value = 1.0;
-  else
-    new_neuron->value = 0.0;
+  new_neuron->value = 0.0;
 
   return new_neuron;
 }

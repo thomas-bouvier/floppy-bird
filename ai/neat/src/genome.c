@@ -92,10 +92,6 @@ int generateGenome(Genome * genome) {
     if (!addNeuronToGenome(genome, newNeuron(INPUT)))
       return 0;
 
-  for (i = 0; i < N_BIAS; ++i)
-    if (!addNeuronToGenome(genome, newNeuron(BIAS)))
-      return 0;
-
   for (i = 0; i < N_OUTPUTS; ++i)
     if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
       return 0;
@@ -648,7 +644,7 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
       fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 1 is NULL\n");
       return -DBL_MAX;
     }
-
+    
     setOnFirstElement(current_neuron_1->connections);
     while (!outOfGenericList(current_neuron_1->connections)) {
 
@@ -711,8 +707,9 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
 * \param[out] genome_2 the second Genome to compare
 * \return int 1 if the two Genome elements are from the same Species, 0 otherwise
 */
-int sameSpecies(Genome * genome_1, Genome * genome_2) {
-  return WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 0) < SPECIATION_THRESHOLD;
+double sameSpecies(Genome * genome_1, Genome * genome_2) {
+    double coef = WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 1) < SPECIATION_THRESHOLD;
+    return coef;
 }
 
 /*!
@@ -749,6 +746,16 @@ double * evaluateGenome(Genome * genome, double * input) {
     setOn(genome->network, i);
     ((Neuron *) getCurrent(genome->network))->value = input[i];
   }
+
+  /* debug
+  int index = 0;
+  setOnFirstElement(genome->network);
+  while (index < 4) {
+      printf("%f\n", ((Neuron *) getCurrent(genome->network))->value);
+      ++index;
+      nextElement(genome->network);
+  }
+  */
 
   // scanning input and output neurons
 
@@ -882,9 +889,6 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
     else if (current_neuron->type == OUTPUT)
       fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
-
-    else if (current_neuron->type == BIAS)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=orange];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
     else if (current_neuron->type == BASIC)
       fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
