@@ -86,8 +86,8 @@ void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 */
 void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites)
 {
-    drawSprite(renderer, camera, sprites->pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, SCREEN_HEIGHT-obstacle->lower.y);
-    drawSprite(renderer, camera, sprites->pipe1, obstacle->upper.x, 0, PIPE_WIDTH, obstacle->upper.h);
+    drawSprite(renderer, camera, sprites->pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, 500);
+    drawSprite(renderer, camera, sprites->pipe1, obstacle->upper.x, obstacle->upper.h-500, PIPE_WIDTH, 500);
 }
 
 /*!
@@ -112,6 +112,16 @@ void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites
     drawSprite(renderer, camera, bird_surface, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE);
 }
 /*!
+* \brief Draw a given bird
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the scene
+* \param[in] sprites the structure containing all the image of the game
+*/
+void drawPause(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
+{
+    drawSprite(renderer, camera, sprites->pause, SCREEN_WIDTH-80+camera->x, 40, 50, 50);
+}
+/*!
 * \brief Draw two squares with the color of upper and lower pipes and the size of the bird at the center of the screen
 * \param[out] renderer the drawing target
 * \param[in] camera the view of the scene
@@ -120,11 +130,14 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    int x1 = SCREEN_WIDTH/2 - 3*BIRD_SIZE/2;
-    int x2 = SCREEN_WIDTH/2 + BIRD_SIZE/2;
+    int x1 = SCREEN_WIDTH/2 - 5*BIRD_SIZE/2;
+    int x2 = SCREEN_WIDTH/2 - BIRD_SIZE/2;
+    int x3 = SCREEN_WIDTH/2 + 3*BIRD_SIZE/2;
     int y = SCREEN_HEIGHT/2 - BIRD_SIZE/2;
     drawRectangle(renderer, camera, x1, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
     drawRectangle(renderer, camera, x2, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
+    drawRectangle(renderer, camera, x3, y, BIRD_SIZE,BIRD_SIZE, 255, 105, 180);
+
     SDL_RenderPresent(renderer);
 }
 /*!
@@ -183,7 +196,7 @@ void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * ca
     }
     drawRealBird(renderer, bird, camera, sprites);
     displayScore(renderer, score, font);
-    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
+    drawPause(renderer, camera, sprites);
     SDL_RenderPresent(renderer);
 }
 /*!

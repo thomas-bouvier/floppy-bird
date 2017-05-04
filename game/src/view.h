@@ -31,6 +31,7 @@ typedef struct{
     SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
     SDL_Surface * play;         /*!< The image in menu to resume game */
     SDL_Surface * quit;         /*!< The image in menu to quit game */
+    SDL_Surface * pause;        /*!< the image of the pause button */
 }Sprites;
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
@@ -42,6 +43,7 @@ void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * cam
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites);
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font);
 void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
+void drawPause(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
 void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);

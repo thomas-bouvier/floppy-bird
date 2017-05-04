@@ -57,6 +57,7 @@ int main(int argc, char ** argv)
     char tap_path[100];
     char play_path[100];
     char quit_path[100];
+    char pause_path[100];
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
@@ -267,7 +268,16 @@ int main(int argc, char ** argv)
             return EXIT_FAILURE;
         }
     }
-
+    if (readConfig(config, pause_path, "pause :\n"))
+    {
+        sprites.pause = IMG_Load(pause_path);
+        if(!sprites.pause)
+        {
+            fprintf(stderr, "Opening pause sprite failure :\n");
+            printf("%s\n", pause_path);
+            return EXIT_FAILURE;
+        }
+    }
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -452,6 +462,17 @@ int main(int argc, char ** argv)
     /* Quit the game */
     if(mode == IA1)
         freeMatrixQ(matrixQ);
+    SDL_FreeSurface(sprites.background);
+    SDL_FreeSurface(sprites.bird1);
+    SDL_FreeSurface(sprites.bird2);
+    SDL_FreeSurface(sprites.bird3);
+    SDL_FreeSurface(sprites.ground);
+    SDL_FreeSurface(sprites.pause);
+    SDL_FreeSurface(sprites.pipe1);
+    SDL_FreeSurface(sprites.pipe2);
+    SDL_FreeSurface(sprites.play);
+    SDL_FreeSurface(sprites.quit);
+    SDL_FreeSurface(sprites.tap_to_play);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);
