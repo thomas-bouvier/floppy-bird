@@ -25,6 +25,11 @@ Node * newNode() {
 GenericList * newGenericList(CloneFunction clone_function, FreeFunction free_function) {
   GenericList * new_list = NULL;
 
+  if (free_function == NULL) {
+    fprintf(stderr, "Free function can't be NULL for new GenericList\n");
+    return NULL;
+  }
+
   if ((new_list = (GenericList *) malloc(sizeof(GenericList))) == (GenericList *) NULL) {
     fprintf(stderr, "Error while allocating memory for new GenericList\n");
     return NULL;

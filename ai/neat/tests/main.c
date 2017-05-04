@@ -8,10 +8,61 @@
 #include "../src/network.h"
 #include "../src/generic_list.h"
 
+/* newNode */
+
+static void test_newNode(void ** state) {
+    Node * node = newNode();
+
+    *state = node;
+
+    assert_null(node->data);
+    assert_null(node->next);
+}
+
+static int teardown_newNode(void ** state) {
+    free(*state);
+    return 0;
+}
+
+/* newGenericList */
+
+static void test_newGenericListMissingFreeFunction(void ** state) {
+    GenericList * list = newGenericList(NULL, NULL);
+
+    *state = list;
+
+    assert_null(list);
+}
+
+static void test_newGenericListMissingCloneFunction(void ** state) {
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    *state = list;
+
+    assert_null(list->clone_function);
+    assert_ptr_equal(list->free_function, freeNeuron);
+}
+
+static void test_newGenericList(void ** state) {
+    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+
+    *state = list;
+
+    assert_ptr_equal(list->clone_function, cloneNeuron);
+    assert_ptr_equal(list->free_function, freeNeuron);
+}
+
+static int teardown_newGenericList(void ** state) {
+    if (*state != NULL)
+        freeGenericList(*state);
+
+    return 0;
+}
+
 /* initGenericList */
 
 static int setup_initGenericList(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -38,7 +89,7 @@ static int teardown_initGenericList(void ** state) {
 /* emptyGenericList */
 
 static int setup_emptyGenericList(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -57,7 +108,7 @@ static void test_emptyGenericList(void ** state) {
 }
 
 static int setup_emptyGenericListOneElementRemoved(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -85,7 +136,7 @@ static int teardown_emptyGenericList(void ** state) {
 /* outOfGenericList */
 
 static int setup_outOfGenericList(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -104,7 +155,7 @@ static void test_outOfGenericList(void ** state) {
 }
 
 static int setup_outOfGenericListOneElement(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -124,7 +175,7 @@ static void test_outOfGenericListOneElement(void ** state) {
 }
 
 static int setup_outOfGenericListOneElementNext(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -152,7 +203,7 @@ static int teardown_outOfGenericList(void ** state) {
 /* setOnFirstElement */
 
 static int setup_setOnFirstElementEmptyList(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -174,7 +225,7 @@ static void test_setOnFirstElementEmptyList(void ** state) {
 }
 
 static int setup_setOnFirstElementOneElement(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -197,7 +248,7 @@ static void test_setOnFirstElementOneElement(void ** state) {
 }
 
 static int setup_setOnFirstElement(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -230,7 +281,7 @@ static int teardown_setOnFirstElement(void ** state) {
 /* setOn */
 
 static int setup_setOnEmptyList(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -251,7 +302,7 @@ static void test_setOnEmptyList(void ** state) {
 }
 
 static int setup_setOn(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -290,7 +341,7 @@ static int teardown_setOn(void ** state) {
 /* nextElement */
 
 static int setup_nextElement(void ** state) {
-  GenericList * list = newGenericList(NULL, NULL);
+  GenericList * list = newGenericList(NULL, freeNeuron);
 
   if (list == NULL)
     return -1;
@@ -334,6 +385,10 @@ static int teardown_nextElement(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
+    cmocka_unit_test_teardown(test_newNode, teardown_newNode),
+    cmocka_unit_test_teardown(test_newGenericListMissingFreeFunction, teardown_newGenericList),
+    cmocka_unit_test_teardown(test_newGenericListMissingCloneFunction, teardown_newGenericList),
+    cmocka_unit_test_teardown(test_newGenericList, teardown_newGenericList),
     cmocka_unit_test_setup_teardown(test_initGenericList, setup_initGenericList, teardown_initGenericList),
     cmocka_unit_test_setup_teardown(test_emptyGenericList, setup_emptyGenericList, teardown_emptyGenericList),
     cmocka_unit_test_setup_teardown(test_emptyGenericListOneElementRemoved, setup_emptyGenericListOneElementRemoved, teardown_emptyGenericList),
