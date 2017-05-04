@@ -8,12 +8,14 @@
 #include "stylus.h"
 #include "tracking.h"
 #include "pipeTracking.h"
+#include <pthread.h>
 
 /*!
 * \struct Robot 
 * \brief struct gathering all the necessary to interface the IA with the robot
 */
 struct Robot{
+	pthread_mutex_t mutex_robot;	/*!< the mutex to avoid threads writing conflicts */
 	float birdHeight;		/*!<  the bird height*/
 	float pipeHeight; 		/*!<  the pipe height*/
 	float pipeBirdDist;		/*!<  the pipe - bird distance*/

@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-Wall 
 CFLAGS_OPENCV = -I/usr/include/opencv -I$(HOME)/git/robidouille/raspicam_cv 	
 LDFLAGS2_OPENCV = -lopencv_highgui -lopencv_core -lopencv_legacy -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_imgproc -lpthread -lm
-LDFLAGS= -lwiringPi   
+LDFLAGS= -lwiringPi -lpthread  
 LDFLAGS_PI =  -L$(HOME)/git/raspberrypi/userland/build/lib -lmmal_core -lmmal -l mmal_util -lvcos -lbcm_host	
 
 
