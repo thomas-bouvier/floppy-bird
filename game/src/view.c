@@ -142,7 +142,6 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
     setOnFirst(l);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
-    drawBird(renderer, bird, camera);
     while (i < OBSTACLE_NUMBER)
     {
         if (l->current->lower.x != 0){
@@ -151,6 +150,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
+    drawBird(renderer, bird, camera);
     displayScore(renderer, score, font);
     drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
     SDL_RenderPresent(renderer);
@@ -173,7 +173,6 @@ void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * ca
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
-    drawRealBird(renderer, bird, camera, sprites);
     while (i < OBSTACLE_NUMBER)
     {
         if (l->current->lower.x != 0){
@@ -182,6 +181,7 @@ void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * ca
             ++i;
         }
     }
+    drawRealBird(renderer, bird, camera, sprites);
     displayScore(renderer, score, font);
     drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
     SDL_RenderPresent(renderer);

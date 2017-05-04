@@ -23,7 +23,5 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 int ratioBirdHeight(Bird * bird);
 int ratioPipeHeight (Bird * bird, List * l);
 int ratioPipeWidth (Bird * bird, Camera * camera, List * l);
-int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, Sound * sound, int levelFromFile, int simplifiedMode);
-
 
 #endif // GAME_H

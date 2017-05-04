@@ -62,7 +62,7 @@ int main(int argc, char ** argv)
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
     int levelFromFile = 1;
     /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
-    int simplifiedMode = 1;
+    int simplifiedMode = 0;
     int score;
     Obstacle * savedObstacle = NULL;
 
@@ -402,10 +402,19 @@ int main(int argc, char ** argv)
                         nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
                     }
 
-
-                    hit = game(&bird, &camera, &l, level, event, &number, savedObstacle, &score, &sound, levelFromFile, simplifiedMode);
+                    /* Update of the model */
+                    updateBird(&bird, event, &sound);
+                    deleteObstacle(&camera, &l);
+                    if (createObstacle(&camera, &l, level, number, levelFromFile))
+                        number++;
+                    score = updateScore(score, &bird, savedObstacle, &sound);
+                    if(simplifiedMode == 0)
+                        modifySpeed(score, &camera);
+                    cameraScrolling(&camera, &bird);
+                    hit = detectHit(&bird, nextBirdObstacle(&l, &bird), &sound);
                     hit_saved = hit;
                     savedObstacle = nextBirdObstacle(&l, &bird);
+
                     if(simplifiedMode)
                         displayGame(renderer, &bird, &l, &camera, score, font);
                     else
