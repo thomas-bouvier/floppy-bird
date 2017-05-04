@@ -80,13 +80,13 @@ void createObstacleFromFile(FILE * level, int number, List * l)
 }
 
 /*!
-* \brief Create an obstacle with an random height
+* \brief Create an obstacle with a random height
 * \param[in] number the obstacle number
 * \param[out] l the list of obstacles
 */
 void createObstacleRandomly(int number, List * l)
 {
-    int heightPipe = rand() % (MAX_HEIGHT_LOWER - MIN_HEIGHT_LOWER + 1) + MIN_HEIGHT_LOWER;
+    int heightPipe = pipes_height[rand() % NUMBER_OF_OBSTACLE_SIZES];
     Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
     insertLast(l, newObs);
 }

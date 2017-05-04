@@ -73,6 +73,16 @@
 */
 #define MAX_HEIGHT_LOWER 500
 
+/*! \def NUMBER_OF_OBSTACLE_SIZES
+* \brief The number of heights possible for an obstacle
+*/
+#define NUMBER_OF_OBSTACLE_SIZES 8
+
+/*!
+* The possible sizes for an obstacle
+*/
+const int pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450, 500};
+
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
 */
