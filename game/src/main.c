@@ -439,15 +439,12 @@ int main(int argc, char ** argv)
 
             if(hit && mode == PLAY)
             {
-                if(!simplifiedMode)
+                while(birdFall(&bird, simplifiedMode))
                 {
-                    while(bird.y < SCREEN_HEIGHT)
-                    {
-                        bird.y+=10;
-                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
-                        SDL_Delay(16);
-                    }
+                    displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    SDL_Delay(16);
                 }
+
                 SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
                 SDL_RenderClear(renderer);
                 displayBestScore(renderer, font, scoreFile);

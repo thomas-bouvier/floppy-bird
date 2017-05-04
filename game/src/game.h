@@ -19,6 +19,7 @@ void modifySpeed(int score, Camera * camera);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);
 int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound);
+int birdFall(Bird * bird, int simplifiedMode);
 int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound);
 int ratioBirdHeight(Bird * bird);
 int ratioPipeHeight (Bird * bird, List * l);
