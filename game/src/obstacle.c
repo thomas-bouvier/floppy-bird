@@ -5,6 +5,11 @@
 #include "obstacle.h"
 
 /*!
+* The possible sizes for an obstacle
+*/
+const int pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450, 500};
+
+/*!
 *\brief Create an obstacle
 * \param[in] number the obstacle number
 * \param[in] height_lower the ordinate of the lower pipe (must be between MIN_HEIGHT_LOWER and MAX_HEIGHT_LOWER)
