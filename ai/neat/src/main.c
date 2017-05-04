@@ -28,11 +28,11 @@ int main() {
 
   for (i = 0; i < pool->nb_species; ++i) {
 
-    setOnFirst(pool->species[i].genomes);
-    while (!outOfList(pool->species[i].genomes)) {
+    setOnFirstElement(pool->species[i].genomes);
+    while (!outOfGenericList(pool->species[i].genomes)) {
       generateGenome(getCurrent(pool->species[i].genomes));
 
-      next(pool->species[i].genomes);
+      nextElement(pool->species[i].genomes);
     }
   }
 
