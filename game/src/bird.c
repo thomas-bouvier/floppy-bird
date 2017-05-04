@@ -15,6 +15,7 @@ void initBird(Bird * new_bird)
     new_bird->w = BIRD_SIZE;
     new_bird->h = BIRD_SIZE;
     new_bird->dir_y = 0;
+    new_bird->dead = 0;
 }
 
 /*!

@@ -19,6 +19,7 @@ typedef struct{
     int h;                      /*!< the height of the bird */
     int w;                      /*!< the width of the bird */
     int dir_y;                  /*!< the speed of climb/fall of the bird */
+    int dead;                   /*!< the state of the bird (1 for dead, 0 for alive) */
 } Bird;
 
 void initBird(Bird * new_bird);

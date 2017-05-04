@@ -412,6 +412,8 @@ int main(int argc, char ** argv)
                         modifySpeed(score, &camera);
                     cameraScrolling(&camera, &bird);
                     hit = detectHit(&bird, nextBirdObstacle(&l, &bird), &sound);
+                    if (hit == 1)
+                        bird.dead = 1;
                     hit_saved = hit;
                     savedObstacle = nextBirdObstacle(&l, &bird);
 
