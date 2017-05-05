@@ -8,7 +8,9 @@
 #include "../src/network.h"
 #include "../src/generic_list.h"
 
-/* newNode */
+/*========================================================================
+    newNode
+========================================================================*/
 
 static void test_newNode(void ** state) {
     Node * node = newNode();
@@ -24,7 +26,9 @@ static int teardown_newNode(void ** state) {
     return 0;
 }
 
-/* newGenericList */
+/*========================================================================
+    newGenericList
+========================================================================*/
 
 static void test_newGenericListMissingFreeFunction(void ** state) {
     GenericList * list = newGenericList(NULL, NULL);
@@ -59,7 +63,9 @@ static int teardown_newGenericList(void ** state) {
     return 0;
 }
 
-/* initGenericList */
+/*========================================================================
+    initGenericList
+========================================================================*/
 
 static int setup_initGenericList(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -86,7 +92,75 @@ static int teardown_initGenericList(void ** state) {
   return 0;
 }
 
-/* emptyGenericList */
+/*========================================================================
+    cloneGenericList
+========================================================================*/
+
+typedef struct {
+    void * base_list;
+    void * clone_list;
+} CloneGenericListStruct;
+
+static int setup_cloneGenericList(void ** state) {
+    CloneGenericListStruct * helper = NULL;
+    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    if ((helper = (CloneGenericListStruct *) malloc(sizeof(CloneGenericListStruct))) == (CloneGenericListStruct *) NULL)
+        return -1;
+
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    helper->base_list = list;
+
+    *state = helper;
+
+    return 0;
+}
+
+static void test_cloneGenericList(void ** state) {
+    CloneGenericListStruct * helper = (CloneGenericListStruct *) (* state);
+    GenericList * base_list = (GenericList *) helper->base_list;
+    GenericList * clone_list = NULL;
+
+    clone_list = cloneGenericList(base_list);
+    helper->clone_list = clone_list;
+
+    assert_ptr_equal(base_list->clone_function, clone_list->clone_function);
+    assert_ptr_equal(base_list->free_function, clone_list->free_function);
+
+    setOnFirstElement(base_list);
+    setOnFirstElement(clone_list);
+
+    assert_int_equal(((Neuron *) base_list->current->data)->type, INPUT);
+    assert_int_equal(((Neuron *) clone_list->current->data)->type, INPUT);
+    assert_ptr_not_equal(base_list->current, clone_list->current);
+
+    nextElement(base_list);
+    nextElement(clone_list);
+
+    assert_int_equal(((Neuron *) base_list->current->data)->type, OUTPUT);
+    assert_int_equal(((Neuron *) clone_list->current->data)->type, OUTPUT);
+    assert_ptr_not_equal(base_list->current, clone_list->current);
+}
+
+static int teardown_cloneGenericList(void ** state) {
+    freeGenericList(((CloneGenericListStruct *) *state)->base_list);
+    freeGenericList(((CloneGenericListStruct *) *state)->clone_list);
+    return 0;
+}
+
+/*========================================================================
+    emptyGenericList
+========================================================================*/
 
 static int setup_emptyGenericList(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -133,7 +207,9 @@ static int teardown_emptyGenericList(void ** state) {
   return 0;
 }
 
-/* outOfGenericList */
+/*========================================================================
+    outOfGenericList
+========================================================================*/
 
 static int setup_outOfGenericList(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -200,7 +276,9 @@ static int teardown_outOfGenericList(void ** state) {
   return 0;
 }
 
-/* setOnFirstElement */
+/*========================================================================
+    setOnFirstElement
+========================================================================*/
 
 static int setup_setOnFirstElementEmptyList(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -278,7 +356,9 @@ static int teardown_setOnFirstElement(void ** state) {
   return 0;
 }
 
-/* setOn */
+/*========================================================================
+    setOn
+========================================================================*/
 
 static int setup_setOnEmptyList(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -338,7 +418,9 @@ static int teardown_setOn(void ** state) {
   return 0;
 }
 
-/* nextElement */
+/*========================================================================
+    nextElement
+========================================================================*/
 
 static int setup_nextElement(void ** state) {
   GenericList * list = newGenericList(NULL, freeNeuron);
@@ -383,6 +465,10 @@ static int teardown_nextElement(void ** state) {
   return 0;
 }
 
+/*========================================================================
+    tests
+========================================================================*/
+
 int main() {
   const struct CMUnitTest tests[] = {
     cmocka_unit_test_teardown(test_newNode, teardown_newNode),
@@ -390,6 +476,7 @@ int main() {
     cmocka_unit_test_teardown(test_newGenericListMissingCloneFunction, teardown_newGenericList),
     cmocka_unit_test_teardown(test_newGenericList, teardown_newGenericList),
     cmocka_unit_test_setup_teardown(test_initGenericList, setup_initGenericList, teardown_initGenericList),
+    cmocka_unit_test_setup_teardown(test_cloneGenericList, setup_cloneGenericList, teardown_cloneGenericList),
     cmocka_unit_test_setup_teardown(test_emptyGenericList, setup_emptyGenericList, teardown_emptyGenericList),
     cmocka_unit_test_setup_teardown(test_emptyGenericListOneElementRemoved, setup_emptyGenericListOneElementRemoved, teardown_emptyGenericList),
     cmocka_unit_test_setup_teardown(test_outOfGenericList, setup_outOfGenericList, teardown_outOfGenericList),
