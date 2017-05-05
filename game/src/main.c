@@ -176,7 +176,7 @@ int main(int argc, char ** argv)
                     running = waitClick();
                 if(mode == IA1)
                     running = 1;
-                displayGame(renderer, &bird, &l, &camera, score, font);
+                displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
             }
             else
                 displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
@@ -229,7 +229,8 @@ int main(int argc, char ** argv)
 
                     if(mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
-                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioBirdHeight(&bird)-ratioPipeHeight(&bird, &l), hit_saved);
+                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), ratioPipeHeight(&bird, &l)-ratioBirdHeight(&bird), ratioPipeHeight(&bird, &l), hit_saved);
+
                         if(last_action[0] != -1)
                             event = last_action[0];
                     }
@@ -255,7 +256,7 @@ int main(int argc, char ** argv)
                     savedObstacle = nextBirdObstacle(&l, &bird);
 
                     if(simplifiedMode)
-                        displayGame(renderer, &bird, &l, &camera, score, font);
+                        displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
                     else
                         displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
                     playSound(sound, jump_sound, obstacle_sound, death_sound);
