@@ -25,6 +25,7 @@ int main(int argc, char ** argv)
     int hit;
     int running = 1;
     int menu_loop = 1;
+    int ia1 = 0;
     Action init;
     Sound sound;
     Mode mode;
@@ -160,6 +161,7 @@ int main(int argc, char ** argv)
             matrixQ = loadQMatrix(qmatrixPath);
             init_array(last_states, NB_SAVED_STATES, -1);
             init_array(last_action, NB_SAVED_ACTIONS, -1);
+            ia1 = 1;
         }
 
         while(running)
@@ -269,12 +271,18 @@ int main(int argc, char ** argv)
                     displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
                     SDL_Delay(16);
                 }
+                emptyEvent();
 
-                SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
-                SDL_RenderClear(renderer);
+                if(simplifiedMode > 0)
+               {
+                    SDL_Delay(200);
+                    SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
+                    SDL_RenderClear(renderer);
+                    displayScore(renderer, score, font);
+               }
                 displayBestScore(renderer, font, scoreFile);
                 SDL_RenderPresent(renderer);
-                running=waitClick();
+                running = waitClick();
             }
             if(hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);
@@ -282,8 +290,9 @@ int main(int argc, char ** argv)
     }
 
     /* Quit the game */
-    if(mode == IA1)
+    if(ia1 > 0)
         freeMatrixQ(matrixQ);
+
     SDL_FreeSurface(sprites.background);
     SDL_FreeSurface(sprites.bird1);
     SDL_FreeSurface(sprites.bird2);
@@ -295,12 +304,15 @@ int main(int argc, char ** argv)
     SDL_FreeSurface(sprites.play);
     SDL_FreeSurface(sprites.quit);
     SDL_FreeSurface(sprites.tap_to_play);
+
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);
+
     fclose(config);
     fclose(level);
     fclose(scoreFile);
+
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;
