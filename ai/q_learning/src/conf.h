@@ -22,13 +22,13 @@
 
 #define DISTANCE_ACCURACY 1 /*!< Accuracy of the distance to process less states, an higher value reduce the accuracy and raise the collision risk */
 
-#define NB_SAVED_STATES 2 /*!< Number of saved states to compute the new reward (must be >2) */
+#define NB_SAVED_STATES 3 /*!< Number of saved states to compute the new reward (must be >2) */
 
 #define NB_SAVED_ACTIONS 5 /*!< Number of saved actions to compute the new reward and to compute the velocity (must be >(NB_SAVED_STATES-1) and >4 actions) */
 
-#define NB_FPS_BEFORE_NEXT_ACTION_MIN 14 /*!< Number of FPS minimum between two actions */
+#define NB_FPS_BEFORE_NEXT_ACTION_MIN 8 /*!< Number of FPS minimum between two actions */
 
-#define NB_FPS_BEFORE_NEXT_ACTION_MAX 17 /*!< Number of FPS maximum between two actions */
+#define NB_FPS_BEFORE_NEXT_ACTION_MAX 8 /*!< Number of FPS maximum between two actions */
 
 /* FIXED PARAMETERS */
 
