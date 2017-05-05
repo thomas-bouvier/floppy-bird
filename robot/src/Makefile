@@ -4,7 +4,7 @@ CFLAGS_OPENCV = -I/usr/include/opencv -I$(HOME)/git/robidouille/raspicam_cv
 LDFLAGS2_OPENCV = -lopencv_highgui -lopencv_core -lopencv_legacy -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_imgproc -lpthread -lm
 LDFLAGS= -lwiringPi -lpthread  -D_REENTRANT
 LDFLAGS_PI =  -L$(HOME)/git/raspberrypi/userland/build/lib -lmmal_core -lmmal -l mmal_util -lvcos -lbcm_host	
-
+Q_LEARNING_PATH=../../ai/q_learning/src/
 
 DEBUG=yes
 ifeq ($(DEBUG),yes)
@@ -26,7 +26,11 @@ imageBroadcast.o: imageBroadcast.h configuration.h tracking.h pipeTracking.h
 imageProcessing.o: imageProcessing.h tracking.h imageBroadcast.h
 tracking.o: tracking.h configuration.h imageBroadcast.h imageProcessing.h
 pipeTracking.o: pipeTracking.h configuration.h
-ia.o: ia.h stylus.h 
+ia.o: ia.h stylus.h $(Q_LEARNING_PATH)q_learning.h $(Q_LEARNING_PATH)conf.h
+q_learning.o: $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)file_manager.h $(Q_LEARNING_PATH)utils.h $(Q_LEARNING_PATH)conf.h
+qmatrix.o: $(Q_LEARNING_PATH)game_state.h $(Q_LEARNING_PATH)utils.h $(Q_LEARNING_PATH)conf.h
+file_manager.o: $(Q_LEARNING_PATH)qmatrix.h
+game_state.o: $(Q_LEARNING_PATH)conf.h
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CFLAGS_OPENCV) -c $< -o $@
