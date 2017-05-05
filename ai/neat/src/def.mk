@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall
-LDFLAGS = -lm
+CFLAGS = -Wall -fprofile-arcs -ftest-coverage
+LDFLAGS = -lm -fprofile-arcs -ftest-coverage
 
 main: main.o generic_list.o genome.o population.o neat_utils.o network.o
 	$(CC) $^ $(LDFLAGS) -o $@
