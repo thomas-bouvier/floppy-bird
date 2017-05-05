@@ -556,11 +556,96 @@ static int teardown_add(void ** state) {
 }
 
 /*========================================================================
+    delete
+========================================================================*/
+
+static int setup_delete(void ** state) {
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(INPUT));
+
+    *state = list;
+
+    return 0;
+}
+
+static void test_delete(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    setOn(list, 2);
+    assert_int_equal(delete(list, getCurrent(list)), 1);
+
+    setOnFirstElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+}
+
+static void test_deleteFirst(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    setOnFirstElement(list);
+    assert_int_equal(delete(list, getCurrent(list)), 1);
+
+    setOnFirstElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+}
+
+static void test_deleteLast(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    setOn(list, 4);
+    assert_int_equal(delete(list, getCurrent(list)), 1);
+
+    setOnFirstElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+
+    nextElement(list);
+    assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+}
+
+static int teardown_delete(void ** state) {
+    freeGenericList(*state);
+    return 0;
+}
+
+/*========================================================================
     tests
 ========================================================================*/
 
 int main() {
-  const struct CMUnitTest tests[] = {
+  const struct CMUnitTest tests_generic_list[] = {
     cmocka_unit_test_teardown(test_newNode, teardown_newNode),
     cmocka_unit_test_teardown(test_newGenericListMissingFreeFunction, teardown_newGenericList),
     cmocka_unit_test_teardown(test_newGenericListMissingCloneFunction, teardown_newGenericList),
@@ -580,7 +665,10 @@ int main() {
     cmocka_unit_test_setup_teardown(test_nextElement, setup_nextElement, teardown_nextElement),
     cmocka_unit_test_setup_teardown(test_getCurrent, setup_getCurrent, teardown_getCurrent),
     cmocka_unit_test_setup_teardown(test_add, setup_add, teardown_add),
+    cmocka_unit_test_setup_teardown(test_delete, setup_delete, teardown_delete),
+    cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
+    cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
   };
 
-  return cmocka_run_group_tests(tests, NULL, NULL);
+  return cmocka_run_group_tests(tests_generic_list, NULL, NULL);
 }
