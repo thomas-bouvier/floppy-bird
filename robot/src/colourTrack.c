@@ -185,6 +185,7 @@ int main(int argc, char *argv[]){
 			setNextPipeHeight(&robot, pipeHeight);
 		if(pipePosition >= 0)
 			setNextPipePosition(&robot, pipePosition);
+		setDataUpdated(&robot, true);
 		if(verbose)
 			printf("pipe : h%f w%f ; bird : h%f ; STATUS : %s\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot),birdStatus ? "running" : "dead");
 		if(logFile != NULL){

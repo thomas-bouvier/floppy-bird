@@ -7,6 +7,7 @@
 
 #include "stylus.h"
 #include <pthread.h>
+#include "configuration.h"
 
 typedef struct Robot Robot;
 
@@ -21,6 +22,7 @@ struct Robot{
 	float pipeBirdDist;		/*!<  the pipe - bird distance*/
 	int gameStatus;			/*!< the status of the game : 1 if the game is running, 0 if the bird is dead */
 	Stylus* stylus;		/*!< The stylus actuated by the servo */
+	boolean dataUpdated;	/*!< Tells if data has been updated : 1 if updated, 0 otherwise */
 };
 
 /* init */
@@ -35,6 +37,8 @@ float getBirdHeight(Robot* robot);
 void setBirdHeight(Robot* robot, float value);
 int getGameStatus(Robot* robot);
 void setGameStatus(Robot* robot, int status);
+boolean getDataUpdated(Robot* robot);
+void setDataUpdated(Robot* robot, boolean value);
 
 /* actions */
 void jump(Robot* robot);

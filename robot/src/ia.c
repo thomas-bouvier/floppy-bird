@@ -161,6 +161,31 @@ void setGameStatus(Robot* robot, int status)
 }
 
 /*!
+* \brief tells if data has been updated or not
+* \param[in] robot : the robot interface
+* \return 1 if the data updated, 0 otherwise
+*/
+boolean getDataUpdated(Robot* robot)
+{
+	pthread_mutex_lock (&(robot->mutex_robot));
+	boolean value = robot->dataUpdated;
+	pthread_mutex_unlock (&(robot->mutex_robot));
+	return value;
+}
+
+/*!
+* \brief set the var dataUpdated
+* \param[in] robot : the robot interface
+* \param[in] value : the new value for dataUpdated
+*/
+void setDataUpdated(Robot* robot, boolean value)
+{
+	pthread_mutex_lock (&(robot->mutex_robot));
+	robot->dataUpdated = value;
+	pthread_mutex_unlock (&(robot->mutex_robot));
+}
+
+/*!
 * \brief click with the stylus to make the bird jump
 * \param[in] robot : the robot interface
 */
