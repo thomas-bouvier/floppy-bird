@@ -7,6 +7,7 @@
 #include <highgui.h>
 #include <sys/time.h>
 #include <time.h>
+#include <pthread.h>
 #include "RaspiCamCV.h"
 
 #include "configuration.h"
@@ -15,6 +16,7 @@
 #include "tracking.h"
 #include "imageProcessing.h"
 #include "pipeTracking.h"
+#include "ia.h"
 
 /*!
 * \brief init capture function : init and configure the capture
@@ -34,27 +36,35 @@ RaspiCamCvCapture * initCapture(){
 }
 
 int main(int argc, char *argv[]){
-	/* Variables*/
+		
+	/* Image */
 	RaspiCamCvCapture * capture = initCapture();			/* The capture = video from the camera */
-	struct TrackedObject birdTracker;						/* The tracker for te bird */
-	struct TrackedObject pipeTracker[NB_PIPE_TRACKER];		/* An array of pipe trackers used to compute the dynamic tracking */
-	struct PipeDynamicTracker pipeDynTracker;				/* The pipe dynamic tracker */
 	struct ImageBroadcast cameraFlux;				/* The raw image from the camera */
 	struct ImageBroadcast birdBinFlux;				/* The binairy images resulting from the bird tracking */
 	struct ImageBroadcast pipeBinFlux;				/* The binary images resulting from the pipe dynamic tracking */
 	CvRect workingSpace;							/* The area defining the limits of the screen */
-	Stylus stylus;									/* The stylus actuated by the servo */
-	char colourTrackingWindow[] = "Color Tracking";			/* The name of the main window */
-	char birdWindow[] = "Bird tracking";					/* The name of the bird tracking window */
-	char pipeWindow[] = "Pipe tracking";					/* The name of the pipe tracking window */
-	char workSpaceDefWindow[] = "WorkingSpaceDefinition";	/* The name of the first window being displayed to define the working space */
 	
+	/* trackers*/
+	struct TrackedObject birdTracker;						/* The tracker for te bird */
+	struct TrackedObject pipeTracker[NB_PIPE_TRACKER];		/* An array of pipe trackers used to compute the dynamic tracking */
+	struct PipeDynamicTracker pipeDynTracker;				/* The pipe dynamic tracker */
+	
+	/* Mecanic */
+	Stylus stylus;			/* The stylus actuated by the servo */
+	Robot robot;			/* The robot gathers everything needed to interface the IA with the tracking */
+	
+	/* Thread */
+	pthread_t iaThread;				/* the thread for the ia */
+	int retIaThread = -1;			/* the return value when creating the ia thread */					
+	
+	/* Files */
 	int c;		/* Used to test which options are passed through argv */
 	FILE* loadFile = NULL;		/* The load File pointer */
 	FILE* saveFile = NULL;		/* The save File pointer */
 	FILE* logFile = NULL;		/* The log File pointer */
+	boolean verbose = false;	/* Tells if we want to display informations on the console */
 	
-	while((c = getopt(argc,argv,"l:s:d:")) != -1)
+	while((c = getopt(argc,argv,"l:s:d:iv")) != -1)
 		switch(c){
 			case 'l':		/* -l loadFileName : load working space and structures (trackers...) from the load File*/
 				loadFile = fopen(optarg,"rb");
@@ -77,6 +87,17 @@ int main(int argc, char *argv[]){
 					return 1;
 				}
 				break;
+			case 'i':		/* -i : run the IA */
+				printf("Creating a thread for the IA\n");
+				retIaThread = pthread_create (&iaThread, NULL, mainIa,&robot); 
+				if(retIaThread == 0)
+					printf("Thread created\n");
+				else 
+					fprintf (stderr, "%s", strerror (retIaThread));
+				break;
+			case 'v':		/* -v : verbose mode */
+				verbose = true;
+				break;
 			default:
 				printf("Unknown option :\nUsage : \n\t-l loadFileName\n\t-s saveFileName\n\t-d logFileName\n");
 				return 1;
@@ -91,11 +112,11 @@ int main(int argc, char *argv[]){
 	enable(&stylus);
 	
 	/* init working space and flux */
-	workingSpace = initWorkSpace(capture, workSpaceDefWindow,loadFile);
-	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
+	workingSpace = initWorkSpace(capture, "Working Space Definition",loadFile);
+	initImageBroadcast(&cameraFlux, NULL, &workingSpace, "Color Tracking", NULL);
 	loadImage(&cameraFlux,capture);
-	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, birdWindow, NULL);
-	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, pipeWindow, NULL);
+	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, "Bird tracking", NULL);
+	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, "Pipe tracking", NULL);
 	
 	/* init trackers */
 	int i;
@@ -114,7 +135,9 @@ int main(int argc, char *argv[]){
 		}
 		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
 	}
-    
+	
+	/* init the robot */
+    initRobot(&robot, &stylus);
     
     /* init var used in the main loop */
     if(logFile != NULL){
@@ -135,20 +158,23 @@ int main(int argc, char *argv[]){
 		showImage(&cameraFlux);
 		
 		/* Time computing */
-		gettimeofday(&currentTime,NULL);		/* update the time */
-		long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
-		gettimeofday(&lastTime,NULL);
-		float frameRate = 1000000.0/frameTime;
-		printf("FPS : %f \t",frameRate);
+		if(verbose){
+			gettimeofday(&currentTime,NULL);		/* update the time */
+			long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
+			gettimeofday(&lastTime,NULL);
+			float frameRate = 1000000.0/frameTime;
+			printf("FPS : %f \t",frameRate);
+		}
 		
 		/* Data processing */
 		CvPoint pipe = nextPipe(&pipeDynTracker,birdTracker.origin.x - birdTracker.width/2);
-		float birdHeight = getRelativeDistance(&birdTracker,UP);
-		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height)); 
-		float pipeBirdDist = (float)pipe.x/birdTracker.origin.x;
-		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
+		setBirdHeight(&robot, getRelativeDistance(&birdTracker,UP));
+		setNextPipeHeight(&robot, 1-((float)pipe.y/(pipeBinFlux.img->height)));
+		setNextPipePosition(&robot, (float)pipe.x/birdTracker.origin.x);
+		if(verbose)
+			printf("pipe : h%f w%f ; bird : h%f\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot));
 		if(logFile != NULL){
-			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
+			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),getBirdHeight(&robot),getNextPipeHeight(&robot),getNextPipePosition(&robot));
 		}
 		
 		/* keyboard functions */
@@ -157,10 +183,10 @@ int main(int argc, char *argv[]){
 		switch(key)	
 		{
 			case 'b':		/* b to select the color of the bird */
-				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
+				cvSetMouseCallback("Color Tracking", getObjectColor,&birdTracker);
 				break;
 			case 'p':		/* p to select the color of the pipe */
-				cvSetMouseCallback(colourTrackingWindow, getPipeColor,&pipeDynTracker);
+				cvSetMouseCallback("Color Tracking", getPipeColor,&pipeDynTracker);
 				break;
 			case 32:		/* space to click */
 				click(&stylus);
@@ -175,6 +201,9 @@ int main(int argc, char *argv[]){
 		update(&stylus);
 		
 	} while (!exit);
+
+	/* Thread cancel */
+	pthread_cancel (iaThread);
 
 	/* close and /  or save files */ 
 	if(loadFile != NULL)

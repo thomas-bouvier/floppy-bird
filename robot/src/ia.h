@@ -6,9 +6,9 @@
 #define IA_H
 
 #include "stylus.h"
-#include "tracking.h"
-#include "pipeTracking.h"
 #include <pthread.h>
+
+typedef struct Robot Robot;
 
 /*!
 * \struct Robot 
@@ -38,5 +38,8 @@ void setGameStatus(Robot* robot, int status);
 
 /* actions */
 void jump(Robot* robot);
+
+/* IA */
+void* mainIa (void* robot);
 
 #endif /* IA_H */

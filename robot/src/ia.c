@@ -1,15 +1,25 @@
 #include "ia.h"
 
 /*!
+* \brief the main function for the IA
+* \param[in] robot : the robot interface
+*/
+void* mainIa (void* robot)
+{
+	robot = (Robot*) robot;
+	return NULL;
+}
+
+/*!
 * \brief init the robot struct
 * \param[in] robot : the robot interface
 * \param[in] stylus : the address of the stylus
 */
 void initRobot(Robot* robot, Stylus* stylus)
 {
-	robot->mutex_robot = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_init ( &robot->mutex_robot, NULL);
 	setBirdHeight(robot,-1);
-	getNextPipeHeight(robot,-1);
+	setNextPipeHeight(robot,-1);
 	setNextPipePosition(robot,-1);
 	setGameStatus(robot,0);
 	robot->stylus = stylus;
