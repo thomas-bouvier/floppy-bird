@@ -24,9 +24,9 @@
 
 #define NB_SAVED_STATES 2 /*!< Number of saved states to compute the new reward */
 
-#define NB_SAVED_ACTIONS (NB_SAVED_STATES-1) /*!< Number of saved states to compute the new reward */
+#define NB_SAVED_ACTIONS (NB_SAVED_STATES-1) /*!< Number of saved actions to compute the new reward */
 
-#define NB_FPS_BEFORE_NEXT_ACTION_MIN 10 /*!< Number of FPS maximum between two actions */
+#define NB_FPS_BEFORE_NEXT_ACTION_MIN 10 /*!< Number of FPS minimum between two actions */
 
 #define NB_FPS_BEFORE_NEXT_ACTION_MAX 20 /*!< Number of FPS maximum between two actions */
 
