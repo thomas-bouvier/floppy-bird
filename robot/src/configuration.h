@@ -37,8 +37,8 @@ typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 #define NB_PIPE_TRACKER 3
 
 /* Tolerances for color analysis (HSV format)*/
-#define Htolerance 5 //2
-#define Stolerance 200//5
+#define Htolerance 1 //2
+#define Stolerance 20//5
 
 /* Maths methods */
 #define max(a, b) ((a) > (b) ? (a) : (b))

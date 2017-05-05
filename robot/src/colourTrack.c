@@ -42,12 +42,14 @@ int main(int argc, char *argv[]){
 	struct ImageBroadcast cameraFlux;				/* The raw image from the camera */
 	struct ImageBroadcast birdBinFlux;				/* The binairy images resulting from the bird tracking */
 	struct ImageBroadcast pipeBinFlux;				/* The binary images resulting from the pipe dynamic tracking */
+	struct ImageBroadcast statusFlux;				/* The binairy images resulting from the bird status tracking */
 	CvRect workingSpace;							/* The area defining the limits of the screen */
 	
 	/* trackers*/
 	struct TrackedObject birdTracker;						/* The tracker for te bird */
 	struct TrackedObject pipeTracker[NB_PIPE_TRACKER];		/* An array of pipe trackers used to compute the dynamic tracking */
 	struct PipeDynamicTracker pipeDynTracker;				/* The pipe dynamic tracker */
+	struct TrackedObject statusTracker;						/* track the status of the game (bird alive / dead) */
 	
 	/* Mecanic */
 	Stylus stylus;			/* The stylus actuated by the servo */
@@ -117,23 +119,26 @@ int main(int argc, char *argv[]){
 	loadImage(&cameraFlux,capture);
 	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, "Bird tracking", NULL);
 	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, "Pipe tracking", NULL);
+	initImageBroadcast(&statusFlux, NULL, &workingSpace, "Game status", NULL);
 	
 	/* init trackers */
+	int width = cameraFlux.img->roi->width;
+	int height = cameraFlux.img->roi->height;
 	int i;
 	if(loadFile == NULL){	/* init trackers with default parameters */
-		int width = cameraFlux.img->roi->width;
-		int height = cameraFlux.img->roi->height;
 		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&birdBinFlux,cvRect(((width/3) - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2)),0,width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE,height),RECTANGLE);
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
 			initTrackedObject(&pipeTracker[i],0,0,0,&cameraFlux,&pipeBinFlux,cvRect(width - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE) -1,0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
 		}
 		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
+		initTrackedObject(&statusTracker,0,0,0,&cameraFlux,&statusFlux,cvRect(0,0,width,height),NONE);
     } else {		/* init trackers from the load File */
 		loadTrackedObject(&birdTracker,&cameraFlux,&birdBinFlux,loadFile);
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
 			loadTrackedObject(&pipeTracker[i],&cameraFlux,&pipeBinFlux,loadFile);
 		}
 		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
+		loadTrackedObject(&statusTracker,&cameraFlux,&statusFlux,loadFile);
 	}
 	
 	/* init the robot */
@@ -155,6 +160,7 @@ int main(int argc, char *argv[]){
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
 		updatePipeDynamicTracker(&pipeDynTracker);
+		updateTracking(&statusTracker);
 		showImage(&cameraFlux);
 		
 		/* Time computing */
@@ -171,6 +177,8 @@ int main(int argc, char *argv[]){
 		float birdHeight = getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height));
 		float pipePosition = (float)pipe.x/birdTracker.origin.x;
+		int birdStatus = statusTracker.nbPixels < (int)(width * height / 1.3);
+		setGameStatus(&robot, birdStatus);
 		if(birdHeight >= 0) 
 			setBirdHeight(&robot, birdHeight);
 		if(pipeHeight >= 0)
@@ -178,9 +186,9 @@ int main(int argc, char *argv[]){
 		if(pipePosition >= 0)
 			setNextPipePosition(&robot, pipePosition);
 		if(verbose)
-			printf("pipe : h%f w%f ; bird : h%f\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot));
+			printf("pipe : h%f w%f ; bird : h%f ; STATUS : %s\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot),birdStatus ? "running" : "dead");
 		if(logFile != NULL){
-			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),getBirdHeight(&robot),getNextPipeHeight(&robot),getNextPipePosition(&robot));
+			fprintf(logFile,"%ld;%f;%f;%f;%d\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),getBirdHeight(&robot),getNextPipeHeight(&robot),getNextPipePosition(&robot), birdStatus);
 		}
 		
 		/* keyboard functions */
@@ -193,6 +201,9 @@ int main(int argc, char *argv[]){
 				break;
 			case 'p':		/* p to select the color of the pipe */
 				cvSetMouseCallback("Color Tracking", getPipeColor,&pipeDynTracker);
+				break;
+			case 's' :
+				cvSetMouseCallback("Color Tracking", getObjectColor,&statusTracker);	
 				break;
 			case 32:		/* space to click */
 				click(&stylus);
@@ -221,6 +232,7 @@ int main(int argc, char *argv[]){
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
 			saveTrackedObject(&pipeTracker[i],saveFile);
 		}
+		saveTrackedObject(&statusTracker,saveFile);
 		fclose(saveFile);
 	}
 	
@@ -232,6 +244,7 @@ int main(int argc, char *argv[]){
     for(i = 0; i < NB_PIPE_TRACKER; i++){
 		releaseTrackingImageMemory(&pipeTracker[i]);
 	}
+	releaseTrackingImageMemory(&statusTracker);
 	raspiCamCvReleaseCapture(&capture);
 	cvDestroyAllWindows();
 	
