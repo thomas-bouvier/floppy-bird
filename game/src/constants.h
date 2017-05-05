@@ -180,6 +180,7 @@ typedef struct{
     SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
     SDL_Surface * play;         /*!< The image in menu to resume game */
     SDL_Surface * quit;         /*!< The image in menu to quit game */
+    SDL_Surface * pause;        /*!< The image to display pause menu in the game */
 }Sprites;
 
 #endif // CONSTANTS_H

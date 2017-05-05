@@ -171,11 +171,11 @@ int openSpriteFiles(FILE * config, Sprites * sprites)
 {
     int i;
     char path[100];
-    char sprite_types[10][20] = {"bird1 :\n", "bird2 :\n", "bird3 :\n", "pipe1 :\n", "pipe2 :\n",
-                                "background :\n", "ground :\n", "tap :\n", "play :\n", "quit :\n"};
+    char sprite_types[11][20] = {"bird1 :\n", "bird2 :\n", "bird3 :\n", "pipe1 :\n", "pipe2 :\n",
+                                "background :\n", "ground :\n", "tap :\n", "play :\n", "quit :\n", "pause :\n"};
     SDL_Surface ** sprite_table[] = {&sprites->bird1, &sprites->bird2, &sprites->bird3, &sprites->pipe1, &sprites->pipe2,
-                                    &sprites->background, &sprites->ground, &sprites->tap_to_play, &sprites->play, &sprites->quit};
-    for (i=0 ; i<10 ; ++i)
+                                    &sprites->background, &sprites->ground, &sprites->tap_to_play, &sprites->play, &sprites->quit, &sprites->pause};
+    for (i=0 ; i<11 ; ++i)
     {
         if (readConfig(config, path, sprite_types[i]))
         {

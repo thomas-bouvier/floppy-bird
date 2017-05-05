@@ -127,7 +127,24 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
     }
     return h;
 }
-
+/*!
+* \brief if we're in normal mode the function make the bird fall of of value
+* \param[out] bird the bird that will fall
+* \param[in] simplifiedMode the variable that indicate if we're in simplified (1) or normal (0) mode
+* \return 0 if in simplified mode or if the bird can't fall anymore and 1 in others cases
+*/
+int birdFall(Bird * bird, int simplifiedMode)
+{
+    if(simplifiedMode)
+        return 0;
+    else
+    {
+        bird->y+=10;
+        if(bird->y > SCREEN_HEIGHT)
+            bird->y = SCREEN_HEIGHT - BIRD_SIZE;
+        return (bird->y + BIRD_SIZE != SCREEN_HEIGHT);
+    }
+}
 /*!
 * \brief The function update the score if an obstacle is passed
 * \param[in] score the current score

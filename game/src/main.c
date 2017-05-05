@@ -42,7 +42,6 @@ int main(int argc, char ** argv)
     Mix_Chunk * obstacle_sound = NULL;
     Mix_Chunk * death_sound = NULL;
 
-    //char fontPath[100];
     TTF_Font * font = NULL;
 
     Sprites sprites;
@@ -265,15 +264,12 @@ int main(int argc, char ** argv)
 
             if(hit && mode == PLAY)
             {
-                if(!simplifiedMode)
+                while(birdFall(&bird, simplifiedMode))
                 {
-                    while(bird.y < SCREEN_HEIGHT)
-                    {
-                        bird.y+=10;
-                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
-                        SDL_Delay(16);
-                    }
+                    displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    SDL_Delay(16);
                 }
+
                 SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
                 SDL_RenderClear(renderer);
                 displayBestScore(renderer, font, scoreFile);
@@ -288,6 +284,17 @@ int main(int argc, char ** argv)
     /* Quit the game */
     if(mode == IA1)
         freeMatrixQ(matrixQ);
+    SDL_FreeSurface(sprites.background);
+    SDL_FreeSurface(sprites.bird1);
+    SDL_FreeSurface(sprites.bird2);
+    SDL_FreeSurface(sprites.bird3);
+    SDL_FreeSurface(sprites.ground);
+    SDL_FreeSurface(sprites.pause);
+    SDL_FreeSurface(sprites.pipe1);
+    SDL_FreeSurface(sprites.pipe2);
+    SDL_FreeSurface(sprites.play);
+    SDL_FreeSurface(sprites.quit);
+    SDL_FreeSurface(sprites.tap_to_play);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);
     Mix_FreeChunk(death_sound);

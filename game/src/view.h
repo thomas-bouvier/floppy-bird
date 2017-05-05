@@ -16,8 +16,6 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 
-
-
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);
@@ -27,6 +25,7 @@ void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * cam
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites);
 void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font);
 void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
+void drawPause(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);
 void displayScore(SDL_Renderer * renderer, int score, TTF_Font * font);
