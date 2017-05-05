@@ -641,6 +641,119 @@ static int teardown_delete(void ** state) {
 }
 
 /*========================================================================
+    find
+========================================================================*/
+
+typedef struct {
+    GenericList * list;
+    Neuron * element;
+    Neuron * to_be_freed;
+} FindStruct;
+
+static int setup_find(void ** state) {
+    FindStruct * helper = NULL;
+    Neuron * element = NULL;
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    if ((helper = (FindStruct *) malloc(sizeof(FindStruct))) == (FindStruct *) NULL)
+        return -1;
+
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+
+    element = newNeuron(INPUT);
+    helper->element = element;
+    add(list, element);
+
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+
+    helper->list = list;
+
+    *state = helper;
+
+    return 0;
+}
+
+static void test_find(void ** state) {
+    FindStruct * helper = *state;
+    GenericList * list = helper->list;
+    Neuron * element = helper->element;
+    Neuron * to_be_freed = NULL;
+
+    assert_int_equal(find(list, NULL), 0);
+    assert_int_equal(find(list, element), 1);
+
+    to_be_freed = newNeuron(OUTPUT);
+    helper->to_be_freed = to_be_freed;
+    assert_int_equal(find(list, to_be_freed), 0);
+}
+
+static int teardown_find(void ** state) {
+    freeGenericList(((FindStruct *) *state)->list);
+    freeNeuron(((FindStruct *) *state)->to_be_freed);
+    return 0;
+}
+
+/*========================================================================
+    count
+========================================================================*/
+
+static int setup_countEmptyList(void ** state) {
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    *state = list;
+
+    return 0;
+}
+
+static int setup_count(void ** state) {
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(OUTPUT));
+
+    *state = list;
+
+    return 0;
+}
+
+static void test_countEmptyList(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    assert_int_equal(count(list), 0);
+}
+
+static void test_count(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    assert_int_equal(count(list), 5);
+}
+
+static int teardown_count(void ** state) {
+    freeGenericList(*state);
+    return 0;
+}
+
+/*========================================================================
     tests
 ========================================================================*/
 
@@ -668,6 +781,9 @@ int main() {
     cmocka_unit_test_setup_teardown(test_delete, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
+    cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
+    cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
+    cmocka_unit_test_setup_teardown(test_count, setup_count, teardown_count),
   };
 
   return cmocka_run_group_tests(tests_generic_list, NULL, NULL);
