@@ -45,8 +45,11 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 					{
                         if(cur_state->pipe_height == matrixQ->state[i].pipe_height)
 					    {
-						    freeState(cur_state);
-						    return i;
+                            if(cur_state->velocity == matrixQ->state[i].velocity)
+					        {
+						        freeState(cur_state);
+						        return i;
+                            }
                         }
 					}
 				i++;
@@ -97,6 +100,7 @@ int addState(State * cur_state, MatrixQ * matrixQ)
 	matrixQ->state[matrixQ->nb_states].delta_x = cur_state->delta_x;
 	matrixQ->state[matrixQ->nb_states].delta_y = cur_state->delta_y;
 	matrixQ->state[matrixQ->nb_states].pipe_height = cur_state->pipe_height;
+	matrixQ->state[matrixQ->nb_states].velocity = cur_state->velocity;
 	matrixQ->nb_states++;
 	freeState(cur_state);
 	return matrixQ->nb_states-1;
@@ -124,7 +128,7 @@ void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action
 {
 	int i=0;
 
-	for(i=0;i<NB_SAVED_ACTIONS;++i)
+	for(i=0;i<NB_SAVED_STATES-1;++i)
 	{
 		if(last_states_index[i+1] != -1)
 		{

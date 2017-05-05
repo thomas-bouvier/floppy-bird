@@ -15,7 +15,7 @@ int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int
 	shift_array(last_states, NB_SAVED_STATES);
 
 	/* Update the new state */
-	last_states[0] = findStateIndex(getCurrentState(processing_dxdy(dx), processing_dxdy(dy), pipe_height, processing_birdstate(bird_state)), matrixQ);
+	last_states[0] = findStateIndex(getCurrentState(processing_dxdy(dx), processing_dxdy(dy), pipe_height, getCurrentVelocity(last_action), processing_birdstate(bird_state)), matrixQ);
 
 	/* Update the Q matrix */
 	updateQReward(matrixQ, last_states, last_action);
