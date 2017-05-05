@@ -43,8 +43,11 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 				if(cur_state->delta_x == matrixQ->state[i].delta_x)
 					if(cur_state->delta_y == matrixQ->state[i].delta_y)
 					{
-						freeState(cur_state);
-						return i;
+                        if(cur_state->pipe_height == matrixQ->state[i].pipe_height)
+					    {
+						    freeState(cur_state);
+						    return i;
+                        }
 					}
 				i++;
 			}
@@ -61,6 +64,8 @@ int findStateIndex(State * cur_state, MatrixQ * matrixQ)
 */
 int addState(State * cur_state, MatrixQ * matrixQ)
 {
+    int i;
+
 	if(matrixQ->nb_states == 0)
 	{
 		if((matrixQ->state = (State *) malloc((matrixQ->nb_states+1)*sizeof(State))) == NULL) 
@@ -88,10 +93,10 @@ int addState(State * cur_state, MatrixQ * matrixQ)
 		}
 	}
 	
-	matrixQ->reward[matrixQ->nb_states*2] = randomAtMost(RANDOM_INIT_REWARD);
-	matrixQ->reward[matrixQ->nb_states*2+1] = randomAtMost(RANDOM_INIT_REWARD);
+	for(i=0; i<NB_ACTIONS; ++i) matrixQ->reward[matrixQ->nb_states*2+i] = randomAtMost(RANDOM_INIT_REWARD);
 	matrixQ->state[matrixQ->nb_states].delta_x = cur_state->delta_x;
 	matrixQ->state[matrixQ->nb_states].delta_y = cur_state->delta_y;
+	matrixQ->state[matrixQ->nb_states].pipe_height = cur_state->pipe_height;
 	matrixQ->nb_states++;
 	freeState(cur_state);
 	return matrixQ->nb_states-1;

@@ -16,7 +16,7 @@ void freeState(State * state)
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 * \return Return a state, distances=-1 if the bird is dead, NULL if error
 */
-State * getCurrentState(int delta_x, int delta_y, int bird_state)
+State * getCurrentState(int delta_x, int delta_y, int pipe_height, int bird_state)
 {
 	State * new_state = NULL;
 	switch(bird_state)
@@ -25,11 +25,13 @@ State * getCurrentState(int delta_x, int delta_y, int bird_state)
 				new_state = (State *) malloc(sizeof(State));
 				new_state->delta_x = -1;
 				new_state->delta_y = -1;
+				new_state->pipe_height = -1;
 				return new_state;
 		case 1:
 				new_state = (State *) malloc(sizeof(State));
 				new_state->delta_x = delta_x;
 				new_state->delta_y = delta_y;
+				new_state->pipe_height = pipe_height;
 				return new_state;
 		default:
 			freeState(new_state);

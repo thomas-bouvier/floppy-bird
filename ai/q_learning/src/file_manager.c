@@ -46,6 +46,7 @@ MatrixQ * loadQMatrix(char * filename)
 	{
         fscanf(fp, " %hd", &(matrixQ->state[i].delta_x));
 		fscanf(fp, " %hd", &(matrixQ->state[i].delta_y));
+		fscanf(fp, " %hd", &(matrixQ->state[i].pipe_height));
 		for(j=0; j<NB_ACTIONS; ++j) fscanf(fp, " %f", &(matrixQ->reward[i*NB_ACTIONS+j]));
         fscanf(fp, "\n");
 	}
@@ -82,6 +83,7 @@ int saveQMatrix(MatrixQ * matrixQ, char * filename)
 	{
      	fprintf(fp, "%d ", matrixQ->state[i].delta_x);
 		fprintf(fp, "%d ", matrixQ->state[i].delta_y);
+		fprintf(fp, "%d ", matrixQ->state[i].pipe_height);
 		for(j=0; j<NB_ACTIONS; ++j) fprintf(fp, "%f ", matrixQ->reward[i*NB_ACTIONS+j]);
         fprintf(fp, "\n");
 	}
