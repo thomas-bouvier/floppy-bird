@@ -595,6 +595,9 @@ static void test_delete(void ** state) {
 
     nextElement(list);
     assert_int_equal(((Neuron *) getCurrent(list))->type, INPUT);
+
+    nextElement(list);
+    assert_int_equal(delete(list, getCurrent(list)), 0);
 }
 
 static void test_deleteFirst(void ** state) {
