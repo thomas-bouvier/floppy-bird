@@ -7,6 +7,41 @@
 void* mainIa (void* robot)
 {
 	robot = (Robot*) robot;
+
+    MatrixQ * matrixQ = NULL;
+    int last_states[NB_SAVED_STATES];
+    int last_action[NB_SAVED_ACTIONS];
+    char *qmatrixPath="../res/qmatrix_data_robot.txt";
+    int hit_saved=0;
+    int action_break=0;
+    int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
+    srand(time(NULL));
+
+
+    /* Open the file that contains qMatrix data */
+
+    matrixQ = loadQMatrix(qmatrixPath);
+    init_array(last_states, NB_SAVED_STATES, -1);
+    init_array(last_action, NB_SAVED_ACTIONS, -1);
+    ia1 = 1;
+
+    while(1)
+    {
+        if(action_break == 0 || hit_saved == 1)
+        {
+            q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), getNextPipeHeight(robot)-getBirdHeight(robot), getNextPipeHeight(robot), hit_saved);
+
+            if(last_action[0] != -1)
+                event = last_action[0];
+        }
+        if(++action_break >= nb_fps_before_next_action)
+        {
+            action_break=0;
+            nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
+        }
+         hit_saved = getGameStatus(robot);
+    }
+
 	return NULL;
 }
 
