@@ -16,22 +16,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_image.h>
 
-/*!
-* \struct Sprites view.h
-* \brief The structure containing all the image useful to the game
-*/
-typedef struct{
-    SDL_Surface * bird1;        /*!< The first image of the bird */
-    SDL_Surface * bird2;        /*!< The second image of the bird */
-    SDL_Surface * bird3;        /*!< The third image of the bird */
-    SDL_Surface * pipe1;        /*!< The image of the upper pipe */
-    SDL_Surface * pipe2;        /*!< The image of the lower pipe */
-    SDL_Surface * background;   /*!< The image of the background */
-    SDL_Surface * ground;       /*!< The image of the ground */
-    SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
-    SDL_Surface * play;         /*!< The image in menu to resume game */
-    SDL_Surface * quit;         /*!< The image in menu to quit game */
-}Sprites;
+
 
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);

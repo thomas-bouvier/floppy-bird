@@ -36,27 +36,15 @@ int main(int argc, char ** argv)
 
     FILE * config = NULL;
     FILE * level = NULL;
-    char scorePath[100];
     FILE * scoreFile = NULL;
-    char jump_path[100];
-    Mix_Chunk * jump_sound;
-    char obstacle_path[100];
-    Mix_Chunk * obstacle_sound;
-    char death_path[100];
-    Mix_Chunk * death_sound;
-    char fontPath[100];
+
+    Mix_Chunk * jump_sound = NULL;
+    Mix_Chunk * obstacle_sound = NULL;
+    Mix_Chunk * death_sound = NULL;
+
+    //char fontPath[100];
     TTF_Font * font = NULL;
 
-    char bird1_path[100];
-    char bird2_path[100];
-    char bird3_path[100];
-    char pipe1_path[100];
-    char pipe2_path[100];
-    char background_path[100];
-    char ground_path[100];
-    char tap_path[100];
-    char play_path[100];
-    char quit_path[100];
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
@@ -76,7 +64,7 @@ int main(int argc, char ** argv)
     int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
     srand(time(NULL));
 
-    /* Open the configuration file (that contains the paths of level, sprites),
+    /* Open the configuration file (that contains the paths of level, sprites...),
     according to the parameter passed to main (or not) */
     if (argc == 1)
         config = fopen("conf/config.txt", "r");
@@ -88,30 +76,9 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    /* Open the file that contains the save of the level */
-    char levelPath[100];
-    if (readConfig(config, levelPath, "level :\n"))
-        level = fopen(levelPath, "r");
-    if(level == NULL)
-    {
-        fprintf(stderr,"Opening level file failure :\n");
-        printf("%s\n", levelPath);
+    /* Open the files necessary for the game (predefined level file, score file) */
+    if (!openGameFiles(config, &level, &scoreFile))
         return EXIT_FAILURE;
-    }
-
-    /* Open the file that contains the save of the best score : create it if it does not exist yet */
-    if (readConfig(config, scorePath, "score :\n"))
-    {
-        scoreFile = fopen(scorePath, "r+");
-        if (scoreFile == NULL)
-            scoreFile = fopen(scorePath, "w+");
-    }
-    if(scoreFile == NULL)
-    {
-        fprintf(stderr,"Opening score file failure :\n");
-        printf("%s\n", scorePath);
-        return EXIT_FAILURE;
-    }
 
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -134,140 +101,6 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    /* Setup sounds */
-    Mix_AllocateChannels(3);
-    if (readConfig(config, jump_path, "jump :\n"))
-    {
-        jump_sound = Mix_LoadWAV(jump_path);
-        if (jump_sound == NULL)
-        {
-            fprintf(stderr,"Opening jump sound failure :\n");
-            printf("%s\n", jump_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, obstacle_path, "obstacle :\n"))
-    {
-        obstacle_sound = Mix_LoadWAV(obstacle_path);
-        if (obstacle_sound == NULL)
-        {
-            fprintf(stderr,"Opening obstacle sound failure :\n");
-            printf("%s\n", obstacle_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, death_path, "death :\n"))
-    {
-        death_sound = Mix_LoadWAV(death_path);
-        if (death_sound == NULL)
-        {
-            fprintf(stderr,"Opening death sound failure :\n");
-            printf("%s\n", death_path);
-            return EXIT_FAILURE;
-        }
-    }
-    /* Setup sprites */
-    if (readConfig(config, bird1_path, "bird1 :\n"))
-    {
-        sprites.bird1=IMG_Load(bird1_path);
-        if(!sprites.bird1)
-        {
-            fprintf(stderr, "Opening bird1 sprite failure :\n");
-            printf("%s\n", bird1_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, bird2_path, "bird2 :\n"))
-    {
-        sprites.bird2=IMG_Load(bird2_path);
-        if(!sprites.bird2)
-        {
-            fprintf(stderr, "Opening bird2 sprite failure :\n");
-            printf("%s\n", bird2_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, bird3_path, "bird3 :\n"))
-    {
-        sprites.bird3=IMG_Load(bird3_path);
-        if(!sprites.bird3)
-        {
-            fprintf(stderr, "Opening bird3 sprite failure :\n");
-            printf("%s\n", bird3_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, pipe1_path, "pipe1 :\n"))
-    {
-        sprites.pipe1=IMG_Load(pipe1_path);
-        if(!sprites.pipe1)
-        {
-            fprintf(stderr, "Opening pipe1 sprite failure :\n");
-            printf("%s\n", pipe1_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, pipe2_path, "pipe2 :\n"))
-    {
-        sprites.pipe2=IMG_Load(pipe2_path);
-        if(!sprites.pipe2)
-        {
-            fprintf(stderr, "Opening pipe2 sprite failure :\n");
-            printf("%s\n", pipe2_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, background_path, "background :\n"))
-    {
-        sprites.background=IMG_Load(background_path);
-        if(!sprites.background)
-        {
-            fprintf(stderr, "Opening background sprite failure :\n");
-            printf("%s\n", background_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, ground_path, "ground :\n"))
-    {
-        sprites.ground=IMG_Load(ground_path);
-        if(!sprites.ground)
-        {
-            fprintf(stderr, "Opening ground sprite failure :\n");
-            printf("%s\n", ground_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, tap_path, "tap :\n"))
-    {
-        sprites.tap_to_play=IMG_Load(tap_path);
-        if(!sprites.tap_to_play)
-        {
-            fprintf(stderr, "Opening tap sprite failure :\n");
-            printf("%s\n", tap_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, play_path, "play :\n"))
-    {
-        sprites.play=IMG_Load(play_path);
-        if(!sprites.play)
-        {
-            fprintf(stderr, "Opening play sprite failure :\n");
-            printf("%s\n", play_path);
-            return EXIT_FAILURE;
-        }
-    }
-    if (readConfig(config, quit_path, "quit :\n"))
-    {
-        sprites.quit=IMG_Load(quit_path);
-        if(!sprites.quit)
-        {
-            fprintf(stderr, "Opening quit sprite failure :\n");
-            printf("%s\n", quit_path);
-            return EXIT_FAILURE;
-        }
-    }
-
     /* Setup window */
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -287,16 +120,19 @@ int main(int argc, char ** argv)
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-    /* Open a font for text */
-    if (readConfig(config, fontPath, "font :\n"))
-    {
-        font = TTF_OpenFont(fontPath, 70);
-        if(font == NULL)
-        {
-            fprintf(stderr, "Missing font : %s\n", TTF_GetError());
-            return EXIT_FAILURE;
-        }
-    }
+
+    /* Setup sounds */
+    Mix_AllocateChannels(3);
+    if (!openSoundFiles(config, &jump_sound, &obstacle_sound, &death_sound))
+        return EXIT_FAILURE;
+
+    /* Setup sprites */
+    if (!openSpriteFiles(config, &sprites))
+        return EXIT_FAILURE;
+
+    /* Setup font */
+    if (!openFontFiles(config, &font))
+        return EXIT_FAILURE;
 
     while(menu_loop)
     {

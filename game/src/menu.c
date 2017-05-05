@@ -104,7 +104,12 @@ int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
     return WAIT;
 }
 
-
+/*!
+* \brief Display the pause menu
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the game
+* \param[in] sprites the structure that contains the Surfaces for the game
+*/
 void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 {
     drawSprite(renderer, camera, sprites->play, camera->x + 300, SCREEN_HEIGHT/2 - 75, 150, 150);
@@ -112,6 +117,10 @@ void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
     SDL_RenderPresent(renderer);
 }
 
+/*!
+* \brief Defined the action on the pause menu
+* \return Quit, Resume or Pause according to the user action
+*/
 int actionOnPauseMenu()
 {
     SDL_Event event;
@@ -122,7 +131,7 @@ int actionOnPauseMenu()
             return RESUME;
         if(event.button.x > 600 && event.button.x < 750 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
             return QUIT;
-        //SDL_Delay(200);
+
     }
     return PAUSE;
 }
