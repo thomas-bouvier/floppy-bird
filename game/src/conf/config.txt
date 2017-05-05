@@ -16,7 +16,7 @@ death :
 ../res/sounds/death.wav
 
 qMatrix :
-../res/files/q_learning/saved_data/qmatrix_data.txt
+../res/files/q_learning_data/qmatrix_data.txt
 
 sprites :
 background :

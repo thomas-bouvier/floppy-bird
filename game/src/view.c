@@ -148,8 +148,9 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
 * \param[in] camera the view of the scene
 * \param[in] score the current score
 * \param[in] font the font used to write text
+* \param[in] sprites the structure containing all the image of the game
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font)
+void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;
     setOnFirst(l);
@@ -165,7 +166,7 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
     }
     drawBird(renderer, bird, camera);
     displayScore(renderer, score, font);
-    drawRectangle(renderer, camera, SCREEN_WIDTH-50+camera->x, 0, 50, 50, 100, 100, 100);
+    drawPause(renderer, camera, sprites);
     SDL_RenderPresent(renderer);
 }
 

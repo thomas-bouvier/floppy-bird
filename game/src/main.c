@@ -176,7 +176,7 @@ int main(int argc, char ** argv)
                     running = waitClick();
                 if(mode == IA1)
                     running = 1;
-                displayGame(renderer, &bird, &l, &camera, score, font);
+                displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
             }
             else
                 displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
@@ -255,7 +255,7 @@ int main(int argc, char ** argv)
                     savedObstacle = nextBirdObstacle(&l, &bird);
 
                     if(simplifiedMode)
-                        displayGame(renderer, &bird, &l, &camera, score, font);
+                        displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
                     else
                         displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
                     playSound(sound, jump_sound, obstacle_sound, death_sound);
