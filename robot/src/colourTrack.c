@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
 	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, "Bird tracking", NULL);
 	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, "Pipe tracking", NULL);
 	initImageBroadcast(&statusFlux, NULL, &workingSpace, "Game status", NULL);
-	
+	printf("init trackers\n");
 	/* init trackers */
 	int width = cameraFlux.img->roi->width;
 	int height = cameraFlux.img->roi->height;
@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
 		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
 		loadTrackedObject(&statusTracker,&cameraFlux,&statusFlux,loadFile);
 	}
-	
+	printf("init robot\n");
 	/* init the robot */
     initRobot(&robot, &stylus);
     
@@ -153,7 +153,7 @@ int main(int argc, char *argv[]){
 	struct timeval startTime, lastTime, currentTime;
 	gettimeofday(&startTime,NULL);
 	gettimeofday(&lastTime,NULL);
-	
+	printf("loop\n");
 	/* main loop */
 	do {
 		/* Update tracking */

@@ -18,12 +18,13 @@ void* mainIa (void* robot)
     int hit_saved=0;
     int action_break=0;
     srand(time(NULL));
-
     matrixQ = loadQMatrix(qmatrixPath);
+
     init_array(last_states, NB_SAVED_STATES, -1);
     init_array(last_action, NB_SAVED_ACTIONS, -1);
 
     /* Press Play *//*1 clk 120us*/
+    sleep(1);
     jump(robot);
     jump(robot);
     sleep(1);
@@ -42,7 +43,9 @@ void* mainIa (void* robot)
             if(hit_saved)
             {
                 jump(robot);
+                sleep(1);
                 jump(robot);
+                sleep(1);
                 jump(robot);
                 sleep(1);
             }
