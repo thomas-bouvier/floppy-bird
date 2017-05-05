@@ -168,9 +168,15 @@ int main(int argc, char *argv[]){
 		
 		/* Data processing */
 		CvPoint pipe = nextPipe(&pipeDynTracker,birdTracker.origin.x - birdTracker.width/2);
-		setBirdHeight(&robot, getRelativeDistance(&birdTracker,UP));
-		setNextPipeHeight(&robot, 1-((float)pipe.y/(pipeBinFlux.img->height)));
-		setNextPipePosition(&robot, (float)pipe.x/birdTracker.origin.x);
+		float birdHeight = getRelativeDistance(&birdTracker,UP);
+		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height));
+		float pipePosition = (float)pipe.x/birdTracker.origin.x;
+		if(birdHeight >= 0) 
+			setBirdHeight(&robot, birdHeight);
+		if(pipeHeight >= 0)
+			setNextPipeHeight(&robot, pipeHeight);
+		if(pipePosition >= 0)
+			setNextPipePosition(&robot, pipePosition);
 		if(verbose)
 			printf("pipe : h%f w%f ; bird : h%f\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot));
 		if(logFile != NULL){
