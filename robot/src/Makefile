@@ -13,7 +13,7 @@ endif
 
 all: testCamera colourTrack
 
-colourTrack: colourTrack.o stylus.o imageBroadcast.o imageProcessing.o tracking.o pipeTracking.o ia.o
+colourTrack: colourTrack.o stylus.o imageBroadcast.o imageProcessing.o tracking.o pipeTracking.o ia.o q_learning.o qmatrix.o file_manager.o game_state.o utils.o
 	$(CC) $^ $(LDFLAGS) $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -L./lib/ lib/libraspicamcv.a -o $@
 
 testCamera: testCamera.o stylus.o
@@ -31,6 +31,9 @@ q_learning.o: $(Q_LEARNING_PATH)qmatrix.h $(Q_LEARNING_PATH)file_manager.h $(Q_L
 qmatrix.o: $(Q_LEARNING_PATH)game_state.h $(Q_LEARNING_PATH)utils.h $(Q_LEARNING_PATH)conf.h
 file_manager.o: $(Q_LEARNING_PATH)qmatrix.h
 game_state.o: $(Q_LEARNING_PATH)conf.h
+
+%.o: $(Q_LEARNING_PATH)%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(CFLAGS_OPENCV) -c $< -o $@

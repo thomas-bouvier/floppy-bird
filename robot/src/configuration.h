@@ -43,7 +43,6 @@ typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 /* Maths methods */
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define min(a, b) ((a) < (b) ? (a) : (b))  
-#define abs(x) ((x) > 0 ? (x) : -(x))
 #define sign(x) ((x) > 0 ? 1 : -1)
 
 
