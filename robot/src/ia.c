@@ -1,4 +1,7 @@
 #include "ia.h"
+#include <unistd.h>
+#include "../../ai/q_learning/src/q_learning.h"
+#include "../../ai/q_learning/src/game_state.h"
 
 /*!
 * \brief the main function for the IA
@@ -14,32 +17,42 @@ void* mainIa (void* robot)
     char *qmatrixPath="../res/qmatrix_data_robot.txt";
     int hit_saved=0;
     int action_break=0;
-    int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
     srand(time(NULL));
-
-
-    /* Open the file that contains qMatrix data */
 
     matrixQ = loadQMatrix(qmatrixPath);
     init_array(last_states, NB_SAVED_STATES, -1);
     init_array(last_action, NB_SAVED_ACTIONS, -1);
-    ia1 = 1;
+
+    /* Press Play *//*1 clk 120us*/
+    jump(robot);
+    jump(robot);
+    sleep(1);
 
     while(1)
     {
-        if(action_break == 0 || hit_saved == 1)
-        {
-            q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth(&bird, &camera, &l), getNextPipeHeight(robot)-getBirdHeight(robot), getNextPipeHeight(robot), hit_saved);
-
-            if(last_action[0] != -1)
-                event = last_action[0];
-        }
-        if(++action_break >= nb_fps_before_next_action)
+        if(action_break == 1 || hit_saved == 1)
         {
             action_break=0;
-            nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
+            q_learning_loop(matrixQ, last_states, last_action, getNextPipePosition(robot), getNextPipeHeight(robot)-getBirdHeight(robot), getNextPipeHeight(robot), hit_saved);
+
+            if(last_action[0] != -1)
+            {
+                if(last_action[0]) jump(robot);
+            }
+            if(hit_saved)
+            {
+                jump(robot);
+                jump(robot);
+                jump(robot);
+                sleep(1);
+            }
         }
-         hit_saved = getGameStatus(robot);
+        if(getDataUpdated(robot))
+        {
+            action_break=1;
+            setDataUpdated(robot, 0);        
+        }         
+        hit_saved = getGameStatus(robot);
     }
 
 	return NULL;
