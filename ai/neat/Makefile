@@ -13,7 +13,7 @@ $(SUBDIRS):
 clean: $(SUBDIRSCLEAN)
 
 clean_curdir:
-	rm -rfv *.o *~ *.gcno *.gcda main
+	rm -rfv *.o *~ *.gcno *.gcda *.gcov main
 
 %clean: %
 	make -C $< -f ../$(STACK)Makefile clean_curdir
