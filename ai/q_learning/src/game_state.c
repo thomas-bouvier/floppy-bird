@@ -16,7 +16,7 @@ void freeState(State * state)
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 * \return Return a state, distances=-1 if the bird is dead, NULL if error
 */
-State * getCurrentState(int delta_x, int delta_y, int pipe_height, int bird_state)
+State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity, int bird_state)
 {
 	State * new_state = NULL;
 	switch(bird_state)
@@ -26,18 +26,45 @@ State * getCurrentState(int delta_x, int delta_y, int pipe_height, int bird_stat
 				new_state->delta_x = -1;
 				new_state->delta_y = -1;
 				new_state->pipe_height = -1;
+				new_state->velocity = -1;
 				return new_state;
 		case 1:
 				new_state = (State *) malloc(sizeof(State));
 				new_state->delta_x = delta_x;
 				new_state->delta_y = delta_y;
 				new_state->pipe_height = pipe_height;
+				new_state->velocity = velocity;
 				return new_state;
 		default:
 			freeState(new_state);
 			break;
 	}
 	return NULL;
+}
+
+/*!
+* \brief Get the current velocity thanks to the last actions known
+* \param[in] last_actions array of last actions performed
+* \return Return a velocity, a high negative value is linked to a fast falling bird
+*/
+int getCurrentVelocity(int * last_states)
+{
+    int i=0;
+
+    while(i<4 && last_states[i] != 1) i++;
+    switch(i)
+    {
+        case 0:
+            return +5;
+        case 1:
+            return +3;
+        case 2:
+            return +0;
+        case 3:
+            return -3;
+        default:
+            return -5;
+    }
 }
 
 /*!
