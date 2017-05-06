@@ -578,6 +578,21 @@ static int setup_delete(void ** state) {
     return 0;
 }
 
+static int setup_deleteOneElement(void ** state) {
+    GenericList * list = newGenericList(NULL, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    add(list, newNeuron(INPUT));
+
+    *state = list;
+
+    return 0;
+}
+
 static void test_delete(void ** state) {
     GenericList * list = (GenericList *) (* state);
 
@@ -636,6 +651,16 @@ static void test_deleteLast(void ** state) {
 
     nextElement(list);
     assert_int_equal(((Neuron *) getCurrent(list))->type, OUTPUT);
+}
+
+static void test_deleteOneElement(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    setOnFirstElement(list);
+    assert_int_equal(delete(list, getCurrent(list)), 1);
+
+    assert_null(list->first);
+    assert_null(list->last);
 }
 
 static int teardown_delete(void ** state) {
@@ -784,6 +809,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_delete, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
+    cmocka_unit_test_setup_teardown(test_deleteOneElement, setup_deleteOneElement, teardown_delete),
     cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
     cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
     cmocka_unit_test_setup_teardown(test_count, setup_count, teardown_count),

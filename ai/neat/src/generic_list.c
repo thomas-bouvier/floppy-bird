@@ -226,9 +226,8 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
 }
 
 static int deleteFirst(GenericList * list, void * data) {
-  Node * element_to_delete = list->first;
+    Node * element_to_delete = list->first;
 
-  if (!emptyGenericList(list)) {
     list->first = list->first->next;
     setOnFirstElement(list);
 
@@ -243,33 +242,20 @@ static int deleteFirst(GenericList * list, void * data) {
     free(element_to_delete);
 
     return 1;
-  }
-
-  return 0;
 }
 
 static int deleteLast(GenericList * list, void * data) {
-  Node * element_to_delete = list->last;
-  Node * previous_element = NULL;
+    Node * element_to_delete = list->last;
+    Node * previous_element = NULL;
 
-  if (!emptyGenericList(list)) {
     setOnFirstElement(list);
-    if (list->current == element_to_delete)
-      list->first = NULL;
-
-    else {
-      while (list->current != list->last) {
+    while (list->current != list->last) {
         previous_element = list->current;
         nextElement(list);
-      }
-
-      previous_element->next = NULL;
     }
 
+    previous_element->next = NULL;
     list->current = list->last = previous_element;
-
-    if (list->last == NULL)
-      list->first = NULL;
 
     if (data)
       data = element_to_delete->data;
@@ -279,16 +265,12 @@ static int deleteLast(GenericList * list, void * data) {
     free(element_to_delete);
 
     return 1;
-  }
-
-  return 0;
 }
 
 static int deleteCurrent(GenericList * list, void * data) {
-  Node * previous_element = NULL;
-  Node * stop = NULL;
+    Node * previous_element = NULL;
+    Node * stop = NULL;
 
-  if (!outOfGenericList(list)) {
     if (list->current == list->first)
       return deleteFirst(list, data);
 
@@ -315,9 +297,6 @@ static int deleteCurrent(GenericList * list, void * data) {
 
       return 1;
     }
-  }
-
-  return 0;
 }
 
 /*!
