@@ -209,3 +209,12 @@ void jump(Robot* robot)
 {
 	click(robot->stylus);
 }
+
+/*!
+* \brief cancel the next Jump (put the nbClick to 0)
+* \param[in] robot : the robot interface
+*/
+void cancelAllJump(Robot* robot)
+{
+	flushClickStack(robot->stylus);
+}

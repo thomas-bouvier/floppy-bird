@@ -29,6 +29,7 @@ void update(Stylus* stylus);
 void disable(Stylus* stylus);
 void enable(Stylus* stylus);
 void click(Stylus* stylus);
+void flushClickStack(Stylus* stylus);
 
 
 #endif //STYLUS_H

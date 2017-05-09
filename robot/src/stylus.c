@@ -105,7 +105,14 @@ static void moveStylus(Stylus* stylus, int targetPos)
 	pwmWrite(stylus->pin,targetPos);
 }
 
-
+/*!
+* \brief Flush the stylus click stack
+* \param[in] stylus : address of the stylus 
+*/
+void flushClickStack(Stylus* stylus)
+{
+	stylus->nbClick = 0;
+}
 
 
 
