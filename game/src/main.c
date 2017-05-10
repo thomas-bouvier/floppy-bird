@@ -283,6 +283,8 @@ int main(int argc, char ** argv)
                }
                 displayBestScore(renderer, font, scoreFile);
                 SDL_RenderPresent(renderer);
+                SDL_Delay(1000);
+                emptyEvent();
                 running = waitClick();
             }
             if(hit && mode == IA1)
@@ -294,7 +296,7 @@ int main(int argc, char ** argv)
     if(ia1 > 0)
         freeMatrixQ(matrixQ);
 
-    SDL_FreeSurface(sprites.background);
+    /*SDL_FreeSurface(sprites.background);
     SDL_FreeSurface(sprites.bird1);
     SDL_FreeSurface(sprites.bird2);
     SDL_FreeSurface(sprites.bird3);
@@ -312,8 +314,9 @@ int main(int argc, char ** argv)
 
     fclose(config);
     fclose(level);
-    fclose(scoreFile);
+    fclose(scoreFile);*/
 
+    closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, font);
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;

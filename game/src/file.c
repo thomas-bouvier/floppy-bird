@@ -211,3 +211,27 @@ int openFontFiles(FILE * config, TTF_Font ** font)
     }
     return 1;
 }
+
+
+void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
+               Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font)
+{
+    SDL_FreeSurface(sprites->background);
+    SDL_FreeSurface(sprites->bird1);
+    SDL_FreeSurface(sprites->bird2);
+    SDL_FreeSurface(sprites->bird3);
+    SDL_FreeSurface(sprites->ground);
+    SDL_FreeSurface(sprites->pause);
+    SDL_FreeSurface(sprites->pipe1);
+    SDL_FreeSurface(sprites->pipe2);
+    SDL_FreeSurface(sprites->play);
+    SDL_FreeSurface(sprites->quit);
+    SDL_FreeSurface(sprites->tap_to_play);
+    Mix_FreeChunk(jump_sound);
+    Mix_FreeChunk(obstacle_sound);
+    Mix_FreeChunk(death_sound);
+    TTF_CloseFont(font);
+    fclose(config);
+    fclose(level);
+    fclose(scoreFile);
+}
