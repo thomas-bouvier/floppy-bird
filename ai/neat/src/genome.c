@@ -5,34 +5,39 @@
 * \return Return a new Genome, or NULL if error
 */
 Genome * newGenome(int * innovation) {
-  Network * new_network = NULL;
-  Genome * new_genome = NULL;
+    Network * new_network = NULL;
+    Genome * new_genome = NULL;
 
-  if ((new_genome = malloc(sizeof(Genome))) == (Genome * ) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Genome\n");
-    return NULL;
-  }
+    if (innovation == NULL) {
+        fprintf(stderr, "Can't create a new Genome without attached innovation number\n");
+        return NULL;
+    }
 
-  new_network = newGenericList(cloneNeuron, freeNeuron);
-  initGenericList(new_network);
+    if ((new_genome = malloc(sizeof(Genome))) == (Genome * ) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Genome\n");
+        return NULL;
+    }
 
-  new_genome->network = new_network;
-  new_genome->nb_neurons = 0;
-  new_genome->nb_connection_genes = 0;
-  new_genome->fitness = 0.0;
+    new_network = newGenericList(cloneNeuron, freeNeuron);
+    initGenericList(new_network);
 
-  // initializing mutation rates
+    new_genome->network = new_network;
+    new_genome->nb_neurons = 0;
+    new_genome->nb_connection_genes = 0;
+    new_genome->fitness = 0.0;
 
-  new_genome->mutation_rates[0] = POINT_MUTATION_RATE;
-  new_genome->mutation_rates[1] = LINK_MUTATION_RATE;
-  new_genome->mutation_rates[2] = NODE_MUTATION_RATE;
-  new_genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+    // initializing mutation rates
 
-  new_genome->global_rank = 0;
-  new_genome->innovation = innovation;
-  new_genome->nb_mutations = 0;
+    new_genome->mutation_rates[0] = POINT_MUTATION_RATE;
+    new_genome->mutation_rates[1] = LINK_MUTATION_RATE;
+    new_genome->mutation_rates[2] = NODE_MUTATION_RATE;
+    new_genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
 
-  return new_genome;
+    new_genome->global_rank = 0;
+    new_genome->innovation = innovation;
+    new_genome->nb_mutations = 0;
+
+    return new_genome;
 }
 
 /*!
@@ -644,7 +649,7 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
       fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 1 is NULL\n");
       return -DBL_MAX;
     }
-    
+
     setOnFirstElement(current_neuron_1->connections);
     while (!outOfGenericList(current_neuron_1->connections)) {
 

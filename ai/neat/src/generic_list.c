@@ -19,8 +19,8 @@ Node * newNode() {
 }
 
 /*!
-* \brief Create a GenericGenericList.
-* \return Return a new GenericGenericList, NULL if error
+* \brief Create a GenericList.
+* \return Return a new GenericList, NULL if error
 */
 GenericList * newGenericList(CloneFunction clone_function, FreeFunction free_function) {
   GenericList * new_list = NULL;
@@ -214,9 +214,14 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
       }
 
       new_node->data = element;
-      new_node->next = list->current;
 
-      previous_node->next = new_node;
+      if (list->current == list->first) {
+        new_node->next = list->first;
+        list->first = new_node;
+      } else {
+        new_node->next = list->current;
+        previous_node->next = new_node;
+      }
     }
 
     return 1;
@@ -225,7 +230,7 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
   return 0;
 }
 
-static int deleteFirst(GenericList * list, void * data) {
+static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
     Node * element_to_delete = list->first;
 
     list->first = list->first->next;
@@ -234,8 +239,8 @@ static int deleteFirst(GenericList * list, void * data) {
     if (list->first == NULL)
       list->last = NULL;
 
-    if (data)
-      data = element_to_delete->data;
+    if (retrieve_data)
+      *data = element_to_delete->data;
     else if (list->free_function)
       list->free_function(element_to_delete->data);
 
@@ -244,7 +249,7 @@ static int deleteFirst(GenericList * list, void * data) {
     return 1;
 }
 
-static int deleteLast(GenericList * list, void * data) {
+static int deleteLast(GenericList * list, int retrieve_data, void ** data) {
     Node * element_to_delete = list->last;
     Node * previous_element = NULL;
 
@@ -257,8 +262,8 @@ static int deleteLast(GenericList * list, void * data) {
     previous_element->next = NULL;
     list->current = list->last = previous_element;
 
-    if (data)
-      data = element_to_delete->data;
+    if (retrieve_data)
+      *data = element_to_delete->data;
     else if (list->free_function)
       list->free_function(element_to_delete->data);
 
@@ -267,15 +272,15 @@ static int deleteLast(GenericList * list, void * data) {
     return 1;
 }
 
-static int deleteCurrent(GenericList * list, void * data) {
+static int deleteCurrent(GenericList * list, int retrieve_data, void ** data) {
     Node * previous_element = NULL;
     Node * stop = NULL;
 
     if (list->current == list->first)
-      return deleteFirst(list, data);
+      return deleteFirst(list, retrieve_data, data);
 
     else if (list->current == list->last)
-      return deleteLast(list, data);
+      return deleteLast(list, retrieve_data, data);
 
     else {
       stop = list->current;
@@ -288,8 +293,8 @@ static int deleteCurrent(GenericList * list, void * data) {
 
       previous_element->next = list->current->next;
 
-      if (data)
-        data = list->current->data;
+      if (retrieve_data)
+        *data = list->current->data;
       else if (list->free_function)
         list->free_function(list->current->data);
 
@@ -309,7 +314,7 @@ int delete(GenericList * list, void * element) {
   setOnFirstElement(list);
   while (!outOfGenericList(list)) {
     if (list->current->data == element) {
-      deleteCurrent(list, NULL);
+      deleteCurrent(list, 0, NULL);
       return 1;
     }
 
@@ -319,26 +324,31 @@ int delete(GenericList * list, void * element) {
   return 0;
 }
 
+/*!
+* \brief Sort the given GenericList using the provided function.
+* \param[out] list the GenericList to sort
+* \param[in] f the function to use to sort the elements
+*/
 void sort(GenericList * list, int (*f) (const void *, const void *)) {
-  Node * pos = NULL;
-  void * save = NULL;
+    Node * pos = NULL;
+    void ** save = malloc(sizeof(void *));
 
-  if (count(list) > 1) {
-    setOnFirstElement(list);
-    nextElement(list);
-    while (!outOfGenericList(list)) {
-      pos = list->current->next;
-      deleteCurrent(list, save);
-
-      setOnFirstElement(list);
-      while (list->current != pos && (*f)(save, list->current->data) < 0)
+    if (count(list) > 1) {
+        setOnFirstElement(list);
         nextElement(list);
+        while (!outOfGenericList(list)) {
+            pos = list->current->next;
+            deleteCurrent(list, 1, save);
 
-      insertBeforeCurrent(list, save);
+            setOnFirstElement(list);
+            while (list->current != pos && (*f)(*save, list->current->data) < 0)
+                nextElement(list);
 
-      list->current = pos;
+            insertBeforeCurrent(list, *save);
+
+            list->current = pos;
+        }
     }
-  }
 }
 
 /*!

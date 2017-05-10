@@ -5,6 +5,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
+#include "../src/genome.h"
 #include "../src/network.h"
 #include "../src/generic_list.h"
 
@@ -669,6 +670,125 @@ static int teardown_delete(void ** state) {
 }
 
 /*========================================================================
+    sort
+========================================================================*/
+
+static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
+    int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
+
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
+
+    return 1;
+}
+
+typedef struct {
+    GenericList * list;
+    int innovation;
+} SortStruct;
+
+static int setup_sort(void ** state) {
+    SortStruct * helper = NULL;
+    Genome * genome_1 = NULL;
+    Genome * genome_2 = NULL;
+    Genome * genome_3 = NULL;
+    Genome * genome_4 = NULL;
+    Genome * genome_5 = NULL;
+    Genome * genome_6 = NULL;
+    GenericList * list = newGenericList(NULL, freeGenome);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    if ((helper = (SortStruct *) malloc(sizeof(SortStruct))) == (SortStruct *) NULL)
+        return -1;
+
+    helper->innovation = 40;
+
+    genome_1 = newGenome(&helper->innovation);
+    if (genome_1 == NULL)
+        return -1;
+
+    genome_1->fitness = 1.05;
+    add(list, genome_1);
+
+    genome_2 = newGenome(&helper->innovation);
+    if (genome_2 == NULL)
+        return -1;
+
+    genome_2->fitness = 5.056;
+    add(list, genome_2);
+
+    genome_3 = newGenome(&helper->innovation);
+    if (genome_3 == NULL)
+        return -1;
+
+    genome_3->fitness = 1.05;
+    add(list, genome_3);
+
+    genome_4 = newGenome(&helper->innovation);
+    if (genome_4 == NULL)
+        return -1;
+
+    genome_4->fitness = -0.0419;
+    add(list, genome_4);
+
+    genome_5 = newGenome(&helper->innovation);
+    if (genome_5 == NULL)
+        return -1;
+
+    genome_5->fitness = 45.0;
+    add(list, genome_5);
+
+    genome_6 = newGenome(&helper->innovation);
+    if (genome_6 == NULL)
+        return -1;
+
+    genome_6->fitness = 10.2;
+    add(list, genome_6);
+
+    helper->list = list;
+
+    *state = helper;
+
+    return 0;
+}
+
+static void test_sort(void ** state) {
+    SortStruct * helper = (SortStruct *) (* state);
+    GenericList * list = helper->list;
+
+    sort(list, compareFitnessCulling);
+
+    setOnFirstElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 45.0 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 10.2 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 5.056 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness + 0.0419 == 0);
+}
+
+static int teardown_sort(void ** state) {
+    freeGenericList(((SortStruct *) *state)->list);
+    return 0;
+}
+
+/*========================================================================
     find
 ========================================================================*/
 
@@ -709,7 +829,7 @@ static int setup_find(void ** state) {
 }
 
 static void test_find(void ** state) {
-    FindStruct * helper = *state;
+    FindStruct * helper = (FindStruct *) (* state);
     GenericList * list = helper->list;
     Neuron * element = helper->element;
     Neuron * to_be_freed = NULL;
@@ -810,6 +930,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
     cmocka_unit_test_setup_teardown(test_deleteOneElement, setup_deleteOneElement, teardown_delete),
+    cmocka_unit_test_setup_teardown(test_sort, setup_sort, teardown_sort),
     cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
     cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
     cmocka_unit_test_setup_teardown(test_count, setup_count, teardown_count),
