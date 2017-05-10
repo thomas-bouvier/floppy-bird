@@ -113,6 +113,15 @@ void flushClickStack(Stylus* stylus)
 	stylus->nbClick = 0;
 }
 
+/*!
+* \brief get the nbClick parameter
+* \param[in] stylus : address of the stylus 
+* \return nbClick
+*/
+int getNbClick(Stylus* stylus)
+{
+	return stylus->nbClick;
+}
 
 
 

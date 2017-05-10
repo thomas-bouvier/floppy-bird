@@ -30,6 +30,7 @@ void disable(Stylus* stylus);
 void enable(Stylus* stylus);
 void click(Stylus* stylus);
 void flushClickStack(Stylus* stylus);
+int getNbClick(Stylus* stylus);
 void moveStylus(Stylus* stylus, int targetPos);
 
 

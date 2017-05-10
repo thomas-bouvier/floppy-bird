@@ -43,6 +43,7 @@ void setDataUpdated(Robot* robot, boolean value);
 /* actions */
 void jump(Robot* robot);
 void cancelAllJump(Robot* robot);
+boolean jumpRunning(Robot* robot);
 
 /* IA */
 void* mainIa (void* robot);
