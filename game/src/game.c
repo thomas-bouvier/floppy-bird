@@ -195,3 +195,9 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 {
     return nextBirdObstacle(l, bird)->lower.x - camera->x;
 }
+
+
+void jump(Action * event)
+{
+    *event = JUMP;
+}

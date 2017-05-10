@@ -277,7 +277,7 @@ int main(int argc, char ** argv)
                 if(simplifiedMode > 0)
                {
                     SDL_Delay(200);
-                    SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                     SDL_RenderClear(renderer);
                     displayScore(renderer, score, font);
                }
@@ -295,27 +295,6 @@ int main(int argc, char ** argv)
     /* Quit the game */
     if(ia1 > 0)
         freeMatrixQ(matrixQ);
-
-    /*SDL_FreeSurface(sprites.background);
-    SDL_FreeSurface(sprites.bird1);
-    SDL_FreeSurface(sprites.bird2);
-    SDL_FreeSurface(sprites.bird3);
-    SDL_FreeSurface(sprites.ground);
-    SDL_FreeSurface(sprites.pause);
-    SDL_FreeSurface(sprites.pipe1);
-    SDL_FreeSurface(sprites.pipe2);
-    SDL_FreeSurface(sprites.play);
-    SDL_FreeSurface(sprites.quit);
-    SDL_FreeSurface(sprites.tap_to_play);
-
-    Mix_FreeChunk(jump_sound);
-    Mix_FreeChunk(obstacle_sound);
-    Mix_FreeChunk(death_sound);
-
-    fclose(config);
-    fclose(level);
-    fclose(scoreFile);*/
-
     closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, font);
     quitGame(window, renderer);
 
