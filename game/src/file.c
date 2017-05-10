@@ -174,11 +174,10 @@ int openSpriteFiles(FILE * config, Sprites * sprites, SDL_Renderer * renderer)
     char path[100];
     char sprite_types[11][20] = { "pipe1 :\n", "pipe2 :\n","play :\n", "quit :\n","bird1 :\n", "bird2 :\n",
                                     "bird3 :\n","background :\n", "ground :\n", "pause :\n","tap :\n"};
-    SDL_Surface ** sprite_table[] = { &sprites->pipe1, &sprites->pipe2,
-                                      &sprites->play, &sprites->quit };
-    SDL_Texture ** texture_table[] = {&sprites->bird1, &sprites->bird2, &sprites->bird3,&sprites->background,
+    SDL_Surface ** sprite_table[] = { &sprites->pipe1, &sprites->pipe2};
+    SDL_Texture ** texture_table[] = {&sprites->play, &sprites->quit, &sprites->bird1, &sprites->bird2, &sprites->bird3,&sprites->background,
                                     &sprites->ground,&sprites->pause, &sprites->tap_to_play};
-    for (i=0 ; i<4 ; ++i)
+    for (i=0 ; i<2 ; ++i)
     {
         if (readConfig(config, path, sprite_types[i]))
         {
@@ -192,9 +191,9 @@ int openSpriteFiles(FILE * config, Sprites * sprites, SDL_Renderer * renderer)
         }
    }
     SDL_Surface * surface = NULL;
-    for(i= 0 ; i<7 ; ++i)
+    for(i= 0 ; i<9 ; ++i)
     {
-        if (readConfig(config, path, sprite_types[i+4]))
+        if (readConfig(config, path, sprite_types[i+2]))
         {
           surface = IMG_Load(path);
            *(texture_table[i]) = SDL_CreateTextureFromSurface(renderer, surface);
@@ -208,22 +207,23 @@ int openSpriteFiles(FILE * config, Sprites * sprites, SDL_Renderer * renderer)
     }
     SDL_FreeSurface(surface);
     return 1;
-    printf("bite");
 }
 
 /*!
 * \brief Open the font file for the game
 * \param[out] config the file that contains the configuration paths
-* \param[out] font the font used in the game
+* \param[out] big_font the biggest font used in the game
+* \param[out] medium_font the same font, but smaller
 * \return Return 1 if file was well opened, 0 if failure
 */
-int openFontFiles(FILE * config, TTF_Font ** font)
+int openFontFiles(FILE * config, TTF_Font ** big_font, TTF_Font ** medium_font)
 {
     char path[100];
     if (readConfig(config, path, "font :\n"))
     {
-        *font = TTF_OpenFont(path, 70);
-        if(*font == NULL)
+        *big_font = TTF_OpenFont(path, 70);
+        *medium_font = TTF_OpenFont(path, 40);
+        if(*big_font == NULL || *medium_font == NULL)
         {
             fprintf(stderr, "Missing font : %s\n", TTF_GetError());
             return 0;
@@ -232,7 +232,17 @@ int openFontFiles(FILE * config, TTF_Font ** font)
     return 1;
 }
 
-
+/*!
+* \brief Close all the files
+* \param[out] config the file that contains the configuration paths
+* \param[out] level the file that contains predefined obstacles
+* \param[out] scoreFile the file that contains the score
+* \param[out] jump_sound sound for a jump
+* \param[out] obstacle_sound the sound played when an obstacle is passed
+* \param[out] death_sound the sound played when the bird died
+* \param[out] sprites the structure that contains all the Surfaces
+* \param[out] font the font used in the game
+*/
 void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
                Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font)
 {
@@ -244,8 +254,8 @@ void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_
     SDL_DestroyTexture(sprites->pause);
     SDL_FreeSurface(sprites->pipe1);
     SDL_FreeSurface(sprites->pipe2);
-    SDL_FreeSurface(sprites->play);
-    SDL_FreeSurface(sprites->quit);
+    SDL_DestroyTexture(sprites->play);
+    SDL_DestroyTexture(sprites->quit);
     SDL_DestroyTexture(sprites->tap_to_play);
     Mix_FreeChunk(jump_sound);
     Mix_FreeChunk(obstacle_sound);

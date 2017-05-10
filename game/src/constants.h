@@ -178,8 +178,8 @@ typedef struct{
     SDL_Texture * background;   /*!< The image of the background */
     SDL_Texture * ground;       /*!< The image of the ground */
     SDL_Texture * tap_to_play;  /*!< The image to explain how to play */
-    SDL_Surface * play;         /*!< The image in menu to resume game */
-    SDL_Surface * quit;         /*!< The image in menu to quit game */
+    SDL_Texture * play;         /*!< The image in menu to resume game */
+    SDL_Texture * quit;         /*!< The image in menu to quit game */
     SDL_Texture * pause;        /*!< The image to display pause menu in the game */
 }Sprites;
 
