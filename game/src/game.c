@@ -195,3 +195,12 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 {
     return nextBirdObstacle(l, bird)->lower.x - camera->x;
 }
+
+/*!
+* \brief Allow the bird to jump
+* \param[out] event the action to be changed in status "jump"
+*/
+void jump(Action * event)
+{
+    *event = JUMP;
+}

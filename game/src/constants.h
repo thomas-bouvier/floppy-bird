@@ -170,17 +170,17 @@ enum Speed
 * \brief The structure containing all the image useful to the game
 */
 typedef struct{
-    SDL_Surface * bird1;        /*!< The first image of the bird */
-    SDL_Surface * bird2;        /*!< The second image of the bird */
-    SDL_Surface * bird3;        /*!< The third image of the bird */
+    SDL_Texture * bird1;        /*!< The first image of the bird */
+    SDL_Texture * bird2;        /*!< The second image of the bird */
+    SDL_Texture * bird3;        /*!< The third image of the bird */
     SDL_Surface * pipe1;        /*!< The image of the upper pipe */
     SDL_Surface * pipe2;        /*!< The image of the lower pipe */
-    SDL_Surface * background;   /*!< The image of the background */
-    SDL_Surface * ground;       /*!< The image of the ground */
-    SDL_Surface * tap_to_play;  /*!< The image to explain how to play */
-    SDL_Surface * play;         /*!< The image in menu to resume game */
-    SDL_Surface * quit;         /*!< The image in menu to quit game */
-    SDL_Surface * pause;        /*!< The image to display pause menu in the game */
+    SDL_Texture * background;   /*!< The image of the background */
+    SDL_Texture * ground;       /*!< The image of the ground */
+    SDL_Texture * tap_to_play;  /*!< The image to explain how to play */
+    SDL_Texture * play;         /*!< The image in menu to resume game */
+    SDL_Texture * quit;         /*!< The image in menu to quit game */
+    SDL_Texture * pause;        /*!< The image to display pause menu in the game */
 }Sprites;
 
 #endif // CONSTANTS_H
