@@ -194,16 +194,18 @@ int openSpriteFiles(FILE * config, Sprites * sprites)
 /*!
 * \brief Open the font file for the game
 * \param[out] config the file that contains the configuration paths
-* \param[out] font the font used in the game
+* \param[out] big_font the biggest font used in the game
+* \param[out] medium_font the same font, but smaller
 * \return Return 1 if file was well opened, 0 if failure
 */
-int openFontFiles(FILE * config, TTF_Font ** font)
+int openFontFiles(FILE * config, TTF_Font ** big_font, TTF_Font ** medium_font)
 {
     char path[100];
     if (readConfig(config, path, "font :\n"))
     {
-        *font = TTF_OpenFont(path, 70);
-        if(*font == NULL)
+        *big_font = TTF_OpenFont(path, 70);
+        *medium_font = TTF_OpenFont(path, 40);
+        if(*big_font == NULL || *medium_font == NULL)
         {
             fprintf(stderr, "Missing font : %s\n", TTF_GetError());
             return 0;
@@ -212,7 +214,17 @@ int openFontFiles(FILE * config, TTF_Font ** font)
     return 1;
 }
 
-
+/*!
+* \brief Close all the files
+* \param[out] config the file that contains the configuration paths
+* \param[out] level the file that contains predefined obstacles
+* \param[out] scoreFile the file that contains the score
+* \param[out] jump_sound sound for a jump
+* \param[out] obstacle_sound the sound played when an obstacle is passed
+* \param[out] death_sound the sound played when the bird died
+* \param[out] sprites the structure that contains all the Surfaces
+* \param[out] font the font used in the game
+*/
 void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
                Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font)
 {

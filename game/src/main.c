@@ -43,7 +43,8 @@ int main(int argc, char ** argv)
     Mix_Chunk * obstacle_sound = NULL;
     Mix_Chunk * death_sound = NULL;
 
-    TTF_Font * font = NULL;
+    TTF_Font * big_font = NULL;
+    TTF_Font * medium_font = NULL;
 
     Sprites sprites;
 
@@ -131,7 +132,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
 
     /* Setup font */
-    if (!openFontFiles(config, &font))
+    if (!openFontFiles(config, &big_font, &medium_font))
         return EXIT_FAILURE;
 
     while(menu_loop)
@@ -142,7 +143,7 @@ int main(int argc, char ** argv)
         while((mode != PLAY && mode != IA1) && init != QUIT)
         {
             mode = WAIT;
-            mode = mainMenu(renderer, &camera, font, &levelFromFile, &simplifiedMode, &sprites);
+            mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &sprites);
             init = detectTouch();
             if(mode == QUITGAME)
                 init = QUIT;
@@ -176,10 +177,10 @@ int main(int argc, char ** argv)
                     running = waitClick();
                 if(mode == IA1)
                     running = 1;
-                displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                displayGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
             }
             else
-                displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                displayRealGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
 
             if(mode == PLAY) /* Wait the first jump to start the game*/
             {
@@ -256,9 +257,9 @@ int main(int argc, char ** argv)
                     savedObstacle = nextBirdObstacle(&l, &bird);
 
                     if(simplifiedMode)
-                        displayGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                        displayGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
                     else
-                        displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                        displayRealGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
                     playSound(sound, jump_sound, obstacle_sound, death_sound);
                     lastFrame = SDL_GetTicks();
                 }
@@ -269,7 +270,7 @@ int main(int argc, char ** argv)
             {
                 while(birdFall(&bird, simplifiedMode))
                 {
-                    displayRealGame(renderer, &bird, &l, &camera, score, font, &sprites);
+                    displayRealGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
                     SDL_Delay(16);
                 }
                 emptyEvent();
@@ -279,9 +280,9 @@ int main(int argc, char ** argv)
                     SDL_Delay(200);
                     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                     SDL_RenderClear(renderer);
-                    displayScore(renderer, score, font);
+                    displayScore(renderer, score, big_font);
                }
-                displayBestScore(renderer, font, scoreFile);
+                displayBestScore(renderer, big_font, scoreFile);
                 SDL_RenderPresent(renderer);
                 SDL_Delay(1000);
                 emptyEvent();
@@ -295,7 +296,7 @@ int main(int argc, char ** argv)
     /* Quit the game */
     if(ia1 > 0)
         freeMatrixQ(matrixQ);
-    closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, font);
+    closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font);
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;

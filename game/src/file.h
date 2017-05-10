@@ -20,7 +20,7 @@ int readBestScore(FILE * f);
 int openGameFiles(FILE * config, FILE ** level, FILE ** scoreFile);
 int openSoundFiles(FILE * config, Mix_Chunk ** jump_sound, Mix_Chunk ** obstacle_sound, Mix_Chunk ** death_sound);
 int openSpriteFiles(FILE * config, Sprites * sprites);
-int openFontFiles(FILE * config, TTF_Font ** font);
+int openFontFiles(FILE * config, TTF_Font ** font, TTF_Font ** medium);
 void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
                Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font);
 
