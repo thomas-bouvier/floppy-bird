@@ -19,7 +19,7 @@
 void drawRectangle(SDL_Renderer * renderer, Camera * camera, int x, int y, int w, int h, int r, int g, int b);
 void drawBird(SDL_Renderer * renderer, Bird * bird, Camera * camera);
 void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera);
-void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Surface * surface, int x, int y, int w, int h);
+void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Texture * texture, int x, int y, int w, int h);
 void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites);
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites);

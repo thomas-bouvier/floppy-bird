@@ -52,18 +52,16 @@ void drawObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera)
 * \brief Draw a given sprite on a renderer
 * \param[out] renderer the drawing target
 * \param[in] camera the view of the scene
-* \param[in] surface the image to draw
+* \param[in] texture the image to draw
 * \param[in] x the x-coordinate for the image on the window
 * \param[in] y the y-coordinate for the image on the window
 * \param[in] w the width of the image
 * \param[in] h the height of the image
 */
-void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Surface * surface, int x, int y, int w, int h)
+void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Texture * texture, int x, int y, int w, int h)
 {
     SDL_Rect rect = {x - camera->x, y, w, h};
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_RenderCopy(renderer, texture, NULL, &rect);
-    SDL_DestroyTexture(texture);
 }
 
 /*!
@@ -86,8 +84,10 @@ void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 */
 void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites)
 {
-    drawSprite(renderer, camera, sprites->pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, 500);
-    drawSprite(renderer, camera, sprites->pipe1, obstacle->upper.x, obstacle->upper.h-500, PIPE_WIDTH, 500);
+    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, sprites->pipe2);
+    drawSprite(renderer, camera, texture, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, 500);
+    texture = SDL_CreateTextureFromSurface(renderer, sprites->pipe1);
+    drawSprite(renderer, camera, texture, obstacle->upper.x, obstacle->upper.h-500, PIPE_WIDTH, 500);
 }
 
 /*!
@@ -99,17 +99,17 @@ void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * cam
 */
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites)
 {
-    SDL_Surface * bird_surface = NULL;
+    SDL_Texture * bird_texture = NULL;
     if(bird->dir_y > 5)
-        bird_surface = sprites->bird1;
+        bird_texture = sprites->bird1;
     else
     {
         if(bird->dir_y < 0)
-            bird_surface = sprites->bird3;
+            bird_texture = sprites->bird3;
         else
-            bird_surface = sprites->bird2;
+            bird_texture = sprites->bird2;
     }
-    drawSprite(renderer, camera, bird_surface, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE);
+    drawSprite(renderer, camera, bird_texture, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE);
 }
 /*!
 * \brief Draw a given bird

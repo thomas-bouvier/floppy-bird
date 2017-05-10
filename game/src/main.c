@@ -127,7 +127,7 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
 
     /* Setup sprites */
-    if (!openSpriteFiles(config, &sprites))
+    if (!openSpriteFiles(config, &sprites, renderer))
         return EXIT_FAILURE;
 
     /* Setup font */
