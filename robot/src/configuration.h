@@ -9,7 +9,7 @@
 #define PRESS_DELAY 100000			/*delay in uS*/
 #define REST_DELAY 20000 			/*delay in uS*/
 #define STYLUS_CLICK_POSITION 71
-#define STYLUS_REST_POSITION 90
+#define STYLUS_REST_POSITION 95
 #define PWM_PIN 1
 
 
@@ -37,8 +37,8 @@ typedef enum {false = 0,true = 1,False = 0,True = 1}boolean;
 #define NB_PIPE_TRACKER 3
 
 /* Tolerances for color analysis (HSV format)*/
-#define Htolerance 5 //2
-#define Stolerance 200//5
+#define Htolerance 10 //2
+#define Stolerance 150//5
 
 /* Maths methods */
 #define max(a, b) ((a) > (b) ? (a) : (b))

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include "../../ai/q_learning/src/q_learning.h"
 #include "../../ai/q_learning/src/game_state.h"
-
+#include <time.h>
 /*!
 * \brief the main function for the IA
 * \param[in] robot : the robot interface
@@ -16,12 +16,15 @@ void* mainIa (void* robot)
     int last_action[NB_SAVED_ACTIONS];
     char *qmatrixPath="../res/qmatrix_data_robot.txt";
     int hit_saved=0;
-    int action_break=0;
+    int action_break=1;
     srand(time(NULL));
     matrixQ = loadQMatrix(qmatrixPath);
 
     init_array(last_states, NB_SAVED_STATES, -1);
     init_array(last_action, NB_SAVED_ACTIONS, -1);
+    
+    int complement=0;
+    long int time=0;
 
     /* Press Play *//*1 clk 120us*/
     sleep(1);
@@ -31,30 +34,47 @@ void* mainIa (void* robot)
 
     while(1)
     {
+		//printf("hit_saved: %d\n", hit_saved);
+		
         if(action_break == 1 || hit_saved == 1)
         {
             action_break=0;
-            q_learning_loop(matrixQ, last_states, last_action, getNextPipePosition(robot), getNextPipeHeight(robot)-getBirdHeight(robot), getNextPipeHeight(robot), hit_saved);
+            q_learning_loop(matrixQ, last_states, last_action, 10*getNextPipePosition(robot), 10*getNextPipeHeight(robot)-10*getBirdHeight(robot), 10*getNextPipeHeight(robot), hit_saved);
 
             if(last_action[0] != -1)
-            {
+            {	
+				printf("Saut\n");
                 if(last_action[0]) jump(robot);
             }
             if(hit_saved)
             {
+				cancelAllJump(robot);
+				saveQMatrix(matrixQ, qmatrixPath);
+				printf("Mort\n");
+				sleep(2);
                 jump(robot);
                 sleep(1);
                 jump(robot);
                 sleep(1);
                 jump(robot);
-                sleep(1);
+                action_break = 1; /* Test random */
             }
-        }
-        if(getDataUpdated(robot))
+        }   
+        if(/*getDataUpdated(robot) && */time+500000<clock())
         {
-            action_break=1;
+			time=clock();
+			printf("%li\n", time);
+			/*if(complement) complement=0;
+			else complement=1;
+			
+			if(complement)
+			{*/
+				printf("DataUpdated\n");
+				action_break=1;
+			/*}*/
             setDataUpdated(robot, 0);        
-        }         
+        }
+        //printf("getUpdated: %d\n", getDataUpdated(robot));       
         hit_saved = getGameStatus(robot);
     }
 
@@ -154,7 +174,7 @@ void setBirdHeight(Robot* robot, float value)
 /*!
 * \brief get the game status
 * \param[in] robot : the robot interface
-* \return 1 if the game is running, 0 if the bird is dead
+* \return 0 if the game is running, 1 if the bird is dead
 */
 int getGameStatus(Robot* robot)
 {
@@ -217,4 +237,5 @@ void jump(Robot* robot)
 void cancelAllJump(Robot* robot)
 {
 	flushClickStack(robot->stylus);
+	moveStylus(robot->stylus,robot->stylus->restPosition);
 }

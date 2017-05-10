@@ -177,8 +177,9 @@ int main(int argc, char *argv[]){
 		float birdHeight = getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height));
 		float pipePosition = (float)pipe.x/birdTracker.origin.x;
-		int birdStatus = statusTracker.nbPixels < (int)(width * height / 1.3);
+		int birdStatus = statusTracker.nbPixels >= (int)(width * height / 1.3);
 		setGameStatus(&robot, birdStatus);
+		//printf("birdStatus : %d\n",birdStatus);
 		if(birdHeight >= 0) 
 			setBirdHeight(&robot, birdHeight);
 		if(pipeHeight >= 0)
@@ -187,7 +188,7 @@ int main(int argc, char *argv[]){
 			setNextPipePosition(&robot, pipePosition);
 		setDataUpdated(&robot, true);
 		if(verbose)
-			printf("pipe : h%f w%f ; bird : h%f ; STATUS : %s\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot),birdStatus ? "running" : "dead");
+			printf("pipe : h%f w%f ; bird : h%f ; STATUS : %s\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot),birdStatus ? "dead" : "running");
 		if(logFile != NULL){
 			fprintf(logFile,"%ld;%f;%f;%f;%d\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),getBirdHeight(&robot),getNextPipeHeight(&robot),getNextPipePosition(&robot), birdStatus);
 		}
@@ -219,7 +220,7 @@ int main(int argc, char *argv[]){
 		update(&stylus);
 		
 	} while (!exit);
-
+	
 	/* Thread cancel */
 	pthread_cancel (iaThread);
 

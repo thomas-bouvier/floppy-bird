@@ -21,7 +21,7 @@ testCamera: testCamera.o stylus.o
 
 testCamera.o: stylus.h configuration.h
 stylus.o: stylus.h configuration.h
-colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h imageProcessing.h pipeTracking.h
+colourTrack.o: stylus.h configuration.h imageBroadcast.h tracking.h imageProcessing.h pipeTracking.h $(Q_LEARNING_PATH)q_learning.h
 imageBroadcast.o: imageBroadcast.h configuration.h tracking.h pipeTracking.h
 imageProcessing.o: imageProcessing.h tracking.h imageBroadcast.h
 tracking.o: tracking.h configuration.h imageBroadcast.h imageProcessing.h

@@ -5,7 +5,6 @@
 #include "stylus.h"
 #include "configuration.h"
 
-static void moveStylus(Stylus* stylus, int targetPos);
 
 /*!
 * \brief Attach a stylus with its physical parameters
@@ -96,7 +95,7 @@ void click(Stylus* stylus)
 * \param[in] stylus : address of the stylus 
 * \param[in] targetPos : target position msut be included between MIN_PWM_PULSE_DURATION and MAX_PWM_PULSE_DURATION
 */
-static void moveStylus(Stylus* stylus, int targetPos)
+void moveStylus(Stylus* stylus, int targetPos)
 {
 	if(targetPos>MAX_PWM_PULSE_DURATION)
 		targetPos = MAX_PWM_PULSE_DURATION;
