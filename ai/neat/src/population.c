@@ -175,11 +175,10 @@ int newGeneration(MatingPool * pool, int verbose) {
 
   cullSpecies(pool, 1);
 
-  /*
   while (count + pool->nb_species < POPULATION) {
-
+    children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species)], verbose);
+    ++count;
   }
-  */
 
   for (i = 0; i < count; ++i)
     if (!addGenomeToProperSpecies(children[i], pool))
