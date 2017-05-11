@@ -192,42 +192,32 @@ int add(GenericList * list, void * element) {
 * \return int 1 if the element was successfully inserted, 0 otherwise
 */
 static int insertBeforeCurrent(GenericList * list, void * element) {
-  Node * new_node = NULL;
-  Node * previous_node = NULL;
-  Node * stop = NULL;
-
-  if (!outOfGenericList(list)) {
-    stop = list->current;
+    Node * new_node = NULL;
+    Node * previous_node = NULL;
+    Node * stop = list->current;
 
     setOnFirstElement(list);
     while (list->current != stop) {
-      previous_node = list->current;
-      nextElement(list);
+        previous_node = list->current;
+        nextElement(list);
     }
 
-    if (emptyGenericList(list))
-      add(list, element);
-    else {
-      if ((new_node = newNode()) == (Node *) NULL) {
+    if ((new_node = newNode()) == (Node *) NULL) {
         fprintf(stderr, "Error while allocating memory for new Node\n");
         return 0;
-      }
+    }
 
-      new_node->data = element;
+    new_node->data = element;
 
-      if (list->current == list->first) {
+    if (list->current == list->first) {
         new_node->next = list->first;
         list->first = new_node;
-      } else {
+    } else {
         new_node->next = list->current;
         previous_node->next = new_node;
-      }
     }
 
     return 1;
-  }
-
-  return 0;
 }
 
 static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {

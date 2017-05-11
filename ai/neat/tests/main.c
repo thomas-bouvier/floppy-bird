@@ -781,6 +781,9 @@ static void test_sort(void ** state) {
 
     nextElement(list);
     assert_true(((Genome *) getCurrent(list))->fitness + 0.0419 == 0);
+
+    nextElement(list);
+    assert_null(getCurrent(list));
 }
 
 static int teardown_sort(void ** state) {
