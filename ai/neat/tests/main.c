@@ -939,6 +939,36 @@ static void test_randomBool(void ** state) {
 }
 
 /*========================================================================
+    newGenome
+========================================================================*/
+
+static void test_newGenome(void ** state) {
+    int innovation = 40;
+    Genome * genome = newGenome(&innovation);
+
+    assert_non_null(genome);
+    assert_non_null(genome->network);
+    assert_true(emptyGenericList(genome->network));
+    assert_int_equal(genome->nb_neurons, 0);
+    assert_int_equal(genome->nb_connection_genes, 0);
+    assert_true(genome->fitness == 0.0);
+    assert_int_equal(genome->mutation_rates[0], POINT_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[1], LINK_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[2], NODE_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[3], ENABLE_DISABLE_MUTATION_RATE),
+    assert_int_equal(genome->global_rank, 0);
+    assert_ptr_equal(genome->innovation, &innovation);
+    assert_int_equal(genome->nb_mutations, 0);
+
+    *state = genome;
+}
+
+static int teardown_newGenome(void ** state) {
+    freeGenome(*state);
+    return 0;
+}
+
+/*========================================================================
     tests
 ========================================================================*/
 
@@ -982,6 +1012,12 @@ int main() {
     };
 
     cmocka_run_group_tests(tests_neat_utils, NULL, NULL);
+
+    const struct CMUnitTest tests_genome[] = {
+        cmocka_unit_test_teardown(test_newGenome, teardown_newGenome),
+    };
+
+    cmocka_run_group_tests(tests_genome, NULL, NULL);
 
     return EXIT_SUCCESS;
 }
