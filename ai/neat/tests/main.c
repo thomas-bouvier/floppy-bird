@@ -8,6 +8,7 @@
 #include "../src/genome.h"
 #include "../src/network.h"
 #include "../src/generic_list.h"
+#include "../src/neat_utils.h"
 
 /*========================================================================
     newNode
@@ -905,39 +906,82 @@ static int teardown_count(void ** state) {
 }
 
 /*========================================================================
+    randomLimit
+========================================================================*/
+
+static void test_randomLimit(void ** state) {
+    int i;
+
+    for (i = 0; i < 10000; ++i)
+        assert_in_range(randomLimit(100), 0, 99);
+}
+
+/*========================================================================
+    random01
+========================================================================*/
+
+static void test_random01(void ** state) {
+    int i;
+
+    for (i = 0; i < 10000; ++i)
+        assert_in_range(random01(), 0, 1);
+}
+
+/*========================================================================
+    randomBool
+========================================================================*/
+
+static void test_randomBool(void ** state) {
+    int i;
+
+    for (i = 0; i < 10000; ++i)
+        assert_in_range(randomBool(), 0, 1);
+}
+
+/*========================================================================
     tests
 ========================================================================*/
 
 int main() {
-  const struct CMUnitTest tests_generic_list[] = {
-    cmocka_unit_test_teardown(test_newNode, teardown_newNode),
-    cmocka_unit_test_teardown(test_newGenericListMissingFreeFunction, teardown_newGenericList),
-    cmocka_unit_test_teardown(test_newGenericListMissingCloneFunction, teardown_newGenericList),
-    cmocka_unit_test_teardown(test_newGenericList, teardown_newGenericList),
-    cmocka_unit_test_setup_teardown(test_initGenericList, setup_initGenericList, teardown_initGenericList),
-    cmocka_unit_test_setup_teardown(test_cloneGenericList, setup_cloneGenericList, teardown_cloneGenericList),
-    cmocka_unit_test_setup_teardown(test_emptyGenericList, setup_emptyGenericList, teardown_emptyGenericList),
-    cmocka_unit_test_setup_teardown(test_emptyGenericListOneElementRemoved, setup_emptyGenericListOneElementRemoved, teardown_emptyGenericList),
-    cmocka_unit_test_setup_teardown(test_outOfGenericList, setup_outOfGenericList, teardown_outOfGenericList),
-    cmocka_unit_test_setup_teardown(test_outOfGenericListOneElement, setup_outOfGenericListOneElement, teardown_outOfGenericList),
-    cmocka_unit_test_setup_teardown(test_outOfGenericListOneElementNext, setup_outOfGenericListOneElementNext, teardown_outOfGenericList),
-    cmocka_unit_test_setup_teardown(test_setOnFirstElementEmptyList, setup_setOnFirstElementEmptyList, teardown_setOnFirstElement),
-    cmocka_unit_test_setup_teardown(test_setOnFirstElementOneElement, setup_setOnFirstElementOneElement, teardown_setOnFirstElement),
-    cmocka_unit_test_setup_teardown(test_setOnFirstElement, setup_setOnFirstElement, teardown_setOnFirstElement),
-    cmocka_unit_test_setup_teardown(test_setOnEmptyList, setup_setOnEmptyList, teardown_setOn),
-    cmocka_unit_test_setup_teardown(test_setOn, setup_setOn, teardown_setOn),
-    cmocka_unit_test_setup_teardown(test_nextElement, setup_nextElement, teardown_nextElement),
-    cmocka_unit_test_setup_teardown(test_getCurrent, setup_getCurrent, teardown_getCurrent),
-    cmocka_unit_test_setup_teardown(test_add, setup_add, teardown_add),
-    cmocka_unit_test_setup_teardown(test_delete, setup_delete, teardown_delete),
-    cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
-    cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
-    cmocka_unit_test_setup_teardown(test_deleteOneElement, setup_deleteOneElement, teardown_delete),
-    cmocka_unit_test_setup_teardown(test_sort, setup_sort, teardown_sort),
-    cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
-    cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
-    cmocka_unit_test_setup_teardown(test_count, setup_count, teardown_count),
-  };
+    const struct CMUnitTest tests_generic_list[] = {
+        cmocka_unit_test_teardown(test_newNode, teardown_newNode),
+        cmocka_unit_test_teardown(test_newGenericListMissingFreeFunction, teardown_newGenericList),
+        cmocka_unit_test_teardown(test_newGenericListMissingCloneFunction, teardown_newGenericList),
+        cmocka_unit_test_teardown(test_newGenericList, teardown_newGenericList),
+        cmocka_unit_test_setup_teardown(test_initGenericList, setup_initGenericList, teardown_initGenericList),
+        cmocka_unit_test_setup_teardown(test_cloneGenericList, setup_cloneGenericList, teardown_cloneGenericList),
+        cmocka_unit_test_setup_teardown(test_emptyGenericList, setup_emptyGenericList, teardown_emptyGenericList),
+        cmocka_unit_test_setup_teardown(test_emptyGenericListOneElementRemoved, setup_emptyGenericListOneElementRemoved, teardown_emptyGenericList),
+        cmocka_unit_test_setup_teardown(test_outOfGenericList, setup_outOfGenericList, teardown_outOfGenericList),
+        cmocka_unit_test_setup_teardown(test_outOfGenericListOneElement, setup_outOfGenericListOneElement, teardown_outOfGenericList),
+        cmocka_unit_test_setup_teardown(test_outOfGenericListOneElementNext, setup_outOfGenericListOneElementNext, teardown_outOfGenericList),
+        cmocka_unit_test_setup_teardown(test_setOnFirstElementEmptyList, setup_setOnFirstElementEmptyList, teardown_setOnFirstElement),
+        cmocka_unit_test_setup_teardown(test_setOnFirstElementOneElement, setup_setOnFirstElementOneElement, teardown_setOnFirstElement),
+        cmocka_unit_test_setup_teardown(test_setOnFirstElement, setup_setOnFirstElement, teardown_setOnFirstElement),
+        cmocka_unit_test_setup_teardown(test_setOnEmptyList, setup_setOnEmptyList, teardown_setOn),
+        cmocka_unit_test_setup_teardown(test_setOn, setup_setOn, teardown_setOn),
+        cmocka_unit_test_setup_teardown(test_nextElement, setup_nextElement, teardown_nextElement),
+        cmocka_unit_test_setup_teardown(test_getCurrent, setup_getCurrent, teardown_getCurrent),
+        cmocka_unit_test_setup_teardown(test_add, setup_add, teardown_add),
+        cmocka_unit_test_setup_teardown(test_delete, setup_delete, teardown_delete),
+        cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
+        cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
+        cmocka_unit_test_setup_teardown(test_deleteOneElement, setup_deleteOneElement, teardown_delete),
+        cmocka_unit_test_setup_teardown(test_sort, setup_sort, teardown_sort),
+        cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
+        cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
+        cmocka_unit_test_setup_teardown(test_count, setup_count, teardown_count),
+    };
 
-  return cmocka_run_group_tests(tests_generic_list, NULL, NULL);
+    cmocka_run_group_tests(tests_generic_list, NULL, NULL);
+
+    const struct CMUnitTest tests_neat_utils[] = {
+        cmocka_unit_test(test_randomLimit),
+        cmocka_unit_test(test_random01),
+        cmocka_unit_test(test_randomBool),
+    };
+
+    cmocka_run_group_tests(tests_neat_utils, NULL, NULL);
+
+    return EXIT_SUCCESS;
 }
