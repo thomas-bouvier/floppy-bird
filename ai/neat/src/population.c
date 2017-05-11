@@ -163,9 +163,10 @@ int newGeneration(MatingPool * pool, int verbose) {
 
     for (j = 0; j < breed; ++j) {
       child = breedGenome(&pool->species[i], verbose);
-
-      if (!child)
+      if (!child) {
+        fprintf(stderr, "Child Genome can't be NULL\n");
         return 0;
+      }
 
       children[count] = child;
       ++count;
@@ -174,9 +175,11 @@ int newGeneration(MatingPool * pool, int verbose) {
 
   cullSpecies(pool, 1);
 
+  /*
   while (count + pool->nb_species < POPULATION) {
-      
+
   }
+  */
 
   for (i = 0; i < count; ++i)
     if (!addGenomeToProperSpecies(children[i], pool))
@@ -207,9 +210,6 @@ static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
 void cullSpecies(MatingPool * pool, int cut_to_one) {
   int i;
   double remaining;
-
-  printf("cullSpecies-------------------------------\n");
-  printf("%d, %d\n", pool->nb_species, cut_to_one);
 
   for (i = 0; i < pool->nb_species; ++i) {
     sort(pool->species[i].genomes, compareFitnessCulling);

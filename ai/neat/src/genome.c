@@ -452,7 +452,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
   ConnectionGene * new_connection_gene = NULL;
 
-  int break_inner_loop;
+  int break_inner_loop = 0;
 
   Genome * genome_temp = NULL;
 
@@ -471,7 +471,6 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
   setOnFirstElement(genome_1->network);
   outer_loop: while (!outOfGenericList(genome_1->network)) {
-    break_inner_loop = 0;
 
     current_neuron_1 = (Neuron *) getCurrent(genome_1->network);
     if (current_neuron_1 == (Neuron *) NULL) {
@@ -491,7 +490,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
       // second connection gene
 
       setOnFirstElement(genome_2->network);
-      while (!outOfGenericList(genome_2->network) && !break_inner_loop) {
+      while (!outOfGenericList(genome_2->network)) {
 
         current_neuron_2 = (Neuron *) getCurrent(genome_2->network);
         if (current_neuron_2 == (Neuron *) NULL) {
@@ -500,7 +499,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
         }
 
         setOnFirstElement(current_neuron_2->connections);
-        while (!outOfGenericList(current_neuron_2->connections) && !break_inner_loop) {
+        while (!outOfGenericList(current_neuron_2->connections)) {
 
           current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connections);
           if (current_connection_gene_2 == (ConnectionGene *) NULL) {
@@ -525,10 +524,22 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
               break_inner_loop = 1;
           }
 
-          nextElement(current_neuron_2->connections);
+          if (break_inner_loop) {
+            setOnFirstElement(current_neuron_2->connections);
+            while (!outOfGenericList(current_neuron_2->connections))
+                nextElement(current_neuron_2->connections);
+          } else
+            nextElement(current_neuron_2->connections);
         }
 
-        nextElement(genome_2->network);
+        if (break_inner_loop) {
+            setOnFirstElement(genome_2->network);
+            while (!outOfGenericList(genome_2->network))
+                nextElement(genome_2->network);
+
+            break_inner_loop = 0;
+        } else
+            nextElement(genome_2->network);
       }
 
       new_neuron_1 = cloneNeuronWithoutConnections(current_connection_gene_1->neuron_in);
@@ -713,7 +724,7 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
 * \return int 1 if the two Genome elements are from the same Species, 0 otherwise
 */
 double sameSpecies(Genome * genome_1, Genome * genome_2) {
-    double coef = WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 1) < SPECIATION_THRESHOLD;
+    double coef = WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 0) < SPECIATION_THRESHOLD;
     return coef;
 }
 
