@@ -7,7 +7,7 @@
 #define CONFIGURATION_H
 
 #define PRESS_DELAY 100000			/*delay in uS*/
-#define REST_DELAY 20000 			/*delay in uS*/
+#define REST_DELAY 	200000 			/*delay in uS*/
 #define STYLUS_CLICK_POSITION 71
 #define STYLUS_REST_POSITION 95
 #define PWM_PIN 1
@@ -22,8 +22,8 @@
 #define THRESHOLD_NB_PIXELS_PIPE 200
 #define BIRD_CIRCLE_DIAMETER 15
 
-#define CAPTURE_WIDTH 	960/2//(32*10)//960/2 //256		/* Must be a multiple of 32 */
-#define CAPTURE_HEIGHT 	720/2//(32*8)//720/2 //192		/* Must be a multiple of 32 */
+#define CAPTURE_WIDTH 	(32*10)//960/2 //256		/* Must be a multiple of 32 */
+#define CAPTURE_HEIGHT 	(32*8)//720/2 //192		/* Must be a multiple of 32 */
 
 #define WORKSPACE_DEF_COLOR CV_RGB(255, 0, 0)
 #define DEFAULT_TRACKER_COLOR CV_RGB(255, 0, 0)

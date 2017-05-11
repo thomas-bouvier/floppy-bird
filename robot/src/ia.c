@@ -3,7 +3,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#define JUMP_OFFSET 0.5
+#define JUMP_OFFSET 0.15
 
 /*!
 * \brief the main function for the IA
