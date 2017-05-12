@@ -7,6 +7,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+#include "configuration.h"
 
 /*!
 * \struct Stylus 
@@ -21,6 +22,7 @@ typedef struct {
 	long int restDelay;			/*!< the delay needed (in uS) by the device between 2 clicks */
 	int nbClick;			/*!< the number of click to act */
 	struct timeval moveTime;		/*!< the time of the last move*/
+	boolean clickStatus;		/*!< true if the click has to be canceled */
 } Stylus;
 
 
