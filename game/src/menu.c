@@ -55,26 +55,26 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF
     if(event.motion.x > 100 && event.motion.x < 410 && event.motion.y > 300 && event.motion.y < 371)
         TTF_SetFontStyle(big_font, TTF_STYLE_ITALIC);
     printText(renderer, "IA2 Demo", 100, 300, big_font);
-    /* Quit game */
-    if(event.motion.x > 100 && event.motion.x < 450 && event.motion.y > 400 && event.motion.y < 471)
-        TTF_SetFontStyle(big_font, TTF_STYLE_ITALIC);
-    printText(renderer, "Quit game", 100, 400, big_font);
     /* Simplified/Normal Mode */
-    printText(renderer, "Mode :", 100, 550, medium_font);
-    if(event.motion.x > 300 && event.motion.x < 613 && event.motion.y > 550 && event.motion.y < 591)
+    printText(renderer, "Mode :", 100, 450, medium_font);
+    if(event.motion.x > 300 && event.motion.x < 493 && event.motion.y > 450 && event.motion.y < 491)
         TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
     if((*simplifiedMode) == 1)
-        printText(renderer, "Simplified Mode", 300, 550, medium_font);
+        printText(renderer, "Simplified", 300, 450, medium_font);
     else
-        printText(renderer, "Normal Mode", 300, 550, medium_font);
+        printText(renderer, "Normal", 300, 450, medium_font);
     /* Predefined/Random Level */
-    printText(renderer, "Level :", 100, 620, medium_font);
-    if(event.motion.x > 300 && event.motion.x < 632 && event.motion.y > 620 && event.motion.y < 661)
+    printText(renderer, "Level :", 100, 520, medium_font);
+    if(event.motion.x > 300 && event.motion.x < 518 && event.motion.y > 520 && event.motion.y < 561)
         TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
     if((*levelFromFile) == 1)
-        printText(renderer, "Predefined Level", 300, 620, medium_font);
+        printText(renderer, "Predefined", 300, 520, medium_font);
     else
-        printText(renderer, "Random Level", 300, 620, medium_font);
+        printText(renderer, "Random", 300, 520, medium_font);
+        /* Quit game */
+    if(event.motion.x > 700 && event.motion.x < 900 && event.motion.y > 650 && event.motion.y < 691)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
+    printText(renderer, "Quit game", 700, 650, medium_font);
     /* Displaying */
     SDL_RenderPresent(renderer);
     return actionOnMainMenu(event, levelFromFile, simplifiedMode);
@@ -97,12 +97,12 @@ int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
             return IA1;
         if(event.button.x > 100 && event.button.x < 410 && event.button.y > 300 && event.button.y < 371)
             return IA2;
-        if(event.button.x > 100 && event.button.x < 450 && event.button.y > 400 && event.button.y < 471)
-            return QUITGAME;
-        if(event.button.x > 300 && event.button.x < 613 && event.button.y > 550 && event.button.y < 591)
+        if(event.button.x > 300 && event.button.x < 493 && event.button.y > 450 && event.button.y < 491)
             *simplifiedMode = (*simplifiedMode != 1);
-        if(event.button.x > 300 && event.button.x < 632 && event.button.y > 620 && event.button.y < 661)
+        if(event.button.x > 300 && event.button.x < 518 && event.button.y > 520 && event.button.y < 561)
             *levelFromFile = (*levelFromFile != 1);
+        if(event.button.x > 700 && event.button.x < 900 && event.button.y > 650 && event.button.y < 691)
+            return QUITGAME;
         SDL_Delay(200);
     }
     return WAIT;
