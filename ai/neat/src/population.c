@@ -311,7 +311,7 @@ Genome * breedGenome(Species * species, int verbose) {
     printf("prob: %f\n", p);
   }
 
-  if (p < CROSSOVER_RATE) {
+  /*if (p < CROSSOVER_RATE) {
     genome_1 = getRandomGenome(species);
     genome_2 = getRandomGenome(species);
 
@@ -333,6 +333,7 @@ Genome * breedGenome(Species * species, int verbose) {
     child = crossover(genome_1, genome_2);
   }
   else {
+  */
     genome_1 = getRandomGenome(species);
 
     if (verbose) {
@@ -347,7 +348,7 @@ Genome * breedGenome(Species * species, int verbose) {
     }
 
     child = (Genome *) cloneGenome(genome_1);
-  }
+  //}
 
   mutate(child);
 

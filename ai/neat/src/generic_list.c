@@ -66,7 +66,7 @@ GenericList * cloneGenericList(GenericList * list) {
     add(new_list, new_list->clone_function(getCurrent(list)));
 
     nextElement(list);
-  }
+}
 
   new_list->current = new_list->first;
 
@@ -321,9 +321,11 @@ int delete(GenericList * list, void * element) {
 */
 void sort(GenericList * list, int (*f) (const void *, const void *)) {
     Node * pos = NULL;
-    void ** save = malloc(sizeof(void *));
+    void ** save;
 
     if (count(list) > 1) {
+        save = malloc(sizeof(void *));
+
         setOnFirstElement(list);
         nextElement(list);
         while (!outOfGenericList(list)) {
@@ -338,6 +340,9 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
 
             list->current = pos;
         }
+
+        free(*save);
+        free(save);
     }
 }
 
