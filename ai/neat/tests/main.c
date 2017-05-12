@@ -164,6 +164,7 @@ static void test_cloneGenericList(void ** state) {
 static int teardown_cloneGenericList(void ** state) {
     freeGenericList(((CloneGenericListStruct *) *state)->base_list);
     freeGenericList(((CloneGenericListStruct *) *state)->clone_list);
+    free(*state);
     return 0;
 }
 
@@ -770,34 +771,7 @@ static void test_sort(void ** state) {
     SortStruct * helper = (SortStruct *) (* state);
     GenericList * list = helper->list;
 
-    /*
-    setOnFirstElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
-
-    nextElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness - 5.056 == 0);
-
-    nextElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
-
-    nextElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness + 0.0419 == 0);
-
-    nextElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness - 45.0 == 0);
-
-    nextElement(list);
-    assert_true(((Genome *) getCurrent(list))->fitness - 10.2 == 0);
-
-    nextElement(list);
-    assert_null(getCurrent(list));
-    */
-
-    printGenericList(list);
-
     sort(list, compareFitnessCulling);
-
-    printGenericList(list);
 
     setOnFirstElement(list);
     assert_true(((Genome *) getCurrent(list))->fitness - 45.0 == 0);
@@ -823,6 +797,7 @@ static void test_sort(void ** state) {
 
 static int teardown_sort(void ** state) {
     freeGenericList(((SortStruct *) *state)->list);
+    free(*state);
     return 0;
 }
 
@@ -883,6 +858,7 @@ static void test_find(void ** state) {
 static int teardown_find(void ** state) {
     freeGenericList(((FindStruct *) *state)->list);
     freeNeuron(((FindStruct *) *state)->to_be_freed);
+    free(*state);
     return 0;
 }
 

@@ -221,7 +221,6 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
 }
 
 static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
-    printf("deleteFirst\n");
     Node * element_to_delete = list->first;
 
     list->first = list->first->next;
@@ -241,7 +240,6 @@ static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
 }
 
 static int deleteLast(GenericList * list, int retrieve_data, void ** data) {
-    printf("deleteLast\n");
     Node * element_to_delete = list->last;
     Node * previous_element = NULL;
 
@@ -265,7 +263,6 @@ static int deleteLast(GenericList * list, int retrieve_data, void ** data) {
 }
 
 static int deleteCurrent(GenericList * list, int retrieve_data, void ** data) {
-    printf("deleteCurrent\n");
     Node * previous_element = NULL;
     Node * stop = NULL;
 
@@ -344,7 +341,6 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
             list->current = pos;
         }
 
-        free(*save);
         free(save);
     }
 }
