@@ -221,6 +221,7 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
 }
 
 static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
+    printf("deleteFirst\n");
     Node * element_to_delete = list->first;
 
     list->first = list->first->next;
@@ -240,6 +241,7 @@ static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
 }
 
 static int deleteLast(GenericList * list, int retrieve_data, void ** data) {
+    printf("deleteLast\n");
     Node * element_to_delete = list->last;
     Node * previous_element = NULL;
 
@@ -263,6 +265,7 @@ static int deleteLast(GenericList * list, int retrieve_data, void ** data) {
 }
 
 static int deleteCurrent(GenericList * list, int retrieve_data, void ** data) {
+    printf("deleteCurrent\n");
     Node * previous_element = NULL;
     Node * stop = NULL;
 
@@ -378,4 +381,32 @@ int count(GenericList * list) {
   }
 
   return count;
+}
+
+/*!
+* \brief Print the given GenericList.
+* \param[out] list the GenericList to print
+*/
+void printGenericList(GenericList * list) {
+    int index = 0;
+
+    printf("list address: %p\n", list);
+    printf("%d elements\n\n", count(list));
+
+    setOnFirstElement(list);
+    while (!outOfGenericList(list)) {
+        printf("%d.\n", index);
+        ++index;
+
+        printf("node address: %p\n", list->current);
+        printf("next node address: %p\n", list->current->next);
+        printf("data address: %p\n", list->current->data);
+
+        if (list->current->next)
+            printf("next data address: %p\n", list->current->next->data);
+
+        printf("\n");
+
+        nextElement(list);
+    }
 }

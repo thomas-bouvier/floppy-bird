@@ -54,4 +54,6 @@ void sort(GenericList * list, int (*f) (const void *, const void *));
 int find(GenericList * list, void * element);
 int count(GenericList * list);
 
+void printGenericList(GenericList * list);
+
 #endif // GENERIC_LIST_H

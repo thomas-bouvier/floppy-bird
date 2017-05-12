@@ -35,27 +35,34 @@ static int teardown_newNode(void ** state) {
 static void test_newGenericListMissingFreeFunction(void ** state) {
     GenericList * list = newGenericList(NULL, NULL);
 
-    *state = list;
-
     assert_null(list);
+
+    *state = list;
 }
 
 static void test_newGenericListMissingCloneFunction(void ** state) {
     GenericList * list = newGenericList(NULL, freeNeuron);
 
-    *state = list;
-
+    assert_non_null(list);
     assert_null(list->clone_function);
     assert_ptr_equal(list->free_function, freeNeuron);
+
+    initGenericList(list);
+
+    *state = list;
 }
 
 static void test_newGenericList(void ** state) {
     GenericList * list = newGenericList(cloneNeuron, freeNeuron);
 
-    *state = list;
+    assert_non_null(list);
 
     assert_ptr_equal(list->clone_function, cloneNeuron);
     assert_ptr_equal(list->free_function, freeNeuron);
+
+    initGenericList(list);
+
+    *state = list;
 }
 
 static int teardown_newGenericList(void ** state) {
@@ -763,7 +770,34 @@ static void test_sort(void ** state) {
     SortStruct * helper = (SortStruct *) (* state);
     GenericList * list = helper->list;
 
+    /*
+    setOnFirstElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 5.056 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 1.05 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness + 0.0419 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 45.0 == 0);
+
+    nextElement(list);
+    assert_true(((Genome *) getCurrent(list))->fitness - 10.2 == 0);
+
+    nextElement(list);
+    assert_null(getCurrent(list));
+    */
+
+    printGenericList(list);
+
     sort(list, compareFitnessCulling);
+
+    printGenericList(list);
 
     setOnFirstElement(list);
     assert_true(((Genome *) getCurrent(list))->fitness - 45.0 == 0);
