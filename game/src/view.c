@@ -274,5 +274,5 @@ int displayBestScore(SDL_Renderer * renderer, TTF_Font * font, FILE * score_file
 */
 void tapToPlay(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 {
-    drawSprite(renderer, camera, sprites->tap_to_play, SCREEN_WIDTH/2 - sprites->tap_to_play->w/2, SCREEN_HEIGHT/2 - sprites->tap_to_play->h, 150, 150);
+    drawSprite(renderer, camera, sprites->tap_to_play, SCREEN_WIDTH/2 - 60, SCREEN_HEIGHT/2 - 100, 150, 150);
 }
