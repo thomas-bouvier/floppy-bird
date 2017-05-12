@@ -17,7 +17,7 @@ MatingPool * newMatingPool() {
   new_mating_pool->max_fitness = 0.0;
   new_mating_pool->sum_average_fitnesses = 0.0;
   new_mating_pool->average_fitness = 0.0;
-  new_mating_pool->innovation = 0;
+  new_mating_pool->innovation = N_OUTPUTS;
 
   return new_mating_pool;
 }
@@ -134,7 +134,7 @@ int newGeneration(MatingPool * pool, int verbose) {
   int j;
   int count;
   double breed;
-  Genome * children[N_MAX_SPECIES * N_MAX_GENOMES];
+  Genome * children[POPULATION];
   Genome * child;
 
   if (verbose) {
@@ -159,7 +159,7 @@ int newGeneration(MatingPool * pool, int verbose) {
       printf("Species no %d\n", i);
     }
 
-    breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
+    breed = floor(pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION) - 1.0;
 
     for (j = 0; j < breed; ++j) {
       child = breedGenome(&pool->species[i], verbose);

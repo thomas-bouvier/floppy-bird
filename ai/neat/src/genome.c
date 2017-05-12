@@ -89,19 +89,21 @@ void freeGenome(void * genome) {
 * \return int Return 1 if the Genome was successfully generated, 0 otherwise
 */
 int generateGenome(Genome * genome) {
-  int i;
+    int i;
 
-  // populating neuron list
+    // populating neuron list
 
-  for (i = 0; i < N_INPUTS; ++i)
-    if (!addNeuronToGenome(genome, newNeuron(INPUT)))
-      return 0;
+    for (i = 0; i < N_INPUTS; ++i)
+        if (!addNeuronToGenome(genome, newNeuron(INPUT)))
+            return 0;
 
-  for (i = 0; i < N_OUTPUTS; ++i)
-    if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
-      return 0;
+    for (i = 0; i < N_OUTPUTS; ++i)
+        if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
+            return 0;
 
-  return 1;
+    //TODO
+
+    return 1;
 }
 
 /*!
@@ -762,16 +764,6 @@ double * evaluateGenome(Genome * genome, double * input) {
     setOn(genome->network, i);
     ((Neuron *) getCurrent(genome->network))->value = input[i];
   }
-
-  /* debug
-  int index = 0;
-  setOnFirstElement(genome->network);
-  while (index < 4) {
-      printf("%f\n", ((Neuron *) getCurrent(genome->network))->value);
-      ++index;
-      nextElement(genome->network);
-  }
-  */
 
   // scanning input and output neurons
 
