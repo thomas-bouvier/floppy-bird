@@ -7,7 +7,7 @@
 #define CONFIGURATION_H
 
 #define PRESS_DELAY 100000			/*delay in uS*/
-#define REST_DELAY 	200000 			/*delay in uS*/
+#define REST_DELAY 	300000 			/*delay in uS*/
 #define STYLUS_CLICK_POSITION 71
 #define STYLUS_REST_POSITION 95
 #define PWM_PIN 1

@@ -2,42 +2,50 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#define JUMP_OFFSET 0.15
+#define JUMP_OFFSET 0.28
+#define JUMP_HEIGHT 0.5
+#define SENSIBILITY 0.9
 
 /*!
 * \brief the main function for the IA
 * \param[in] robot : the robot interface
 */
-void* mainIa (void* robot)
+void* mainIa (void* bot)
 {
-	robot = (Robot*) robot;
+	Robot* robot = (Robot*)malloc(sizeof(Robot));
+	robot = (Robot*)bot;
 
-	boolean fall = true;
+
 
     /* Press Play *//*1 clk 120us*/
     sleep(1);
     jump(robot);
     while(!getDataUpdated(robot));
     setDataUpdated(robot, 0);  
-    float lastBirdHeight = getBirdHeight(robot);
     jump(robot);
     jump(robot);
+    sleep(1);
     
 
     while(1)
     {
-		printf("%s\n",fall? "fall" : "rise");
         if(getDataUpdated(robot))
         {
-			//printf("DataUpdated\n");
 			setDataUpdated(robot, 0); 
 			float birdHeight = getBirdHeight(robot);
-			fall = (birdHeight - lastBirdHeight) < 0;
-			if(!jumpRunning(robot) && (birdHeight < (getNextPipeHeight(robot) + JUMP_OFFSET))){
-				jump(robot);
+			float pipeHeight = getNextPipeHeight(robot) + JUMP_OFFSET;
+			if(!jumpRunning(robot) && (birdHeight < pipeHeight)){
+				float n = ((pipeHeight - birdHeight)/JUMP_HEIGHT) + SENSIBILITY ;
+				int nbJump = (int)n;
+				int i;
+				/*printf("run %f (%d) jumps ; jump running : %s\n",n,nbJump,jumpRunning(robot)? "yes" : "no"); */
+				for (i = 0; i<nbJump;i++){
+					jump(robot);
+				}
 			}
-			lastBirdHeight = birdHeight;
+
         }     
        
         if(getGameStatus(robot)){
@@ -50,6 +58,7 @@ void* mainIa (void* robot)
 			sleep(1);
 			jump(robot);
 			jump(robot);
+			sleep(1);
 		}
     }
 
