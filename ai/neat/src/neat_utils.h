@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int randomLimit(int limit);
+int randomLimit(long limit);
 double random01();
 int randomBool();
 

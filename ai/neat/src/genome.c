@@ -343,7 +343,7 @@ int mutateNode(Genome * genome) {
   if (i == 0)
     return 1;
 
-  random_connection_gene_index = randomLimit(i);
+  random_connection_gene_index = randomLimit(i - 1);
 
   if (candidates[random_connection_gene_index]->enabled == 0)
     return 1;
@@ -424,7 +424,7 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
   if (i == 0)
     return 1;
 
-  random_connection_gene_index = randomLimit(i);
+  random_connection_gene_index = randomLimit(i - 1);
   candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
 
   genome->mutations_history[genome->nb_mutations] = 3;

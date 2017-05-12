@@ -1,22 +1,22 @@
 #include "neat_utils.h"
 
 /*!
-* \brief Return a random number between 0 and the specified parameter
+* \brief Return a random number between 0 and the specified parameter (included)
 * \param[in] limit the upper limit
-* \return int Return a random number in [0; limit[
+* \return int Return a random number in [0; limit]
 */
-int randomLimit(int limit) {
-  if ((limit - 1) == RAND_MAX) {
-    return rand();
-  } else {
-    long end = RAND_MAX / limit;
-    end *= limit;
+int randomLimit(long limit) {
+    unsigned long num_bins = (unsigned long) limit + 1;
+    unsigned long num_rand = (unsigned long) RAND_MAX + 1;
+    unsigned long bin_size = num_rand / num_bins;
+    unsigned long defect = num_rand % num_bins;
 
-    int r;
-    while ((r = rand()) >= end);
+    long x;
+    do {
+        x = random();
+    } while (num_rand - defect <= (unsigned long) x);
 
-    return r % limit;
-  }
+    return x / bin_size;
 }
 
 /*!
@@ -32,5 +32,5 @@ double random01() {
 * \return int 0 or 1
 */
 int randomBool() {
-  return randomLimit(2);
+  return randomLimit(1);
 }

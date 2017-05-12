@@ -913,7 +913,7 @@ static void test_randomLimit(void ** state) {
     int i;
 
     for (i = 0; i < 10000; ++i)
-        assert_in_range(randomLimit(100), 0, 99);
+        assert_in_range(randomLimit(100), 0, 100);
 }
 
 /*========================================================================

@@ -176,7 +176,7 @@ int newGeneration(MatingPool * pool, int verbose) {
   cullSpecies(pool, 1);
 
   while (count + pool->nb_species < POPULATION) {
-    children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species)], verbose);
+    children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
     ++count;
   }
 
@@ -488,7 +488,7 @@ void computeAverageFitness(Species * species) {
 * \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
-  setOn(species->genomes, randomLimit(species->nb_genomes));
+  setOn(species->genomes, randomLimit(species->nb_genomes - 1));
   return getCurrent(species->genomes);
 }
 
