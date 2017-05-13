@@ -331,8 +331,8 @@ int mutateLink(Genome * genome) {
     if (count(genome->neurons) <= 1)
         return 1;
 
-    neuron_1 = getRandomNeuron(genome);
-    neuron_2 = getRandomNeuron(genome);
+    neuron_1 = getRandomNeuron(genome, 0, 1);
+    neuron_2 = getRandomNeuron(genome, 1, 0);
 
     connection_gene = newConnectionGene(0, 1, *genome->innovation);
 
@@ -724,8 +724,41 @@ double * evaluateGenome(Genome * genome, double * input) {
 * \param[in] genome the Genome to choose a Neuron from
 * \return Return a random Neuron
 */
-Neuron * getRandomNeuron(Genome * genome) {
-    setOn(genome->neurons, randomLimit(count(genome->neurons) - 1));
+Neuron * getRandomNeuron(Genome * genome, int non_input, int non_output) {
+    int i;
+    ConnectionGene * current_connection_gene = NULL;
+    GenericList * candidates = newGenericList(cloneNeuron, freeNeuron);
+
+    if (!candidates)
+        return NULL;
+
+    initGenericList(candidates);
+
+    if (!non_input)
+        for (i = 0; i < N_INPUTS; ++i)
+            add(candidates, getNeuron(genome, i));
+
+    if (!non_output)
+        for (i = 0; i < N_OUTPUTS; ++i)
+            add(candidates, getNeuron(genome, N_INPUTS + i));
+
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
+
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
+
+        if (!non_input || current_connection_gene->neuron_in_id >= N_INPUTS)
+            if (!non_output || current_connection_gene->neuron_in_id >= N_INPUTS + N_OUTPUTS)
+                add(candidates, getNeuron(genome, current_connection_gene->neuron_in_id));
+
+        if (!non_input || current_connection_gene->neuron_out_id >= N_INPUTS)
+            if (!non_output || current_connection_gene->neuron_out_id >= N_INPUTS + N_OUTPUTS)
+                add(candidates, getNeuron(genome, current_connection_gene->neuron_out_id));
+
+        nextElement(genome->connection_genes);
+    }
+
+    setOn(genome->neurons, randomLimit(count(candidates) - 1));
     return ((Neuron *) getCurrent(genome->neurons));
 }
 

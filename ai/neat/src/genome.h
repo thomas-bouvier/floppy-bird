@@ -53,7 +53,7 @@ int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out);
 
 double * evaluateGenome(Genome * genome, double * input);
 
-Neuron * getRandomNeuron(Genome * genome);
+Neuron * getRandomNeuron(Genome * genome, int non_input, int non_output);
 Neuron * getNeuron(Genome * genome, int id);
 ConnectionGene * getRandomConnectionGene(Genome * genome);
 

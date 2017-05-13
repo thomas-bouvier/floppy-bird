@@ -6,6 +6,9 @@
 * \return int Return a random number in [0; limit]
 */
 int randomLimit(long limit) {
+    if (limit < 0)
+        return 0;
+
     unsigned long num_bins = (unsigned long) limit + 1;
     unsigned long num_rand = (unsigned long) RAND_MAX + 1;
     unsigned long bin_size = num_rand / num_bins;
