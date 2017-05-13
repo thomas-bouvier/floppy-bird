@@ -497,32 +497,29 @@ Genome * getRandomGenome(Species * species) {
 * \param[in] pool the MatingPool to print
 */
 void printMatingPool(MatingPool * pool) {
-  int i;
-  int j;
-  int k;
+    int i;
 
-  printf("==================================\n");
-  printf("==================================\n");
-  printf("==================================\n");
-  printf("Printing MatingPool...\n");
+    printf("==================================\n");
+    printf("==================================\n");
+    printf("==================================\n");
+    printf("Printing MatingPool...\n");
 
-  printf("\n");
-  printf("nb_species: %d\n", pool->nb_species);
-  printf("generation: %d\n", pool->generation);
-
-  for (i = 0; i < pool->nb_species; ++i) {
     printf("\n");
-    printf("==================================\n");
-    printf("==================================\n");
-    printf("Species no %d\n", i);
-    printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
+    printf("nb_species: %d\n", pool->nb_species);
+    printf("generation: %d\n", pool->generation);
 
-    j = 0;
-    setOnFirstElement(pool->species[i].genomes);
-    while (!outOfGenericList(pool->species[i].genomes)) {
-      printGenome((Genome *) getCurrent(pool->species[i].genomes));
+    for (i = 0; i < pool->nb_species; ++i) {
+        printf("\n");
+        printf("==================================\n");
+        printf("==================================\n");
+        printf("Species no %d\n", i);
+        printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
 
-      nextElement(pool->species[i].genomes);
+        setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes)) {
+            printGenome((Genome *) getCurrent(pool->species[i].genomes));
+
+            nextElement(pool->species[i].genomes);
+        }
     }
-  }
 }

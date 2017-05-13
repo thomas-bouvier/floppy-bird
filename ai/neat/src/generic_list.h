@@ -23,11 +23,11 @@ typedef struct Node {
 * \brief A GenericList is the implementation of a linked GenericList structure.
 */
 struct GenericList {
-  Node * first;                   /*<! the address of the first element of the GenericList */
-  Node * current;                 /*<! the address of the current element of the GenericList */
-  Node * last;                    /*<! the address of the last element of the GenericList */
-  CloneFunction clone_function;
-  FreeFunction free_function;
+    Node * first;                   /*<! the address of the first element of the GenericList */
+    Node * current;                 /*<! the address of the current element of the GenericList */
+    Node * last;                    /*<! the address of the last element of the GenericList */
+    CloneFunction clone_function;
+    FreeFunction free_function;
 };
 
 Node * newNode();
@@ -48,6 +48,7 @@ void * getCurrent(GenericList * list);
 
 int add(GenericList * list, void * element);
 int delete(GenericList * list, void * element);
+int clearGenericList(GenericList * list);
 
 void sort(GenericList * list, int (*f) (const void *, const void *));
 

@@ -301,17 +301,34 @@ static int deleteCurrent(GenericList * list, int retrieve_data, void ** data) {
 * \return int 1 if the element was successfully deleted, 0 otherwise
 */
 int delete(GenericList * list, void * element) {
-  setOnFirstElement(list);
-  while (!outOfGenericList(list)) {
-    if (list->current->data == element) {
-      deleteCurrent(list, 0, NULL);
-      return 1;
+    setOnFirstElement(list);
+    while (!outOfGenericList(list)) {
+        if (list->current->data == element) {
+            deleteCurrent(list, 0, NULL);
+            return 1;
+        }
+
+        nextElement(list);
     }
 
-    nextElement(list);
-  }
+    return 0;
+}
 
-  return 0;
+/*!
+* \brief Clear the entire given GenericList.
+* \param[out] list the GenericList to clear
+* \return int 1 if the GenericList was successfully cleared, 0 otherwise
+*/
+int clearGenericList(GenericList * list) {
+    setOnFirstElement(list);
+    while (!outOfGenericList(list)) {
+        if (!delete(list, getCurrent(list)))
+            return 0;
+
+        setOnFirstElement(list);
+    }
+
+    return 1;
 }
 
 /*!

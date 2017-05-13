@@ -679,6 +679,49 @@ static int teardown_delete(void ** state) {
 }
 
 /*========================================================================
+    clear
+========================================================================*/
+
+static int setup_clearGenericList(void ** state) {
+    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+
+    if (list == NULL)
+        return -1;
+
+    initGenericList(list);
+
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(BASIC));
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(BASIC));
+    add(list, newNeuron(INPUT));
+    add(list, newNeuron(OUTPUT));
+    add(list, newNeuron(BASIC));
+    add(list, newNeuron(INPUT));
+
+    *state = list;
+
+    return 0;
+}
+
+static void test_clearGenericList(void ** state) {
+    GenericList * list = (GenericList *) (* state);
+
+    clearGenericList(list);
+
+    assert_null(list->first);
+    assert_null(list->last);
+    assert_true(emptyGenericList(list));
+    assert_int_equal(count(list), 0);
+}
+
+static int teardown_clearGenericList(void ** state) {
+    freeGenericList(*state);
+    return 0;
+}
+
+/*========================================================================
     sort
 ========================================================================*/
 
@@ -1007,6 +1050,7 @@ int main() {
         cmocka_unit_test_setup_teardown(test_deleteFirst, setup_delete, teardown_delete),
         cmocka_unit_test_setup_teardown(test_deleteLast, setup_delete, teardown_delete),
         cmocka_unit_test_setup_teardown(test_deleteOneElement, setup_deleteOneElement, teardown_delete),
+        cmocka_unit_test_setup_teardown(test_clearGenericList, setup_clearGenericList, teardown_clearGenericList),
         cmocka_unit_test_setup_teardown(test_sort, setup_sort, teardown_sort),
         cmocka_unit_test_setup_teardown(test_find, setup_find, teardown_find),
         cmocka_unit_test_setup_teardown(test_countEmptyList, setup_countEmptyList, teardown_count),
