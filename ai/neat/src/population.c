@@ -111,7 +111,7 @@ int removeSpecies(MatingPool * pool, short int id) {
     return 0;
   }
 
-  freeGenericList(pool->species[i].genomes);
+  freeGenericList(pool->species[index].genomes);
 
   for (i = index; i < pool->nb_species - 1; ++i)
     pool->species[i] = pool->species[i + 1];
@@ -131,63 +131,64 @@ int removeSpecies(MatingPool * pool, short int id) {
 * before breeding each remaining Species and keeping the stronger Genome element.
 */
 int newGeneration(MatingPool * pool, int verbose) {
-  int i;
-  int j;
-  int count;
-  double breed;
-  Genome * children[POPULATION];
-  Genome * child;
+    int i;
+    int j;
+    int count;
+    double breed;
+    Genome * children[POPULATION];
+    Genome * child;
 
-  if (verbose) {
-    printf("==================================\n");
-    printf("==================================\n");
-    printf("==================================\n");
-    printf("New generation...\n");
-  }
-
-  cullSpecies(pool, 0);
-
-  computeGlobalRanks(pool);
-  removeStaleSpecies(pool);
-
-  computeGlobalRanks(pool);
-  removeWeakSpecies(pool, 0);
-
-  count = 0;
-  for (i = 0; i < pool->nb_species; ++i) {
     if (verbose) {
-      printf("\n\n\n");
-      printf("Species no %d\n", i);
+        printf("==================================\n");
+        printf("==================================\n");
+        printf("==================================\n");
+        printf("New generation...\n");
     }
 
-    breed = floor(pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION) - 1.0;
+    cullSpecies(pool, 0);
 
-    for (j = 0; j < breed; ++j) {
-      child = breedGenome(&pool->species[i], verbose);
-      if (!child) {
-        fprintf(stderr, "Child Genome can't be NULL\n");
-        return 0;
-      }
+    computeGlobalRanks(pool);
+    removeStaleSpecies(pool);
 
-      children[count] = child;
-      ++count;
+    computeGlobalRanks(pool);
+    removeWeakSpecies(pool, 0);
+
+    count = 0;
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (verbose) {
+            printf("\n\n\n");
+            printf("Species no %d\n", i);
+        }
+
+        breed = floor(pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION) - 1.0;
+        printf("%f\n", breed);
+
+        for (j = 0; j < breed; ++j) {
+            child = breedGenome(&pool->species[i], 1);
+            if (!child) {
+                fprintf(stderr, "Child Genome can't be NULL\n");
+                return 0;
+            }
+
+            children[count] = child;
+            ++count;
+        }
     }
-  }
 
-  cullSpecies(pool, 1);
+    cullSpecies(pool, 1);
 
-  while (count + pool->nb_species < POPULATION) {
-    children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
-    ++count;
-  }
+    while (count + pool->nb_species < POPULATION) {
+        children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
+        ++count;
+    }
 
-  for (i = 0; i < count; ++i)
-    if (!addGenomeToProperSpecies(children[i], pool))
-      return 0;
+    for (i = 0; i < count; ++i)
+        if (!addGenomeToProperSpecies(children[i], pool))
+            return 0;
 
-  ++pool->generation;
+    ++pool->generation;
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -237,26 +238,28 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
 * times the number of Genome elements in a Species ie. POPULATION is lower than WEAK_SPECIES_THRESHOLD.
 */
 void removeWeakSpecies(MatingPool * pool, int verbose) {
-  int i;
-  double breed;
+    int i;
+    double breed;
 
-  for (i = 0; i < pool->nb_species; ++i)
-    computeAverageFitness(&pool->species[i]);
+    for (i = 0; i < pool->nb_species; ++i)
+        computeAverageFitness(&pool->species[i]);
 
-  computeGlobalAverageFitness(pool);
+    computeGlobalAverageFitness(pool);
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
+    if (pool->nb_species > 1) {
+        for (i = 0; i < pool->nb_species; ++i) {
+            breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
 
-    if (verbose) {
-      printf("species average fitness: %f\n", pool->species[i].average_fitness);
-      printf("pool average fitness: %f\n", pool->average_fitness);
-      printf("breed: %f\n", breed);
+            if (verbose) {
+                printf("species average fitness: %f\n", pool->species[i].average_fitness);
+                printf("pool average fitness: %f\n", pool->average_fitness);
+                printf("breed: %f\n", breed);
+            }
+
+            if (breed < WEAK_SPECIES_THRESHOLD)
+                removeSpecies(pool, pool->species[i].id);
+        }
     }
-
-    if (breed < WEAK_SPECIES_THRESHOLD)
-      removeSpecies(pool, pool->species[i].id);
-  }
 }
 
 /*!
@@ -266,24 +269,26 @@ void removeWeakSpecies(MatingPool * pool, int verbose) {
 * A Species is considered as stale when
 */
 void removeStaleSpecies(MatingPool * pool) {
-  int i;
+    int i;
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    if (!emptyGenericList(pool->species[i].genomes)) {
-      sort(pool->species[i].genomes, compareFitnessCulling);
+    if (pool->nb_species > 1) {
+        for (i = 0; i < pool->nb_species; ++i) {
+            if (!emptyGenericList(pool->species[i].genomes)) {
+                sort(pool->species[i].genomes, compareFitnessCulling);
 
-      setOnFirstElement(pool->species[i].genomes);
-      if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
-        pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
-        pool->species[i].staleness = 0;
-      }
-      else
-        ++pool->species[i].staleness;
+                setOnFirstElement(pool->species[i].genomes);
+                if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
+                    pool->species[i].max_fitness = ((Genome *) getCurrent(pool->species[i].genomes))->fitness;
+                    pool->species[i].staleness = 0;
+                }
+                else
+                    ++pool->species[i].staleness;
 
-      if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
-        removeSpecies(pool, pool->species[i].id);
+                if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
+                    removeSpecies(pool, pool->species[i].id);
+            }
+        }
     }
-  }
 }
 
 /*!
@@ -489,7 +494,7 @@ void computeAverageFitness(Species * species) {
 */
 Genome * getRandomGenome(Species * species) {
   setOn(species->genomes, randomLimit(species->nb_genomes - 1));
-  return getCurrent(species->genomes);
+  return (Genome *) getCurrent(species->genomes);
 }
 
 /*!

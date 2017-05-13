@@ -22,13 +22,13 @@ typedef struct MatingPool MatingPool;
 * \brief A Species contains Genome elements which have similar characteristics.
 */
 struct Species {
-  GenericList * genomes;                   /*!< Genomes elements contained in this Species */
-  short int id;                     /*!< the id of this Species */
-  short int nb_genomes;             /*!< the number of Genome elements contained in this Species */
-  double max_fitness;               /*!< the maximum score of all Genome elements in this Species */
-  double average_fitness;           /*!< the average score of Genome elements in this Species */
-  int staleness;                    /*!< the staleness of this Species */
-  int * innovation;                 /*!< the address of the innovation number of the MatingPool containing this Species */
+    GenericList * genomes;            /*!< Genomes elements contained in this Species */
+    short int id;                     /*!< the id of this Species */
+    short int nb_genomes;             /*!< the number of Genome elements contained in this Species */
+    double max_fitness;               /*!< the maximum score of all Genome elements in this Species */
+    double average_fitness;           /*!< the average score of Genome elements in this Species */
+    int staleness;                    /*!< the staleness of this Species */
+    int * innovation;                 /*!< the address of the innovation number of the MatingPool containing this Species */
 };
 
 /*!
@@ -36,13 +36,13 @@ struct Species {
 * \brief A MatingPool gathers all the Species.
 */
 struct MatingPool {
-  Species species[N_MAX_SPECIES];     /*!< the Genome elements in the MatingPool are split into distinct groups known as Species */
-  short int nb_species;               /*!< the number of Species contained in this MatingPool */
-  short int generation;               /*!< the current number of generations */
-  double max_fitness;                 /*!< the maximum score of all Genome elements in this MatingPool */
-  double sum_average_fitnesses;       /*!< the sum of average scores of Species contained in this MatingPool */
-  double average_fitness;             /*!< the average score of Species contained in this MatingPool */
-  int innovation;                     /*!< the innovation number is used to track the history of a ConnectionGene evolution */
+    Species species[N_MAX_SPECIES];     /*!< the Genome elements in the MatingPool are split into distinct groups known as Species */
+    short int nb_species;               /*!< the number of Species contained in this MatingPool */
+    short int generation;               /*!< the current number of generations */
+    double max_fitness;                 /*!< the maximum score of all Genome elements in this MatingPool */
+    double sum_average_fitnesses;       /*!< the sum of average scores of Species contained in this MatingPool */
+    double average_fitness;             /*!< the average score of Species contained in this MatingPool */
+    int innovation;                     /*!< the innovation number is used to track the history of a ConnectionGene evolution */
 };
 
 MatingPool * newMatingPool();

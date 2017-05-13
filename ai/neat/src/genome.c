@@ -325,10 +325,10 @@ int mutateLink(Genome * genome) {
     if (connection_gene == NULL)
         return 0;
 
-    add(genome->connection_genes, connection_gene);
-
     genome->mutations_history[genome->nb_mutations] = 1;
     ++genome->nb_mutations;
+
+    add(genome->connection_genes, connection_gene);
 
     if (linked(genome, neuron_1, neuron_2))
         return 1;
@@ -436,6 +436,8 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 */
 Genome * crossover(Genome * genome_1, Genome * genome_2) {
     int i;
+    int skip_continue_instruction = 0;
+    int skip_break_instruction = 0;
 
     Genome * child_genome = NULL;
 
@@ -463,7 +465,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
     }
 
     setOnFirstElement(genome_1->connection_genes);
-    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
+    while (!outOfGenericList(genome_1->connection_genes)) {
 
         current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
@@ -479,19 +481,29 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
                     new_connection_gene = cloneConnectionGene(current_connection_gene_2);
                     add(child_genome->connection_genes, new_connection_gene);
 
-                    nextElement(genome_1->connection_genes);
-                    goto outer_loop;
+                    skip_continue_instruction = 1;
                 }
                 else {
-                    break;
+                    skip_break_instruction = 1;
                 }
             }
 
+            if (skip_continue_instruction || skip_break_instruction) {
+                while (!outOfGenericList(genome_2->connection_genes))
+                    nextElement(genome_2->connection_genes);
+            }
+            else {
+                nextElement(genome_2->connection_genes);
+            }
+        }
+
+        if (!skip_continue_instruction) {
             new_connection_gene = cloneConnectionGene(current_connection_gene_1);
             add(child_genome->connection_genes, new_connection_gene);
-
-            nextElement(genome_2->connection_genes);
         }
+
+        skip_continue_instruction = 0;
+        skip_break_instruction = 0;
 
         nextElement(genome_1->connection_genes);
     }
