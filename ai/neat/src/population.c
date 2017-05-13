@@ -41,20 +41,21 @@ void freeMatingPool(MatingPool * pool) {
 * \return int Return 1 if the MatingPool was successfully filled, 0 otherwise
 */
 int populateMatingPool(MatingPool * pool) {
-  int i;
-  Genome * genome = NULL;
+    int i;
+    Genome * genome = NULL;
 
-  for (i = 0; i < POPULATION; ++i) {
-    if ((genome = newGenome(&pool->innovation)) == (Genome *) NULL)
-      return 0;
+    for (i = 0; i < POPULATION; ++i) {
+        if ((genome = newGenome(&pool->innovation)) == (Genome *) NULL)
+            return 0;
 
-    mutate(genome);
+        genome->max_neurons = N_INPUTS;
+        mutate(genome);
 
-    if (!addGenomeToProperSpecies(genome, pool))
-      return 0;
-  }
+        if (!addGenomeToProperSpecies(genome, pool))
+            return 0;
+    }
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -311,7 +312,7 @@ Genome * breedGenome(Species * species, int verbose) {
     printf("prob: %f\n", p);
   }
 
-  /*if (p < CROSSOVER_RATE) {
+  if (p < CROSSOVER_RATE) {
     genome_1 = getRandomGenome(species);
     genome_2 = getRandomGenome(species);
 
@@ -333,7 +334,6 @@ Genome * breedGenome(Species * species, int verbose) {
     child = crossover(genome_1, genome_2);
   }
   else {
-  */
     genome_1 = getRandomGenome(species);
 
     if (verbose) {

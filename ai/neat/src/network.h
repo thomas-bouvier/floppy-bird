@@ -22,11 +22,11 @@ typedef struct Neuron Neuron;
 * \brief A ConnectionGene joins Neuron elements in the Network.
 */
 struct ConnectionGene {
-  double weight;                    /*!< the weight of the connection gene */
-  unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
-  Neuron * neuron_in;               /*!< the predecessor Neuron */
-  Neuron * neuron_out;              /*!< the successor Neuron */
-  int innovation;                   /*!< the innovation number of the Genome containing this ConnectionGene */
+    double weight;                    /*!< the weight of the connection gene */
+    unsigned char enabled;            /*!< the enabled/disabled flag of the connection gene */
+    int neuron_in_id;                 /*!< the id of the predecessor Neuron */
+    int neuron_out_id;                /*!< the id of the successor Neuron */
+    int innovation;                   /*!< the innovation number of the Genome containing this ConnectionGene */
 };
 
 /*!
@@ -34,10 +34,10 @@ struct ConnectionGene {
 * \brief A NeuronType refers to the type of the Neuron.
 */
 enum NeuronType {
-  UNKNOW,
-  INPUT,
-  OUTPUT,
-  BASIC
+    UNKNOW,
+    INPUT,
+    OUTPUT,
+    BASIC
 };
 
 /*!
@@ -45,23 +45,18 @@ enum NeuronType {
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
 struct Neuron {
-  GenericList * connections;                 /*!< the successors ConnectionGene linked to this Neuron */
-  short int id;                       /*!< the id of this Neuron */
-  NeuronType type;                    /*!< the type of this Neuron */
-  double value;                       /*!< the value attached to this Neuron */
+    GenericList * connection_genes;     /*!< the successors ConnectionGene linked to this Neuron */
+    short int id;                       /*!< the id of this Neuron */
+    NeuronType type;                    /*!< the type of this Neuron */
+    double value;                       /*!< the value attached to this Neuron */
 };
-
-/*!
-* \brief The Network type is actually a neuron GenericList.
-*/
-typedef GenericList Network;
 
 Neuron * newNeuron(NeuronType type);
 void * cloneNeuron(void * neuron);
 Neuron * cloneNeuronWithoutConnections(Neuron * neuron);
 void freeNeuron(void * neuron);
 
-int addNeuronToNetwork(Network * network, Neuron * neuron);
+int addNeuron(GenericList * neurons, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);
 void * cloneConnectionGene(void * connection_gene);

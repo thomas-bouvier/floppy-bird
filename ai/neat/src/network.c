@@ -6,26 +6,25 @@
 * \return Return a new Neuron, or NULL if error
 */
 Neuron * newNeuron(NeuronType type) {
-  GenericList * connections = NULL;
-  Neuron * new_neuron = NULL;
+    GenericList * new_connection_genes_list = NULL;
+    Neuron * new_neuron = NULL;
 
-  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Neuron\n");
-    return NULL;
-  }
+    if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Neuron\n");
+        return NULL;
+    }
 
-  if ((connections = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
-    return NULL;
+    if ((new_connection_genes_list = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
+        return NULL;
 
-  initGenericList(connections);
+    initGenericList(new_connection_genes_list);
+    new_neuron->connection_genes = new_connection_genes_list;
 
-  new_neuron->connections = connections;
+    new_neuron->id = -1;
+    new_neuron->type = type;
+    new_neuron->value = 0.0;
 
-  new_neuron->id = -1;
-  new_neuron->type = type;
-  new_neuron->value = 0.0;
-
-  return new_neuron;
+    return new_neuron;
 }
 
 /*!
@@ -34,47 +33,46 @@ Neuron * newNeuron(NeuronType type) {
 * \return Return a new Neuron, or NULL if error
 */
 void * cloneNeuron(void * neuron) {
-  GenericList * connections = NULL;
-  Neuron * new_neuron = NULL;
+    GenericList * new_connection_genes_list = NULL;
+    Neuron * new_neuron = NULL;
 
-  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Neuron\n");
-    return NULL;
-  }
+    if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Neuron\n");
+        return NULL;
+    }
 
-  if ((connections = cloneGenericList(((Neuron *) neuron)->connections)) == (GenericList *) NULL)
-    return NULL;
+    if ((new_connection_genes_list = cloneGenericList(((Neuron *) neuron)->connection_genes)) == (GenericList *) NULL)
+        return NULL;
 
-  new_neuron->connections = connections;
+    new_neuron->connection_genes = new_connection_genes_list;
 
-  new_neuron->id = ((Neuron *) neuron)->id;
-  new_neuron->type = ((Neuron *) neuron)->type;
-  new_neuron->value = ((Neuron *) neuron)->value;
+    new_neuron->id = ((Neuron *) neuron)->id;
+    new_neuron->type = ((Neuron *) neuron)->type;
+    new_neuron->value = ((Neuron *) neuron)->value;
 
-  return new_neuron;
+    return new_neuron;
 }
 
 Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
-  GenericList * connections = NULL;
-  Neuron * new_neuron = NULL;
+    GenericList * new_connection_genes_list = NULL;
+    Neuron * new_neuron = NULL;
 
-  if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Neuron\n");
-    return NULL;
-  }
+    if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Neuron\n");
+        return NULL;
+    }
 
-  if ((connections = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
-    return NULL;
+    if ((new_connection_genes_list = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
+        return NULL;
 
-  initGenericList(connections);
+    initGenericList(new_connection_genes_list);
+    new_neuron->connection_genes = new_connection_genes_list;
 
-  new_neuron->connections = connections;
+    new_neuron->id = ((Neuron *) neuron)->id;
+    new_neuron->type = ((Neuron *) neuron)->type;
+    new_neuron->value = ((Neuron *) neuron)->value;
 
-  new_neuron->id = ((Neuron *) neuron)->id;
-  new_neuron->type = ((Neuron *) neuron)->type;
-  new_neuron->value = ((Neuron *) neuron)->value;
-
-  return new_neuron;
+    return new_neuron;
 }
 
 /*!
@@ -82,8 +80,8 @@ Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(void * neuron) {
-  freeGenericList(((Neuron *) neuron)->connections);
-  free(neuron);
+    freeGenericList(((Neuron *) neuron)->connection_genes);
+    free(neuron);
 }
 
 /*!
@@ -92,16 +90,16 @@ void freeNeuron(void * neuron) {
 * \param[out] neuron the Neuron to add
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
-int addNeuronToNetwork(Network * network, Neuron * neuron) {
-  int nb_neurons = count(network);
-  if (nb_neurons == N_MAX_NEURONS) {
-    fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
-    return 0;
-  }
+int addNeuron(GenericList * neurons, Neuron * neuron) {
+    int nb_neurons = count(neurons);
+    if (nb_neurons == N_MAX_NEURONS) {
+        fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
+        return 0;
+    }
 
-  neuron->id = nb_neurons;
+    neuron->id = nb_neurons;
 
-  return add(network, neuron);
+    return add(neurons, neuron);
 }
 
 /*!
@@ -112,22 +110,22 @@ int addNeuronToNetwork(Network * network, Neuron * neuron) {
 * \return Return a ConnectionGene, NULL if error
 */
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation) {
-  ConnectionGene * new_connection_gene = NULL;
+    ConnectionGene * new_connection_gene = NULL;
 
-  if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
-    return NULL;
-  }
+    if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
+        return NULL;
+    }
 
-  new_connection_gene->weight = weight;
-  new_connection_gene->enabled = enabled;
+    new_connection_gene->weight = weight;
+    new_connection_gene->enabled = enabled;
 
-  new_connection_gene->neuron_in = NULL;
-  new_connection_gene->neuron_out = NULL;
+    new_connection_gene->neuron_in_id = 0;
+    new_connection_gene->neuron_out_id = 0;
 
-  new_connection_gene->innovation = innovation;
+    new_connection_gene->innovation = innovation;
 
-  return new_connection_gene;
+    return new_connection_gene;
 }
 
 /*!
@@ -136,22 +134,22 @@ ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int inn
 * \return Return a ConnectionGene, NULL if error
 */
 void * cloneConnectionGene(void * connection_gene) {
-  ConnectionGene * new_connection_gene = NULL;
+    ConnectionGene * new_connection_gene = NULL;
 
-  if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
-    return NULL;
-  }
+    if ((new_connection_gene = (ConnectionGene *) malloc(sizeof(ConnectionGene))) == (ConnectionGene *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new ConnectionGene\n");
+        return NULL;
+    }
 
-  new_connection_gene->weight = ((ConnectionGene *) connection_gene)->weight;
-  new_connection_gene->enabled = ((ConnectionGene *) connection_gene)->enabled;
+    new_connection_gene->weight = ((ConnectionGene *) connection_gene)->weight;
+    new_connection_gene->enabled = ((ConnectionGene *) connection_gene)->enabled;
 
-  new_connection_gene->neuron_in = ((ConnectionGene *) connection_gene)->neuron_in;
-  new_connection_gene->neuron_out = ((ConnectionGene *) connection_gene)->neuron_out;
+    new_connection_gene->neuron_in = ((ConnectionGene *) connection_gene)->neuron_in_id;
+    new_connection_gene->neuron_out = ((ConnectionGene *) connection_gene)->neuron_out_id;
 
-  new_connection_gene->innovation = ((ConnectionGene *) connection_gene)->innovation;
+    new_connection_gene->innovation = ((ConnectionGene *) connection_gene)->innovation;
 
-  return new_connection_gene;
+    return new_connection_gene;
 }
 
 /*!
@@ -159,7 +157,7 @@ void * cloneConnectionGene(void * connection_gene) {
 * \param[out] connection_gene the ConnectionGene to be freed
 */
 void freeConnectionGene(void * connection_gene) {
-  free(connection_gene);
+    free(connection_gene);
 }
 
 /*!
@@ -170,17 +168,19 @@ void freeConnectionGene(void * connection_gene) {
 * \return int 1 if the two Neuron elements were successfully added, 0 otherwise
 */
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene) {
-  int nb_connection_genes = count(neuron_in->connections);
-  if (nb_connection_genes == N_MAX_CONNECTION_GENES) {
-    fprintf(stderr, "Can't add connection gene to neuron : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
-    return 0;
-  }
+    int nb_connection_genes = count(neuron_in->connection_genes);
+    if (nb_connection_genes == N_MAX_CONNECTION_GENES) {
+        fprintf(stderr, "Can't add connection gene to neuron : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
+        return 0;
+    }
 
-  if (!add(neuron_in->connections, connection_gene))
-    return 0;
+    /*
+    if (!add(neuron_in->connection_genes, connection_gene))
+        return 0;
+    */
 
-  connection_gene->neuron_in = neuron_in;
-  connection_gene->neuron_out = neuron_out;
+    connection_gene->neuron_in_id = neuron_in->id;
+    connection_gene->neuron_out_id = neuron_out->id;
 
-  return 1;
+    return 1;
 }
