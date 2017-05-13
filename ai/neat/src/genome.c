@@ -101,6 +101,10 @@ void freeGenome(void * genome) {
 */
 int generateGenome(Genome * genome) {
     int i;
+    int found_neuron = 0;
+    ConnectionGene * current_connection_gene = NULL;
+    Neuron * current_neuron = NULL;
+    Neuron * new_neuron = NULL;
 
     setOnFirstElement(genome->neurons);
     while (!outOfGenericList(genome->neurons)) {
@@ -118,7 +122,74 @@ int generateGenome(Genome * genome) {
         if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
             return 0;
 
-    //TODO
+    setOnFirstElement(genome->connections);
+    while (!outOfGenericList(genome->connections)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connections);
+
+        if (current_connection_gene->enabled) {
+            setOnFirstElement(genome->neurons);
+            while (!outOfGenericList(genome->neurons)) {
+                current_neuron = (Neuron *) getCurrent(genome->neurons);
+
+                if (current_neuron->id == current_connection_gene->neuron_out_id)
+                    found_neuron = 1;
+
+                nextElement(genome->neurons);
+            }
+
+            // neuron not found, we're creating it
+
+            if (!found_neuron) {
+                new_neuron = newNeuron(BASIC);
+
+                if (!addNeuronToGenome(genome, new_neuron))
+                    return 0;
+
+                new_neuron->id = current_connection_gene->neuron_out_id;
+            }
+
+            found_neuron = 0;
+
+            // we're retrieving the Neuron with the appopriate id in new_neuron
+
+            setOnFirstElement(genome->neurons);
+            while (!outOfGenericList(genome->neurons)) {
+                current_neuron = (Neuron *) getCurrent(genome->neurons);
+
+                if (current_neuron->id == current_connection_gene->neuron_out_id)
+                    new_neuron = current_neuron;
+
+                nextElement(genome->neurons);
+            }
+
+            add(new_neuron->connections, current_connection_gene);
+
+            setOnFirstElement(genome->neurons);
+            while (!outOfGenericList(genome->neurons)) {
+                current_neuron = (Neuron *) getCurrent(genome->neurons);
+
+                if (current_neuron->id == current_connection_gene->neuron_in_id)
+                    found_neuron = 1;
+
+                nextElement(genome->neurons);
+            }
+
+            // neuron not found, we're creating it
+
+            if (!found_neuron) {
+                new_neuron = newNeuron(BASIC);
+
+                if (!addNeuronToGenome(genome, new_neuron))
+                    return 0;
+
+                new_neuron->id = current_connection_gene->neuron_in_id;
+            }
+
+            found_neuron = 0;
+        }
+
+        nextElement(genome->connections);
+    }
 
     return 1;
 }
