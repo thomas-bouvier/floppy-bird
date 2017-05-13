@@ -359,7 +359,7 @@ int mutateLink(Genome * genome) {
     genome->mutations_history[genome->nb_mutations] = 1;
     ++genome->nb_mutations;
 
-    if (linked(neuron_1, neuron_2))
+    if (linked(genome, neuron_1, neuron_2))
         return 1;
 
     ++(*genome->innovation);
@@ -629,21 +629,26 @@ double sameSpecies(Genome * genome_1, Genome * genome_2) {
 }
 
 /*!
-* \brief Check if the two given Neuron elements are linked by a ConnectionGene
+* \brief Check if the two given Neuron elements are linked by a ConnectionGene.
 * \param[out] neuron_in The first Neuron
 * \param[in] neuron_out The second Neuron
 * \return int 1 if the two Neuron elements are linked, 0 otherwise
 */
-int linked(Neuron * neuron_in, Neuron * neuron_out) {
-  setOnFirstElement(neuron_in->connection_genes);
-  while (!outOfGenericList(neuron_in->connection_genes)) {
-    if (((ConnectionGene *) getCurrent(neuron_in->connection_genes))->neuron_out_id == neuron_out)
-      return 1;
+int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out) {
+    ConnectionGene * current_connection_gene = NULL;
 
-    nextElement(neuron_in->connection_genes);
-  }
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
 
-  return 0;
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
+
+        if (current_connection_gene->neuron_in_id == neuron_in->id && current_connection_gene->neuron_out_id == neuron_out->id)
+            return 1;
+
+        nextElement(genome->connection_genes);
+    }
+
+    return 0;
 }
 
 double * evaluateGenome(Genome * genome, double * input) {
