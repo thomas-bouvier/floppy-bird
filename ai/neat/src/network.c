@@ -144,8 +144,8 @@ void * cloneConnectionGene(void * connection_gene) {
     new_connection_gene->weight = ((ConnectionGene *) connection_gene)->weight;
     new_connection_gene->enabled = ((ConnectionGene *) connection_gene)->enabled;
 
-    new_connection_gene->neuron_in = ((ConnectionGene *) connection_gene)->neuron_in_id;
-    new_connection_gene->neuron_out = ((ConnectionGene *) connection_gene)->neuron_out_id;
+    new_connection_gene->neuron_in_id = ((ConnectionGene *) connection_gene)->neuron_in_id;
+    new_connection_gene->neuron_out_id = ((ConnectionGene *) connection_gene)->neuron_out_id;
 
     new_connection_gene->innovation = ((ConnectionGene *) connection_gene)->innovation;
 

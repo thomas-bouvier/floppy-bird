@@ -462,6 +462,8 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 * \return a new Genome resulting of a crossover between the given Genome elements, NULL otherwise
 */
 Genome * crossover(Genome * genome_1, Genome * genome_2) {
+    int i;
+
     Genome * child_genome = NULL;
 
     ConnectionGene * current_connection_gene_1 = NULL;
@@ -530,9 +532,9 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
     // finally, we're copying mutation rates from genome_1, which has the greater fitness
 
     for (i = 0; i < 4; ++i)
-        child->mutation_rates[i] = genome_1->mutation_rates[i];
+        child_genome->mutation_rates[i] = genome_1->mutation_rates[i];
 
-    return child;
+    return child_genome;
 }
 
 static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
@@ -782,68 +784,68 @@ ConnectionGene * getRandomConnectionGene(Genome * genome) {
 * \return int 1 if the file was successfully written, 0 otherwise
 */
 int writeGraphVizGenome(Genome * genome, char * filename) {
-  FILE * f = NULL;
-  GenericList * connection_gene_successors = NULL;
-  Neuron * current_neuron = NULL;
-  ConnectionGene * current_connection_gene = NULL;
+    FILE * f = NULL;
+    GenericList * connection_gene_successors = NULL;
+    Neuron * current_neuron = NULL;
+    ConnectionGene * current_connection_gene = NULL;
 
-  if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
-      fprintf(stderr, "Error while opening %s\n", filename);
-      return 0;
-  }
+    if ((f = (FILE *) fopen(filename, "w")) == (FILE *) NULL) {
+        fprintf(stderr, "Error while opening %s\n", filename);
+        return 0;
+    }
 
-  fprintf(f, "digraph {\n");
+    fprintf(f, "digraph {\n");
 
-  // links
+    // links
 
-  setOnFirstElement(genome->neurons);
-  while (!outOfGenericList(genome->neurons)) {
-      connection_gene_successors = ((Neuron *) genome->neurons->current->data)->connection_genes;
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        connection_gene_successors = ((Neuron *) genome->neurons->current->data)->connection_genes;
 
-      if (emptyGenericList(connection_gene_successors))
-        fprintf(f, "\t%d;\n", ((Neuron *) genome->neurons->current->data)->id);
-      else {
-        setOnFirstElement(connection_gene_successors);
-        while (!outOfGenericList(connection_gene_successors)) {
-          current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
+        if (emptyGenericList(connection_gene_successors))
+            fprintf(f, "\t%d;\n", ((Neuron *) genome->neurons->current->data)->id);
+        else {
+            setOnFirstElement(connection_gene_successors);
+            while (!outOfGenericList(connection_gene_successors)) {
+                current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
 
-          if (current_connection_gene->enabled)
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
-          else
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id->id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+                if (current_connection_gene->enabled)
+                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+                else
+                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
-          nextElement(connection_gene_successors);
+                nextElement(connection_gene_successors);
+            }
         }
-      }
 
-      nextElement(genome->neurons);
-  }
+        nextElement(genome->neurons);
+    }
 
-  // nodes
+    // nodes
 
-  setOnFirstElement(genome->neurons);
-  while(!outOfGenericList(genome->neurons)) {
-    current_neuron = (Neuron *) genome->neurons->current->data;
+    setOnFirstElement(genome->neurons);
+    while(!outOfGenericList(genome->neurons)) {
+        current_neuron = (Neuron *) genome->neurons->current->data;
 
-    if (current_neuron->type == INPUT)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+        if (current_neuron->type == INPUT)
+            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
-    else if (current_neuron->type == OUTPUT)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+        else if (current_neuron->type == OUTPUT)
+            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
-    else if (current_neuron->type == BASIC)
-      fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+        else if (current_neuron->type == BASIC)
+            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
-    else
-      fprintf(f, "\t%d [shape=circle];\n", current_neuron->id);
+        else
+            fprintf(f, "\t%d [shape=circle];\n", current_neuron->id);
 
-    nextElement(genome->neurons);
-  }
+        nextElement(genome->neurons);
+    }
 
-  fprintf(f, "}");
-  fclose(f);
+    fprintf(f, "}");
+    fclose(f);
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -851,27 +853,27 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 * \param[in] genome the Genome to print
 */
 void printGenome(Genome * genome) {
-  int k;
+    int k;
 
-  printf("----------------------------------\n");
-  printf("\t%p\n", genome);
+    printf("----------------------------------\n");
+    printf("\t%p\n", genome);
 
-  printf("\t\tnb_neurons: %d\n", genome->nb_neurons);
-  printf("\t\tnb_connection_genes: %d\n", genome->nb_connection_genes);
-  printf("\n");
+    printf("\t\tnb_neurons: %d\n", genome->nb_neurons);
+    printf("\t\tnb_connection_genes: %d\n", genome->nb_connection_genes);
+    printf("\n");
 
-  printf("\tMutation rates:\n");
+    printf("\tMutation rates:\n");
 
-  printf("\t\tPOINT_MUTATION_RATE: %f\n", genome->mutation_rates[0]);
-  printf("\t\tLINK_MUTATION_RATE: %f\n", genome->mutation_rates[1]);
-  printf("\t\tNODE_MUTATION_RATE: %f\n", genome->mutation_rates[2]);
-  printf("\t\tENABLE_DISABLE_MUTATION_RATE: %f\n", genome->mutation_rates[3]);
+    printf("\t\tPOINT_MUTATION_RATE: %f\n", genome->mutation_rates[0]);
+    printf("\t\tLINK_MUTATION_RATE: %f\n", genome->mutation_rates[1]);
+    printf("\t\tNODE_MUTATION_RATE: %f\n", genome->mutation_rates[2]);
+    printf("\t\tENABLE_DISABLE_MUTATION_RATE: %f\n", genome->mutation_rates[3]);
 
-  printf("\n");
-  printf("\tMutations history: ");
+    printf("\n");
+    printf("\tMutations history: ");
 
-  for (k = 0; k < genome->nb_mutations; ++k)
-    printf("%d ", genome->mutations_history[k]);
+    for (k = 0; k < genome->nb_mutations; ++k)
+        printf("%d ", genome->mutations_history[k]);
 
-  printf("\n");
+    printf("\n");
 }
