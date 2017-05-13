@@ -577,79 +577,44 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
 }
 
 static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose) {
-  double disjoint_count = 0.0;
+    double disjoint_count = 0.0;
 
-  Neuron * current_neuron_1 = NULL;
-  Neuron * current_neuron_2 = NULL;
+    Neuron * current_neuron_1 = NULL;
+    Neuron * current_neuron_2 = NULL;
 
-  ConnectionGene * current_connection_gene_1 = NULL;
-  ConnectionGene * current_connection_gene_2 = NULL;
+    ConnectionGene * current_connection_gene_1 = NULL;
+    ConnectionGene * current_connection_gene_2 = NULL;
 
-  // first connection gene
+    setOnFirstElement(genome_1->connection_genes);
+    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
 
-  setOnFirstElement(genome_1->neurons);
-  while (!outOfGenericList(genome_1->neurons)) {
+        current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
-    current_neuron_1 = (Neuron *) getCurrent(genome_1->neurons);
-    if (current_neuron_1 == NULL) {
-      fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 1 is NULL\n");
-      return -DBL_MAX;
-    }
+        setOnFirstElement(genome_2->connection_genes);
+        while (!outOfGenericList(genome_2->connection_genes)) {
 
-    setOnFirstElement(current_neuron_1->connection_genes);
-    while (!outOfGenericList(current_neuron_1->connection_genes)) {
+            current_connection_gene_2 = (ConnectionGene *) getCurrent(genome_2->connection_genes);
 
-      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connection_genes);
-      if (current_connection_gene_1 == NULL) {
-        fprintf(stderr, "Error in computeDisjoint function: current ConnectionGene of genome 1 is NULL\n");
-        return -DBL_MAX;
-      }
+            if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
+                nextElement(genome_1->connection_genes);
+                goto outer_loop;
+            }
 
-      // second connection gene
-
-      setOnFirstElement(genome_2->neurons);
-      while (!outOfGenericList(genome_2->neurons)) {
-
-        current_neuron_2 = (Neuron *) getCurrent(genome_2->neurons);
-        if (current_neuron_2 == NULL) {
-          fprintf(stderr, "Error in computeDisjoint function: current Neuron of genome 2 is NULL\n");
-          return -DBL_MAX;
-        }
-
-        setOnFirstElement(current_neuron_2->connection_genes);
-        while (!outOfGenericList(current_neuron_2->connection_genes)) {
-
-          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connection_genes);
-          if (current_connection_gene_2 == NULL) {
-            fprintf(stderr, "Error in computeDisjoint function: current ConnectionGene of genome 2 is NULL\n");
-            return -DBL_MAX;
-          }
-
-          // we finally have current_connection_gene_1 and current_connection_gene_2
-
-          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation)
             disjoint_count += 1.0;
-
-          nextElement(current_neuron_2->connection_genes);
+            nextElement(genome_2->connection_genes);
         }
 
-        nextElement(genome_2->neurons);
-      }
-
-      nextElement(current_neuron_1->connection_genes);
+        nextElement(genome_1->connection_genes);
     }
 
-    nextElement(genome_1->neurons);
-  }
+    if (verbose) {
+        printf("computeDisjoint\n");
+        printf("disjoint_count: %f\n", disjoint_count);
+        printf("max: %f\n", fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
+        printf("res: %f\n\n", disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
+    }
 
-  if (verbose) {
-    printf("computeDisjoint\n");
-    printf("disjoint_count: %f\n", disjoint_count);
-    printf("max: %f\n", fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
-    printf("res: %f\n\n", disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
-  }
-
-  return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
+    return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
 }
 
 /*!
