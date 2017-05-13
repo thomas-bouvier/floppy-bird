@@ -46,9 +46,9 @@ GenericList * newGenericList(CloneFunction clone_function, FreeFunction free_fun
 * \param[out] list the GenericList to be initialized
 */
 void initGenericList(GenericList * list) {
-  list->first = NULL;
-  list->current = NULL;
-  list->last = NULL;
+    list->first = NULL;
+    list->current = NULL;
+    list->last = NULL;
 }
 
 /*!
@@ -57,20 +57,20 @@ void initGenericList(GenericList * list) {
 * \return Return a new GenericList, NULL if error
 */
 GenericList * cloneGenericList(GenericList * list) {
-  GenericList * new_list = newGenericList(list->clone_function, list->free_function);
+    GenericList * new_list = newGenericList(list->clone_function, list->free_function);
 
-  initGenericList(new_list);
+    initGenericList(new_list);
 
-  setOnFirstElement(list);
-  while(!outOfGenericList(list)) {
-    add(new_list, new_list->clone_function(getCurrent(list)));
+    setOnFirstElement(list);
+    while(!outOfGenericList(list)) {
+        add(new_list, new_list->clone_function(getCurrent(list)));
 
-    nextElement(list);
-}
+        nextElement(list);
+    }
 
-  new_list->current = new_list->first;
+    new_list->current = new_list->first;
 
-  return new_list;
+    return new_list;
 }
 
 /*!

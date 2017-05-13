@@ -59,7 +59,11 @@ void * cloneGenome(void * genome) {
         return NULL;
     }
 
-    new_neurons_list = cloneGenericList(((Genome *) genome)->neurons);
+    //new_neurons_list = cloneGenericList(((Genome *) genome)->neurons);
+
+    new_neurons_list = newGenericList(cloneNeuron, freeNeuron);
+    initGenericList(new_neurons_list);
+
     new_connection_genes_list = cloneGenericList(((Genome *) genome)->connection_genes);
 
     new_genome->neurons = new_neurons_list;
@@ -76,7 +80,7 @@ void * cloneGenome(void * genome) {
     new_genome->global_rank = 0;
     new_genome->innovation = ((Genome *) genome)->innovation;
     new_genome->nb_mutations = 0;
-    new_genome->max_neurons = 0;
+    new_genome->max_neurons = ((Genome *) genome)->max_neurons;
 
     return new_genome;
 }
@@ -100,7 +104,8 @@ int generateGenome(Genome * genome) {
     int found_neuron = 0;
     ConnectionGene * current_connection_gene = NULL;
     Neuron * current_neuron = NULL;
-    Neuron * new_neuron = NULL;
+    Neuron * new_neuron_1 = NULL;
+    Neuron * new_neuron_2 = NULL;
 
     clearGenericList(genome->neurons);
 
@@ -134,12 +139,12 @@ int generateGenome(Genome * genome) {
             // neuron not found, we're creating it
 
             if (!found_neuron) {
-                new_neuron = newNeuron(BASIC);
+                new_neuron_1 = newNeuron(BASIC);
 
-                if (!addNeuronToGenome(genome, new_neuron))
+                if (!addNeuronToGenome(genome, new_neuron_1))
                     return 0;
 
-                new_neuron->id = current_connection_gene->neuron_out_id;
+                new_neuron_1->id = current_connection_gene->neuron_out_id;
             }
 
             found_neuron = 0;
@@ -151,12 +156,12 @@ int generateGenome(Genome * genome) {
                 current_neuron = (Neuron *) getCurrent(genome->neurons);
 
                 if (current_neuron->id == current_connection_gene->neuron_out_id)
-                    new_neuron = current_neuron;
+                    new_neuron_1 = current_neuron;
 
                 nextElement(genome->neurons);
             }
 
-            add(new_neuron->connection_genes_input, current_connection_gene);
+            add(new_neuron_1->connection_genes_input, current_connection_gene);
 
             setOnFirstElement(genome->neurons);
             while (!outOfGenericList(genome->neurons)) {
@@ -171,12 +176,12 @@ int generateGenome(Genome * genome) {
             // neuron not found, we're creating it
 
             if (!found_neuron) {
-                new_neuron = newNeuron(BASIC);
+                new_neuron_2 = newNeuron(BASIC);
 
-                if (!addNeuronToGenome(genome, new_neuron))
+                if (!addNeuronToGenome(genome, new_neuron_2))
                     return 0;
 
-                new_neuron->id = current_connection_gene->neuron_in_id;
+                new_neuron_2->id = current_connection_gene->neuron_in_id;
             }
 
             found_neuron = 0;
@@ -507,6 +512,8 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
         nextElement(genome_1->connection_genes);
     }
+
+    child_genome->max_neurons = fmax(genome_1->max_neurons, genome_2->max_neurons);
 
     // finally, we're copying mutation rates from genome_1, which has the greater fitness
 
@@ -866,8 +873,18 @@ void printGenome(Genome * genome) {
     printf("----------------------------------\n");
     printf("\t%p\n", genome);
 
-    printf("\t\tnb_neurons: %d\n", count(genome->neurons));
+    printf("\t\tnb_neurons: %d TYPES:", count(genome->neurons));
+
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        printf(" %d", ((Neuron *) getCurrent(genome->neurons))->type);
+        nextElement(genome->neurons);
+    }
+
+    printf("\n");
+
     printf("\t\tnb_connection_genes: %d\n", count(genome->connection_genes));
+    printf("\t\tmax_neurons: %d\n", genome->max_neurons);
     printf("\n");
 
     printf("\tMutation rates:\n");

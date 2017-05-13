@@ -161,10 +161,9 @@ int newGeneration(MatingPool * pool, int verbose) {
         }
 
         breed = floor(pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION) - 1.0;
-        printf("%f\n", breed);
 
         for (j = 0; j < breed; ++j) {
-            child = breedGenome(&pool->species[i], 1);
+            child = breedGenome(&pool->species[i], verbose);
             if (!child) {
                 fprintf(stderr, "Child Genome can't be NULL\n");
                 return 0;
