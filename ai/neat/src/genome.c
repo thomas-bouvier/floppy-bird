@@ -124,9 +124,9 @@ int generateGenome(Genome * genome) {
 
     //TODO sort connection genes
 
-    setOnFirstElement(genome->connections);
-    while (!outOfGenericList(genome->connections)) {
-        current_connection_gene = (ConnectionGene *) getCurrent(genome->connections);
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
 
         if (current_connection_gene->enabled) {
             setOnFirstElement(genome->neurons);
@@ -164,7 +164,7 @@ int generateGenome(Genome * genome) {
                 nextElement(genome->neurons);
             }
 
-            add(new_neuron->connections, current_connection_gene);
+            add(new_neuron->connection_genes, current_connection_gene);
 
             setOnFirstElement(genome->neurons);
             while (!outOfGenericList(genome->neurons)) {
@@ -190,7 +190,7 @@ int generateGenome(Genome * genome) {
             found_neuron = 0;
         }
 
-        nextElement(genome->connections);
+        nextElement(genome->connection_genes);
     }
 
     return 1;
@@ -865,13 +865,33 @@ Neuron * getRandomNeuron(Genome * genome) {
 }
 
 /*!
+* \brief Return the Neuron matching the given id.
+* \param[in] genome the Genome to search a matching Neuron in
+* \param[out] id the id of the Neuron to search for
+* \return Return the Neuron whose id matches, or NULL if not found
+*/
+Neuron * getNeuron(Genome * genome, int id) {
+    Neuron * current_neuron = NULL;
+
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        current_neuron = (Neuron *) getCurrent(genome->neurons);
+
+        if (current_neuron->id == id)
+            return current_neuron;
+
+        nextElement(genome->neurons);
+    }
+}
+
+/*!
 * \brief Return a random ConnectionGene from the given Genome.
 * \param[in] genome the Genome to choose a ConnectionGene from
 * \return Return a random ConnectionGene
 */
 ConnectionGene * getRandomConnectionGene(Genome * genome) {
-    setOn(genome->connections, randomLimit(genome->nb_connection_genes - 1));
-    return ((ConnectionGene *) getCurrent(genome->connections));
+    setOn(genome->connection_genes, randomLimit(genome->nb_connection_genes - 1));
+    return ((ConnectionGene *) getCurrent(genome->connection_genes));
 }
 
 /*!

@@ -56,6 +56,7 @@ int linked(Neuron * neuron_in, Neuron * neuron_out);
 double * evaluateGenome(Genome * genome, double * input);
 
 Neuron * getRandomNeuron(Genome * genome);
+Neuron * getNeuron(Genome * genome, int id);
 ConnectionGene * getRandomConnectionGene(Genome * genome);
 
 int writeGraphVizGenome(Genome * genome, char * filename);
