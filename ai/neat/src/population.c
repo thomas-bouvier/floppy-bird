@@ -96,29 +96,29 @@ int addSpeciesToMatingPool(MatingPool * pool) {
 * \return int 1 if the Species was successfully removed from the MatingPool, 0 otherwise
 */
 int removeSpecies(MatingPool * pool, short int id) {
-  int i;
-  int index = -1;
+    int i;
+    int index = -1;
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    if (pool->species[i].id == id) {
-      index = i;
-      break;
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (pool->species[i].id == id) {
+            index = i;
+            break;
+        }
     }
-  }
 
-  if (index == -1) {
-    fprintf(stderr, "No Species found with id %d\n", id);
-    return 0;
-  }
+    if (index == -1) {
+        fprintf(stderr, "No Species found with id %d\n", id);
+        return 0;
+    }
 
-  freeGenericList(pool->species[index].genomes);
+    freeGenericList(pool->species[index].genomes);
 
-  for (i = index; i < pool->nb_species - 1; ++i)
-    pool->species[i] = pool->species[i + 1];
+    for (i = index; i < pool->nb_species - 1; ++i)
+        pool->species[i] = pool->species[i + 1];
 
-  --pool->nb_species;
+    --pool->nb_species;
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -198,35 +198,35 @@ int newGeneration(MatingPool * pool, int verbose) {
 * \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
 */
 static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
-  int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
+    int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
 
-  if (diff == 0.0)
-    return 0;
-  else if (diff < 0.0)
-    return -1;
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
 
-  return 1;
+    return 1;
 }
 
 void cullSpecies(MatingPool * pool, int cut_to_one) {
-  int i;
-  double remaining;
+    int i;
+    double remaining;
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    sort(pool->species[i].genomes, compareFitnessCulling);
+    for (i = 0; i < pool->nb_species; ++i) {
+        sort(pool->species[i].genomes, compareFitnessCulling);
 
-    if (cut_to_one)
-      remaining = 1.0;
-    else
-      remaining = ceil(pool->species[i].nb_genomes / 2.0);
+        if (cut_to_one)
+            remaining = 1.0;
+        else
+            remaining = ceil(pool->species[i].nb_genomes / 2.0);
 
-    setOnFirstElement(pool->species[i].genomes);
-    while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
-      delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
-      setOnFirstElement(pool->species[i].genomes);
-      --pool->species[i].nb_genomes;
+        setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
+            delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
+            setOnFirstElement(pool->species[i].genomes);
+            --pool->species[i].nb_genomes;
+        }
     }
-  }
 }
 
 /*!
@@ -297,67 +297,67 @@ void removeStaleSpecies(MatingPool * pool) {
 * \param[in] verbose bool value indicating whether an output has to be printed in the console
 */
 Genome * breedGenome(Species * species, int verbose) {
-  double p;
-  Genome * child = NULL;
+    double p;
+    Genome * child = NULL;
 
-  Genome * genome_1 = NULL;
-  Genome * genome_2 = NULL;
-
-  if (verbose) {
-    printf("\n");
-    printf("Breeding genome...\n");
-    printf("----------------------------------\n");
-    printf("----------------------------------\n");
-  }
-
-  p = random01();
-
-  if (verbose) {
-    printf("CROSSOVER_RATE: %f\n", CROSSOVER_RATE);
-    printf("prob: %f\n", p);
-  }
-
-  if (p < CROSSOVER_RATE) {
-    genome_1 = getRandomGenome(species);
-    genome_2 = getRandomGenome(species);
-
-    if (verbose) {
-      printf("\n");
-      printf("Crossover...\n");
-      printf("----------------------------------\n");
-      printf("----------------------------------\n");
-
-      printf("\n");
-      printf("Genome no 1\n");
-      printGenome(genome_1);
-
-      printf("\n");
-      printf("Genome no 2\n");
-      printGenome(genome_2);
-    }
-
-    child = crossover(genome_1, genome_2);
-  }
-  else {
-    genome_1 = getRandomGenome(species);
+    Genome * genome_1 = NULL;
+    Genome * genome_2 = NULL;
 
     if (verbose) {
         printf("\n");
-        printf("Cloning random genome...\n");
+        printf("Breeding genome...\n");
         printf("----------------------------------\n");
         printf("----------------------------------\n");
-
-        printf("\n");
-        printf("Genome\n");
-        printGenome(genome_1);
     }
 
-    child = (Genome *) cloneGenome(genome_1);
-  }
+    p = random01();
 
-  mutate(child);
+    if (verbose) {
+        printf("CROSSOVER_RATE: %f\n", CROSSOVER_RATE);
+        printf("prob: %f\n", p);
+    }
 
-  return child;
+    if (p < CROSSOVER_RATE) {
+        genome_1 = getRandomGenome(species);
+        genome_2 = getRandomGenome(species);
+
+        if (verbose) {
+            printf("\n");
+            printf("Crossover...\n");
+            printf("----------------------------------\n");
+            printf("----------------------------------\n");
+
+            printf("\n");
+            printf("Genome no 1\n");
+            printGenome(genome_1);
+
+            printf("\n");
+            printf("Genome no 2\n");
+            printGenome(genome_2);
+        }
+
+        child = crossover(genome_1, genome_2);
+    }
+    else {
+        genome_1 = getRandomGenome(species);
+
+        if (verbose) {
+            printf("\n");
+            printf("Cloning random genome...\n");
+            printf("----------------------------------\n");
+            printf("----------------------------------\n");
+
+            printf("\n");
+            printf("Genome\n");
+            printGenome(genome_1);
+        }
+
+        child = (Genome *) cloneGenome(genome_1);
+    }
+
+    mutate(child);
+
+    return child;
 }
 
 /*!
@@ -367,7 +367,7 @@ Genome * breedGenome(Species * species, int verbose) {
 * \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
 */
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
-  return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
+    return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
 /*!
@@ -375,32 +375,32 @@ static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_
 * \param[out] pool the MatingPool whose global ranks of Genomes elements have to be calculated
 */
 void computeGlobalRanks(MatingPool * pool) {
-  int i;
-  int j;
-  int k;
-  Genome * genomes[N_MAX_SPECIES * N_MAX_GENOMES];
+    int i;
+    int j;
+    int k;
+    Genome * genomes[N_MAX_SPECIES * N_MAX_GENOMES];
 
   // we're storing the addresses of all genomes from all species in a single array
 
-  j = 0;
-  for (i = 0; i < pool->nb_species; ++i) {
-    setOnFirstElement(pool->species[i].genomes);
-    while (!outOfGenericList(pool->species[i].genomes)) {
-      genomes[j] = ((Genome *) getCurrent(pool->species[i].genomes));
+    j = 0;
+    for (i = 0; i < pool->nb_species; ++i) {
+        setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes)) {
+            genomes[j] = ((Genome *) getCurrent(pool->species[i].genomes));
 
-      ++j;
-      nextElement(pool->species[i].genomes);
+            ++j;
+            nextElement(pool->species[i].genomes);
+        }
     }
-  }
 
   // we're sorting the genomes from their fitness
 
-  qsort(genomes, j, sizeof(Genome *), compareFitnessGlobalRanks);
+    qsort(genomes, j, sizeof(Genome *), compareFitnessGlobalRanks);
 
   // we're calculating the global rank for the current genome
 
-  for (k = 0; k < j; ++k)
-    genomes[k]->global_rank = k;
+    for (k = 0; k < j; ++k)
+        genomes[k]->global_rank = k;
 }
 
 /*!
@@ -408,29 +408,29 @@ void computeGlobalRanks(MatingPool * pool) {
 * \param[out] pool the MatingPool whose the average fitness has to be calculated
 */
 void computeGlobalAverageFitness(MatingPool * pool) {
-  int i;
-  double sum = 0.0;
+    int i;
+    double sum = 0.0;
 
-  for (i = 0; i < pool->nb_species; ++i)
-    sum += pool->species[i].average_fitness;
+    for (i = 0; i < pool->nb_species; ++i)
+        sum += pool->species[i].average_fitness;
 
-  pool->sum_average_fitnesses = sum;
-  pool->average_fitness = sum / pool->nb_species;
+    pool->sum_average_fitnesses = sum;
+    pool->average_fitness = sum / pool->nb_species;
 }
 
 
 static int addGenomeToSpecies(Genome * genome, Species * species) {
-  if (species->nb_genomes == N_MAX_GENOMES) {
-    fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
-    return 0;
-  }
+    if (species->nb_genomes == N_MAX_GENOMES) {
+        fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
+        return 0;
+    }
 
-  if (!add(species->genomes, genome))
-    return 0;
+    if (!add(species->genomes, genome))
+        return 0;
 
-  ++species->nb_genomes;
+    ++species->nb_genomes;
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -446,28 +446,28 @@ static int addGenomeToSpecies(Genome * genome, Species * species) {
 * fitness yet due to not having its weights optimised will survive the culling.
 */
 int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
-  int i;
+    int i;
 
-  // we're looking for a species that matches the given genome
+    // we're looking for a species that matches the given genome
 
-  for (i = 0; i < pool->nb_species; ++i) {
-    if (pool->species[i].nb_genomes > 0) {
-      if (sameSpecies(genome, (Genome *) pool->species[i].genomes->first->data)) {
-        addGenomeToSpecies(genome, &pool->species[i]);
-        return 1;
-      }
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (pool->species[i].nb_genomes > 0) {
+            if (sameSpecies(genome, (Genome *) pool->species[i].genomes->first->data)) {
+                addGenomeToSpecies(genome, &pool->species[i]);
+                return 1;
+            }
+        }
     }
-  }
 
-  // no species matches the given genome
+    // no species matches the given genome
 
-  if (!addSpeciesToMatingPool(pool))
-    return 0;
+    if (!addSpeciesToMatingPool(pool))
+        return 0;
 
-  if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1]))
-    return 0;
+    if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1]))
+        return 0;
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -475,16 +475,16 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 * \param[out] species the Species whose the average fitness has to be calculated
 */
 void computeAverageFitness(Species * species) {
-  double sum = 0.0;
+    double sum = 0.0;
 
-  setOnFirstElement(species->genomes);
-  while (!outOfGenericList(species->genomes)) {
-    sum += ((Genome *) species->genomes->current->data)->global_rank;
+    setOnFirstElement(species->genomes);
+    while (!outOfGenericList(species->genomes)) {
+        sum += ((Genome *) species->genomes->current->data)->global_rank;
 
-    nextElement(species->genomes);
-  }
+        nextElement(species->genomes);
+    }
 
-  species->average_fitness = sum / species->nb_genomes;
+    species->average_fitness = sum / species->nb_genomes;
 }
 
 /*!
@@ -493,8 +493,8 @@ void computeAverageFitness(Species * species) {
 * \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
-  setOn(species->genomes, randomLimit(species->nb_genomes - 1));
-  return (Genome *) getCurrent(species->genomes);
+    setOn(species->genomes, randomLimit(species->nb_genomes - 1));
+    return (Genome *) getCurrent(species->genomes);
 }
 
 /*!
