@@ -122,6 +122,8 @@ int generateGenome(Genome * genome) {
         if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
             return 0;
 
+    //TODO sort connection genes
+
     setOnFirstElement(genome->connections);
     while (!outOfGenericList(genome->connections)) {
         current_connection_gene = (ConnectionGene *) getCurrent(genome->connections);
@@ -390,10 +392,8 @@ int mutateNode(Genome * genome) {
         return 0;
     connection_gene->enabled = 0;
 
-    genome->mutations_history[genome->nb_mutations] = 2;
-    ++genome->nb_mutations;
-    ++genome->max_neurons;
 
+    ++genome->max_neurons;
     ++(*genome->innovation);
 
     connection_gene_1 = cloneConnectionGene(connection_gene);
@@ -411,6 +411,9 @@ int mutateNode(Genome * genome) {
     connection_gene_2->enabled = 1;
     connection_gene_2->innovation = *genome->innovation;
     add(genome->connection_genes, connection_gene_2);
+
+    genome->mutations_history[genome->nb_mutations] = 2;
+    ++genome->nb_mutations;
 }
 
 /*!
@@ -420,49 +423,33 @@ int mutateNode(Genome * genome) {
 * \return int 1 if the ConnectionGene elements were successfully updated, 0 otherwise
 */
 int mutateEnableFlag(Genome * genome, unsigned char enable) {
-  int i = 0;
-  int random_connection_gene_index;
-  Neuron * current_neuron = NULL;
-  ConnectionGene * current_connection_gene = NULL;
-  ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
+    int i;
+    int random_connection_gene_index = -1;
+    ConnectionGene * current_connection_gene = NULL;
+    ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
 
-  setOnFirstElement(genome->neurons);
-  while (!outOfGenericList(genome->neurons)) {
+    setOnFirstElement(genome->connections);
+    while (!outOfGenericList(genome->connections)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connections);
 
-    current_neuron = (Neuron *) getCurrent(genome->neurons);
+        if (current_connection_gene->enabled != enable) {
+            candidates[i] = current_connection_gene;
+            ++i;
+        }
 
-    if (current_neuron == NULL)
-      return 0;
-
-    setOnFirstElement(current_neuron->connection_genes);
-    while (!outOfGenericList(current_neuron->connection_genes)) {
-
-      current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
-
-      if (current_connection_gene == NULL)
-        return 0;
-
-      if (current_connection_gene->enabled != enable) {
-        candidates[i] = current_connection_gene;
-        ++i;
-      }
-
-      nextElement(current_neuron->connection_genes);
+        nextElement(genome->connections);
     }
 
-    nextElement(genome->neurons);
-  }
+    if (i == 0)
+        return 1;
 
-  if (i == 0)
+    random_connection_gene_index = randomLimit(i - 1);
+    candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
+
+    genome->mutations_history[genome->nb_mutations] = 3;
+    ++genome->nb_mutations;
+
     return 1;
-
-  random_connection_gene_index = randomLimit(i - 1);
-  candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
-
-  genome->mutations_history[genome->nb_mutations] = 3;
-  ++genome->nb_mutations;
-
-  return 1;
 }
 
 /*!
