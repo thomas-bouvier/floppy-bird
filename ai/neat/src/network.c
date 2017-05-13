@@ -168,8 +168,7 @@ void freeConnectionGene(void * connection_gene) {
 * \return int 1 if the two Neuron elements were successfully added, 0 otherwise
 */
 int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene) {
-    int nb_connection_genes = count(neuron_in->connection_genes);
-    if (nb_connection_genes == N_MAX_CONNECTION_GENES) {
+    if (count(neuron_in->connection_genes) == N_MAX_CONNECTION_GENES) {
         fprintf(stderr, "Can't add connection gene to neuron : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
         return 0;
     }

@@ -957,10 +957,10 @@ static void test_newGenome(void ** state) {
     Genome * genome = newGenome(&innovation);
 
     assert_non_null(genome);
-    assert_non_null(genome->network);
-    assert_true(emptyGenericList(genome->network));
-    assert_int_equal(genome->nb_neurons, 0);
-    assert_int_equal(genome->nb_connection_genes, 0);
+    assert_non_null(genome->neurons);
+    assert_non_null(genome->connection_genes);
+    assert_true(emptyGenericList(genome->neurons));
+    assert_true(emptyGenericList(genome->connection_genes));
     assert_true(genome->fitness == 0.0);
     assert_int_equal(genome->mutation_rates[0], POINT_MUTATION_RATE),
     assert_int_equal(genome->mutation_rates[1], LINK_MUTATION_RATE),

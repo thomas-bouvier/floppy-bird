@@ -46,7 +46,7 @@ enum NeuronType {
 */
 struct Neuron {
     GenericList * connection_genes;     /*!< the successors ConnectionGene linked to this Neuron */
-    short int id;                       /*!< the id of this Neuron */
+    int id;                             /*!< the id of this Neuron */
     NeuronType type;                    /*!< the type of this Neuron */
     double value;                       /*!< the value attached to this Neuron */
 };

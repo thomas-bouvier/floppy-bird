@@ -26,9 +26,7 @@ Genome * newGenome(int * innovation) {
     initGenericList(new_connection_genes_list);
 
     new_genome->neurons = new_neurons_list;
-    new_genome->nb_neurons = 0;
     new_genome->connection_genes = new_connection_genes_list;
-    new_genome->nb_connection_genes = 0;
     new_genome->fitness = 0.0;
 
     // initializing mutation rates
@@ -65,9 +63,7 @@ void * cloneGenome(void * genome) {
     new_connection_genes_list = cloneGenericList(((Genome *) genome)->connection_genes);
 
     new_genome->neurons = new_neurons_list;
-    new_genome->nb_neurons = ((Genome *) genome)->nb_neurons;
     new_genome->connection_genes = new_connection_genes_list;
-    new_genome->nb_connection_genes = ((Genome *) genome)->nb_connection_genes;
     new_genome->fitness = 0.0;
 
     // initializing mutation rates
@@ -106,11 +102,17 @@ int generateGenome(Genome * genome) {
     Neuron * current_neuron = NULL;
     Neuron * new_neuron = NULL;
 
+    printf("generate genome----------------------------\n");
+    printf("count(genome->neurons) %d\n", count(genome->neurons));
+    printf("delete()\n");
+
     setOnFirstElement(genome->neurons);
     while (!outOfGenericList(genome->neurons)) {
         delete(genome->neurons, getCurrent(genome->neurons));
         nextElement(genome->neurons);
     }
+
+    printf("count(genome->neurons) %d\n", count(genome->neurons));
 
     // populating neuron list
 
@@ -197,10 +199,10 @@ int generateGenome(Genome * genome) {
 }
 
 /*!
-* \brief Add the given Neuron to the given Genome
-* \param[out] genome the Genome to modify
+* \brief Add the given Neuron to the given Genome.
+* \param[out] genome the Genome to alter
 * \param[in] neuron the Neuron to insert
-* \return int 1 if the Neuron was succesfully inserted, 0 otherwise
+* \return int 1 if the Neuron was successfully inserted, 0 otherwise
 */
 int addNeuronToGenome(Genome * genome, Neuron * neuron) {
     if (!addNeuron(genome->neurons, neuron)) {
@@ -208,16 +210,17 @@ int addNeuronToGenome(Genome * genome, Neuron * neuron) {
         return 0;
     }
 
-    ++genome->nb_neurons;
-
     return 1;
 }
 
+/*!
+* \brief Add the given ConnectionGene to the Genome.
+* \param[out] genome the Genome to alter
+* \return int 1 if the ConnectionGene was successfully added, 0 otherwise
+*/
 int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene) {
     if (!addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene))
         return 0;
-
-    ++genome->nb_connection_genes;
 
     return 1;
 }
@@ -264,32 +267,32 @@ int mutate(Genome * genome) {
 
     double r = genome->mutation_rates[0];
     while (r > 0) {
-    if (random01() < r)
-        mutatePoint(genome);
+        if (random01() < r)
+            mutatePoint(genome);
 
         r -= 1.0;
     }
 
     r = genome->mutation_rates[1];
     while (r > 0) {
-    if (random01() < r)
-        mutateLink(genome);
+        if (random01() < r)
+            mutateLink(genome);
 
         r -= 1.0;
     }
 
     r = genome->mutation_rates[2];
     while (r > 0) {
-    if (random01() < r)
-        mutateNode(genome);
+        if (random01() < r)
+            mutateNode(genome);
 
         r -= 1.0;
     }
 
     r = genome->mutation_rates[3];
     while (r > 0) {
-    if (random01() < r)
-        mutateEnableFlag(genome, 0);
+        if (random01() < r)
+            mutateEnableFlag(genome, 0);
 
         r -= 1.0;
     }
@@ -324,6 +327,8 @@ int mutatePoint(Genome * genome) {
 
     genome->mutations_history[genome->nb_mutations] = 0;
     ++genome->nb_mutations;
+
+    return 1;
 }
 
 /*!
@@ -417,6 +422,8 @@ int mutateNode(Genome * genome) {
 
     genome->mutations_history[genome->nb_mutations] = 2;
     ++genome->nb_mutations;
+
+    return 1;
 }
 
 /*!
@@ -541,9 +548,6 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
     double sum = 0.0;
     double sameInnovation = 0.0;
 
-    Neuron * current_neuron_1 = NULL;
-    Neuron * current_neuron_2 = NULL;
-
     ConnectionGene * current_connection_gene_1 = NULL;
     ConnectionGene * current_connection_gene_2 = NULL;
 
@@ -581,9 +585,6 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
 static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose) {
     double disjoint_count = 0.0;
 
-    Neuron * current_neuron_1 = NULL;
-    Neuron * current_neuron_2 = NULL;
-
     ConnectionGene * current_connection_gene_1 = NULL;
     ConnectionGene * current_connection_gene_2 = NULL;
 
@@ -612,11 +613,11 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
     if (verbose) {
         printf("computeDisjoint\n");
         printf("disjoint_count: %f\n", disjoint_count);
-        printf("max: %f\n", fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
-        printf("res: %f\n\n", disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes));
+        printf("max: %f\n", fmax(count(genome_1->connection_genes), count(genome_2->connection_genes)));
+        printf("res: %f\n\n", disjoint_count / fmax(count(genome_1->connection_genes), count(genome_2->connection_genes)));
     }
 
-    return disjoint_count / fmax(genome_1->nb_connection_genes, genome_2->nb_connection_genes);
+    return disjoint_count / fmax(count(genome_1->connection_genes), count(genome_2->connection_genes));
 }
 
 /*!
@@ -743,7 +744,7 @@ double * evaluateGenome(Genome * genome, double * input) {
 * \return Return a random Neuron
 */
 Neuron * getRandomNeuron(Genome * genome) {
-    setOn(genome->neurons, randomLimit(genome->nb_neurons - 1));
+    setOn(genome->neurons, randomLimit(count(genome->neurons) - 1));
     return ((Neuron *) getCurrent(genome->neurons));
 }
 
@@ -765,6 +766,8 @@ Neuron * getNeuron(Genome * genome, int id) {
 
         nextElement(genome->neurons);
     }
+
+    return current_neuron;
 }
 
 /*!
@@ -773,7 +776,7 @@ Neuron * getNeuron(Genome * genome, int id) {
 * \return Return a random ConnectionGene
 */
 ConnectionGene * getRandomConnectionGene(Genome * genome) {
-    setOn(genome->connection_genes, randomLimit(genome->nb_connection_genes - 1));
+    setOn(genome->connection_genes, randomLimit(count(genome->connection_genes) - 1));
     return ((ConnectionGene *) getCurrent(genome->connection_genes));
 }
 
@@ -858,8 +861,8 @@ void printGenome(Genome * genome) {
     printf("----------------------------------\n");
     printf("\t%p\n", genome);
 
-    printf("\t\tnb_neurons: %d\n", genome->nb_neurons);
-    printf("\t\tnb_connection_genes: %d\n", genome->nb_connection_genes);
+    printf("\t\tnb_neurons: %d\n", count(genome->neurons));
+    printf("\t\tnb_connection_genes: %d\n", count(genome->connection_genes));
     printf("\n");
 
     printf("\tMutation rates:\n");
