@@ -536,82 +536,44 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 }
 
 static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
-  double sum = 0.0;
-  double sameInnovation = 0.0;
+    double sum = 0.0;
+    double sameInnovation = 0.0;
 
-  Neuron * current_neuron_1 = NULL;
-  Neuron * current_neuron_2 = NULL;
+    Neuron * current_neuron_1 = NULL;
+    Neuron * current_neuron_2 = NULL;
 
-  ConnectionGene * current_connection_gene_1 = NULL;
-  ConnectionGene * current_connection_gene_2 = NULL;
+    ConnectionGene * current_connection_gene_1 = NULL;
+    ConnectionGene * current_connection_gene_2 = NULL;
 
-  // first connection gene
+    setOnFirstElement(genome_1->connection_genes);
+    while (!outOfGenericList(genome_1->connection_genes)) {
 
-  setOnFirstElement(genome_1->neurons);
-  while (!outOfGenericList(genome_1->neurons)) {
+        current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
-    current_neuron_1 = (Neuron *) getCurrent(genome_1->neurons);
-    if (current_neuron_1 == NULL) {
-      fprintf(stderr, "Error in computeWeights function: current Neuron of genome 1 is NULL\n");
-      return -DBL_MAX;
-    }
+        setOnFirstElement(genome_2->connection_genes);
+        while (!outOfGenericList(genome_2->connection_genes)) {
 
-    setOnFirstElement(current_neuron_1->connection_genes);
-    while (!outOfGenericList(current_neuron_1->connection_genes)) {
+            current_connection_gene_2 = (ConnectionGene *) getCurrent(genome_2->connection_genes);
 
-      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connection_genes);
-      if (current_connection_gene_1 == NULL) {
-        fprintf(stderr, "Error in computeWeights function: current ConnectionGene of genome 1 is NULL\n");
-        return -DBL_MAX;
-      }
+            if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
+                sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
+                sameInnovation += 1.0;
+            }
 
-      // second connection gene
-
-      setOnFirstElement(genome_2->neurons);
-      while (!outOfGenericList(genome_2->neurons)) {
-
-        current_neuron_2 = (Neuron *) getCurrent(genome_2->neurons);
-        if (current_neuron_2 == NULL) {
-          fprintf(stderr, "Error in computeWeights function: current Neuron of genome 2 is NULL\n");
-          return -DBL_MAX;
+            nextElement(genome_2->connection_genes);
         }
 
-        setOnFirstElement(current_neuron_2->connection_genes);
-        while (!outOfGenericList(current_neuron_2->connection_genes)) {
-
-          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connection_genes);
-          if (current_connection_gene_2 == NULL) {
-            fprintf(stderr, "Error in computeWeights function: current ConnectionGene of genome 2 is NULL\n");
-            return -DBL_MAX;
-          }
-
-          // we finally have current_connection_gene_1 and current_connection_gene_2
-
-          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
-            sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
-            sameInnovation += 1.0;
-          }
-
-          nextElement(current_neuron_2->connection_genes);
-        }
-
-        nextElement(genome_2->neurons);
-      }
-
-      nextElement(current_neuron_1->connection_genes);
+        nextElement(genome_1->connection_genes);
     }
 
-    nextElement(genome_1->neurons);
-  }
+    if (verbose) {
+        printf("computeWeights\n");
+        printf("sum: %f\n", sum);
+        printf("sameInnovation: %f\n", sameInnovation);
+        printf("res: %f\n\n", sum / sameInnovation);
+    }
 
-  if (verbose) {
-    printf("computeWeights\n");
-    printf("sum: %f\n", sum);
-    printf("sameInnovation: %f\n", sameInnovation);
-    printf("res: %f\n\n", sum / sameInnovation);
-  }
-
-  return sum / sameInnovation;
+    return sum / sameInnovation;
 }
 
 static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose) {
