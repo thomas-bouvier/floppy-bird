@@ -462,128 +462,77 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
 * \return a new Genome resulting of a crossover between the given Genome elements, NULL otherwise
 */
 Genome * crossover(Genome * genome_1, Genome * genome_2) {
-  int i;
-  Genome * child = NULL;
+    Genome * child_genome = NULL;
 
-  Neuron * current_neuron_1 = NULL;
-  Neuron * current_neuron_2 = NULL;
+    ConnectionGene * current_connection_gene_1 = NULL;
+    ConnectionGene * current_connection_gene_2 = NULL;
 
-  ConnectionGene * current_connection_gene_1 = NULL;
-  ConnectionGene * current_connection_gene_2 = NULL;
+    Neuron * new_neuron_1 = NULL;
+    Neuron * new_neuron_2 = NULL;
 
-  Neuron * new_neuron_1 = NULL;
-  Neuron * new_neuron_2 = NULL;
+    ConnectionGene * new_connection_gene = NULL;
 
-  ConnectionGene * new_connection_gene = NULL;
+    Genome * temp_genome = NULL;
 
-  int break_inner_loop = 0;
+    // creating the child genome
 
-  Genome * genome_temp = NULL;
-
-  if ((child = newGenome(genome_1->innovation)) == (Genome *) NULL)
-    return NULL;
-
-  // genome_1 has to have a greater fitness than genome_2
-
-  if (genome_2->fitness > genome_1->fitness) {
-    genome_temp = genome_1;
-    genome_1 = genome_2;
-    genome_2 = genome_temp;
-  }
-
-  // first connection gene
-
-  setOnFirstElement(genome_1->neurons);
-  outer_loop: while (!outOfGenericList(genome_1->neurons)) {
-
-    current_neuron_1 = (Neuron *) getCurrent(genome_1->neurons);
-    if (current_neuron_1 == (Neuron *) NULL) {
-      fprintf(stderr, "Error in crossover function: current Neuron of genome 1 is NULL\n");
-      return NULL;
-    }
-
-    setOnFirstElement(current_neuron_1->connection_genes);
-    while (!outOfGenericList(current_neuron_1->connection_genes)) {
-
-      current_connection_gene_1 = (ConnectionGene *) getCurrent(current_neuron_1->connection_genes);
-      if (current_connection_gene_1 == (ConnectionGene *) NULL) {
-        fprintf(stderr, "Error in crossover function: current ConnectionGene of genome 1 is NULL\n");
+    if ((child_genome = newGenome(genome_1->innovation)) == (Genome *) NULL)
         return NULL;
-      }
 
-      // second connection gene
+    // genome_1 has to have a greater fitness than genome_2
 
-      setOnFirstElement(genome_2->neurons);
-      while (!outOfGenericList(genome_2->neurons)) {
-
-        current_neuron_2 = (Neuron *) getCurrent(genome_2->neurons);
-        if (current_neuron_2 == (Neuron *) NULL) {
-          fprintf(stderr, "Error in crossover function: current Neuron of genome 2 is NULL\n");
-          return NULL;
-        }
-
-        setOnFirstElement(current_neuron_2->connection_genes);
-        while (!outOfGenericList(current_neuron_2->connection_genes)) {
-
-          current_connection_gene_2 = (ConnectionGene *) getCurrent(current_neuron_2->connection_genes);
-          if (current_connection_gene_2 == (ConnectionGene *) NULL) {
-            fprintf(stderr, "Error in crossover function: current ConnectionGene of genome 2 is NULL\n");
-            return NULL;
-          }
-
-          // we finally have current_connection_gene_1 and current_connection_gene_2
-
-          if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
-            if (randomBool() && current_connection_gene_2->enabled) {
-              new_neuron_1 = cloneNeuronWithoutConnections(current_connection_gene_2->neuron_in_id);
-              new_neuron_2 = cloneNeuronWithoutConnections(current_connection_gene_2->neuron_out_id);
-
-              new_connection_gene = cloneConnectionGene(current_connection_gene_2);
-              addConnectionGeneToGenome(child, new_neuron_1, new_neuron_2, new_connection_gene);
-
-              nextElement(genome_1->neurons);
-              goto outer_loop;
-            }
-            else
-              break_inner_loop = 1;
-          }
-
-          if (break_inner_loop) {
-            setOnFirstElement(current_neuron_2->connection_genes);
-            while (!outOfGenericList(current_neuron_2->connection_genes))
-                nextElement(current_neuron_2->connection_genes);
-          } else
-            nextElement(current_neuron_2->connection_genes);
-        }
-
-        if (break_inner_loop) {
-            setOnFirstElement(genome_2->neurons);
-            while (!outOfGenericList(genome_2->neurons))
-                nextElement(genome_2->neurons);
-
-            break_inner_loop = 0;
-        } else
-            nextElement(genome_2->neurons);
-      }
-
-      new_neuron_1 = cloneNeuronWithoutConnections(current_connection_gene_1->neuron_in_id);
-      new_neuron_2 = cloneNeuronWithoutConnections(current_connection_gene_1->neuron_out_id);
-
-      new_connection_gene = cloneConnectionGene(current_connection_gene_1);
-      addConnectionGeneToGenome(child, new_neuron_1, new_neuron_2, new_connection_gene);
-
-      nextElement(current_neuron_1->connection_genes);
+    if (genome_2->fitness > genome_1->fitness) {
+        temp_genome = genome_1;
+        genome_1 = genome_2;
+        genome_2 = temp_genome;
     }
 
-    nextElement(genome_1->neurons);
-  }
+    setOnFirstElement(genome_1->connection_genes);
+    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
 
-  // finally, we're copying mutation rates from genome_1, which has the greater fitness
+        current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
-  for (i = 0; i < 4; ++i)
-    child->mutation_rates[i] = genome_1->mutation_rates[i];
+        setOnFirstElement(genome_2->connection_genes);
+        while (!outOfGenericList(genome_2->connection_genes)) {
 
-  return child;
+            current_connection_gene_2 = (ConnectionGene *) getCurrent(genome_2->connection_genes);
+
+            // we finally have current_connection_gene_1 & current_connection_gene_2
+            if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
+                if (randomBool() && current_connection_gene_2->enabled) {
+
+                    new_neuron_1 = cloneNeuronWithoutConnections(getNeuron(genome_2, current_connection_gene_2->neuron_in_id));
+                    new_neuron_2 = cloneNeuronWithoutConnections(getNeuron(genome_2, current_connection_gene_2->neuron_out_id));
+
+                    new_connection_gene = cloneConnectionGene(current_connection_gene_2);
+                    addConnectionGeneToGenome(child_genome, new_neuron_1, new_neuron_2, new_connection_gene);
+
+                    nextElement(genome_1->connection_genes);
+                    goto outer_loop;
+                }
+                else {
+                    break;
+                }
+            }
+
+            new_neuron_1 = cloneNeuronWithoutConnections(getNeuron(genome_1, current_connection_gene_1->neuron_in_id));
+            new_neuron_2 = cloneNeuronWithoutConnections(getNeuron(genome_1, current_connection_gene_1->neuron_out_id));
+
+            new_connection_gene = cloneConnectionGene(current_connection_gene_1);
+            addConnectionGeneToGenome(child_genome, new_neuron_1, new_neuron_2, new_connection_gene);
+
+            nextElement(genome_2->connection_genes);
+        }
+
+        nextElement(genome_1->connection_genes);
+    }
+
+    // finally, we're copying mutation rates from genome_1, which has the greater fitness
+
+    for (i = 0; i < 4; ++i)
+        child->mutation_rates[i] = genome_1->mutation_rates[i];
+
+    return child;
 }
 
 static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) {
