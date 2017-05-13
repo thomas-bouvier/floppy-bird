@@ -321,6 +321,9 @@ int mutatePoint(Genome * genome) {
 
         nextElement(genome->connection_genes);
     }
+
+    genome->mutations_history[genome->nb_mutations] = 0;
+    ++genome->nb_mutations;
 }
 
 /*!
@@ -384,7 +387,7 @@ int mutateNode(Genome * genome) {
     ConnectionGene * connection_gene_1 = NULL;
     ConnectionGene * connection_gene_2 = NULL;
 
-    if (emptyGenericList(genome->connections))
+    if (emptyGenericList(genome->connection_genes))
         return 0;
 
     connection_gene = getRandomConnectionGene(genome);
@@ -428,16 +431,16 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
     ConnectionGene * current_connection_gene = NULL;
     ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
 
-    setOnFirstElement(genome->connections);
-    while (!outOfGenericList(genome->connections)) {
-        current_connection_gene = (ConnectionGene *) getCurrent(genome->connections);
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
 
         if (current_connection_gene->enabled != enable) {
             candidates[i] = current_connection_gene;
             ++i;
         }
 
-        nextElement(genome->connections);
+        nextElement(genome->connection_genes);
     }
 
     if (i == 0)
