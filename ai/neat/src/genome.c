@@ -652,87 +652,87 @@ int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out) {
 }
 
 double * evaluateGenome(Genome * genome, double * input) {
-  int i;
-  double sum;
-  double * output = NULL;
+    int i;
+    double sum;
+    double * output = NULL;
 
-  Neuron * current_neuron = NULL;
-  Neuron * current_neuron_out = NULL;
+    Neuron * current_neuron = NULL;
+    Neuron * current_neuron_out = NULL;
 
-  ConnectionGene * current_connection_gene = NULL;
+    ConnectionGene * current_connection_gene = NULL;
 
-  // updating values of the neurons from the given inputs
+    // updating values of the neurons from the given inputs
 
-  for (i = 0; i < N_INPUTS; ++i) {
-    setOn(genome->neurons, i);
-    ((Neuron *) getCurrent(genome->neurons))->value = input[i];
-  }
-
-  // scanning input and output neurons
-
-  setOnFirstElement(genome->neurons);
-  while (!outOfGenericList(genome->neurons)) {
-    current_neuron = (Neuron *) getCurrent(genome->neurons);
-
-    if (current_neuron->id >= N_INPUTS + N_OUTPUTS) {
-
-      sum = 0.0;
-
-      setOnFirstElement(current_neuron->connection_genes);
-      while (!outOfGenericList(current_neuron->connection_genes)) {
-        current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
-        current_neuron_out = current_connection_gene->neuron_out_id;
-
-        sum += current_connection_gene->weight * current_neuron_out->value;
-
-        nextElement(current_neuron->connection_genes);
-      }
-
-      if (!emptyGenericList(current_neuron->connection_genes))
-        current_neuron->value = fast_sigmoid(sum);
+    for (i = 0; i < N_INPUTS; ++i) {
+        setOn(genome->neurons, i);
+        ((Neuron *) getCurrent(genome->neurons))->value = input[i];
     }
 
-    nextElement(genome->neurons);
-  }
+    // scanning input and output neurons
+
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        current_neuron = (Neuron *) getCurrent(genome->neurons);
+
+        if (current_neuron->id >= N_INPUTS + N_OUTPUTS) {
+
+            sum = 0.0;
+
+            setOnFirstElement(current_neuron->connection_genes);
+            while (!outOfGenericList(current_neuron->connection_genes)) {
+                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
+                current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
+
+                sum += current_connection_gene->weight * current_neuron_out->value;
+
+                nextElement(current_neuron->connection_genes);
+            }
+
+            if (!emptyGenericList(current_neuron->connection_genes))
+                current_neuron->value = fast_sigmoid(sum);
+        }
+
+        nextElement(genome->neurons);
+    }
 
   // scanning output neurons
 
-  setOnFirstElement(genome->neurons);
-  while (!outOfGenericList(genome->neurons)) {
-    current_neuron = (Neuron *) getCurrent(genome->neurons);
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        current_neuron = (Neuron *) getCurrent(genome->neurons);
 
-    if (current_neuron->id >= N_INPUTS && current_neuron->id < N_INPUTS + N_OUTPUTS) {
+        if (current_neuron->id >= N_INPUTS && current_neuron->id < N_INPUTS + N_OUTPUTS) {
 
-      sum = 0.0;
+            sum = 0.0;
 
-      setOnFirstElement(current_neuron->connection_genes);
-      while (!outOfGenericList(current_neuron->connection_genes)) {
-        current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
-        current_neuron_out = current_connection_gene->neuron_out_id;
+            setOnFirstElement(current_neuron->connection_genes);
+            while (!outOfGenericList(current_neuron->connection_genes)) {
+                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
+                current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
 
-        sum += current_connection_gene->weight * current_neuron_out->value;
+                sum += current_connection_gene->weight * current_neuron_out->value;
 
-        nextElement(current_neuron->connection_genes);
-      }
+                nextElement(current_neuron->connection_genes);
+            }
 
-      if (!emptyGenericList(current_neuron->connection_genes))
-        current_neuron->value = fast_sigmoid(sum);
+            if (!emptyGenericList(current_neuron->connection_genes))
+                current_neuron->value = fast_sigmoid(sum);
+        }
+
+        nextElement(genome->neurons);
     }
 
-    nextElement(genome->neurons);
-  }
+    // returning output
 
-  // returning output
+    if ((output = malloc(sizeof(double) * N_OUTPUTS)) == NULL)
+        return NULL;
 
-  if ((output = malloc(sizeof(double) * N_OUTPUTS)) == NULL)
-    return NULL;
+    for (i = 0; i < N_OUTPUTS; ++i) {
+        setOn(genome->neurons, N_INPUTS + i);
+        output[i] = ((Neuron *) getCurrent(genome->neurons))->value;
+    }
 
-  for (i = 0; i < N_OUTPUTS; ++i) {
-    setOn(genome->neurons, N_INPUTS + i);
-    output[i] = ((Neuron *) getCurrent(genome->neurons))->value;
-  }
-
-  return output;
+    return output;
 }
 
 /*!
