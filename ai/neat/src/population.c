@@ -502,6 +502,7 @@ void printMatingPool(MatingPool * pool) {
     printf("==================================\n");
     printf("==================================\n");
     printf("==================================\n");
+    printf("==================================\n");
     printf("Printing MatingPool...\n");
 
     printf("\n");
@@ -510,7 +511,6 @@ void printMatingPool(MatingPool * pool) {
 
     for (i = 0; i < pool->nb_species; ++i) {
         printf("\n");
-        printf("==================================\n");
         printf("==================================\n");
         printf("Species no %d\n", i);
         printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);

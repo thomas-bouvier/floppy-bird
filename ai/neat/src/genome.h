@@ -38,7 +38,6 @@ void freeGenome(void * genome);
 
 int generateGenome(Genome * genome);
 int addNeuronToGenome(Genome * genome, Neuron * neuron);
-int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene);
 
 int mutate(Genome * genome);
 int mutatePoint(Genome * genome);

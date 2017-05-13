@@ -156,7 +156,7 @@ int generateGenome(Genome * genome) {
                 nextElement(genome->neurons);
             }
 
-            add(new_neuron->connection_genes, current_connection_gene);
+            add(new_neuron->connection_genes_input, current_connection_gene);
 
             setOnFirstElement(genome->neurons);
             while (!outOfGenericList(genome->neurons)) {
@@ -199,20 +199,6 @@ int addNeuronToGenome(Genome * genome, Neuron * neuron) {
         freeNeuron(neuron);
         return 0;
     }
-
-    return 1;
-}
-
-/*!
-* \brief Add the given ConnectionGene to the Genome.
-* \param[out] genome the Genome to alter
-* \return int 1 if the ConnectionGene was successfully added, 0 otherwise
-*/
-int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuron_2, ConnectionGene * connection_gene) {
-    if (!addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene))
-        return 0;
-
-    add(genome->connection_genes, connection_gene);
 
     return 1;
 }
@@ -339,8 +325,7 @@ int mutateLink(Genome * genome) {
     if (connection_gene == NULL)
         return 0;
 
-    if (!addConnectionGeneToGenome(genome, neuron_1, neuron_2, connection_gene))
-        return 0;
+    add(genome->connection_genes, connection_gene);
 
     genome->mutations_history[genome->nb_mutations] = 1;
     ++genome->nb_mutations;
@@ -491,11 +476,8 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
             if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
                 if (randomBool() && current_connection_gene_2->enabled) {
 
-                    new_neuron_1 = cloneNeuronWithoutConnections(getNeuron(genome_2, current_connection_gene_2->neuron_in_id));
-                    new_neuron_2 = cloneNeuronWithoutConnections(getNeuron(genome_2, current_connection_gene_2->neuron_out_id));
-
                     new_connection_gene = cloneConnectionGene(current_connection_gene_2);
-                    addConnectionGeneToGenome(child_genome, new_neuron_1, new_neuron_2, new_connection_gene);
+                    add(child_genome->connection_genes, new_connection_gene);
 
                     nextElement(genome_1->connection_genes);
                     goto outer_loop;
@@ -505,11 +487,8 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
                 }
             }
 
-            new_neuron_1 = cloneNeuronWithoutConnections(getNeuron(genome_1, current_connection_gene_1->neuron_in_id));
-            new_neuron_2 = cloneNeuronWithoutConnections(getNeuron(genome_1, current_connection_gene_1->neuron_out_id));
-
             new_connection_gene = cloneConnectionGene(current_connection_gene_1);
-            addConnectionGeneToGenome(child_genome, new_neuron_1, new_neuron_2, new_connection_gene);
+            add(child_genome->connection_genes, new_connection_gene);
 
             nextElement(genome_2->connection_genes);
         }
@@ -662,17 +641,17 @@ double * evaluateGenome(Genome * genome, double * input) {
 
             sum = 0.0;
 
-            setOnFirstElement(current_neuron->connection_genes);
-            while (!outOfGenericList(current_neuron->connection_genes)) {
-                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
+            setOnFirstElement(current_neuron->connection_genes_input);
+            while (!outOfGenericList(current_neuron->connection_genes_input)) {
+                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
                 current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
 
                 sum += current_connection_gene->weight * current_neuron_out->value;
 
-                nextElement(current_neuron->connection_genes);
+                nextElement(current_neuron->connection_genes_input);
             }
 
-            if (!emptyGenericList(current_neuron->connection_genes))
+            if (!emptyGenericList(current_neuron->connection_genes_input))
                 current_neuron->value = fast_sigmoid(sum);
         }
 
@@ -689,17 +668,17 @@ double * evaluateGenome(Genome * genome, double * input) {
 
             sum = 0.0;
 
-            setOnFirstElement(current_neuron->connection_genes);
-            while (!outOfGenericList(current_neuron->connection_genes)) {
-                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes);
+            setOnFirstElement(current_neuron->connection_genes_input);
+            while (!outOfGenericList(current_neuron->connection_genes_input)) {
+                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
                 current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
 
                 sum += current_connection_gene->weight * current_neuron_out->value;
 
-                nextElement(current_neuron->connection_genes);
+                nextElement(current_neuron->connection_genes_input);
             }
 
-            if (!emptyGenericList(current_neuron->connection_genes))
+            if (!emptyGenericList(current_neuron->connection_genes_input))
                 current_neuron->value = fast_sigmoid(sum);
         }
 
@@ -817,19 +796,19 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
     setOnFirstElement(genome->neurons);
     while (!outOfGenericList(genome->neurons)) {
-        connection_gene_successors = ((Neuron *) genome->neurons->current->data)->connection_genes;
+        connection_gene_successors = ((Neuron *) getCurrent(genome->neurons))->connection_genes_input;
 
         if (emptyGenericList(connection_gene_successors))
-            fprintf(f, "\t%d;\n", ((Neuron *) genome->neurons->current->data)->id);
+            fprintf(f, "\t%d;\n", ((Neuron *) getCurrent(genome->neurons))->id);
         else {
             setOnFirstElement(connection_gene_successors);
             while (!outOfGenericList(connection_gene_successors)) {
-                current_connection_gene = (ConnectionGene *) connection_gene_successors->current->data;
+                current_connection_gene = (ConnectionGene *) getCurrent(connection_gene_successors);
 
                 if (current_connection_gene->enabled)
-                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) getCurrent(genome->neurons))->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
                 else
-                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) genome->neurons->current->data)->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) getCurrent(genome->neurons))->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
                 nextElement(connection_gene_successors);
             }
@@ -881,10 +860,10 @@ void printGenome(Genome * genome) {
 
     printf("\tMutation rates:\n");
 
-    printf("\t\tPOINT_MUTATION_RATE: %f\n", genome->mutation_rates[0]);
-    printf("\t\tLINK_MUTATION_RATE: %f\n", genome->mutation_rates[1]);
-    printf("\t\tNODE_MUTATION_RATE: %f\n", genome->mutation_rates[2]);
-    printf("\t\tENABLE_DISABLE_MUTATION_RATE: %f\n", genome->mutation_rates[3]);
+    printf("\t\tPOINT_MUTATION_RATE (0): %f\n", genome->mutation_rates[0]);
+    printf("\t\tLINK_MUTATION_RATE (1): %f\n", genome->mutation_rates[1]);
+    printf("\t\tNODE_MUTATION_RATE (2): %f\n", genome->mutation_rates[2]);
+    printf("\t\tENABLE_DISABLE_MUTATION_RATE (3): %f\n", genome->mutation_rates[3]);
 
     printf("\n");
     printf("\tMutations history: ");

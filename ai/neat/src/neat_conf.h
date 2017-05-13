@@ -5,7 +5,7 @@
 #ifndef NEAT_CONF_H
 #define NEAT_CONF_H
 
-#define POPULATION                    5
+#define POPULATION                    1
 
 #define N_MAX_SPECIES                 50
 #define N_MAX_GENOMES                 50

@@ -45,10 +45,10 @@ enum NeuronType {
 * \brief A Neuron defines a node in the Network. It can be an input, or an output.
 */
 struct Neuron {
-    GenericList * connection_genes;     /*!< the successors ConnectionGene linked to this Neuron */
-    int id;                             /*!< the id of this Neuron */
-    NeuronType type;                    /*!< the type of this Neuron */
-    double value;                       /*!< the value attached to this Neuron */
+    GenericList * connection_genes_input;       /*!< the successors ConnectionGene linked to this Neuron */
+    int id;                                     /*!< the id of this Neuron */
+    NeuronType type;                            /*!< the type of this Neuron */
+    double value;                               /*!< the value attached to this Neuron */
 };
 
 Neuron * newNeuron(NeuronType type);
