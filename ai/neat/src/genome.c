@@ -102,17 +102,7 @@ int generateGenome(Genome * genome) {
     Neuron * current_neuron = NULL;
     Neuron * new_neuron = NULL;
 
-    printf("generate genome----------------------------\n");
-    printf("count(genome->neurons) %d\n", count(genome->neurons));
-    printf("delete()\n");
-
-    setOnFirstElement(genome->neurons);
-    while (!outOfGenericList(genome->neurons)) {
-        delete(genome->neurons, getCurrent(genome->neurons));
-        nextElement(genome->neurons);
-    }
-
-    printf("count(genome->neurons) %d\n", count(genome->neurons));
+    clearGenericList(genome->neurons);
 
     // populating neuron list
 
@@ -222,6 +212,8 @@ int addConnectionGeneToGenome(Genome * genome, Neuron * neuron_1, Neuron * neuro
     if (!addConnectionGeneToNeurons(neuron_1, neuron_2, connection_gene))
         return 0;
 
+    add(genome->connection_genes, connection_gene);
+
     return 1;
 }
 
@@ -265,15 +257,10 @@ int mutate(Genome * genome) {
         genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
     */
 
-    double r = genome->mutation_rates[0];
-    while (r > 0) {
-        if (random01() < r)
-            mutatePoint(genome);
+    if (random01() < genome->mutation_rates[0])
+        mutatePoint(genome);
 
-        r -= 1.0;
-    }
-
-    r = genome->mutation_rates[1];
+    double r = genome->mutation_rates[1];
     while (r > 0) {
         if (random01() < r)
             mutateLink(genome);
@@ -347,16 +334,10 @@ int mutateLink(Genome * genome) {
     neuron_1 = getRandomNeuron(genome);
     neuron_2 = getRandomNeuron(genome);
 
-    /*
-    while (neuron_1 == neuron_2)
-        neuron_2 = getRandomNeuron(genome);
-    */
-
     connection_gene = newConnectionGene(0, 1, *genome->innovation);
 
     if (connection_gene == NULL)
         return 0;
-
 
     if (!addConnectionGeneToGenome(genome, neuron_1, neuron_2, connection_gene))
         return 0;
@@ -433,7 +414,7 @@ int mutateNode(Genome * genome) {
 * \return int 1 if the ConnectionGene elements were successfully updated, 0 otherwise
 */
 int mutateEnableFlag(Genome * genome, unsigned char enable) {
-    int i;
+    int i = 0;
     int random_connection_gene_index = -1;
     ConnectionGene * current_connection_gene = NULL;
     ConnectionGene * candidates[N_MAX_NEURONS * N_MAX_CONNECTION_GENES];
@@ -831,13 +812,13 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
         current_neuron = (Neuron *) genome->neurons->current->data;
 
         if (current_neuron->type == INPUT)
-            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+            fprintf(f, "\t%d [label=\"%d\\n%.3f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
         else if (current_neuron->type == OUTPUT)
-            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+            fprintf(f, "\t%d [label=\"%d\\n%.3f\", shape=circle, style=filled, fillcolor=red];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
         else if (current_neuron->type == BASIC)
-            fprintf(f, "\t%d [label=\"%d\\n%.1f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
+            fprintf(f, "\t%d [label=\"%d\\n%.3f\", shape=circle];\n", current_neuron->id, current_neuron->id, current_neuron->value);
 
         else
             fprintf(f, "\t%d [shape=circle];\n", current_neuron->id);

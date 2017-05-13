@@ -80,7 +80,7 @@ Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(void * neuron) {
-    freeGenericList(((Neuron *) neuron)->connection_genes);
+    //freeGenericList(((Neuron *) neuron)->connection_genes);
     free(neuron);
 }
 
