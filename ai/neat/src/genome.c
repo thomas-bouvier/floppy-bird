@@ -872,7 +872,7 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
         if (current_connection_gene->enabled)
             fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
         else
-            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", current_connection_gene->neuron_out_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
 
         nextElement(genome->connection_genes);

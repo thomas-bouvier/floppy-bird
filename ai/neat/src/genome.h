@@ -24,7 +24,7 @@ typedef struct {
     GenericList * neurons;                  /*!< the GenericList of Neuron elements attached to this Genome */
     GenericList * connection_genes;         /*!< the GenericList of ConnectionGene elements attached to this Genome */
     double fitness;                         /*!< the fitness of the Genome */
-    float mutation_rates[4];                /*!< the mutation rates attached to this Genome */
+    float mutation_rates[6];                /*!< the mutation rates attached to this Genome */
     int global_rank;                        /*!< the global rank of this Genome, including other Species */
     int * innovation;                       /*!< the address of the innovation number of the MatingPool containing this Genome */
     int nb_mutations;                       /*!< the number of mutations of this Genome */
