@@ -1,5 +1,8 @@
 #include "population.h"
 
+static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2);
+static int compareFitnessCulling(const void * genome_1, const void * genome_2);
+
 /*!
 * \brief Create a MatingPool
 * \return Return a MatingPool, NULL if error
@@ -146,7 +149,9 @@ int newGeneration(MatingPool * pool, int verbose) {
         printf("New generation...\n\n\n");
     }
 
-    cullSpecies(pool, 0, verbose);
+    ret = cullGenomesOfSpecies(pool, 0, verbose);
+    if (ret > 0 && verbose)
+        printf("=> %d Species were culled!\n", ret);
 
     computeGlobalRanks(pool);
     ret = removeStaleSpecies(pool, verbose);
@@ -162,6 +167,14 @@ int newGeneration(MatingPool * pool, int verbose) {
     if (ret > 0 && verbose) {
         printf("=> %d Species were removed!\n", ret);
         printf("===> There are now %d Species left\n\n", pool->nb_species);
+    }
+
+    if (verbose) {
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Breeding Genomes...\n\n");
     }
 
     count = 0;
@@ -180,7 +193,15 @@ int newGeneration(MatingPool * pool, int verbose) {
         }
     }
 
-    cullSpecies(pool, 1, verbose);
+    cullGenomesOfSpecies(pool, 1, verbose);
+
+    if (verbose) {
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Breeding %d missing Genomes...\n\n", POPULATION - pool->nb_species);
+    }
 
     while (count + pool->nb_species < POPULATION) {
         children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
@@ -197,33 +218,16 @@ int newGeneration(MatingPool * pool, int verbose) {
 }
 
 /*!
-* \brief Compare two Genome elements based on their fitness
-* \param[in] genome_1 the first Genome to compare
-* \param[in] genome_2 the second Genome to compare
-* \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
-*/
-static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
-    int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
-
-    if (diff == 0.0)
-        return 0;
-    else if (diff < 0.0)
-        return -1;
-
-    return 1;
-}
-
-/*!
 * \brief Cull Species that have the worst fitnesses from the given MatingPool.
 * \param[out] pool the MatingPool to cull Species from
 * \param[in] cut_to_one bool indicating if all Species should be culled except the one with the best fitness
 * \param[in] verbose bool value indicating whether an output has to be printed in the console
 * \return int the number of culled Species
 */
-int cullSpecies(MatingPool * pool, int cut_to_one, int verbose) {
+int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     int i;
     double remaining;
-    int removed_count = 0;
+    int culled_count = 0;
 
     if (verbose) {
         printf("====================================================================\n");
@@ -247,14 +251,14 @@ int cullSpecies(MatingPool * pool, int cut_to_one, int verbose) {
             setOnFirstElement(pool->species[i].genomes);
 
             --pool->species[i].nb_genomes;
-            ++removed_count;
+            ++culled_count;
         }
     }
 
     if (verbose)
         printf("\n");
 
-    return removed_count;
+    return culled_count;
 }
 
 /*!
@@ -377,20 +381,7 @@ Genome * breedGenome(Species * species, int verbose) {
     Genome * genome_1 = NULL;
     Genome * genome_2 = NULL;
 
-    if (verbose) {
-        printf("====================================================================\n");
-        printf("====================================================================\n");
-        printf("====================================================================\n");
-        printf("====================================================================\n");
-        printf("Breeding genome...\n\n");
-    }
-
     p = random01();
-
-    if (verbose) {
-        printf("CROSSOVER_RATE: %f\n", CROSSOVER_RATE);
-        printf("prob: %f\n", p);
-    }
 
     if (p < CROSSOVER_RATE) {
         genome_1 = getRandomGenome(species);
@@ -398,51 +389,59 @@ Genome * breedGenome(Species * species, int verbose) {
 
         if (verbose) {
             printf("\n");
-            printf("Crossover...\n");
-            printf("----------------------------------\n");
-            printf("----------------------------------\n");
+            printf("Crossover... (p = %f < CROSSOVER_RATE = %f)\n", p, CROSSOVER_RATE);
+            printf("==================================\n");
+            printf("==================================\n");
 
             printf("\n");
-            printf("Genome no 1\n");
+            printf("between...\n");
             printGenome(genome_1);
 
             printf("\n");
-            printf("Genome no 2\n");
+            printf("...and\n");
             printGenome(genome_2);
         }
 
         child = crossover(genome_1, genome_2);
+
+        if (verbose) {
+            printf("\n");
+            printf("----------------------------------\n");
+            printf("----------------------------------\n\n");
+            printf("Result:\n");
+
+            printGenome(child);
+        }
     }
     else {
         genome_1 = getRandomGenome(species);
 
         if (verbose) {
             printf("\n");
-            printf("Cloning random genome...\n");
-            printf("----------------------------------\n");
-            printf("----------------------------------\n");
+            printf("Cloning random genome... (p = %f >= CROSSOVER_RATE = %f)\n", p, CROSSOVER_RATE);
+            printf("==================================\n");
+            printf("==================================\n");
 
             printf("\n");
-            printf("Genome\n");
+            printf("to be cloned:\n");
             printGenome(genome_1);
         }
 
         child = (Genome *) cloneGenome(genome_1);
+
+        if (verbose) {
+            printf("\n");
+            printf("----------------------------------\n");
+            printf("----------------------------------\n\n");
+            printf("Result:\n");
+
+            printGenome(child);
+        }
     }
 
     mutate(child);
 
     return child;
-}
-
-/*!
-* \brief Compare two Genome elements based on their fitness
-* \param[in] genome_1 the first Genome to compare
-* \param[in] genome_2 the second Genome to compare
-* \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
-*/
-static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
-    return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
 /*!
@@ -614,4 +613,31 @@ void printMatingPool(MatingPool * pool) {
         printf("no %d\n", i);
         printSpecies(&pool->species[i]);
     }
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
+*/
+static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
+    return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+*/
+static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
+    int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
+
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
+
+    return 1;
 }

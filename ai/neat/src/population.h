@@ -53,7 +53,7 @@ int addSpeciesToMatingPool(MatingPool * pool);
 int removeSpecies(MatingPool * pool, short int id);
 
 int newGeneration(MatingPool * pool, int verbose);
-int cullSpecies(MatingPool * pool, int cut_to_one, int verbose);
+int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose);
 int removeWeakSpecies(MatingPool * pool, int verbose);
 int removeStaleSpecies(MatingPool * pool, int verbose);
 
