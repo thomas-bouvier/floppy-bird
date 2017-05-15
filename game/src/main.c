@@ -52,6 +52,8 @@ int main(int argc, char ** argv)
     int levelFromFile = 1;
     /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
     int simplifiedMode = 0;
+    /* if speedAcceleration == 1, the game is accelerated ; if not, the speed stay constant */
+    int speedAcceleration = 0;
     int score;
     Obstacle * savedObstacle = NULL;
 
@@ -143,7 +145,7 @@ int main(int argc, char ** argv)
         while((mode != PLAY && mode != IA1) && init != QUIT)
         {
             mode = WAIT;
-            mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &sprites);
+            mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &speedAcceleration, &sprites);
             init = detectTouch();
             if(mode == QUITGAME)
                 init = QUIT;
@@ -247,7 +249,7 @@ int main(int argc, char ** argv)
                     if (createObstacle(&camera, &l, level, number, levelFromFile))
                         number++;
                     score = updateScore(score, &bird, savedObstacle, &sound);
-                    if(simplifiedMode == 0)
+                    if(simplifiedMode == 0 && speedAcceleration == 1)
                         modifySpeed(score, &camera);
                     cameraScrolling(&camera, &bird);
                     hit = detectHit(&bird, nextBirdObstacle(&l, &bird), &sound);

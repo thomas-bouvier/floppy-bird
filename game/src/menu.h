@@ -12,8 +12,8 @@
 #include <SDL2/SDL_mixer.h>
 
 void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate, TTF_Font * font);
-int mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, Sprites * Sprites);
-int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode);
+int mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, Sprites * Sprites);
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration);
 void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * Sprites);
 int actionOnPauseMenu();
 
