@@ -48,11 +48,11 @@ int mutateEnableFlag(Genome * genome, unsigned char enable);
 Genome * crossover(Genome * genome_1, Genome * genome_2);
 
 double sameSpecies(Genome * genome_1, Genome * genome_2);
-int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out);
+int linked(Genome * genome, int neuron_in_id, int neuron_out_id);
 
 double * evaluateGenome(Genome * genome, double * input);
 
-Neuron * getRandomNeuron(Genome * genome, int non_input, int non_output);
+int getRandomNeuronId(Genome * genome, int non_input, int non_output);
 Neuron * getNeuron(Genome * genome, int id);
 ConnectionGene * getRandomConnectionGene(Genome * genome);
 

@@ -418,7 +418,7 @@ Genome * breedGenome(Species * species, int verbose) {
 
         if (verbose) {
             printf("\n");
-            printf("Cloning random genome... (p = %f >= CROSSOVER_RATE = %f)\n", p, CROSSOVER_RATE);
+            printf("Cloning random Genome... (p = %f >= CROSSOVER_RATE = %f)\n", p, CROSSOVER_RATE);
             printf("==================================\n");
             printf("==================================\n");
 

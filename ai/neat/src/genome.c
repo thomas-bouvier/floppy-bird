@@ -111,13 +111,15 @@ int generateGenome(Genome * genome) {
 
     // populating neuron list
 
-    for (i = 0; i < N_INPUTS; ++i)
+    for (i = 0; i < N_INPUTS; ++i) {
         if (!addNeuronToGenome(genome, newNeuron(INPUT)))
             return 0;
+    }
 
-    for (i = 0; i < N_OUTPUTS; ++i)
+    for (i = 0; i < N_OUTPUTS; ++i) {
         if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
             return 0;
+    }
 
     //TODO sort connection genes
 
@@ -202,6 +204,7 @@ int generateGenome(Genome * genome) {
 int addNeuronToGenome(Genome * genome, Neuron * neuron) {
     if (!addNeuron(genome->neurons, neuron)) {
         freeNeuron(neuron);
+        fprintf(stderr, "Couldn't add Neuron to Genome\n");
         return 0;
     }
 
@@ -253,16 +256,18 @@ int mutate(Genome * genome) {
 
     double r = genome->mutation_rates[1];
     while (r > 0) {
-        if (random01() < r)
+        if (random01() < r) {
             mutateLink(genome);
+        }
 
         r -= 1.0;
     }
 
     r = genome->mutation_rates[2];
     while (r > 0) {
-        if (random01() < r)
+        if (random01() < r) {
             mutateNode(genome);
+        }
 
         r -= 1.0;
     }
@@ -315,15 +320,18 @@ int mutatePoint(Genome * genome) {
 * \return int
 */
 int mutateLink(Genome * genome) {
-    Neuron * neuron_1 = NULL;
-    Neuron * neuron_2 = NULL;
+    int neuron_1_id;
+    int neuron_2_id;
     ConnectionGene * connection_gene = NULL;
 
+    /*
+    printf("count_neurons in mutateLink: %d\n", count(genome->neurons));
     if (count(genome->neurons) <= 1)
         return 1;
+    */
 
-    neuron_1 = getRandomNeuron(genome, 0, 1);
-    neuron_2 = getRandomNeuron(genome, 1, 0);
+    neuron_1_id = getRandomNeuronId(genome, 0, 1);
+    neuron_2_id = getRandomNeuronId(genome, 1, 0);
 
     connection_gene = newConnectionGene(0, 1, *genome->innovation);
 
@@ -333,9 +341,11 @@ int mutateLink(Genome * genome) {
     genome->mutations_history[genome->nb_mutations] = 1;
     ++genome->nb_mutations;
 
+    connection_gene->neuron_in_id = neuron_1_id;
+    connection_gene->neuron_out_id = neuron_2_id;
     add(genome->connection_genes, connection_gene);
 
-    if (linked(genome, neuron_1, neuron_2))
+    if (linked(genome, neuron_1_id, neuron_2_id))
         return 1;
 
     ++(*genome->innovation);
@@ -616,7 +626,7 @@ double sameSpecies(Genome * genome_1, Genome * genome_2) {
 * \param[in] neuron_out The second Neuron
 * \return int 1 if the two Neuron elements are linked, 0 otherwise
 */
-int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out) {
+int linked(Genome * genome, int neuron_in_id, int neuron_out_id) {
     ConnectionGene * current_connection_gene = NULL;
 
     setOnFirstElement(genome->connection_genes);
@@ -624,7 +634,7 @@ int linked(Genome * genome, Neuron * neuron_in, Neuron * neuron_out) {
 
         current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
 
-        if (current_connection_gene->neuron_in_id == neuron_in->id && current_connection_gene->neuron_out_id == neuron_out->id)
+        if (current_connection_gene->neuron_in_id == neuron_in_id && current_connection_gene->neuron_out_id == neuron_out_id)
             return 1;
 
         nextElement(genome->connection_genes);
@@ -718,27 +728,23 @@ double * evaluateGenome(Genome * genome, double * input) {
 }
 
 /*!
-* \brief Return a random Neuron from the given Genome.
+* \brief Return a random Neuron id from the given Genome.
 * \param[in] genome the Genome to choose a Neuron from
 * \return Return a random Neuron
 */
-Neuron * getRandomNeuron(Genome * genome, int non_input, int non_output) {
+int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
     int i;
     ConnectionGene * current_connection_gene = NULL;
-    GenericList * candidates = newGenericList(cloneNeuron, freeNeuron);
-
-    if (!candidates)
-        return NULL;
-
-    initGenericList(candidates);
+    int count = 0;
+    int candidates[N_MAX_NEURONS];
 
     if (!non_input)
         for (i = 0; i < N_INPUTS; ++i)
-            add(candidates, getNeuron(genome, i));
+            candidates[count++] = i;
 
     if (!non_output)
         for (i = 0; i < N_OUTPUTS; ++i)
-            add(candidates, getNeuron(genome, N_INPUTS + i));
+            candidates[count++] = i;
 
     setOnFirstElement(genome->connection_genes);
     while (!outOfGenericList(genome->connection_genes)) {
@@ -747,17 +753,16 @@ Neuron * getRandomNeuron(Genome * genome, int non_input, int non_output) {
 
         if (!non_input || current_connection_gene->neuron_in_id >= N_INPUTS)
             if (!non_output || current_connection_gene->neuron_in_id >= N_INPUTS + N_OUTPUTS)
-                add(candidates, getNeuron(genome, current_connection_gene->neuron_in_id));
+                candidates[count++] = current_connection_gene->neuron_in_id;
 
         if (!non_input || current_connection_gene->neuron_out_id >= N_INPUTS)
             if (!non_output || current_connection_gene->neuron_out_id >= N_INPUTS + N_OUTPUTS)
-                add(candidates, getNeuron(genome, current_connection_gene->neuron_out_id));
+                candidates[count++] = current_connection_gene->neuron_out_id;
 
         nextElement(genome->connection_genes);
     }
 
-    setOn(genome->neurons, randomLimit(count(candidates) - 1));
-    return ((Neuron *) getCurrent(genome->neurons));
+    return candidates[randomLimit(count - 1)];
 }
 
 /*!
@@ -779,6 +784,7 @@ Neuron * getNeuron(Genome * genome, int id) {
         nextElement(genome->neurons);
     }
 
+    fprintf(stderr, "Neuron with id %d not found\n", id);
     return current_neuron;
 }
 

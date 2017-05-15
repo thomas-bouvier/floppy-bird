@@ -173,10 +173,8 @@ int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, Connecti
         return 0;
     }
 
-    /*
-    if (!add(neuron_in->connection_genes, connection_gene))
+    if (!add(neuron_in->connection_genes_input, connection_gene))
         return 0;
-    */
 
     connection_gene->neuron_in_id = neuron_in->id;
     connection_gene->neuron_out_id = neuron_out->id;
