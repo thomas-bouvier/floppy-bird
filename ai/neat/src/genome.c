@@ -885,6 +885,7 @@ void printGenome(Genome * genome) {
 
     printf("\t\tnb_connection_genes: %d\n", count(genome->connection_genes));
     printf("\t\tmax_neurons: %d\n", genome->max_neurons);
+    printf("\t\tfitness: %f\n", genome->fitness);
     printf("\n");
 
     printf("\tMutation rates:\n");

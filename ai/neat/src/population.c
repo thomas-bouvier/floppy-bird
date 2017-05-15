@@ -518,6 +518,8 @@ void printMatingPool(MatingPool * pool) {
         printf("==================================\n");
         printf("Species no %d\n", i);
         printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
+        printf("\tmax_fitness: %f\n", pool->species[i].max_fitness);
+        printf("\taverage_fitness: %f\n", pool->species[i].average_fitness);
 
         setOnFirstElement(pool->species[i].genomes);
         while (!outOfGenericList(pool->species[i].genomes)) {
