@@ -134,32 +134,38 @@ int newGeneration(MatingPool * pool, int verbose) {
     int i;
     int j;
     int count;
+    int ret;
     double breed;
     Genome * children[POPULATION];
     Genome * child;
 
     if (verbose) {
-        printf("==================================\n");
-        printf("==================================\n");
-        printf("==================================\n");
-        printf("New generation...\n");
+        printf("======================================================================================================\n");
+        printf("======================================================================================================\n");
+        printf("======================================================================================================\n");
+        printf("New generation...\n\n\n");
     }
 
-    cullSpecies(pool, 0);
+    cullSpecies(pool, 0, verbose);
 
     computeGlobalRanks(pool);
-    removeStaleSpecies(pool);
+    ret = removeStaleSpecies(pool, verbose);
+
+    if (ret > 0 && verbose) {
+        printf("=> %d Species were removed!\n", ret);
+        printf("===> There are now %d Species left\n\n", pool->nb_species);
+    }
 
     computeGlobalRanks(pool);
-    removeWeakSpecies(pool, 0);
+    ret = removeWeakSpecies(pool, verbose);
+
+    if (ret > 0 && verbose) {
+        printf("=> %d Species were removed!\n", ret);
+        printf("===> There are now %d Species left\n\n", pool->nb_species);
+    }
 
     count = 0;
     for (i = 0; i < pool->nb_species; ++i) {
-        if (verbose) {
-            printf("\n\n\n");
-            printf("Species no %d\n", i);
-        }
-
         breed = floor(pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION) - 1.0;
 
         for (j = 0; j < breed; ++j) {
@@ -174,7 +180,7 @@ int newGeneration(MatingPool * pool, int verbose) {
         }
     }
 
-    cullSpecies(pool, 1);
+    cullSpecies(pool, 1, verbose);
 
     while (count + pool->nb_species < POPULATION) {
         children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
@@ -207,9 +213,25 @@ static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
     return 1;
 }
 
-void cullSpecies(MatingPool * pool, int cut_to_one) {
+/*!
+* \brief Cull Species that have the worst fitnesses from the given MatingPool.
+* \param[out] pool the MatingPool to cull Species from
+* \param[in] cut_to_one bool indicating if all Species should be culled except the one with the best fitness
+* \param[in] verbose bool value indicating whether an output has to be printed in the console
+* \return int the number of culled Species
+*/
+int cullSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     int i;
     double remaining;
+    int removed_count = 0;
+
+    if (verbose) {
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Culling Species...\n\n");
+    }
 
     for (i = 0; i < pool->nb_species; ++i) {
         sort(pool->species[i].genomes, compareFitnessCulling);
@@ -223,22 +245,39 @@ void cullSpecies(MatingPool * pool, int cut_to_one) {
         while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
             delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
             setOnFirstElement(pool->species[i].genomes);
+
             --pool->species[i].nb_genomes;
+            ++removed_count;
         }
     }
+
+    if (verbose)
+        printf("\n");
+
+    return removed_count;
 }
 
 /*!
-* \brief Remove weak Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
+* \brief Remove weak Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD.
 * \param[out] pool the MatingPool whose weak Species have to be removed
 * \param[in] verbose bool value indicating whether an output has to be printed in the console
+* \return int the number of removed Species
 *
 * A Species is considered as weak when the ratio its average fitness to the average fitness of the MatingPool,
 * times the number of Genome elements in a Species ie. POPULATION is lower than WEAK_SPECIES_THRESHOLD.
 */
-void removeWeakSpecies(MatingPool * pool, int verbose) {
+int removeWeakSpecies(MatingPool * pool, int verbose) {
     int i;
     double breed;
+    int removed_count = 0;
+
+    if (verbose) {
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Removing weak Species...\n\n");
+    }
 
     for (i = 0; i < pool->nb_species; ++i)
         computeAverageFitness(&pool->species[i]);
@@ -249,26 +288,49 @@ void removeWeakSpecies(MatingPool * pool, int verbose) {
         for (i = 0; i < pool->nb_species; ++i) {
             breed = pool->species[i].average_fitness / pool->sum_average_fitnesses * POPULATION;
 
-            if (verbose) {
-                printf("species average fitness: %f\n", pool->species[i].average_fitness);
-                printf("pool average fitness: %f\n", pool->average_fitness);
-                printf("breed: %f\n", breed);
-            }
+            if (breed < WEAK_SPECIES_THRESHOLD) {
+                if (verbose) {
+                    printf("breed = %f < %f = WEAK_SPECIES_THRESHOLD\n", breed, WEAK_SPECIES_THRESHOLD);
+                    printSpecies(&pool->species[i]);
+                    printf("\n");
+                }
 
-            if (breed < WEAK_SPECIES_THRESHOLD)
+                ++removed_count;
                 removeSpecies(pool, pool->species[i].id);
+            }
         }
     }
+
+    if (removed_count == 0 && verbose)
+        printf("No Species was removed!\n");
+
+    if (verbose)
+        printf("\n");
+
+    computeGlobalAverageFitness(pool);
+
+    return removed_count;
 }
 
 /*!
-* \brief Remove stale Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD
+* \brief Remove stale Species from the given MatingPool ie. Species that don't reach WEAK_SPECIES_THRESHOLD.
 * \param[out] pool the MatingPool whose stale Species have to be removed
+* \param[in] verbose bool value indicating whether an output has to be printed in the console
+* \return int the number of removed Species
 *
 * A Species is considered as stale when
 */
-void removeStaleSpecies(MatingPool * pool) {
+int removeStaleSpecies(MatingPool * pool, int verbose) {
     int i;
+    int removed_count = 0;
+
+    if (verbose) {
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Removing stale Species...\n\n");
+    }
 
     if (pool->nb_species > 1) {
         for (i = 0; i < pool->nb_species; ++i) {
@@ -283,11 +345,24 @@ void removeStaleSpecies(MatingPool * pool) {
                 else
                     ++pool->species[i].staleness;
 
-                if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD)
+                if (pool->species[i].staleness >= STALE_SPECIES_THRESHOLD) {
+                    if (verbose)
+                        printSpecies(&pool->species[i]);
+
+                    ++removed_count;
                     removeSpecies(pool, pool->species[i].id);
+                }
             }
         }
     }
+
+    if (removed_count == 0 && verbose)
+        printf("No Species was removed!\n");
+
+    if (verbose)
+        printf("\n\n");
+
+    return removed_count;
 }
 
 /*!
@@ -303,10 +378,11 @@ Genome * breedGenome(Species * species, int verbose) {
     Genome * genome_2 = NULL;
 
     if (verbose) {
-        printf("\n");
-        printf("Breeding genome...\n");
-        printf("----------------------------------\n");
-        printf("----------------------------------\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("====================================================================\n");
+        printf("Breeding genome...\n\n");
     }
 
     p = random01();
@@ -478,7 +554,7 @@ void computeAverageFitness(Species * species) {
 
     setOnFirstElement(species->genomes);
     while (!outOfGenericList(species->genomes)) {
-        sum += ((Genome *) species->genomes->current->data)->global_rank;
+        sum += ((Genome *) getCurrent(species->genomes))->global_rank;
 
         nextElement(species->genomes);
     }
@@ -497,7 +573,27 @@ Genome * getRandomGenome(Species * species) {
 }
 
 /*!
-* \brief Print the given MatingPool
+* \brief Print the given Species.
+* \param[in] species the Species to print
+*/
+void printSpecies(Species * species) {
+    printf("==================================\n");
+    printf("Species\n");
+    printf("\tnb_genomes: %d\n", species->nb_genomes);
+    printf("\tmax_fitness: %f\n", species->max_fitness);
+    printf("\taverage_fitness: %f\n", species->average_fitness);
+    printf("\tstaleness: %d\n", species->staleness);
+
+    setOnFirstElement(species->genomes);
+    while (!outOfGenericList(species->genomes)) {
+        printGenome((Genome *) getCurrent(species->genomes));
+
+        nextElement(species->genomes);
+    }
+}
+
+/*!
+* \brief Print the given MatingPool.
 * \param[in] pool the MatingPool to print
 */
 void printMatingPool(MatingPool * pool) {
@@ -515,17 +611,7 @@ void printMatingPool(MatingPool * pool) {
 
     for (i = 0; i < pool->nb_species; ++i) {
         printf("\n");
-        printf("==================================\n");
-        printf("Species no %d\n", i);
-        printf("\tnb_genomes: %d\n", pool->species[i].nb_genomes);
-        printf("\tmax_fitness: %f\n", pool->species[i].max_fitness);
-        printf("\taverage_fitness: %f\n", pool->species[i].average_fitness);
-
-        setOnFirstElement(pool->species[i].genomes);
-        while (!outOfGenericList(pool->species[i].genomes)) {
-            printGenome((Genome *) getCurrent(pool->species[i].genomes));
-
-            nextElement(pool->species[i].genomes);
-        }
+        printf("no %d\n", i);
+        printSpecies(&pool->species[i]);
     }
 }

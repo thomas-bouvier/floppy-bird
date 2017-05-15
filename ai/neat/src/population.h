@@ -53,9 +53,9 @@ int addSpeciesToMatingPool(MatingPool * pool);
 int removeSpecies(MatingPool * pool, short int id);
 
 int newGeneration(MatingPool * pool, int verbose);
-void cullSpecies(MatingPool * pool, int cut_to_one);
-void removeWeakSpecies(MatingPool * pool, int verbose);
-void removeStaleSpecies(MatingPool * pool);
+int cullSpecies(MatingPool * pool, int cut_to_one, int verbose);
+int removeWeakSpecies(MatingPool * pool, int verbose);
+int removeStaleSpecies(MatingPool * pool, int verbose);
 
 Genome * breedGenome(Species * species, int verbose);
 
@@ -68,6 +68,7 @@ void computeAverageFitness(Species * species);
 
 Genome * getRandomGenome(Species * species);
 
+void printSpecies(Species * species);
 void printMatingPool(MatingPool * pool);
 
 #endif // POPULATION_H
