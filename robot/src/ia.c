@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define JUMP_OFFSET 0.28
+#define JUMP_OFFSET 0.3
 #define JUMP_HEIGHT 0.5
 #define SENSIBILITY 0.9
 
@@ -40,7 +40,7 @@ void* mainIa (void* bot)
 				float n = ((pipeHeight - birdHeight)/JUMP_HEIGHT) + SENSIBILITY ;
 				int nbJump = (int)n;
 				int i;
-				/*printf("run %f (%d) jumps ; jump running : %s\n",n,nbJump,jumpRunning(robot)? "yes" : "no"); */
+				printf("run %f (%d) jumps ; jump running : %s\n",n,nbJump,jumpRunning(robot)? "yes" : "no"); 
 				for (i = 0; i<nbJump;i++){
 					jump(robot);
 				}
