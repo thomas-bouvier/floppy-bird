@@ -692,7 +692,7 @@ double * evaluateGenome(Genome * genome, double * input) {
     double * output = NULL;
 
     Neuron * current_neuron = NULL;
-    Neuron * current_neuron_out = NULL;
+    Neuron * current_neuron_in = NULL;
 
     ConnectionGene * current_connection_gene = NULL;
 
@@ -717,9 +717,9 @@ double * evaluateGenome(Genome * genome, double * input) {
             while (!outOfGenericList(current_neuron->connection_genes_input)) {
 
                 current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
-                current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
+                current_neuron_in = getNeuron(genome, current_connection_gene->neuron_in_id);
 
-                sum += current_connection_gene->weight * current_neuron_out->value;
+                sum += current_connection_gene->weight * current_neuron_in->value;
 
                 nextElement(current_neuron->connection_genes_input);
             }
@@ -744,10 +744,11 @@ double * evaluateGenome(Genome * genome, double * input) {
 
             setOnFirstElement(current_neuron->connection_genes_input);
             while (!outOfGenericList(current_neuron->connection_genes_input)) {
-                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
-                current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
 
-                sum += current_connection_gene->weight * current_neuron_out->value;
+                current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
+                current_neuron_in = getNeuron(genome, current_connection_gene->neuron_in_id);
+
+                sum += current_connection_gene->weight * current_neuron_in->value;
 
                 nextElement(current_neuron->connection_genes_input);
             }
@@ -813,21 +814,26 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
 /*!
 * \brief Return the Neuron matching the given id.
 * \param[in] genome the Genome to search a matching Neuron in
-* \param[out] id the id of the Neuron to search for
+* \param[in] id the id of the Neuron to search for
 * \return Return the Neuron whose id matches, or NULL if not found
 */
 Neuron * getNeuron(Genome * genome, int id) {
     Neuron * current_neuron = NULL;
+    Node * save_pos = genome->neurons->current;
 
     setOnFirstElement(genome->neurons);
     while (!outOfGenericList(genome->neurons)) {
         current_neuron = (Neuron *) getCurrent(genome->neurons);
 
-        if (current_neuron->id == id)
+        if (current_neuron->id == id) {
+            genome->neurons->current = save_pos;
             return current_neuron;
+        }
 
         nextElement(genome->neurons);
     }
+
+    genome->neurons->current = save_pos;
 
     fprintf(stderr, "Neuron with id %d not found\n", id);
     return current_neuron;
