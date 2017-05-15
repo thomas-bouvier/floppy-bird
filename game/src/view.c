@@ -166,8 +166,6 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
     }
     drawBird(renderer, bird, camera);
     displayScore(renderer, score, font);
-    drawPause(renderer, camera, sprites);
-    SDL_RenderPresent(renderer);
 }
 
 /*!
@@ -184,7 +182,6 @@ void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * ca
 {
     int i = 0;
     setOnFirst(l);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
     while (i < OBSTACLE_NUMBER)
@@ -197,8 +194,6 @@ void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * ca
     }
     drawRealBird(renderer, bird, camera, sprites);
     displayScore(renderer, score, font);
-    drawPause(renderer, camera, sprites);
-    SDL_RenderPresent(renderer);
 }
 /*!
 * \brief Quit the SDL and destroy renderer and window

@@ -110,7 +110,8 @@ enum Action
     JUMP,               /*! make the bird jump */
     QUIT,               /*! quit the game */
     PAUSE,              /*! pause the game */
-    RESUME              /*! resume game when it was paused */
+    RESUME,             /*! resume game when it was paused */
+    MENU                /*! return to menu */
 };
 
 /*!

@@ -199,8 +199,10 @@ int main(int argc, char ** argv)
                         bird.dir_y = BIRD_JUMP;
                         playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
                     }
-                    if(init == QUIT)
+                    if(init == MENU || init == QUIT)
                         running = 0;
+                    if(init == QUIT)
+                        menu_loop = 0;
                 }
             }
 
@@ -225,10 +227,10 @@ int main(int argc, char ** argv)
                             event = actionOnPauseMenu();
                         }
                     }
-                    if(event == QUIT)
+                    if(event == MENU || event == QUIT)
                         running = 0;
-
-
+                    if(event == QUIT)
+                        menu_loop = 0;
 
                     if(mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
@@ -258,10 +260,13 @@ int main(int argc, char ** argv)
                     hit_saved = hit;
                     savedObstacle = nextBirdObstacle(&l, &bird);
 
+
                     if(simplifiedMode)
                         displayGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
                     else
                         displayRealGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
+                    drawPause(renderer, &camera, &sprites);
+                    SDL_RenderPresent(renderer);
                     playSound(sound, jump_sound, obstacle_sound, death_sound);
                     lastFrame = SDL_GetTicks();
                 }
@@ -273,6 +278,7 @@ int main(int argc, char ** argv)
                 while(birdFall(&bird, simplifiedMode))
                 {
                     displayRealGame(renderer, &bird, &l, &camera, score, big_font, &sprites);
+                    SDL_RenderPresent(renderer);
                     SDL_Delay(16);
                 }
                 emptyEvent();

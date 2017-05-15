@@ -18,7 +18,7 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 	SDL_Surface * text_surface = TTF_RenderText_Blended(font, text, color);
 	SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 	SDL_Rect dest = {abscissa, ordinate, text_surface->w, text_surface->h};
-	printf("%d %d %d %d\n", abscissa, abscissa + text_surface->w, ordinate, ordinate + text_surface->h);
+	/*printf("%d %d %d %d\n", abscissa, abscissa + text_surface->w, ordinate, ordinate + text_surface->h);*/
     TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
 	SDL_RenderCopy(renderer, text_texture, NULL, &dest);
 	SDL_FreeSurface(text_surface);
@@ -144,8 +144,9 @@ int actionOnPauseMenu()
         if(event.button.x > 300 && event.button.x < 450 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
             return RESUME;
         if(event.button.x > 600 && event.button.x < 750 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
-            return QUIT;
-
+            return MENU;
     }
+    if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+        return QUIT;
     return PAUSE;
 }

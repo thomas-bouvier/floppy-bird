@@ -20,7 +20,7 @@ Action detectTouch()
             {
                 case SDL_KEYDOWN:
                     if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                        return QUIT;
+                        return MENU;
                     if(event.key.keysym.scancode == SDL_SCANCODE_SPACE)
                     {
                         return PAUSE;
