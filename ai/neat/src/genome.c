@@ -818,34 +818,26 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 
     // links
 
-    setOnFirstElement(genome->neurons);
-    while (!outOfGenericList(genome->neurons)) {
-        connection_gene_successors = ((Neuron *) getCurrent(genome->neurons))->connection_genes_input;
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
 
-        if (emptyGenericList(connection_gene_successors))
-            fprintf(f, "\t%d;\n", ((Neuron *) getCurrent(genome->neurons))->id);
-        else {
-            setOnFirstElement(connection_gene_successors);
-            while (!outOfGenericList(connection_gene_successors)) {
-                current_connection_gene = (ConnectionGene *) getCurrent(connection_gene_successors);
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
 
-                if (current_connection_gene->enabled)
-                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", ((Neuron *) getCurrent(genome->neurons))->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
-                else
-                    fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", ((Neuron *) getCurrent(genome->neurons))->id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+        if (current_connection_gene->enabled)
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
+        else
+            fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", current_connection_gene->neuron_out_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
 
-                nextElement(connection_gene_successors);
-            }
-        }
 
-        nextElement(genome->neurons);
+        nextElement(genome->connection_genes);
     }
 
     // nodes
 
     setOnFirstElement(genome->neurons);
-    while(!outOfGenericList(genome->neurons)) {
-        current_neuron = (Neuron *) genome->neurons->current->data;
+    while (!outOfGenericList(genome->neurons)) {
+
+        current_neuron = (Neuron *) getCurrent(genome->neurons);
 
         if (current_neuron->type == INPUT)
             fprintf(f, "\t%d [label=\"%d\\n%.3f\", shape=circle, style=filled, fillcolor=yellow];\n", current_neuron->id, current_neuron->id, current_neuron->value);
