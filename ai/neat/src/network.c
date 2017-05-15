@@ -159,25 +159,3 @@ void * cloneConnectionGene(void * connection_gene) {
 void freeConnectionGene(void * connection_gene) {
     free(connection_gene);
 }
-
-/*!
-* \brief Add two Neuron elements to a ConnectionGene. The first one is the source, the second the destination.
-* \param[out] neuron_in the predecessor Neuron
-* \param[in] neuron_out the successor Neuron
-* \param[out] connection_gene the ConnectionGene to modify
-* \return int 1 if the two Neuron elements were successfully added, 0 otherwise
-*/
-int addConnectionGeneToNeurons(Neuron * neuron_in, Neuron * neuron_out, ConnectionGene * connection_gene) {
-    if (count(neuron_in->connection_genes_input) == N_MAX_CONNECTION_GENES) {
-        fprintf(stderr, "Can't add connection gene to neuron : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
-        return 0;
-    }
-
-    if (!add(neuron_in->connection_genes_input, connection_gene))
-        return 0;
-
-    connection_gene->neuron_in_id = neuron_in->id;
-    connection_gene->neuron_out_id = neuron_out->id;
-
-    return 1;
-}
