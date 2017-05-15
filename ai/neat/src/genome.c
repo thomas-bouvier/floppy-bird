@@ -743,7 +743,7 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
 
     if (!non_output)
         for (i = 0; i < N_OUTPUTS; ++i)
-            candidates[count++] = i;
+            candidates[count++] = N_INPUTS + i;
 
     setOnFirstElement(genome->connection_genes);
     while (!outOfGenericList(genome->connection_genes)) {
