@@ -41,7 +41,7 @@ int addNeuronToGenome(Genome * genome, Neuron * neuron);
 
 int mutate(Genome * genome);
 int mutatePoint(Genome * genome);
-int mutateLink(Genome * genome);
+int mutateLink(Genome * genome, int bias);
 int mutateNode(Genome * genome);
 int mutateEnableFlag(Genome * genome, unsigned char enable);
 

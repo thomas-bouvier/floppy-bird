@@ -33,8 +33,10 @@ Genome * newGenome(int * innovation) {
 
     new_genome->mutation_rates[0] = POINT_MUTATION_RATE;
     new_genome->mutation_rates[1] = LINK_MUTATION_RATE;
-    new_genome->mutation_rates[2] = NODE_MUTATION_RATE;
-    new_genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+    new_genome->mutation_rates[2] = BIAS_MUTATION_RATE;
+    new_genome->mutation_rates[3] = NODE_MUTATION_RATE;
+    new_genome->mutation_rates[4] = ENABLE_MUTATION_RATE;
+    new_genome->mutation_rates[5] = DISABLE_MUTATION_RATE;
 
     new_genome->global_rank = 0;
     new_genome->innovation = innovation;
@@ -247,23 +249,42 @@ int mutate(Genome * genome) {
     /*
         genome->mutation_rates[0] = POINT_MUTATION_RATE;
         genome->mutation_rates[1] = LINK_MUTATION_RATE;
-        genome->mutation_rates[2] = NODE_MUTATION_RATE;
-        genome->mutation_rates[3] = ENABLE_DISABLE_MUTATION_RATE;
+        genome->mutation_rates[2] = BIAS_MUTATION_RATE;
+        genome->mutation_rates[3] = NODE_MUTATION_RATE;
+        genome->mutation_rates[5] = ENABLE_MUTATION_RATE;
+        genome->mutation_rates[5] = DISABLE_MUTATION_RATE;
     */
+
+    // POINT_MUTATION_RATE
 
     if (random01() < genome->mutation_rates[0])
         mutatePoint(genome);
 
+    // LINK_MUTATION_RATE
+
     double r = genome->mutation_rates[1];
     while (r > 0) {
         if (random01() < r) {
-            mutateLink(genome);
+            mutateLink(genome, 0);
         }
 
         r -= 1.0;
     }
 
+    // BIAS_MUTATION_RATE
+
     r = genome->mutation_rates[2];
+    while (r > 0) {
+        if (random01() < r) {
+            mutateLink(genome, 1);
+        }
+
+        r -= 1.0;
+    }
+
+    // NODE_MUTATION_RATE
+
+    r = genome->mutation_rates[3];
     while (r > 0) {
         if (random01() < r) {
             mutateNode(genome);
@@ -272,7 +293,19 @@ int mutate(Genome * genome) {
         r -= 1.0;
     }
 
-    r = genome->mutation_rates[3];
+    // ENABLE_MUTATION_RATE
+
+    r = genome->mutation_rates[4];
+    while (r > 0) {
+        if (random01() < r)
+            mutateEnableFlag(genome, 1);
+
+        r -= 1.0;
+    }
+
+    // DISABLE_MUTATION_RATE
+
+    r = genome->mutation_rates[5];
     while (r > 0) {
         if (random01() < r)
             mutateEnableFlag(genome, 0);
@@ -319,7 +352,7 @@ int mutatePoint(Genome * genome) {
 * \param[out] genome
 * \return int
 */
-int mutateLink(Genome * genome) {
+int mutateLink(Genome * genome, int bias) {
     int neuron_1_id;
     int neuron_2_id;
     ConnectionGene * connection_gene = NULL;
@@ -332,7 +365,12 @@ int mutateLink(Genome * genome) {
     if (connection_gene == NULL)
         return 0;
 
-    connection_gene->neuron_in_id = neuron_1_id;
+    if (bias)
+        connection_gene->neuron_in_id = N_INPUTS - 1;
+    else
+        connection_gene->neuron_in_id = neuron_1_id;
+
+
     connection_gene->neuron_out_id = neuron_2_id;
 
     if (linked(genome, neuron_1_id, neuron_2_id)) {
@@ -345,10 +383,14 @@ int mutateLink(Genome * genome) {
     connection_gene->weight = 4.0 * random01() - 2.0;
     connection_gene->innovation = *genome->innovation;
 
-    genome->mutations_history[genome->nb_mutations] = 1;
-    ++genome->nb_mutations;
-
     add(genome->connection_genes, connection_gene);
+
+    if (bias)
+        genome->mutations_history[genome->nb_mutations] = 2;
+    else
+        genome->mutations_history[genome->nb_mutations] = 1;
+
+    ++genome->nb_mutations;
 
     return 1;
 }
@@ -398,7 +440,7 @@ int mutateNode(Genome * genome) {
     connection_gene_2->innovation = *genome->innovation;
     add(genome->connection_genes, connection_gene_2);
 
-    genome->mutations_history[genome->nb_mutations] = 2;
+    genome->mutations_history[genome->nb_mutations] = 3;
     ++genome->nb_mutations;
 
     return 1;
@@ -434,7 +476,11 @@ int mutateEnableFlag(Genome * genome, unsigned char enable) {
     random_connection_gene_index = randomLimit(i - 1);
     candidates[random_connection_gene_index]->enabled = !candidates[random_connection_gene_index]->enabled;
 
-    genome->mutations_history[genome->nb_mutations] = 3;
+    if (enable)
+        genome->mutations_history[genome->nb_mutations] = 4;
+    else
+        genome->mutations_history[genome->nb_mutations] = 5;
+
     ++genome->nb_mutations;
 
     return 1;
@@ -916,8 +962,10 @@ void printGenome(Genome * genome) {
 
     printf("\t\tPOINT_MUTATION_RATE (0): %f\n", genome->mutation_rates[0]);
     printf("\t\tLINK_MUTATION_RATE (1): %f\n", genome->mutation_rates[1]);
-    printf("\t\tNODE_MUTATION_RATE (2): %f\n", genome->mutation_rates[2]);
-    printf("\t\tENABLE_DISABLE_MUTATION_RATE (3): %f\n", genome->mutation_rates[3]);
+    printf("\t\tBIAS_MUTATION_RATE (2): %f\n", genome->mutation_rates[2]);
+    printf("\t\tNODE_MUTATION_RATE (3): %f\n", genome->mutation_rates[3]);
+    printf("\t\tENABLE_MUTATION_RATE (4): %f\n", genome->mutation_rates[4]);
+    printf("\t\tDISABLE_MUTATION_RATE (5): %f\n", genome->mutation_rates[5]);
 
     printf("\n");
     printf("\tMutations history: ");
