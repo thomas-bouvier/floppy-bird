@@ -324,34 +324,31 @@ int mutateLink(Genome * genome) {
     int neuron_2_id;
     ConnectionGene * connection_gene = NULL;
 
-    /*
-    printf("count_neurons in mutateLink: %d\n", count(genome->neurons));
-    if (count(genome->neurons) <= 1)
-        return 1;
-    */
-
     neuron_1_id = getRandomNeuronId(genome, 0, 1);
     neuron_2_id = getRandomNeuronId(genome, 1, 0);
 
-    connection_gene = newConnectionGene(0, 1, *genome->innovation);
+    connection_gene = newConnectionGene(0, 1, 0);
 
     if (connection_gene == NULL)
         return 0;
 
-    genome->mutations_history[genome->nb_mutations] = 1;
-    ++genome->nb_mutations;
-
     connection_gene->neuron_in_id = neuron_1_id;
     connection_gene->neuron_out_id = neuron_2_id;
-    add(genome->connection_genes, connection_gene);
 
-    if (linked(genome, neuron_1_id, neuron_2_id))
+    if (linked(genome, neuron_1_id, neuron_2_id)) {
+        freeConnectionGene(connection_gene);
         return 1;
+    }
 
     ++(*genome->innovation);
 
     connection_gene->weight = 4.0 * random01() - 2.0;
     connection_gene->innovation = *genome->innovation;
+
+    genome->mutations_history[genome->nb_mutations] = 1;
+    ++genome->nb_mutations;
+
+    add(genome->connection_genes, connection_gene);
 
     return 1;
 }
@@ -672,6 +669,7 @@ double * evaluateGenome(Genome * genome, double * input) {
 
             setOnFirstElement(current_neuron->connection_genes_input);
             while (!outOfGenericList(current_neuron->connection_genes_input)) {
+
                 current_connection_gene = (ConnectionGene *) getCurrent(current_neuron->connection_genes_input);
                 current_neuron_out = getNeuron(genome, current_connection_gene->neuron_out_id);
 
@@ -680,8 +678,9 @@ double * evaluateGenome(Genome * genome, double * input) {
                 nextElement(current_neuron->connection_genes_input);
             }
 
-            if (!emptyGenericList(current_neuron->connection_genes_input))
+            if (!emptyGenericList(current_neuron->connection_genes_input)) {
                 current_neuron->value = fast_sigmoid(sum);
+            }
         }
 
         nextElement(genome->neurons);
