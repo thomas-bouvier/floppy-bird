@@ -874,22 +874,47 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 */
 void printGenome(Genome * genome) {
     int k;
+    Neuron * current_neuron = NULL;
+    ConnectionGene * current_connection_gene = NULL;
 
     printf("----------------------------------\n");
     printf("Genome\n");
     printf("\t%p\n", genome);
 
-    printf("\t\tnb_neurons: %d TYPES:", count(genome->neurons));
+    printf("\t\tnb_neurons: %d ; TYPES:", count(genome->neurons));
 
     setOnFirstElement(genome->neurons);
     while (!outOfGenericList(genome->neurons)) {
         printf(" %d", ((Neuron *) getCurrent(genome->neurons))->type);
+
+        nextElement(genome->neurons);
+    }
+
+    printf(" ; IDs:");
+
+    setOnFirstElement(genome->neurons);
+    while (!outOfGenericList(genome->neurons)) {
+        printf(" %d", ((Neuron *) getCurrent(genome->neurons))->id);
+
         nextElement(genome->neurons);
     }
 
     printf("\n");
 
-    printf("\t\tnb_connection_genes: %d\n", count(genome->connection_genes));
+    printf("\t\tnb_connection_genes: %d ; NETWORK_IDs:", count(genome->connection_genes));
+
+    setOnFirstElement(genome->connection_genes);
+    while (!outOfGenericList(genome->connection_genes)) {
+
+        current_connection_gene = (ConnectionGene *) getCurrent(genome->connection_genes);
+
+        printf(" %d -> %d,", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id);
+
+        nextElement(genome->connection_genes);
+    }
+
+    printf("\n");
+
     printf("\t\tmax_neurons: %d\n", genome->max_neurons);
     printf("\t\tfitness: %f\n", genome->fitness);
     printf("\t\tglobal_rank: %d\n", genome->global_rank);
