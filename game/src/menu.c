@@ -36,9 +36,8 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 * \param[in] sprites the structure containing all the image of the game
 * \return the choice of mode wanted by the player
 */
-int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, Sprites * sprites)
+int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, Sprites * sprites)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
     SDL_Event event;
@@ -71,13 +70,21 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF
         printText(renderer, "Predefined", 300, 520, medium_font);
     else
         printText(renderer, "Random", 300, 520, medium_font);
-        /* Quit game */
+    /* Speed acceleration */
+    printText(renderer, "Acceleration :", 100, 590, medium_font);
+    if(event.motion.x > 450 && event.motion.x < 519 && event.motion.y > 590 && event.motion.y < 631)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
+    if((*speedAcceleration) == 1)
+        printText(renderer, "Yes", 450, 590, medium_font);
+    else
+        printText(renderer, "No", 450, 590, medium_font);
+    /* Quit game */
     if(event.motion.x > 700 && event.motion.x < 900 && event.motion.y > 650 && event.motion.y < 691)
         TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
     printText(renderer, "Quit game", 700, 650, medium_font);
     /* Displaying */
     SDL_RenderPresent(renderer);
-    return actionOnMainMenu(event, levelFromFile, simplifiedMode);
+    return actionOnMainMenu(event, levelFromFile, simplifiedMode, speedAcceleration);
 }
 
 /*!
@@ -87,7 +94,7 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \return the choice of mode wanted by the player (WAIT, PLAY, IA1 or IA2)
 */
-int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
@@ -101,6 +108,8 @@ int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode)
             *simplifiedMode = (*simplifiedMode != 1);
         if(event.button.x > 300 && event.button.x < 518 && event.button.y > 520 && event.button.y < 561)
             *levelFromFile = (*levelFromFile != 1);
+        if(event.button.x > 450 && event.button.x < 519 && event.button.y > 590 && event.button.y < 631)
+            *speedAcceleration = (*speedAcceleration != 1);
         if(event.button.x > 700 && event.button.x < 900 && event.button.y > 650 && event.button.y < 691)
             return QUITGAME;
         SDL_Delay(200);
@@ -134,8 +143,36 @@ int actionOnPauseMenu()
         if(event.button.x > 300 && event.button.x < 450 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
             return RESUME;
         if(event.button.x > 600 && event.button.x < 750 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
-            return QUIT;
-
+            return MENU;
     }
+    if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+        return QUIT;
     return PAUSE;
+}
+
+/*!
+* \brief Manage the view and control when the player loses
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the game
+* \param[in] medium_font the font used to write text
+* \return the action to do
+*/
+int endOfGame(SDL_Renderer * renderer, Camera * camera, TTF_Font * medium_font)
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    /*if(event.motion.x > 600 && event.motion.x < 800 && event.motion.y > 650 && event.motion.y < 691)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);*/
+    printText(renderer, "Return to menu", 600, 650, medium_font);
+    SDL_Delay(10);
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    {
+        if(event.button.x > 600 && event.button.x < 800 && event.button.y > 650 && event.button.y < 691)
+            return MENU;
+        else
+            return RESUME;
+    }
+    if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+        return QUIT;
+    return NOTHING;
 }
