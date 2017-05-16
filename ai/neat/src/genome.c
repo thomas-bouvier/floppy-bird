@@ -78,6 +78,8 @@ void * cloneGenome(void * genome) {
     new_genome->mutation_rates[1] = ((Genome *) genome)->mutation_rates[1];
     new_genome->mutation_rates[2] = ((Genome *) genome)->mutation_rates[2];
     new_genome->mutation_rates[3] = ((Genome *) genome)->mutation_rates[3];
+    new_genome->mutation_rates[4] = ((Genome *) genome)->mutation_rates[4];
+    new_genome->mutation_rates[5] = ((Genome *) genome)->mutation_rates[5];
 
     new_genome->global_rank = 0;
     new_genome->innovation = ((Genome *) genome)->innovation;
