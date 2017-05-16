@@ -586,7 +586,7 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
     ConnectionGene * current_connection_gene_2 = NULL;
 
     setOnFirstElement(genome_1->connection_genes);
-    while (!outOfGenericList(genome_1->connection_genes)) {
+    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
 
         current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
@@ -598,6 +598,9 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
             if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
                 sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
                 sameInnovation += 1.0;
+
+                nextElement(genome_1->connection_genes);
+                goto outer_loop;
             }
 
             nextElement(genome_2->connection_genes);
