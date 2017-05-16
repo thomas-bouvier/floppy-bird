@@ -281,7 +281,6 @@ int main(int argc, char ** argv)
                     SDL_RenderPresent(renderer);
                     SDL_Delay(16);
                 }
-                emptyEvent();
 
                 if(simplifiedMode > 0)
                {
@@ -289,12 +288,27 @@ int main(int argc, char ** argv)
                     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                     SDL_RenderClear(renderer);
                     displayScore(renderer, score, big_font);
+                    displayBestScore(renderer, big_font, scoreFile);
+                    SDL_RenderPresent(renderer);
+                    SDL_Delay(1000);
                }
-                displayBestScore(renderer, big_font, scoreFile);
-                SDL_RenderPresent(renderer);
-                SDL_Delay(1000);
                 emptyEvent();
-                running = waitClick();
+
+                Action end_of_game = NOTHING;
+                while(end_of_game == NOTHING)
+                {
+                    SDL_RenderClear(renderer);
+                    if(simplifiedMode == 0)
+                        drawBackground(renderer, &camera, &sprites);
+                    end_of_game = endOfGame(renderer, &camera, medium_font);
+                    displayScore(renderer, score, big_font);
+                    displayBestScore(renderer, big_font, scoreFile);
+                    SDL_RenderPresent(renderer);
+                }
+                if(end_of_game == MENU || end_of_game == QUIT)
+                    running = 0;
+                if(end_of_game == QUIT)
+                    menu_loop = 0;
             }
             if(hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);

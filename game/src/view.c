@@ -137,7 +137,6 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
     drawRectangle(renderer, camera, x1, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 0);
     drawRectangle(renderer, camera, x2, y, BIRD_SIZE,BIRD_SIZE, 0, 0, 255);
     drawRectangle(renderer, camera, x3, y, BIRD_SIZE,BIRD_SIZE, 0, 255, 255);
-
     SDL_RenderPresent(renderer);
 }
 /*!

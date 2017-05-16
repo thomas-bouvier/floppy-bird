@@ -38,7 +38,6 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 */
 int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, Sprites * sprites)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
     SDL_Event event;
@@ -149,4 +148,31 @@ int actionOnPauseMenu()
     if(event.window.event == SDL_WINDOWEVENT_CLOSE)
         return QUIT;
     return PAUSE;
+}
+
+/*!
+* \brief Manage the view and control when the player loses
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the game
+* \param[in] medium_font the font used to write text
+* \return the action to do
+*/
+int endOfGame(SDL_Renderer * renderer, Camera * camera, TTF_Font * medium_font)
+{
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    /*if(event.motion.x > 600 && event.motion.x < 800 && event.motion.y > 650 && event.motion.y < 691)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);*/
+    printText(renderer, "Return to menu", 600, 650, medium_font);
+    SDL_Delay(10);
+    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    {
+        if(event.button.x > 600 && event.button.x < 800 && event.button.y > 650 && event.button.y < 691)
+            return MENU;
+        else
+            return RESUME;
+    }
+    if(event.window.event == SDL_WINDOWEVENT_CLOSE)
+        return QUIT;
+    return NOTHING;
 }
