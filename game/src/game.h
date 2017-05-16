@@ -10,11 +10,12 @@
 #include "obstacle.h"
 #include "camera.h"
 #include "list.h"
+#include "generic_list.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-void startGame(Bird * bird, Camera * camera, List * l, FILE * level, int levelFromFile);
-void cameraScrolling(Camera * camera, Bird * bird);
+void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile);
+void cameraScrolling(Camera * camera, GenericList * bird);
 void modifySpeed(int score, Camera * camera);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);
 int deleteObstacle(Camera * camera, List * l);
@@ -25,5 +26,6 @@ int ratioBirdHeight(Bird * bird);
 int ratioPipeHeight (Bird * bird, List * l);
 int ratioPipeWidth (Bird * bird, Camera * camera, List * l);
 void jump(Action * event);
+void addBird(GenericList * bird);
 
 #endif // GAME_H

@@ -22,7 +22,8 @@ typedef struct{
     int dead;                   /*!< the state of the bird (1 for dead, 0 for alive) */
 } Bird;
 
-void initBird(Bird * new_bird);
+Bird * initBird();
 void updateBird(Bird * bird, int t, Sound * sound);
+void freeBird(Bird * bird);
 
 #endif // BIRD_H

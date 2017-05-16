@@ -6,30 +6,38 @@
 
 /*!
 * \brief Allocate all the object of the game
-* \param[out] bird the bird to allocate
+* \param[out] bird the list of bird to allocate
 * \param[out] camera the camera to allocate
 * \param[out] l the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 */
-void startGame(Bird * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
+void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
 {
-    initBird(bird);
+    Bird * new_bird = initBird();
+    add(bird, new_bird);
     initCamera(camera, 0, LOW);
     initList(l, level, levelFromFile);
+    setOnFirstElement(bird);
 }
 
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
-* \param[out] bird the bird that moves with the camera
+* \param[out] bird the list of bird that moves with the camera
 *
 * Add 1 to the abscissa of camera and bird in order to move them at the same speed
 */
-void cameraScrolling(Camera * camera, Bird * bird)
+void cameraScrolling(Camera * camera, GenericList * bird)
 {
     camera->x += camera->speed;
-    bird->x += camera->speed;
+    setOnFirstElement(bird);
+    while(!outOfGenericList(bird))
+    {
+        if(((Bird*)bird->current->data)->dead == 0)
+            (((Bird*)bird->current->data)->x) = (((Bird*)bird->current->data)->x) + camera->speed;
+        nextElement(bird);
+    }
 }
 
 /*!
@@ -203,4 +211,15 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 void jump(Action * event)
 {
     *event = JUMP;
+}
+/*!
+* \brief Add a bird in the list of bird
+* \param[out] bird the list of bird
+*
+* The new bird added is placed at the beginning of the game
+*/
+void addBird(GenericList * bird)
+{
+    Bird * new_bird = initBird();
+    add(bird, &new_bird);
 }

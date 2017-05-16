@@ -80,14 +80,13 @@ void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 * \param[out] renderer the drawing target
 * \param[in] obstacle the obstacle to draw
 * \param[in] camera the view of the scene
-* \param[in] sprites the structure containing all the image of the game
+* \param[in] pipe1 the sprite of the upper pipe
+* \param[in] pipe2 the sprite of the lower pipe
 */
-void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, Sprites * sprites)
+void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, SDL_Texture * pipe1, SDL_Texture * pipe2)
 {
-    SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, sprites->pipe2);
-    drawSprite(renderer, camera, texture, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, 500);
-    texture = SDL_CreateTextureFromSurface(renderer, sprites->pipe1);
-    drawSprite(renderer, camera, texture, obstacle->upper.x, obstacle->upper.h-500, PIPE_WIDTH, 500);
+    drawSprite(renderer, camera, pipe2, obstacle->lower.x, obstacle->lower.y, PIPE_WIDTH, 500);
+    drawSprite(renderer, camera, pipe1, obstacle->upper.x, obstacle->upper.h-500, PIPE_WIDTH, 500);
 }
 
 /*!
@@ -95,19 +94,25 @@ void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * cam
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to draw
 * \param[in] camera the view of the scene
-* \param[in] sprites the structure containing all the image of the game
+* \param[in] bird1 one of the three possible sprite for the bird
+* \param[in] bird2 one of the three possible sprite for the bird
+* \param[in] bird3 one of the three possible sprite for the bird
 */
-void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, Sprites * sprites)
+void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, SDL_Texture * bird1, SDL_Texture * bird2, SDL_Texture * bird3)
 {
     SDL_Texture * bird_texture = NULL;
     if(bird->dir_y > 5)
-        bird_texture = sprites->bird1;
+    {
+        bird_texture = bird1;
+    }
     else
     {
         if(bird->dir_y < 0)
-            bird_texture = sprites->bird3;
+            bird_texture = bird3;
         else
-            bird_texture = sprites->bird2;
+        {
+            bird_texture = bird2;
+        }
     }
     drawSprite(renderer, camera, bird_texture, bird->x - BIRD_SIZE/2, bird->y - BIRD_SIZE/2, BIRD_SIZE, BIRD_SIZE);
 }
@@ -143,17 +148,18 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
 /*!
 * \brief Display the items of the game
 * \param[out] renderer the drawing target
-* \param[in] bird the bird to display
+* \param[in] bird the list of bird to display
 * \param[in] l the list of obstacle
 * \param[in] camera the view of the scene
 * \param[in] score the current score
 * \param[in] font the font used to write text
 * \param[in] sprites the structure containing all the image of the game
 */
-void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
+void displayGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;
     setOnFirst(l);
+    setOnFirstElement(bird);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     while (i < OBSTACLE_NUMBER)
@@ -164,7 +170,11 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
             ++i;
         }
     }
-    drawBird(renderer, bird, camera);
+    while(!outOfGenericList(bird))
+    {
+        drawBird(renderer, (Bird*)bird->current->data, camera);
+        nextElement(bird);
+    }
     displayScore(renderer, score, font);
     drawPause(renderer, camera, sprites);
     SDL_RenderPresent(renderer);
@@ -180,22 +190,38 @@ void displayGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera
 * \param[in] font the font used to write text
 * \param[in] sprites the structure containing all the image of the game
 */
-void displayRealGame(SDL_Renderer * renderer, Bird * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
+void displayRealGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;
     setOnFirst(l);
+    setOnFirstElement(bird);
+    setOnFirstElement(sprites->bird1);
+    setOnFirstElement(sprites->bird2);
+    setOnFirstElement(sprites->bird3);
+    setOnFirstElement(sprites->pipe1);
+    setOnFirstElement(sprites->pipe2);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
     while (i < OBSTACLE_NUMBER)
     {
-        if (l->current->lower.x != 0){
-            drawRealObstacle(renderer, l->current, camera, sprites);
+        if (l->current->lower.x != 0)
+        {
+            drawRealObstacle(renderer, l->current, camera, sprites->pipe1->current->data, sprites->pipe2->current->data);
             next(l);
+            nextElement(sprites->pipe1);
+            nextElement(sprites->pipe2);
             ++i;
         }
     }
-    drawRealBird(renderer, bird, camera, sprites);
+    while(!outOfGenericList(bird))
+    {
+        drawRealBird(renderer, (Bird*)bird->current->data, camera, (SDL_Texture *)sprites->bird1->current->data, (SDL_Texture *)sprites->bird2->current->data, (SDL_Texture *)sprites->bird3->current->data);
+        nextElement(bird);
+        nextElement(sprites->bird1);
+        nextElement(sprites->bird2);
+        nextElement(sprites->bird3);
+    }
     displayScore(renderer, score, font);
     drawPause(renderer, camera, sprites);
     SDL_RenderPresent(renderer);

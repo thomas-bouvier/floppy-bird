@@ -19,7 +19,7 @@ endif
 Release: main
 Debug: main
 
-main: main.o bird.o camera.o control.o file.o game.o list.o menu.o obstacle.o pipe.o sound.o view.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o
+main: main.o bird.o camera.o control.o file.o game.o list.o menu.o obstacle.o pipe.o sound.o view.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o generic_list.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 main.o: $(Q_LEARNING_PATH)q_learning.h $(Q_LEARNING_PATH)conf.h

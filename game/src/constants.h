@@ -6,6 +6,7 @@
 #define CONSTANTS_H
 
 #include <SDL2/SDL.h>
+#include "generic_list.h"
 
 
 /*! \def SCREEN_WIDTH
@@ -170,11 +171,11 @@ enum Speed
 * \brief The structure containing all the image useful to the game
 */
 typedef struct{
-    SDL_Texture * bird1;        /*!< The first image of the bird */
-    SDL_Texture * bird2;        /*!< The second image of the bird */
-    SDL_Texture * bird3;        /*!< The third image of the bird */
-    SDL_Surface * pipe1;        /*!< The image of the upper pipe */
-    SDL_Surface * pipe2;        /*!< The image of the lower pipe */
+    GenericList * bird1;        /*!< The list of first image of the bird */
+    GenericList * bird2;        /*!< The list of second image of the bird */
+    GenericList * bird3;        /*!< The list of third image of the bird */
+    GenericList * pipe1;        /*!< The list of image of the upper pipe */
+    GenericList * pipe2;        /*!< The list of image of the lower pipe */
     SDL_Texture * background;   /*!< The image of the background */
     SDL_Texture * ground;       /*!< The image of the ground */
     SDL_Texture * tap_to_play;  /*!< The image to explain how to play */
