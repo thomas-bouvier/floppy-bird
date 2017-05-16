@@ -5,6 +5,7 @@
 #include "view.h"
 #include "control.h"
 #include "file.h"
+#include "sdl_files.h"
 #include "sound.h"
 #include "menu.h"
 #include "constants.h"
@@ -123,7 +124,6 @@ int main(int argc, char ** argv)
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-
     /* Setup sounds */
     Mix_AllocateChannels(3);
     if (!openSoundFiles(config, &jump_sound, &obstacle_sound, &death_sound))
@@ -136,7 +136,6 @@ int main(int argc, char ** argv)
     /* Setup font */
     if (!openFontFiles(config, &big_font, &medium_font))
         return EXIT_FAILURE;
-
 
 
     while(menu_loop)
@@ -186,10 +185,7 @@ int main(int argc, char ** argv)
                 displayGame(renderer, bird, &l, &camera, score, big_font, &sprites);
             }
             else
-            {
                 displayRealGame(renderer, bird, &l, &camera, score, big_font, &sprites);
-            }
-
 
             if(mode == PLAY) /* Wait the first jump to start the game*/
             {
@@ -285,7 +281,7 @@ int main(int argc, char ** argv)
                     hit_saved = hit;
                     savedObstacle = nextBirdObstacle(&l, (Bird*)bird->first->data);
 
-
+                    /* Update of the view */
                     if(simplifiedMode)
                         displayGame(renderer, bird, &l, &camera, score, big_font, &sprites);
                     else
