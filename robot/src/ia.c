@@ -23,14 +23,12 @@ void* mainIa (void* robot)
     init_array(last_states, NB_SAVED_STATES, -1);
     init_array(last_action, NB_SAVED_ACTIONS, -1);
     
-    int complement=0;
     long int time=0;
 
     /* Press Play *//*1 clk 120us*/
     sleep(1);
     jump(robot);
     jump(robot);
-    sleep(1);
 
     while(1)
     {
@@ -48,33 +46,28 @@ void* mainIa (void* robot)
             }
             if(hit_saved)
             {
-				cancelAllJump(robot);
 				saveQMatrix(matrixQ, qmatrixPath);
 				printf("Mort\n");
 				sleep(2);
+				printf("jump1\n");
                 jump(robot);
                 sleep(1);
+                printf("jump2\n");
                 jump(robot);
-                sleep(1);
+                printf("jump3\n");
                 jump(robot);
                 action_break = 1; /* Test random */
             }
         }   
-        if(/*getDataUpdated(robot) && */time+500000<clock())
+        if(getDataUpdated(robot) /*&& time+500000<clock()*/)
         {
-			time=clock();
-			printf("%li\n", time);
-			/*if(complement) complement=0;
-			else complement=1;
-			
-			if(complement)
-			{*/
+			/*time=clock();
+			printf("%li\n", time);*/
 				printf("DataUpdated\n");
-				action_break=1;
-			/*}*/
-            setDataUpdated(robot, 0);        
+			action_break=1;
+            setDataUpdated(robot, 0);       
         }
-        //printf("getUpdated: %d\n", getDataUpdated(robot));       
+        /*printf("getUpdated: %d\n", getDataUpdated(robot));*/       
         hit_saved = getGameStatus(robot);
     }
 
