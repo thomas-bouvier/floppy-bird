@@ -1,16 +1,63 @@
 #include "ia.h"
 #include <unistd.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../../ai/q_learning/src/q_learning.h"
 #include "../../ai/q_learning/src/game_state.h"
-#include <time.h>
+
+#define JUMP_OFFSET 0.3
+#define JUMP_HEIGHT 0.5
+#define SENSIBILITY 0.9
 
 /*!
 * \brief the main function for the basic IA
 * \param[in] robot : the robot interface
 */
-void* mainIaBasic (void* robot)
+void* mainIaBasic (void* bot)
 {
-	
+	Robot* robot = (Robot*)malloc(sizeof(Robot));
+	robot = (Robot*)bot;
+    /* Press Play *//*1 clk 120us*/
+    sleep(1);
+    jump(robot);
+    while(!getDataUpdated(robot));
+    setDataUpdated(robot, 0);  
+    jump(robot);
+    jump(robot);
+    sleep(1);
+    
+    while(1)
+    {
+        if(getDataUpdated(robot))
+        {
+			setDataUpdated(robot, 0); 
+			float birdHeight = getBirdHeight(robot);
+			float pipeHeight = getNextPipeHeight(robot) + JUMP_OFFSET;
+			if(!jumpRunning(robot) && (birdHeight < pipeHeight)){
+				float n = ((pipeHeight - birdHeight)/JUMP_HEIGHT) + SENSIBILITY ;
+				int nbJump = (int)n;
+				int i;
+				printf("run %f (%d) jumps ; jump running : %s\n",n,nbJump,jumpRunning(robot)? "yes" : "no"); 
+				for (i = 0; i<nbJump;i++){
+					jump(robot);
+				}
+			}
+        }     
+       
+        if(getGameStatus(robot)){
+			cancelAllJump(robot);
+			printf("Mort\n");
+			sleep(2);
+			jump(robot);
+			sleep(1);
+			jump(robot);
+			sleep(1);
+			jump(robot);
+			jump(robot);
+			sleep(1);
+		}
+    }
 	return NULL;
 }
 
@@ -31,7 +78,6 @@ void* mainIaNeat (void* robot)
 void* mainIaQLearning (void* robot)
 {
 	robot = (Robot*) robot;
-
     MatrixQ * matrixQ = NULL;
     int last_states[NB_SAVED_STATES];
     int last_action[NB_SAVED_ACTIONS];
@@ -40,17 +86,14 @@ void* mainIaQLearning (void* robot)
     int action_break=1;
     srand(time(NULL));
     matrixQ = loadQMatrix(qmatrixPath);
-
     init_array(last_states, NB_SAVED_STATES, -1);
     init_array(last_action, NB_SAVED_ACTIONS, -1);
     
     long int time=0;
-
     /* Press Play *//*1 clk 120us*/
     sleep(1);
     jump(robot);
     jump(robot);
-
     while(1)
     {
 		//printf("hit_saved: %d\n", hit_saved);
@@ -59,7 +102,6 @@ void* mainIaQLearning (void* robot)
         {
             action_break=0;
             q_learning_loop(matrixQ, last_states, last_action, 10*getNextPipePosition(robot), 10*getNextPipeHeight(robot)-10*getBirdHeight(robot), 10*getNextPipeHeight(robot), hit_saved);
-
             if(last_action[0] != -1)
             {	
 				printf("Saut\n");
@@ -91,7 +133,6 @@ void* mainIaQLearning (void* robot)
         /*printf("getUpdated: %d\n", getDataUpdated(robot));*/       
         hit_saved = getGameStatus(robot);
     }
-
 	return NULL;
 }
 
@@ -252,4 +293,14 @@ void cancelAllJump(Robot* robot)
 {
 	flushClickStack(robot->stylus);
 	moveStylus(robot->stylus,robot->stylus->restPosition);
+}
+
+/*!
+* \brief test if a jump is running
+* \param[in] robot : the robot interface
+* \return 1 if a jump is running, 0 otherwise
+*/
+boolean jumpRunning(Robot* robot)
+{
+	return getNbClick(robot->stylus) > 0;
 }
