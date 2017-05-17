@@ -45,6 +45,8 @@ void jump(Robot* robot);
 void cancelAllJump(Robot* robot);
 
 /* IA */
-void* mainIa (void* robot);
+void* mainIaBasic (void* robot);
+void* mainIaNeat (void* robot);
+void* mainIaQLearning (void* robot);
 
 #endif /* IA_H */

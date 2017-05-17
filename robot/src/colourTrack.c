@@ -89,13 +89,41 @@ int main(int argc, char *argv[]){
 					return 1;
 				}
 				break;
-			case 'i':		/* -i : run the IA */
-				printf("Creating a thread for the IA\n");
-				retIaThread = pthread_create (&iaThread, NULL, mainIa,&robot); 
-				if(retIaThread == 0)
-					printf("Thread created\n");
-				else 
-					fprintf (stderr, "%s", strerror (retIaThread));
+			case 'i':		/* -i : run the basic IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the basic IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaBasic,&robot); 
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else 
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
+				break;
+			case 'q':		/* -q : run the q-learning IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the q-learning IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaQLearning,&robot); 
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else 
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
+				break;
+			case 'n':		/* -n : run the neat IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the neat IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaNeat,&robot); 
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else 
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
 				break;
 			case 'v':		/* -v : verbose mode */
 				verbose = true;

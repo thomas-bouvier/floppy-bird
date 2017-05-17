@@ -3,11 +3,32 @@
 #include "../../ai/q_learning/src/q_learning.h"
 #include "../../ai/q_learning/src/game_state.h"
 #include <time.h>
+
 /*!
-* \brief the main function for the IA
+* \brief the main function for the basic IA
 * \param[in] robot : the robot interface
 */
-void* mainIa (void* robot)
+void* mainIaBasic (void* robot)
+{
+	
+	return NULL;
+}
+
+/*!
+* \brief the main function for the neat IA
+* \param[in] robot : the robot interface
+*/
+void* mainIaNeat (void* robot)
+{
+	
+	return NULL;
+}
+
+/*!
+* \brief the main function for the Q-Learning IA
+* \param[in] robot : the robot interface
+*/
+void* mainIaQLearning (void* robot)
 {
 	robot = (Robot*) robot;
 
