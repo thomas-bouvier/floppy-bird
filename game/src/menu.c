@@ -18,7 +18,7 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 	SDL_Surface * text_surface = TTF_RenderText_Blended(font, text, color);
 	SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 	SDL_Rect dest = {abscissa, ordinate, text_surface->w, text_surface->h};
-	printf("%d %d %d %d\n", abscissa, abscissa + text_surface->w, ordinate, ordinate + text_surface->h);
+	/*printf("%d %d %d %d\n", abscissa, abscissa + text_surface->w, ordinate, ordinate + text_surface->h);*/
     TTF_SetFontStyle(font, TTF_STYLE_NORMAL);
 	SDL_RenderCopy(renderer, text_texture, NULL, &dest);
 	SDL_FreeSurface(text_surface);
@@ -38,7 +38,6 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 */
 int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, Sprites * sprites)
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
     SDL_Event event;
@@ -85,37 +84,8 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF
     printText(renderer, "Quit game", 700, 650, medium_font);
     /* Displaying */
     SDL_RenderPresent(renderer);
+    SDL_Delay(10);
     return actionOnMainMenu(event, levelFromFile, simplifiedMode, speedAcceleration);
-}
-
-/*!
-* \brief Select the mode of game of the player by a click on the options displayed by the menu
-* \param[in] event the current event for the SDL
-* \param[out] levelFromFile allow to choose if the obstacles are predefined are random
-* \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
-* \return the choice of mode wanted by the player (WAIT, PLAY, IA1 or IA2)
-*/
-int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration)
-{
-    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
-    {
-        if(event.button.x > 100 && event.button.x < 240 && event.button.y > 100 && event.button.y < 171)
-            return PLAY;
-        if(event.button.x > 100 && event.button.x < 395 && event.button.y > 200 && event.button.y < 271)
-            return IA1;
-        if(event.button.x > 100 && event.button.x < 410 && event.button.y > 300 && event.button.y < 371)
-            return IA2;
-        if(event.button.x > 300 && event.button.x < 493 && event.button.y > 450 && event.button.y < 491)
-            *simplifiedMode = (*simplifiedMode != 1);
-        if(event.button.x > 300 && event.button.x < 518 && event.button.y > 520 && event.button.y < 561)
-            *levelFromFile = (*levelFromFile != 1);
-        if(event.button.x > 450 && event.button.x < 519 && event.button.y > 590 && event.button.y < 631)
-            *speedAcceleration = (*speedAcceleration != 1);
-        if(event.button.x > 700 && event.button.x < 900 && event.button.y > 650 && event.button.y < 691)
-            return QUITGAME;
-        SDL_Delay(200);
-    }
-    return WAIT;
 }
 
 /*!
@@ -129,23 +99,23 @@ void pauseMenu(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
     drawSprite(renderer, camera, sprites->play, camera->x + 300, SCREEN_HEIGHT/2 - 75, 150, 150);
     drawSprite(renderer, camera, sprites->quit, camera->x + 600, SCREEN_HEIGHT/2 - 75, 150, 150);
     SDL_RenderPresent(renderer);
+    SDL_Delay(10);
 }
 
 /*!
-* \brief Defined the action on the pause menu
-* \return Quit, Resume or Pause according to the user action
+* \brief Manage the view and control when the player loses
+* \param[out] renderer the drawing target
+* \param[in] camera the view of the game
+* \param[in] medium_font the font used to write text
+* \return the action to do
 */
-int actionOnPauseMenu()
+int endOfGame(SDL_Renderer * renderer, Camera * camera, TTF_Font * medium_font)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
-    {
-        if(event.button.x > 300 && event.button.x < 450 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
-            return RESUME;
-        if(event.button.x > 600 && event.button.x < 750 && event.button.y > SCREEN_HEIGHT/2 - 75 && event.button.y < SCREEN_HEIGHT/2 + 75)
-            return QUIT;
-
-    }
-    return PAUSE;
+    /*if(event.motion.x > 600 && event.motion.x < 800 && event.motion.y > 650 && event.motion.y < 691)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);*/
+    printText(renderer, "Return to menu", 600, 650, medium_font);
+    SDL_Delay(10);
+    return actionAtEnd(event);
 }
