@@ -96,4 +96,30 @@ The raspberry pi needs some libraries to get all the programs running properly. 
     mkdir objs
     make
 
+### Usage
 
+To run the project :
+
+    sudo ./colourTrack
+    
+note : Super user is needed because of the access to the hardware PWM
+
+
+Some options are available :
+
+    -l loadFileName : load working space and structures (trackers...) from the load File
+    -s saveFileName : save working space and structures (trackers...) into the save File
+    -d logFileName : Save data into a log file
+    -i : run the basic IA 
+    -q : run the q-learning IA 
+    -n : run the neat IA
+    -v : verbose mode
+    
+    
+Example :
+
+    sudo ./colourTrack -l config -i
+    # run the program loading the config file and start the basic IA
+
+    
+    
