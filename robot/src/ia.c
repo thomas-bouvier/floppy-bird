@@ -12,7 +12,7 @@
 
 /*!
 * \brief the main function for the basic IA
-* \param[in] robot : the robot interface
+* \param[in] bot : the robot interface
 */
 void* mainIaBasic (void* bot)
 {
