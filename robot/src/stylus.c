@@ -3,7 +3,6 @@
 #include <wiringPi.h>
 #include <sys/time.h>
 #include "stylus.h"
-#include "configuration.h"
 
 
 /*!
@@ -28,6 +27,7 @@ void attach(Stylus* stylus, int pin, int clickPosition, int restPosition, long i
 	stylus->restDelay = restDelay;
 	stylus->currentPosition = 0;
 	stylus->nbClick = 0;
+	stylus->clickStatus = false;
 	gettimeofday(&(stylus->moveTime),NULL);	// init of the current time
 	disable(stylus);
 }
@@ -43,15 +43,20 @@ void update(Stylus* stylus)
 		gettimeofday(&currentTime,NULL);
 		if(stylus->currentPosition == stylus->restPosition){
 			if((((currentTime.tv_sec - stylus->moveTime.tv_sec)*1000000+currentTime.tv_usec) - stylus->moveTime.tv_usec)>(stylus->restDelay)) {		// if rest delay past
-				moveStylus(stylus,stylus->clickPosition);
-				stylus->currentPosition = stylus->clickPosition;
-				gettimeofday(&(stylus->moveTime),NULL);	// reset of the current time
+				if(stylus->clickStatus){
+					stylus->nbClick--;
+					stylus->clickStatus = false;
+				} else {
+					moveStylus(stylus,stylus->clickPosition);
+					stylus->currentPosition = stylus->clickPosition;
+					gettimeofday(&(stylus->moveTime),NULL);	// reset of the current time
+				}
 			}
 		} else if (stylus->currentPosition == stylus->clickPosition){
 			if((((currentTime.tv_sec - stylus->moveTime.tv_sec)*1000000+currentTime.tv_usec) - stylus->moveTime.tv_usec)>(stylus->pressDelay)) {	// if press delay past
 				moveStylus(stylus,stylus->restPosition);
 				stylus->currentPosition = stylus->restPosition;
-				stylus->nbClick--;
+				stylus->clickStatus = true;
 				gettimeofday(&(stylus->moveTime),NULL);	// reset of the current time
 			}
 		} else {		// default case
@@ -113,6 +118,15 @@ void flushClickStack(Stylus* stylus)
 	stylus->nbClick = 0;
 }
 
+/*!
+* \brief get the nbClick parameter
+* \param[in] stylus : address of the stylus 
+* \return nbClick
+*/
+int getNbClick(Stylus* stylus)
+{
+	return stylus->nbClick;
+}
 
 
 
