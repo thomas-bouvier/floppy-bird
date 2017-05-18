@@ -33,6 +33,7 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 * \param[in] camera the view of the scene
 * \param[out] levelFromFile allow to choose if the obstacles are predefined are random
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
+* \param[out] speedAcceleration allow to choose if the player want an acceleration during the game
 * \param[in] sprites the structure containing all the image of the game
 * \return the choice of mode wanted by the player
 */

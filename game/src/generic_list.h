@@ -19,7 +19,7 @@ typedef struct Node {
 } Node;
 
 /*!
-* \struct GenericList network.h
+* \struct GenericList
 * \brief A GenericList is the implementation of a linked GenericList structure.
 */
 struct GenericList {

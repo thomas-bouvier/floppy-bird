@@ -40,7 +40,7 @@ Now you can compile and run the project with the Makefile provided with the sour
 
 ### Configuration
 
-Two configuration file is provided in game/src/conf.
+Two configuration files are provided in game/src/conf.
 
 One is made for Windows with Codeblocks, the other for Linux, but feel free to modify these paths if you change anything.
 

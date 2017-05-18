@@ -221,5 +221,5 @@ void jump(Action * event)
 void addBird(GenericList * bird)
 {
     Bird * new_bird = initBird();
-    add(bird, &new_bird);
+    add(bird, new_bird);
 }

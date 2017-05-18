@@ -92,7 +92,8 @@ int waitClick()
 * \param[in] event the current event for the SDL
 * \param[out] levelFromFile allow to choose if the obstacles are predefined are random
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
-* \return the choice of mode wanted by the player (WAIT, PLAY, IA1 or IA2)
+* \param[out] speedAcceleration allow to choose if the player want an acceleration during the game
+* \return the choice of mode wanted by the player (WAIT, PLAY, IA1, IA2 or QUITGAME)
 */
 int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration)
 {
@@ -118,8 +119,8 @@ int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode,
 }
 
 /*!
-* \brief Defined the action on the pause menu
-* \return Quit, Resume or Pause according to the user action
+* \brief Select the action on the pause menu
+* \return RESUME, MENU, QUIT or PAUSE according to the user action
 */
 int actionOnPauseMenu()
 {
@@ -137,6 +138,10 @@ int actionOnPauseMenu()
     return PAUSE;
 }
 
+/*!
+* \brief Select the action when the bird dies
+* \return MENU, RESUME, QUIT or NOTHING according to the user action
+*/
 int actionAtEnd(SDL_Event event)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)

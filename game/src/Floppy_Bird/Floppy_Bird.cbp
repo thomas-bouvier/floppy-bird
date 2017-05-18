@@ -79,6 +79,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../pipe.h" />
+		<Unit filename="../sdl_files.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../sdl_files.h" />
 		<Unit filename="../sound.c">
 			<Option compilerVar="CC" />
 		</Unit>
