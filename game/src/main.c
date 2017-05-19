@@ -79,7 +79,6 @@ int main(int argc, char ** argv)
 
     /* Initialization IA2 */
     MatingPool * pool = NULL;
-    GenericList * birdss = NULL;
     Bird * best = NULL;
 
     /* Open the configuration file (that contains the paths of level, sprites...),
@@ -195,11 +194,11 @@ int main(int argc, char ** argv)
 
             if (pool == (MatingPool *) NULL) {
                 fprintf(stderr, "Error\n");
-                return;
+                return EXIT_FAILURE;
             }
 
             if (!populateMatingPool(pool))
-                return;
+                return EXIT_FAILURE;
         }
 
         while (running) {

@@ -875,7 +875,6 @@ ConnectionGene * getRandomConnectionGene(Genome * genome) {
 */
 int writeGraphVizGenome(Genome * genome, char * filename) {
     FILE * f = NULL;
-    GenericList * connection_gene_successors = NULL;
     Neuron * current_neuron = NULL;
     ConnectionGene * current_connection_gene = NULL;
 
@@ -936,7 +935,6 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
 */
 void printGenome(Genome * genome) {
     int k;
-    Neuron * current_neuron = NULL;
     ConnectionGene * current_connection_gene = NULL;
 
     printf("----------------------------------\n");
