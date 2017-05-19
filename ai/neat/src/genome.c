@@ -499,16 +499,11 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
     int skip_break_instruction = 0;
 
     Genome * child_genome = NULL;
+    Genome * temp_genome = NULL;
 
     ConnectionGene * current_connection_gene_1 = NULL;
     ConnectionGene * current_connection_gene_2 = NULL;
-
-    Neuron * new_neuron_1 = NULL;
-    Neuron * new_neuron_2 = NULL;
-
     ConnectionGene * new_connection_gene = NULL;
-
-    Genome * temp_genome = NULL;
 
     // creating the child genome
 
@@ -584,8 +579,10 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
     ConnectionGene * current_connection_gene_1 = NULL;
     ConnectionGene * current_connection_gene_2 = NULL;
 
+    int skip_continue_instruction = 0;
+
     setOnFirstElement(genome_1->connection_genes);
-    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
+    while (!outOfGenericList(genome_1->connection_genes)) {
 
         current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
@@ -598,12 +595,18 @@ static double computeWeights(Genome * genome_1, Genome * genome_2, int verbose) 
                 sum += fabs(current_connection_gene_1->weight - current_connection_gene_2->weight);
                 sameInnovation += 1.0;
 
-                nextElement(genome_1->connection_genes);
-                goto outer_loop;
+                skip_continue_instruction = 1;
             }
 
-            nextElement(genome_2->connection_genes);
+            if (skip_continue_instruction) {
+                while (!outOfGenericList(genome_2->connection_genes))
+                    nextElement(genome_2->connection_genes);
+            }
+            else
+                nextElement(genome_2->connection_genes);
         }
+
+        skip_continue_instruction = 0;
 
         nextElement(genome_1->connection_genes);
     }
@@ -624,8 +627,10 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
     ConnectionGene * current_connection_gene_1 = NULL;
     ConnectionGene * current_connection_gene_2 = NULL;
 
+    int skip_continue_instruction = 0;
+
     setOnFirstElement(genome_1->connection_genes);
-    outer_loop: while (!outOfGenericList(genome_1->connection_genes)) {
+    while (!outOfGenericList(genome_1->connection_genes)) {
 
         current_connection_gene_1 = (ConnectionGene *) getCurrent(genome_1->connection_genes);
 
@@ -636,12 +641,21 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
 
             if (current_connection_gene_1->innovation == current_connection_gene_2->innovation) {
                 nextElement(genome_1->connection_genes);
-                goto outer_loop;
+
+                skip_continue_instruction = 1;
             }
 
-            disjoint_count += 1.0;
-            nextElement(genome_2->connection_genes);
+            if (skip_continue_instruction) {
+                while (!outOfGenericList(genome_2->connection_genes))
+                    nextElement(genome_2->connection_genes);
+            }
+            else {
+                disjoint_count += 1.0;
+                nextElement(genome_2->connection_genes);
+            }
         }
+
+        skip_continue_instruction = 0;
 
         nextElement(genome_1->connection_genes);
     }

@@ -54,8 +54,10 @@ int populateMatingPool(MatingPool * pool) {
         genome->max_neurons = N_INPUTS;
         mutate(genome);
 
-        if (!addGenomeToProperSpecies(genome, pool))
+        if (!addGenomeToProperSpecies(genome, pool)) {
+            fprintf(stderr, "Can't add Genome to proper Species\n");
             return 0;
+        }
     }
 
     return 1;
@@ -207,7 +209,7 @@ int newGeneration(MatingPool * pool, int verbose) {
         children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
         ++count;
     }
-
+    
     for (i = 0; i < count; ++i)
         if (!addGenomeToProperSpecies(children[i], pool))
             return 0;
@@ -526,7 +528,9 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
     for (i = 0; i < pool->nb_species; ++i) {
         if (pool->species[i].nb_genomes > 0) {
-            if (sameSpecies(genome, (Genome *) pool->species[i].genomes->first->data)) {
+            setOnFirstElement(pool->species[i].genomes);
+
+            if (sameSpecies(genome, (Genome *) getCurrent(pool->species[i].genomes))) {
                 addGenomeToSpecies(genome, &pool->species[i]);
                 return 1;
             }
