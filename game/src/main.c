@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "game.h"
 #include "view.h"
 #include "control.h"
@@ -9,11 +10,16 @@
 #include "sound.h"
 #include "menu.h"
 #include "constants.h"
+
 #include <SDL2/SDL.h>
-#include "../../ai/q_learning/src/q_learning.h"
-#include "../../ai/q_learning/src/game_state.h"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+
+#include "../../ai/q_learning/src/q_learning.h"
+#include "../../ai/q_learning/src/game_state.h"
+
+#include "../../ai/neat/src/generic_list.h"
+#include "../../ai/neat/src/population.h"
 
 int main(int argc, char ** argv)
 {
@@ -32,7 +38,7 @@ int main(int argc, char ** argv)
     Mode mode;
     int number;
 
-    GenericList * bird = NULL;
+    GenericList * birds = NULL;
     Camera camera;
     List l;
 
@@ -56,6 +62,7 @@ int main(int argc, char ** argv)
     /* if speedAcceleration == 1, the game is accelerated ; if not, the speed stay constant */
     int speedAcceleration = 0;
     int score;
+
     Obstacle * savedObstacle = NULL;
 
     /* Initialization IA1 */
@@ -63,10 +70,16 @@ int main(int argc, char ** argv)
     int last_states[NB_SAVED_STATES];
     int last_action[NB_SAVED_ACTIONS];
     char qmatrixPath[100];
-    int hit_saved=0;
-    int action_break=0;
+    int hit_saved = 0;
+    int action_break = 0;
     int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
+
     srand(time(NULL));
+
+    /* Initialization IA2 */
+    MatingPool * pool = NULL;
+    GenericList * birdss = NULL;
+    Bird * best = NULL;
 
     /* Open the configuration file (that contains the paths of level, sprites...),
     according to the parameter passed to main (or not) */
@@ -74,7 +87,8 @@ int main(int argc, char ** argv)
         config = fopen("conf/config.txt", "r");
     else
         config = fopen(argv[1], "r");
-    if(config == NULL)
+
+    if (config == NULL)
     {
         fprintf(stderr,"Opening configuration file failure\n");
         return EXIT_FAILURE;
@@ -83,7 +97,9 @@ int main(int argc, char ** argv)
     /* Open the files necessary for the game (predefined level file, score file) */
     if (!openGameFiles(config, &level, &scoreFile))
         return EXIT_FAILURE;
+
     SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
@@ -138,28 +154,29 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
 
 
-    while(menu_loop)
+    while (menu_loop)
     {
         mode = WAIT;
         init = NOTHING;
         running = 1;
-        while((mode != PLAY && mode != IA1) && init != QUIT)
+
+        while ((mode != PLAY && mode != IA1) && init != QUIT)
         {
             mode = WAIT;
             mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &speedAcceleration, &sprites);
             init = detectTouch();
-            if(mode == QUITGAME)
+
+            if (mode == QUITGAME)
                 init = QUIT;
-            if(init == QUIT)
+            if (init == QUIT)
                 menu_loop = 0;
         }
 
-        if(init == QUIT)
+        if (init == QUIT)
             running = 0;
 
         /* Setup IA1 */
-        if(mode == IA1)
-        {
+        if (mode == IA1) {
             /* Open the file that contains qMatrix data */
             readConfig(config, qmatrixPath, "qMatrix :\n");
             matrixQ = loadQMatrix(qmatrixPath);
@@ -168,43 +185,71 @@ int main(int argc, char ** argv)
             ia1 = 1;
         }
 
-        while(running)
-        {
-            bird = newGenericList(NULL, (FreeFunction)freeBird);
-            initGenericList(bird);
+        /* Setup IA2 */
+        if (mode == IA2) {
+            if (pool)
+                freeMatingPool(pool);
+
+            pool = newMatingPool();
+
+            if (pool == (MatingPool *) NULL) {
+                fprintf(stderr, "Error\n");
+                return;
+            }
+
+            if (!populateMatingPool(pool))
+                return;
+        }
+
+        while (running) {
+            birds = newGenericList(NULL, (FreeFunction) freeBird);
+            initGenericList(birds);
+
             score = 0;
-            startGame(bird, &camera, &l, level, levelFromFile);
-            savedObstacle = nextBirdObstacle(&l, (Bird*)bird->first->data);
+
+            if (mode == IA2)
+                startGameNeat(birds, &camera, &l, level, levelFromFile, pool);
+            else
+                startGame(birds, &camera, &l, level, levelFromFile);
+
+            savedObstacle = nextBirdObstacle(&l, (Bird*)birds->first->data);
+
             if (simplifiedMode)
             {
                 drawForTI(renderer, &camera);
-                if(mode == PLAY)
+
+                if (mode == PLAY)
                     running = waitClick();
-                if(mode == IA1)
+                if (mode == IA1)
                     running = 1;
-                displayGame(renderer, bird, &l, &camera, score, big_font, &sprites);
+                if (mode == IA2)
+                    running = 1;
+
+                displayGame(renderer, birds, &l, &camera, score, big_font, &sprites);
             }
             else
-                displayRealGame(renderer, bird, &l, &camera, score, big_font, &sprites);
+                displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
 
-            if(mode == PLAY) /* Wait the first jump to start the game*/
+            if (mode == PLAY) /* Wait the first jump to start the game*/
             {
                 emptyEvent();
                 init = NOTHING;
                 tapToPlay(renderer, &camera, &sprites);
                 SDL_RenderPresent(renderer);
 
-                while(init == NOTHING && running)
+                while (init == NOTHING && running)
                 {
                     init = detectTouch();
-                    if(init == JUMP)
-                    {
-                        ((Bird*)bird->first->data)->dir_y = BIRD_JUMP;
+
+                    if (init == JUMP) {
+                        ((Bird*)birds->first->data)->dir_y = BIRD_JUMP;
                         playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
                     }
-                    if(init == MENU || init == QUIT)
+
+                    if (init == MENU || init == QUIT)
                         running = 0;
-                    if(init == QUIT)
+
+                    if (init == QUIT)
                         menu_loop = 0;
                 }
             }
@@ -212,12 +257,13 @@ int main(int argc, char ** argv)
             number = OBSTACLE_NUMBER;
             hit = 0;
             lastFrame = SDL_GetTicks();
-            if(mode == IA1)
+
+            if (mode == IA1)
                 action_break = 0;
 
             while(!hit && running)
             {
-                for(i = 0; i < (SDL_GetTicks()-lastFrame)/(1000/FRAME_PER_SECOND); ++i)
+                for (i = 0; i < (SDL_GetTicks() - lastFrame) / (1000 / FRAME_PER_SECOND); ++i)
                 {
                     /*printf("%d\n", 1000/(SDL_GetTicks()-lastFrame));*/
                     Action event = detectTouch();
@@ -230,18 +276,20 @@ int main(int argc, char ** argv)
                             event = actionOnPauseMenu();
                         }
                     }
-                    if(event == MENU || event == QUIT)
+
+                    if (event == MENU || event == QUIT)
                         running = 0;
-                    if(event == QUIT)
+                    if (event == QUIT)
                         menu_loop = 0;
 
-                    if(mode == IA1 && (action_break == 0 || hit_saved == 1))
+                    if (mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
-                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)bird->first->data, &camera, &l), ratioPipeHeight((Bird*)bird->first->data, &l)-ratioBirdHeight((Bird*)bird->first->data), ratioPipeHeight((Bird*)bird->first->data, &l), hit_saved);
+                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)birds->first->data, &camera, &l), ratioPipeHeight((Bird*)birds->first->data, &l)-ratioBirdHeight((Bird*)birds->first->data), ratioPipeHeight((Bird*)birds->first->data, &l), hit_saved);
 
                         if(last_action[0] != -1)
                             event = last_action[0];
                     }
+
                     if(mode == IA1 && ++action_break >= nb_fps_before_next_action)
                     {
                         action_break=0;
@@ -249,62 +297,70 @@ int main(int argc, char ** argv)
                     }
 
                     /* Update of the model */
-                    setOnFirstElement(bird);
-                    while(!outOfGenericList(bird))
+                    setOnFirstElement(birds);
+                    while (!outOfGenericList(birds))
                     {
-                        updateBird((Bird*)bird->current->data, event, &sound);
-                        nextElement(bird);
+                        updateBird((Bird*)birds->current->data, event, &sound);
+                        nextElement(birds);
                     }
+
                     deleteObstacle(&camera, &l);
                     if (createObstacle(&camera, &l, level, number, levelFromFile))
                         number++;
-                    setOnFirstElement(bird);
-                    score = updateScore(score, (Bird*)bird->current->data, savedObstacle, &sound);
-                    if(simplifiedMode == 0 && speedAcceleration == 1)
+
+                    setOnFirstElement(birds);
+                    score = updateScore(score, (Bird*)birds->current->data, savedObstacle, &sound);
+
+                    if (simplifiedMode == 0 && speedAcceleration == 1)
                         modifySpeed(score, &camera);
-                    cameraScrolling(&camera, bird);
-                    setOnFirstElement(bird);
-                    while(!outOfGenericList(bird))
+
+                    cameraScrolling(&camera, birds);
+                    setOnFirstElement(birds);
+
+                    while (!outOfGenericList(birds))
                     {
-                        if(detectHit((Bird*)bird->current->data, nextBirdObstacle(&l, (Bird*)bird->current->data), &sound))
-                            ((Bird*)bird->current->data)->dead = 1;
-                        nextElement(bird);
+                        if(detectHit((Bird*)birds->current->data, nextBirdObstacle(&l, (Bird*)birds->current->data), &sound))
+                            ((Bird*)birds->current->data)->dead = 1;
+                        nextElement(birds);
                     }
+
                     hit = 1;
-                    setOnFirstElement(bird);
-                    while(!outOfGenericList(bird))
+                    setOnFirstElement(birds);
+                    while(!outOfGenericList(birds))
                     {
-                        if(((Bird*)bird->current->data)->dead == 0)
+                        if(((Bird*)birds->current->data)->dead == 0)
                             hit = 0;
-                        nextElement(bird);
+                        nextElement(birds);
                     }
                     hit_saved = hit;
-                    savedObstacle = nextBirdObstacle(&l, (Bird*)bird->first->data);
+                    savedObstacle = nextBirdObstacle(&l, (Bird*)birds->first->data);
 
                     /* Update of the view */
-                    if(simplifiedMode)
-                        displayGame(renderer, bird, &l, &camera, score, big_font, &sprites);
+                    if (simplifiedMode)
+                        displayGame(renderer, birds, &l, &camera, score, big_font, &sprites);
                     else
-                        displayRealGame(renderer, bird, &l, &camera, score, big_font, &sprites);
+                        displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+
                     drawPause(renderer, &camera, &sprites);
                     SDL_RenderPresent(renderer);
                     playSound(sound, jump_sound, obstacle_sound, death_sound);
+
                     lastFrame = SDL_GetTicks();
                 }
                 saveScore(scoreFile, score);
             }
 
-            if(hit && mode == PLAY)
+            if (hit && mode == PLAY)
             {
-                while(birdFall((Bird*)bird->first->data, simplifiedMode))
+                while (birdsFall((Bird*)birds->first->data, simplifiedMode))
                 {
-                    displayRealGame(renderer, bird, &l, &camera, score, big_font, &sprites);
+                    displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
                     SDL_RenderPresent(renderer);
                     SDL_Delay(16);
                 }
 
-                if(simplifiedMode > 0)
-               {
+                if (simplifiedMode > 0)
+                {
                     SDL_Delay(200);
                     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                     SDL_RenderClear(renderer);
@@ -312,35 +368,40 @@ int main(int argc, char ** argv)
                     displayBestScore(renderer, big_font, scoreFile);
                     SDL_RenderPresent(renderer);
                     SDL_Delay(1000);
-               }
+                }
                 emptyEvent();
 
                 Action end_of_game = NOTHING;
-                while(end_of_game == NOTHING)
+                while (end_of_game == NOTHING)
                 {
                     SDL_RenderClear(renderer);
-                    if(simplifiedMode == 0)
+
+                    if (simplifiedMode == 0)
                         drawBackground(renderer, &camera, &sprites);
+
                     end_of_game = endOfGame(renderer, &camera, medium_font);
+
                     displayScore(renderer, score, big_font);
                     displayBestScore(renderer, big_font, scoreFile);
                     SDL_RenderPresent(renderer);
                 }
-                if(end_of_game == MENU || end_of_game == QUIT)
+
+                if (end_of_game == MENU || end_of_game == QUIT)
                     running = 0;
-                if(end_of_game == QUIT)
+                if (end_of_game == QUIT)
                     menu_loop = 0;
             }
-            freeGenericList(bird);
-            if(hit && mode == IA1)
+            freeGenericList(birds);
+
+            if (hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);
         }
-
     }
 
     /* Quit the game */
-    if(ia1 > 0)
+    if (ia1 > 0)
         freeMatrixQ(matrixQ);
+
     closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font);
     quitGame(window, renderer);
 

@@ -21,6 +21,29 @@ void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int 
     setOnFirstElement(bird);
 }
 
+void startGameNeat(GenericList * birds, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool)
+{
+    int i;
+    Bird * bird = NULL;
+
+    for (i = 0; i < pool->nb_species; ++i) {
+        setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes)) {
+            generateGenome(getCurrent(pool->species[i].genomes));
+
+            if ((bird = newBird(r, getCurrent(pool->species[i].genomes))) == NULL)
+                return;
+
+            add(birds, bird);
+
+            nextElement(pool->species[i].genomes);
+        }
+    }
+
+    initCamera(camera, 0, LOW);
+    initList(l, level, levelFromFile);
+}
+
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
