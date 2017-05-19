@@ -30,7 +30,7 @@ typedef struct {
     int nb_mutations;                       /*!< the number of mutations of this Genome */
     int mutations_history[N_MAX_MUTATIONS]; /*!< the mutations history of this Genome */
     int max_neurons;
-} Genome;
+}Genome;
 
 Genome * newGenome(int * innovation);
 void * cloneGenome(void * genome);
