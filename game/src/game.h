@@ -10,8 +10,8 @@
 #include "obstacle.h"
 #include "camera.h"
 #include "list.h"
-#include "generic_list.h"
 
+#include "../../ai/neat/src/generic_list.h"
 #include "../../ai/neat/src/population.h"
 
 #include <stdlib.h>

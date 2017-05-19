@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "generic_list.h"
 
 int readLevel(FILE * f, int number);
 int readConfig(FILE * f, char * config, char * type);

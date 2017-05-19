@@ -6,7 +6,7 @@
 #define CONSTANTS_H
 
 #include <SDL2/SDL.h>
-#include "generic_list.h"
+#include "../../ai/neat/src/generic_list.h"
 
 
 /*! \def SCREEN_WIDTH
