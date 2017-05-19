@@ -30,7 +30,6 @@ Genome * newGenome(int * innovation) {
     new_genome->fitness = 0.0;
 
     // initializing mutation rates
-
     new_genome->mutation_rates[0] = POINT_MUTATION_RATE;
     new_genome->mutation_rates[1] = LINK_MUTATION_RATE;
     new_genome->mutation_rates[2] = BIAS_MUTATION_RATE;
