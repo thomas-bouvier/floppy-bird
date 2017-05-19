@@ -205,14 +205,6 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 }
 
 /*!
-* \brief Allow the bird to jump
-* \param[out] event the action to be changed in status "jump"
-*/
-void jump(Action * event)
-{
-    *event = JUMP;
-}
-/*!
 * \brief Add a bird in the list of bird
 * \param[out] bird the list of bird
 *
