@@ -21,7 +21,7 @@ void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int 
     setOnFirstElement(bird);
 }
 
-void startGameNeat(GenericList * birds, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool)
+void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool)
 {
     int i;
     Bird * bird = NULL;
@@ -31,10 +31,10 @@ void startGameNeat(GenericList * birds, Camera * camera, List * l, FILE * level,
         while (!outOfGenericList(pool->species[i].genomes)) {
             generateGenome(getCurrent(pool->species[i].genomes));
 
-            if ((bird = newBird(r, getCurrent(pool->species[i].genomes))) == NULL)
+            if ((bird = initBird()) == NULL)
                 return;
 
-            add(birds, bird);
+            add(bird_list, bird);
 
             nextElement(pool->species[i].genomes);
         }
@@ -227,14 +227,6 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
     return nextBirdObstacle(l, bird)->lower.x - camera->x;
 }
 
-/*!
-* \brief Allow the bird to jump
-* \param[out] event the action to be changed in status "jump"
-*/
-void jump(Action * event)
-{
-    *event = JUMP;
-}
 /*!
 * \brief Add a bird in the list of bird
 * \param[out] bird the list of bird

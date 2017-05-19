@@ -1,5 +1,18 @@
 ﻿# reports
 
+## Compte-rendu réunion n°7 (28/05/2017)
+
+La deadline pour le rendu du code est fixée au mercredi 31/05. Le but est désormais de finaliser le projet.
+
+Le rapport, à rendre pour le 26/05, ne devrait pas comprendre de code, mais plutôt des structures de données, diagrammes, afin de cerner l'organisation du code.
+
+Un seul Doxyfile est à fournir pour tout le projet. Il devra être placé à la racine du projet, avec un scan récursif pour obtenir tout le code.
+
+Les tests unitaires sont prévus dans la notation pour la partie modèle du jeu : gcov doit atteindre 100% dessus en priorité, le reste des tests unitaires sont uniquement du bonus (sur les IA notamment).
+
+Le Makefile a été revu, il fonctionne maintenant avec la méthode du cours (même s'ilrestait correct avant).
+
+
 ## Compte-rendu réunion n°6 (27/04/2017)
 
 La fuite mémoire peut-être liée à la version d'Ubuntu utilisée, pas de fuite avec la 14.04.
@@ -9,6 +22,7 @@ La couverture gcov 100% est toujours à atteindre.
 Le Makefile est à tester avec la méthode du cours, noter les erreurs si cette méthode ne fonctionne pas.
 
 Les vidéos doivent être ajouter au git dans une branche Annexe.
+
 Il est possible d'optimiser le traitement d'images en utilisant la librairie ROS.
 
 Le rapport est à réaliser pour la prochaine réunion.

@@ -38,9 +38,10 @@ int main(int argc, char ** argv)
     Mode mode;
     int number;
 
-    GenericList * birds = NULL;
+    List obstacle_list;
+    GenericList * bird_list = NULL;
+
     Camera camera;
-    List l;
 
     FILE * config = NULL;
     FILE * level = NULL;
@@ -202,17 +203,17 @@ int main(int argc, char ** argv)
         }
 
         while (running) {
-            birds = newGenericList(NULL, (FreeFunction) freeBird);
-            initGenericList(birds);
+            bird_list = newGenericList(NULL, (FreeFunction)freeBird);
+            initGenericList(bird_list);
 
             score = 0;
 
             if (mode == IA2)
-                startGameNeat(birds, &camera, &l, level, levelFromFile, pool);
+                startGameNeat(bird_list, &camera, &obstacle_list, level, levelFromFile, pool);
             else
-                startGame(birds, &camera, &l, level, levelFromFile);
+                startGame(bird_list, &camera, &obstacle_list, level, levelFromFile);
 
-            savedObstacle = nextBirdObstacle(&l, (Bird*)birds->first->data);
+            savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
 
             if (simplifiedMode)
             {
@@ -225,10 +226,10 @@ int main(int argc, char ** argv)
                 if (mode == IA2)
                     running = 1;
 
-                displayGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+                displayGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
             }
             else
-                displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+                displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
 
             if (mode == PLAY) /* Wait the first jump to start the game*/
             {
@@ -241,8 +242,16 @@ int main(int argc, char ** argv)
                 {
                     init = detectTouch();
 
-                    if (init == JUMP) {
-                        ((Bird*)birds->first->data)->dir_y = BIRD_JUMP;
+                    if(init == JUMP)
+                    {
+                        /* Faire sauter toute la liste */
+                        setOnFirstElement(bird_list);
+                        while(!outOfGenericList(bird_list))
+                        {
+                            ((Bird*)bird_list->current->data)->dir_y = BIRD_JUMP;
+                            nextElement(bird_list);
+                        }
+
                         playSound(JUMPSOUND, jump_sound, obstacle_sound, death_sound);
                     }
 
@@ -284,7 +293,8 @@ int main(int argc, char ** argv)
 
                     if (mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
-                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)birds->first->data, &camera, &l), ratioPipeHeight((Bird*)birds->first->data, &l)-ratioBirdHeight((Bird*)birds->first->data), ratioPipeHeight((Bird*)birds->first->data, &l), hit_saved);
+
+                        q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)bird_list->first->data, &camera, &obstacle_list), ratioPipeHeight((Bird*)bird_list->first->data, &obstacle_list)-ratioBirdHeight((Bird*)bird_list->first->data), ratioPipeHeight((Bird*)bird_list->first->data, &obstacle_list), hit_saved);
 
                         if(last_action[0] != -1)
                             event = last_action[0];
@@ -297,49 +307,51 @@ int main(int argc, char ** argv)
                     }
 
                     /* Update of the model */
-                    setOnFirstElement(birds);
-                    while (!outOfGenericList(birds))
+
+                    setOnFirstElement(bird_list);
+                    while (!outOfGenericList(bird_list))
                     {
-                        updateBird((Bird*)birds->current->data, event, &sound);
-                        nextElement(birds);
+                        updateBird((Bird*)bird_list->current->data, event, &sound);
+                        nextElement(bird_list);
                     }
 
-                    deleteObstacle(&camera, &l);
-                    if (createObstacle(&camera, &l, level, number, levelFromFile))
+                    deleteObstacle(&camera, &obstacle_list);
+                    if (createObstacle(&camera, &obstacle_list, level, number, levelFromFile))
                         number++;
 
-                    setOnFirstElement(birds);
-                    score = updateScore(score, (Bird*)birds->current->data, savedObstacle, &sound);
+                    setOnFirstElement(bird_list);
+                    score = updateScore(score, (Bird*)bird_list->current->data, savedObstacle, &sound);
 
                     if (simplifiedMode == 0 && speedAcceleration == 1)
                         modifySpeed(score, &camera);
 
-                    cameraScrolling(&camera, birds);
-                    setOnFirstElement(birds);
+                    cameraScrolling(&camera, bird_list);
+                    setOnFirstElement(bird_list);
 
-                    while (!outOfGenericList(birds))
+                    while (!outOfGenericList(bird_list))
                     {
-                        if(detectHit((Bird*)birds->current->data, nextBirdObstacle(&l, (Bird*)birds->current->data), &sound))
-                            ((Bird*)birds->current->data)->dead = 1;
-                        nextElement(birds);
+                        if(detectHit((Bird*)bird_list->current->data, nextBirdObstacle(&obstacle_list, (Bird*)bird_list->current->data), &sound))
+                            ((Bird*)bird_list->current->data)->dead = 1;
+                        nextElement(bird_list);
                     }
 
                     hit = 1;
-                    setOnFirstElement(birds);
-                    while(!outOfGenericList(birds))
+
+                    setOnFirstElement(bird_list);
+                    while(!outOfGenericList(bird_list))
                     {
-                        if(((Bird*)birds->current->data)->dead == 0)
+                        if(((Bird*)bird_list->current->data)->dead == 0)
                             hit = 0;
-                        nextElement(birds);
+                        nextElement(bird_list);
                     }
                     hit_saved = hit;
-                    savedObstacle = nextBirdObstacle(&l, (Bird*)birds->first->data);
+                    savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
 
                     /* Update of the view */
                     if (simplifiedMode)
-                        displayGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+                        displayGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
                     else
-                        displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+                        displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
 
                     drawPause(renderer, &camera, &sprites);
                     SDL_RenderPresent(renderer);
@@ -352,9 +364,10 @@ int main(int argc, char ** argv)
 
             if (hit && mode == PLAY)
             {
-                while (birdsFall((Bird*)birds->first->data, simplifiedMode))
+                while (birdFall((Bird*)bird_list->first->data, simplifiedMode))
                 {
-                    displayRealGame(renderer, birds, &l, &camera, score, big_font, &sprites);
+                    displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+
                     SDL_RenderPresent(renderer);
                     SDL_Delay(16);
                 }
@@ -391,7 +404,8 @@ int main(int argc, char ** argv)
                 if (end_of_game == QUIT)
                     menu_loop = 0;
             }
-            freeGenericList(birds);
+
+            freeGenericList(bird_list);
 
             if (hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);

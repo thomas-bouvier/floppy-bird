@@ -11,10 +11,14 @@
 #include "camera.h"
 #include "list.h"
 #include "generic_list.h"
+
+#include "../../ai/neat/src/population.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
 void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile);
+void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool);
 void cameraScrolling(Camera * camera, GenericList * bird);
 void modifySpeed(int score, Camera * camera);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);
@@ -25,7 +29,6 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 int ratioBirdHeight(Bird * bird);
 int ratioPipeHeight (Bird * bird, List * l);
 int ratioPipeWidth (Bird * bird, Camera * camera, List * l);
-void jump(Action * event);
 void addBird(GenericList * bird);
 
 #endif // GAME_H
