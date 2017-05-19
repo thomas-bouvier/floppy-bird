@@ -46,6 +46,7 @@ struct MatingPool {
 };
 
 MatingPool * newMatingPool();
+
 void freeMatingPool(MatingPool * pool);
 
 int populateMatingPool(MatingPool * pool);

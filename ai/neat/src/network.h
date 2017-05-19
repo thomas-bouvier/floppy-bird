@@ -55,7 +55,6 @@ Neuron * newNeuron(NeuronType type);
 void * cloneNeuron(void * neuron);
 Neuron * cloneNeuronWithoutConnections(Neuron * neuron);
 void freeNeuron(void * neuron);
-
 int addNeuron(GenericList * neurons, Neuron * neuron);
 
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);

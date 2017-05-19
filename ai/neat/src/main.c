@@ -105,7 +105,6 @@ int main() {
   mutate(current_genome);
   mutate(current_genome);
   mutate(current_genome);
-  mutate(current_genome);
 
   Genome * clone = NULL;
 

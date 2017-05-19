@@ -1,7 +1,7 @@
 #include "network.h"
 
 /*!
-* \brief Create a Neuron
+* \brief Create a Neuron.
 * \param[in] type The NeuronType of the Neuron to be created
 * \return Return a new Neuron, or NULL if error
 */
@@ -28,7 +28,7 @@ Neuron * newNeuron(NeuronType type) {
 }
 
 /*!
-* \brief Clone the given Neuron
+* \brief Clone the given Neuron.
 * \param[in] neuron The Neuron to be cloned
 * \return Return a new Neuron, or NULL if error
 */

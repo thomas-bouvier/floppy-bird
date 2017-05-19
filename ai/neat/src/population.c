@@ -4,7 +4,7 @@ static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_
 static int compareFitnessCulling(const void * genome_1, const void * genome_2);
 
 /*!
-* \brief Create a MatingPool
+* \brief Create a MatingPool.
 * \return Return a MatingPool, NULL if error
 */
 MatingPool * newMatingPool() {
@@ -26,7 +26,7 @@ MatingPool * newMatingPool() {
 }
 
 /*!
-* \brief Free the given MatingPool
+* \brief Free the given MatingPool.
 * \param[out] pool the MatingPool to be freed
 */
 void freeMatingPool(MatingPool * pool) {
