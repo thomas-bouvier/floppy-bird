@@ -28,54 +28,6 @@ Neuron * newNeuron(NeuronType type) {
 }
 
 /*!
-* \brief Clone the given Neuron.
-* \param[in] neuron The Neuron to be cloned
-* \return Return a new Neuron, or NULL if error
-*/
-void * cloneNeuron(void * neuron) {
-    GenericList * new_connection_genes_list = NULL;
-    Neuron * new_neuron = NULL;
-
-    if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
-        fprintf(stderr, "Error while allocating memory for new Neuron\n");
-        return NULL;
-    }
-
-    if ((new_connection_genes_list = cloneGenericList(((Neuron *) neuron)->connection_genes_input)) == (GenericList *) NULL)
-        return NULL;
-
-    new_neuron->connection_genes_input = new_connection_genes_list;
-
-    new_neuron->id = ((Neuron *) neuron)->id;
-    new_neuron->type = ((Neuron *) neuron)->type;
-    new_neuron->value = ((Neuron *) neuron)->value;
-
-    return new_neuron;
-}
-
-Neuron * cloneNeuronWithoutConnections(Neuron * neuron) {
-    GenericList * new_connection_genes_list = NULL;
-    Neuron * new_neuron = NULL;
-
-    if ((new_neuron = (Neuron *) malloc(sizeof(Neuron))) == (Neuron *) NULL) {
-        fprintf(stderr, "Error while allocating memory for new Neuron\n");
-        return NULL;
-    }
-
-    if ((new_connection_genes_list = newGenericList(cloneConnectionGene, freeConnectionGene)) == (GenericList *) NULL)
-        return NULL;
-
-    initGenericList(new_connection_genes_list);
-    new_neuron->connection_genes_input = new_connection_genes_list;
-
-    new_neuron->id = ((Neuron *) neuron)->id;
-    new_neuron->type = ((Neuron *) neuron)->type;
-    new_neuron->value = ((Neuron *) neuron)->value;
-
-    return new_neuron;
-}
-
-/*!
 * \brief Delete the specified Neuron.
 * \param[out] neuron the Neuron to be freed
 */

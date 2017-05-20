@@ -34,10 +34,11 @@ void printText(SDL_Renderer * renderer, char * text, int abscissa, int ordinate,
 * \param[out] levelFromFile allow to choose if the obstacles are predefined are random
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \param[out] speedAcceleration allow to choose if the player want an acceleration during the game
+* \param[out] gapModification allow to choose if the gap between two pipes of an obstacle is modified or not
 * \param[in] sprites the structure containing all the image of the game
 * \return the choice of mode wanted by the player
 */
-int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, Sprites * sprites)
+int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF_Font * medium_font, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, int * gapModification, Sprites * sprites)
 {
     SDL_RenderClear(renderer);
     drawBackground(renderer, camera, sprites);
@@ -79,14 +80,22 @@ int  mainMenu(SDL_Renderer * renderer, Camera * camera, TTF_Font * big_font, TTF
         printText(renderer, "Yes", 450, 590, medium_font);
     else
         printText(renderer, "No", 450, 590, medium_font);
-    /* Quit game */
-    if(event.motion.x > 700 && event.motion.x < 900 && event.motion.y > 650 && event.motion.y < 691)
+    /* Variable gaps */
+    printText(renderer, "Variable gaps :", 100, 660, medium_font);
+    if(event.motion.x > 450 && event.motion.x < 519 && event.motion.y > 660 && event.motion.y < 701)
         TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
-    printText(renderer, "Quit game", 700, 650, medium_font);
+    if((*gapModification) == 1)
+        printText(renderer, "Yes", 450, 660, medium_font);
+    else
+        printText(renderer, "No", 450, 660, medium_font);
+    /* Quit game */
+    if(event.motion.x > 700 && event.motion.x < 900 && event.motion.y > 660 && event.motion.y < 701)
+        TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);
+    printText(renderer, "Quit game", 700, 660, medium_font);
     /* Displaying */
     SDL_RenderPresent(renderer);
     SDL_Delay(10);
-    return actionOnMainMenu(event, levelFromFile, simplifiedMode, speedAcceleration);
+    return actionOnMainMenu(event, levelFromFile, simplifiedMode, speedAcceleration, gapModification);
 }
 
 /*!
@@ -114,7 +123,7 @@ int endOfGame(SDL_Renderer * renderer, Camera * camera, TTF_Font * medium_font)
 {
     SDL_Event event;
     SDL_PollEvent(&event);
-    /*if(event.motion.x > 600 && event.motion.x < 800 && event.motion.y > 650 && event.motion.y < 691)
+    /*if(event.motion.x > 600 && event.motion.x < 921 && event.motion.y > 650 && event.motion.y < 691)
         TTF_SetFontStyle(medium_font, TTF_STYLE_ITALIC);*/
     printText(renderer, "Return to menu", 600, 650, medium_font);
     SDL_Delay(10);

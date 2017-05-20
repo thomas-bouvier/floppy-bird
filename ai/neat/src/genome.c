@@ -19,7 +19,7 @@ Genome * newGenome(int * innovation) {
         return NULL;
     }
 
-    new_neurons_list = newGenericList(cloneNeuron, freeNeuron);
+    new_neurons_list = newGenericList(NULL, freeNeuron);
     initGenericList(new_neurons_list);
 
     new_connection_genes_list = newGenericList(cloneConnectionGene, freeConnectionGene);
@@ -60,9 +60,7 @@ void * cloneGenome(void * genome) {
         return NULL;
     }
 
-    //new_neurons_list = cloneGenericList(((Genome *) genome)->neurons);
-
-    new_neurons_list = newGenericList(cloneNeuron, freeNeuron);
+    new_neurons_list = newGenericList(NULL, freeNeuron);
     initGenericList(new_neurons_list);
 
     new_connection_genes_list = cloneGenericList(((Genome *) genome)->connection_genes);

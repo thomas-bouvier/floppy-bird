@@ -52,8 +52,6 @@ struct Neuron {
 };
 
 Neuron * newNeuron(NeuronType type);
-void * cloneNeuron(void * neuron);
-Neuron * cloneNeuronWithoutConnections(Neuron * neuron);
 void freeNeuron(void * neuron);
 int addNeuron(GenericList * neurons, Neuron * neuron);
 
