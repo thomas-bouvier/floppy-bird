@@ -23,6 +23,7 @@ typedef struct{
     int dead;                   /*!< the state of the bird (1 for dead, 0 for alive) */
     int must_jump;              /*!< the action of the bird (1 it has to jump, 0 else) */
     int flaps;                  /*!< the number of flaps done by this Bird */
+    int score;                  /*!< the number of obstacles this Bird has passed */
     Genome * genome;            /*!< the Genome element attached to this Bird */
 } Bird;
 

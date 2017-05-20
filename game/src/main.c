@@ -113,7 +113,9 @@ int main(int argc, char ** argv)
     int simplifiedMode = 0;
     /* if speedAcceleration == 1, the game is accelerated ; if not, the speed stay constant */
     int speedAcceleration = 0;
+
     int score;
+    int max_score;
 
     Obstacle * savedObstacle = NULL;
 
@@ -215,7 +217,10 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
+        /*
         mode = IA2;
+        levelFromFile = 0;
+        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -266,7 +271,12 @@ int main(int argc, char ** argv)
             bird_list = newGenericList(NULL, (FreeFunction) freeBird);
             initGenericList(bird_list);
 
+            /* reseting scores */
+
             score = 0;
+            max_score = 0;
+
+            /* game initialization */
 
             if (mode == IA2) {
                 startGameNeat(bird_list, &camera, &obstacle_list, level, levelFromFile, pool);
@@ -294,10 +304,10 @@ int main(int argc, char ** argv)
                 if (mode == IA2)
                     running = 1;
 
-                displayGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+                displayGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
             }
             else
-                displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+                displayRealGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
 
             /* If we're in PLAY mode, wait the first jump to start the game */
 
@@ -412,11 +422,20 @@ int main(int argc, char ** argv)
                     if (createObstacle(&camera, &obstacle_list, level, number, levelFromFile))
                         number++;
 
+                    /* score */
+
                     setOnFirstElement(bird_list);
-                    score = updateScore(score, (Bird*) bird_list->current->data, savedObstacle, &sound);
+                    while (!outOfGenericList(bird_list)) {
+                        score = updateScore(((Bird *) getCurrent(bird_list))->score, (Bird *) getCurrent(bird_list), savedObstacle, &sound);
+                        ((Bird *) getCurrent(bird_list))->score = score;
+
+                        if (score > max_score) max_score = score;
+
+                        nextElement(bird_list);
+                    }
 
                     if (simplifiedMode == 0 && speedAcceleration == 1)
-                        modifySpeed(score, &camera);
+                        modifySpeed(max_score, &camera);
 
                     cameraScrolling(&camera, bird_list);
                     setOnFirstElement(bird_list);
@@ -465,9 +484,9 @@ int main(int argc, char ** argv)
                     /* Update of the view */
 
                     if (simplifiedMode)
-                        displayGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+                        displayGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
                     else
-                        displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+                        displayRealGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
 
                     drawPause(renderer, &camera, &sprites);
                     SDL_RenderPresent(renderer);
@@ -475,7 +494,8 @@ int main(int argc, char ** argv)
 
                     lastFrame = SDL_GetTicks();
                 }
-                saveScore(scoreFile, score);
+
+                saveScore(scoreFile, max_score);
             }
 
             /* all birds are dead, and we're in PLAY mode */
@@ -484,7 +504,7 @@ int main(int argc, char ** argv)
             {
                 while (birdFall((Bird*)bird_list->first->data, simplifiedMode))
                 {
-                    displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
+                    displayRealGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
 
                     SDL_RenderPresent(renderer);
                     SDL_Delay(16);
@@ -495,7 +515,7 @@ int main(int argc, char ** argv)
                     SDL_Delay(200);
                     SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
                     SDL_RenderClear(renderer);
-                    displayScore(renderer, score, big_font);
+                    displayScore(renderer, max_score, big_font);
                     displayBestScore(renderer, big_font, scoreFile);
                     SDL_RenderPresent(renderer);
                     SDL_Delay(1000);
@@ -512,7 +532,7 @@ int main(int argc, char ** argv)
 
                     end_of_game = endOfGame(renderer, &camera, medium_font);
 
-                    displayScore(renderer, score, big_font);
+                    displayScore(renderer, max_score, big_font);
                     displayBestScore(renderer, big_font, scoreFile);
                     SDL_RenderPresent(renderer);
                 }

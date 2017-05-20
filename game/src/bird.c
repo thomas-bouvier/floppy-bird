@@ -25,6 +25,7 @@ Bird * initBird(Genome * genome)
     new_bird->dead = 0;
     new_bird->must_jump = 0;
     new_bird->flaps = 0;
+    new_bird->score = 0;
     new_bird->genome = genome;
 
     return new_bird;
@@ -74,6 +75,8 @@ void updateBird(Bird * bird, int t, Sound * sound)
 /*!
 * \brief Deallocate memory of the bird
 * \param[out] bird the bird to deallocate
+*
+* Note that the Genome of the Bird is not freed.
 */
 void freeBird(Bird * bird)
 {
