@@ -267,8 +267,9 @@ int main(int argc, char ** argv)
                         number++;
                     setOnFirstElement(bird_list);
                     score = updateScore(score, (Bird*)bird_list->current->data, savedObstacle, &sound);
-                    if(simplifiedMode == 0 && speedAcceleration == 1)
+                    if(speedAcceleration == 1)
                         modifySpeed(score, &camera);
+                    modifyGap(score);
                     cameraScrolling(&camera, bird_list);
                     setOnFirstElement(bird_list);
                     while(!outOfGenericList(bird_list))

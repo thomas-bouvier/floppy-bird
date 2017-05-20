@@ -168,6 +168,22 @@ enum Speed
 };
 
 /*!
+* The different gap possible between the two pipes of an obstacle
+*/
+typedef enum  Pipe_Gap Pipe_Gap;
+
+/*!
+* \enum Pipe_Gap
+* \brief The different gap possible between the two pipes of an obstacle
+*/
+enum Pipe_Gap
+{
+    LITTLE = 180,           /*! little gap */
+    MEDIUM = 200,           /*! medium gap */
+    BIG = 230,              /*! big gap */
+};
+
+/*!
 * \struct Sprites constants.h
 * \brief The structure containing all the image useful to the game
 */

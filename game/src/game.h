@@ -16,7 +16,6 @@
 
 void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile);
 void cameraScrolling(Camera * camera, GenericList * bird);
-void modifySpeed(int score, Camera * camera);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);
 int deleteObstacle(Camera * camera, List * l);
 int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound);

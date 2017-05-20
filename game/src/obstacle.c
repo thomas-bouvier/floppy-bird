@@ -4,6 +4,13 @@
 */
 #include "obstacle.h"
 
+int obstacle_gap = BIG;
+
+/*!
+* The possible gaps for an obstacle
+*/
+const int gap[3] = {BIG, MEDIUM, LITTLE};
+
 /*!
 * The possible sizes for an obstacle
 */
@@ -24,11 +31,11 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
     	fprintf(stderr, "Obstacle created has a wrong value of height_lower\n");
         return NULL;
     }
-    if(obstacle_gap < OBSTACLE_GAP)
+    /*if(obstacle_gap < OBSTACLE_GAP)
     {
     	fprintf(stderr, "Obstacle created has a wrong value of gap\n");
         return NULL;
-    }
+    }*/
     Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
     if(new_obstacle == NULL)
     {
@@ -80,7 +87,7 @@ void freeObstacle(Obstacle * obstacle)
 void createObstacleFromFile(FILE * level, int number, List * l)
 {
     int heightPipe = readLevel(level, number);
-    Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
+    Obstacle * newObs = newObstacle(number, heightPipe, obstacle_gap, NULL);
     insertLast(l, newObs);
 }
 
@@ -92,9 +99,10 @@ void createObstacleFromFile(FILE * level, int number, List * l)
 void createObstacleRandomly(int number, List * l)
 {
     int heightPipe = pipes_height[rand() % NUMBER_OF_OBSTACLE_SIZES];
-    Obstacle * newObs = newObstacle(number, heightPipe, OBSTACLE_GAP, NULL);
+    Obstacle * newObs = newObstacle(number, heightPipe, obstacle_gap, NULL);
     insertLast(l, newObs);
 }
+
 /*!
 * \brief Indicate if the bird passed the next obstacle
 * \param[in] bird the bird that determines the next obstacle
@@ -109,4 +117,18 @@ int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
         return 1;
     }
     return 0;
+}
+
+/*!
+* \brief Modify the gap between two pipes of an obstacle
+* \param[in] score the score of the player
+*/
+void modifyGap(int score)
+{
+    if(score > 70)
+        obstacle_gap = gap[rand() % 3];
+    else if(score > 20)
+        obstacle_gap = gap[rand() % 2];
+    else
+        obstacle_gap = BIG;
 }
