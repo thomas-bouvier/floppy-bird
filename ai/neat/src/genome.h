@@ -14,7 +14,10 @@
 #include "network.h"
 #include "neat_utils.h"
 
-#define fast_sigmoid(x) ((x) / (1 + fabs(x)))
+#define fast_sigmoid(x) ((x) / (1.0 + fabs(x)))
+#define real_sigmoid_1(x) (2.0 / 1.0 + exp((-4.9) * (x)) - 1.0)
+#define real_sigmoid_2(x) (2.0 / 1.0 + exp((-1.0) * (x)) - 1.0)
+#define real_sigmoid_3(x) (1.0 / (1.0 + exp(-(x))));
 
 /*!
 * \struct Genome genome.h
