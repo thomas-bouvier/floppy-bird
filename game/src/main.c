@@ -208,7 +208,15 @@ int main(int argc, char ** argv)
             score = 0;
 
             if (mode == IA2)
+            {
                 startGameNeat(bird_list, &camera, &obstacle_list, level, levelFromFile, pool);
+                setOnFirstElement(bird_list);
+                while(!outOfGenericList(bird_list))
+                {
+                    addBirdSprite(config, &sprites, renderer);
+                    nextElement(bird_list);
+                }
+            }
             else
                 startGame(bird_list, &camera, &obstacle_list, level, levelFromFile);
 
@@ -307,11 +315,27 @@ int main(int argc, char ** argv)
 
                     /* Update of the model */
 
+
                     setOnFirstElement(bird_list);
-                    while (!outOfGenericList(bird_list))
+                    if(mode == IA2)
                     {
-                        updateBird((Bird*)bird_list->current->data, event, &sound);
-                        nextElement(bird_list);
+                        while(!outOfGenericList(bird_list))
+                        {
+                            if(1) /*j'ai pas réussi à bien appeler la fonction evaluate */
+                                updateBird((Bird*)getCurrent(bird_list), JUMP, &sound);
+                            else
+                                updateBird((Bird*)getCurrent(bird_list), NOTHING, &sound);
+
+                            nextElement(bird_list);
+                        }
+                    }
+                    else
+                    {
+                        while (!outOfGenericList(bird_list))
+                        {
+                            updateBird((Bird*)bird_list->current->data, event, &sound);
+                            nextElement(bird_list);
+                        }
                     }
 
                     deleteObstacle(&camera, &obstacle_list);
