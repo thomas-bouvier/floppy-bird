@@ -317,13 +317,13 @@ int main(int argc, char ** argv)
 
 
                     setOnFirstElement(bird_list);
-                    if(mode == IA2)
+                    if (mode == IA2)
                     {
                         while(!outOfGenericList(bird_list))
                         {
-                            Bird * bird = (Bird *)getCurrent(bird_list);
+                            Bird * bird = (Bird *) getCurrent(bird_list);
 
-                            if(evaluate(genome, ratioBirdHeight(bird),ratioPipeWidth(bird, &camera, &l), ratioPipeHeight(bird, &l))); /*j'ai pas réussi à bien appeler la fonction evaluate */
+                            if (evaluate(bird->genome, ratioBirdHeight(bird),ratioPipeWidth(bird, &camera, &obstacle_list), ratioPipeHeight(bird, &obstacle_list)))
                                 updateBird(bird, JUMP, &sound);
                             else
                                 updateBird(bird, NOTHING, &sound);

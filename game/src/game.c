@@ -14,13 +14,22 @@
 */
 void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
 {
-    Bird * new_bird = initBird();
+    Bird * new_bird = initBird(NULL);
     add(bird, new_bird);
     initCamera(camera, 0, LOW);
     initList(l, level, levelFromFile);
     setOnFirstElement(bird);
 }
 
+/*!
+* \brief Allocate all the object of the game in mode IA2 (neat).
+* \param[out] bird the list of bird to allocate
+* \param[out] camera the camera to allocate
+* \param[out] l the list of obstacles
+* \param[in] level the file that contains the height of the obstacles
+* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+* \param[out] pool the MatingPool
+*/
 void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool)
 {
     int i;
