@@ -73,23 +73,6 @@ void cameraScrolling(Camera * camera, GenericList * bird)
 }
 
 /*!
-* \brief Modifiy the speed of game if it is run in normal mode
-* \param[in] score the score of the player
-* \param[out] camera the camera whose speed is changed
-*/
-void modifySpeed(int score, Camera * camera)
-{
-    if(score > 60)
-        camera->speed = EXTREME;
-    else if(score > 40)
-        camera->speed = HIGH;
-    else if(score > 20)
-        camera->speed = NORMAL;
-    else
-        camera->speed = LOW;
-}
-
-/*!
 * \brief Create an obstacle when the distance between two obstacle is reached
 * \param[in] camera the view of the game
 * \param[out] l the list of obstacles
