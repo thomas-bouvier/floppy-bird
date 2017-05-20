@@ -213,7 +213,7 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        while ((mode != PLAY && mode != IA1) && init != QUIT)
+        while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
             mode = WAIT;
             mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &speedAcceleration, &sprites);
@@ -245,10 +245,8 @@ int main(int argc, char ** argv)
 
             pool = newMatingPool();
 
-            if (pool == (MatingPool *) NULL) {
-                fprintf(stderr, "Error\n");
+            if (pool == (MatingPool *) NULL)
                 return EXIT_FAILURE;
-            }
 
             if (!populateMatingPool(pool))
                 return EXIT_FAILURE;
@@ -339,7 +337,9 @@ int main(int argc, char ** argv)
 
             ticks = 0;
 
-            while(!hit && running)
+            /* while the game is running and the birds are not all dead */
+
+            while (!hit && running)
             {
                 for (i = 0; i < (SDL_GetTicks() - lastFrame) / (1000 / FRAME_PER_SECOND); ++i)
                 {
@@ -347,9 +347,9 @@ int main(int argc, char ** argv)
 
                     Action event = detectTouch();
                     sound = NOSOUND;
-                    if(event == PAUSE)
+                    if (event == PAUSE)
                     {
-                        while(event == PAUSE)
+                        while (event == PAUSE)
                         {
                             pauseMenu(renderer, &camera, &sprites);
                             event = actionOnPauseMenu();
@@ -361,9 +361,10 @@ int main(int argc, char ** argv)
                     if (event == QUIT)
                         menu_loop = 0;
 
+                    /* IA1 */
+
                     if (mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
-
                         q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)bird_list->first->data, &camera, &obstacle_list), ratioPipeHeight((Bird*)bird_list->first->data, &obstacle_list)-ratioBirdHeight((Bird*)bird_list->first->data), ratioPipeHeight((Bird*)bird_list->first->data, &obstacle_list), hit_saved);
 
                         if(last_action[0] != -1)
@@ -417,8 +418,9 @@ int main(int argc, char ** argv)
 
                     while (!outOfGenericList(bird_list))
                     {
-                        if(detectHit((Bird*)bird_list->current->data, nextBirdObstacle(&obstacle_list, (Bird*)bird_list->current->data), &sound))
-                            ((Bird*)bird_list->current->data)->dead = 1;
+                        if (detectHit((Bird*)bird_list->current->data, nextBirdObstacle(&obstacle_list, (Bird*)bird_list->current->data), &sound))
+                            ((Bird*) bird_list->current->data)->dead = 1;
+
                         nextElement(bird_list);
                     }
 
@@ -442,6 +444,7 @@ int main(int argc, char ** argv)
                     savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
 
                     /* Update of the view */
+
                     if (simplifiedMode)
                         displayGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
                     else

@@ -211,14 +211,18 @@ void displayRealGame(SDL_Renderer * renderer, GenericList * bird, List * l, Came
             ++i;
         }
     }
-    while(!outOfGenericList(bird))
+
+    while (!outOfGenericList(bird))
     {
-        drawRealBird(renderer, (Bird*)bird->current->data, camera, (SDL_Texture *)sprites->bird1->current->data, (SDL_Texture *)sprites->bird2->current->data, (SDL_Texture *)sprites->bird3->current->data);
+        if (!((Bird *) getCurrent(bird))->dead)
+            drawRealBird(renderer, (Bird*) bird->current->data, camera, (SDL_Texture *)sprites->bird1->current->data, (SDL_Texture *)sprites->bird2->current->data, (SDL_Texture *)sprites->bird3->current->data);
+
         nextElement(bird);
         nextElement(sprites->bird1);
         nextElement(sprites->bird2);
         nextElement(sprites->bird3);
     }
+
     displayScore(renderer, score, font);
 }
 /*!
