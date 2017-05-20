@@ -148,24 +148,24 @@ void drawForTI(SDL_Renderer * renderer, Camera * camera)
 * \brief Display the items of the game
 * \param[out] renderer the drawing target
 * \param[in] bird the list of bird to display
-* \param[in] l the list of obstacle
+* \param[in] obstacle_list the list of obstacle
 * \param[in] camera the view of the scene
 * \param[in] score the current score
 * \param[in] font the font used to write text
 * \param[in] sprites the structure containing all the image of the game
 */
-void displayGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
+void displayGame(SDL_Renderer * renderer, GenericList * bird, GenericList * obstacle_list, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;
-    setOnFirst(l);
+    setOnFirstElement(obstacle_list);
     setOnFirstElement(bird);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
     while (i < OBSTACLE_NUMBER)
     {
-        if (l->current->lower.x != 0){
-            drawObstacle(renderer, l->current, camera);
-            next(l);
+        if (((Obstacle *)getCurrent(obstacle_list))->lower.x != 0){
+            drawObstacle(renderer, getCurrent(obstacle_list), camera);
+            nextElement(obstacle_list);
             ++i;
         }
     }
@@ -181,16 +181,16 @@ void displayGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera *
 * \brief Display the items of the game with their real sprites
 * \param[out] renderer the drawing target
 * \param[in] bird the bird to display
-* \param[in] l the list of obstacle
+* \param[in] obstacle_list the list of obstacle
 * \param[in] camera the view of the scene
 * \param[in] score the current score
 * \param[in] font the font used to write text
 * \param[in] sprites the structure containing all the image of the game
 */
-void displayRealGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
+void displayRealGame(SDL_Renderer * renderer, GenericList * bird, GenericList * obstacle_list, Camera * camera, int score, TTF_Font * font, Sprites * sprites)
 {
     int i = 0;
-    setOnFirst(l);
+    setOnFirstElement(obstacle_list);
     setOnFirstElement(bird);
     setOnFirstElement(sprites->bird1);
     setOnFirstElement(sprites->bird2);
@@ -202,10 +202,10 @@ void displayRealGame(SDL_Renderer * renderer, GenericList * bird, List * l, Came
     drawBackground(renderer, camera, sprites);
     while (i < OBSTACLE_NUMBER)
     {
-        if (l->current->lower.x != 0)
+        if (((Obstacle *)getCurrent(obstacle_list))->lower.x != 0)
         {
-            drawRealObstacle(renderer, l->current, camera, sprites->pipe1->current->data, sprites->pipe2->current->data);
-            next(l);
+            drawRealObstacle(renderer, getCurrent(obstacle_list), camera, sprites->pipe1->current->data, sprites->pipe2->current->data);
+            nextElement(obstacle_list);
             nextElement(sprites->pipe1);
             nextElement(sprites->pipe2);
             ++i;
