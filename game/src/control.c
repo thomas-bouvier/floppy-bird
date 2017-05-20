@@ -93,9 +93,10 @@ int waitClick()
 * \param[out] levelFromFile allow to choose if the obstacles are predefined are random
 * \param[out] simplifiedMode allow to choose if the game is run in normal or simplified mode
 * \param[out] speedAcceleration allow to choose if the player want an acceleration during the game
+* \param[out] gapModification allow to choose if the gap between two pipes of an obstacle is modified or not
 * \return the choice of mode wanted by the player (WAIT, PLAY, IA1, IA2 or QUITGAME)
 */
-int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration)
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, int * gapModification)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
@@ -111,7 +112,9 @@ int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode,
             *levelFromFile = (*levelFromFile != 1);
         if(event.button.x > 450 && event.button.x < 519 && event.button.y > 590 && event.button.y < 631)
             *speedAcceleration = (*speedAcceleration != 1);
-        if(event.button.x > 700 && event.button.x < 900 && event.button.y > 650 && event.button.y < 691)
+        if(event.button.x > 450 && event.button.x < 519 && event.button.y > 660 && event.button.y < 701)
+            *gapModification = (*gapModification != 1);
+        if(event.button.x > 700 && event.button.x < 900 && event.button.y > 660 && event.button.y < 701)
             return QUITGAME;
         SDL_Delay(200);
     }
@@ -146,7 +149,7 @@ int actionAtEnd(SDL_Event event)
 {
     if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {
-        if(event.button.x > 600 && event.button.x < 800 && event.button.y > 650 && event.button.y < 691)
+        if(event.button.x > 600 && event.button.x < 921 && event.button.y > 650 && event.button.y < 691)
             return MENU;
         else
             return RESUME;

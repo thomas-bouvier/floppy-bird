@@ -108,11 +108,13 @@ int main(int argc, char ** argv)
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
-    int levelFromFile = 1;
+    int levelFromFile = 0;
     /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
     int simplifiedMode = 0;
     /* if speedAcceleration == 1, the game is accelerated ; if not, the speed stay constant */
     int speedAcceleration = 0;
+    /* if gapModification == 1, the gap between two pipes is randomly set ; if not, the gap stay constant */
+    int gapModification = 0;
 
     int score;
     int max_score;
@@ -217,13 +219,15 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
+        /*
         mode = IA2;
         levelFromFile = 0;
+        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
             mode = WAIT;
-            mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &speedAcceleration, &sprites);
+            mode = mainMenu(renderer, &camera, big_font, medium_font, &levelFromFile, &simplifiedMode, &speedAcceleration, &gapModification, &sprites);
             init = detectTouch();
 
             if (mode == QUITGAME)
@@ -442,8 +446,10 @@ int main(int argc, char ** argv)
                         nextElement(bird_list);
                     }
 
-                    if (simplifiedMode == 0 && speedAcceleration == 1)
+                    if (speedAcceleration == 1)
                         modifySpeed(max_score, &camera);
+                    if (gapModification == 1)
+                        modifyGap(max_score);
 
                     cameraScrolling(&camera, bird_list);
                     setOnFirstElement(bird_list);

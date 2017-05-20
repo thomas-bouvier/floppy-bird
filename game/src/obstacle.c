@@ -4,7 +4,7 @@
 */
 #include "obstacle.h"
 
-int obstacle_gap = BIG;
+int obstacle_gap = MEDIUM;
 
 /*!
 * The possible gaps for an obstacle
@@ -14,7 +14,7 @@ const int gap[3] = {BIG, MEDIUM, LITTLE};
 /*!
 * The possible sizes for an obstacle
 */
-const int pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450, 500};
+const int pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450};
 
 /*!
 *\brief Create an obstacle
@@ -125,7 +125,7 @@ int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
 */
 void modifyGap(int score)
 {
-    if(score > 70)
+    if(score > 40)
         obstacle_gap = gap[rand() % 3];
     else if(score > 20)
         obstacle_gap = gap[rand() % 2];
