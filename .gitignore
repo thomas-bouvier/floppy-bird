@@ -11,6 +11,10 @@ Desktop.ini
 
 Makefile
 main
+vgcore.*
+
+*.gcda
+*.gcno
 
 # Code::Blocks
 *.depend
