@@ -321,10 +321,12 @@ int main(int argc, char ** argv)
                     {
                         while(!outOfGenericList(bird_list))
                         {
-                            if(1) /*j'ai pas réussi à bien appeler la fonction evaluate */
-                                updateBird((Bird*)getCurrent(bird_list), JUMP, &sound);
+                            Bird * bird = (Bird *)getCurrent(bird_list);
+
+                            if(evaluate(genome, ratioBirdHeight(bird),ratioPipeWidth(bird, &camera, &l), ratioPipeHeight(bird, &l))); /*j'ai pas réussi à bien appeler la fonction evaluate */
+                                updateBird(bird, JUMP, &sound);
                             else
-                                updateBird((Bird*)getCurrent(bird_list), NOTHING, &sound);
+                                updateBird(bird, NOTHING, &sound);
 
                             nextElement(bird_list);
                         }

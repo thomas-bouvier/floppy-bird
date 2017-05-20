@@ -19,6 +19,7 @@
 
 void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile);
 void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool);
+int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight);
 void cameraScrolling(Camera * camera, GenericList * bird);
 void modifySpeed(int score, Camera * camera);
 int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile);

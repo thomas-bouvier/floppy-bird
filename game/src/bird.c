@@ -8,7 +8,7 @@
 * \brief Initialize the parameters of a given bird
 * \return the bird created
 */
-Bird * initBird()
+Bird * initBird(Genome * genome)
 {
     Bird * new_bird = (Bird*)malloc(sizeof(Bird));
     new_bird->x = BIRD_X_OFFSET;
@@ -18,6 +18,7 @@ Bird * initBird()
     new_bird->dir_y = 0;
     new_bird->dead = 0;
     new_bird->must_jump = 0;
+    new_bird->genome = genome;
     return new_bird;
 }
 

@@ -31,7 +31,7 @@ void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * le
         while (!outOfGenericList(pool->species[i].genomes)) {
             generateGenome(getCurrent(pool->species[i].genomes));
 
-            if ((bird = initBird()) == NULL)
+            if ((bird = initBird(getCurrent(pool->species[i].genomes))) == NULL)
                 return;
 
             add(bird_list, bird);
@@ -42,6 +42,25 @@ void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * le
 
     initCamera(camera, 0, LOW);
     initList(l, level, levelFromFile);
+}
+
+int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
+{
+    double input[N_INPUTS];
+    double * output;
+    double res;
+
+    input[0] = ratioBirdHeight;
+    input[1] = ratioPipeWidth;
+    input[2] = ratioPipeHeight;
+    input[3] = 1.0;
+
+    output = evaluateGenome(genome, input);
+
+    res = *output;
+    free(output);
+
+    return res > 0.5;
 }
 
 /*!
@@ -235,6 +254,6 @@ int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
 */
 void addBird(GenericList * bird)
 {
-    Bird * new_bird = initBird();
+    Bird * new_bird = initBird(NULL);
     add(bird, new_bird);
 }
