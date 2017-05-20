@@ -24,7 +24,6 @@
 */
 #define CAMERA_SPEED 5
 
-
 /*! \def GRAVITY
 * \brief The gravity of the bird
 */
@@ -50,7 +49,6 @@
 */
 #define BIRD_JUMP -15
 
-
 /*! \def PIPE_WIDTH
 * \brief The width of a pipe in pixels
 */
@@ -60,11 +58,6 @@
 * \brief The distance in pixels between two obstacles
 */
 #define PIPE_X_OFFSET 400
-
-/*! \def OBSTACLE_GAP
-* \brief The distance in pixels between the two pipes of an obstacle
-*/
-#define OBSTACLE_GAP 200
 
 /*! \def MIN_HEIGHT_LOWER
 * \brief The minimum height of the lower pipe of an obstacle
@@ -79,7 +72,7 @@
 /*! \def NUMBER_OF_OBSTACLE_SIZES
 * \brief The number of heights possible for an obstacle
 */
-#define NUMBER_OF_OBSTACLE_SIZES 8
+#define NUMBER_OF_OBSTACLE_SIZES 7
 
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
@@ -178,9 +171,9 @@ typedef enum  Pipe_Gap Pipe_Gap;
 */
 enum Pipe_Gap
 {
-    LITTLE = 180,           /*! little gap */
+    LITTLE = 175,           /*! little gap */
     MEDIUM = 200,           /*! medium gap */
-    BIG = 230,              /*! big gap */
+    BIG = 225,              /*! big gap */
 };
 
 /*!
