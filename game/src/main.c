@@ -40,13 +40,13 @@ int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, dou
     return res > 0.5;
 }
 
-void learn(GenericList * bird_list, Bird * best_bird, MatingPool * pool, int * hit, int * ticks) {
+void learn(GenericList * bird_list, Bird ** best_bird, MatingPool * pool, int * hit, int * ticks) {
     Bird * bird = NULL;
     double fitness;
 
     //check if all the birds are dead
     setOnFirstElement(bird_list);
-    best_bird = (Bird *) getCurrent(bird_list);
+    *best_bird = (Bird *) getCurrent(bird_list);
     while (!outOfGenericList(bird_list)) {
 
         //current bird
@@ -61,7 +61,7 @@ void learn(GenericList * bird_list, Bird * best_bird, MatingPool * pool, int * h
             bird->genome->fitness = fitness;
             if (fitness > pool->max_fitness) pool->max_fitness = fitness;
 
-            if (fitness > best_bird->genome->fitness) best_bird = bird;
+            if (fitness > (*best_bird)->genome->fitness) *best_bird = bird;
         }
 
         nextElement(bird_list);
@@ -213,6 +213,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
+        mode = IA2;
+
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
             mode = WAIT;
@@ -235,6 +237,7 @@ int main(int argc, char ** argv)
             matrixQ = loadQMatrix(qmatrixPath);
             init_array(last_states, NB_SAVED_STATES, -1);
             init_array(last_action, NB_SAVED_ACTIONS, -1);
+
             ia1 = 1;
         }
 
@@ -374,7 +377,7 @@ int main(int argc, char ** argv)
                     if (mode == IA1 && ++action_break >= nb_fps_before_next_action)
                     {
                         action_break=0;
-                        nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
+                        nb_fps_before_next_action = randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
                     }
 
                     /* Update of the model */
@@ -438,7 +441,9 @@ int main(int argc, char ** argv)
                         }
                     }
                     else {
-                        learn(bird_list, best_bird, pool, &hit, &ticks);
+                        learn(bird_list, &best_bird, pool, &hit, &ticks);
+
+                        printf("fitness: %f / %f\n", best_bird->genome->fitness, pool->max_fitness);
                     }
 
                     hit_saved = hit;
