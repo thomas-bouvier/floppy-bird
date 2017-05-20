@@ -72,7 +72,7 @@ void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Texture * texture,
 */
 void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites)
 {
-        drawSprite(renderer, camera, sprites->background, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    drawSprite(renderer, camera, sprites->background, camera->x, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 /*!

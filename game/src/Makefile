@@ -1,7 +1,7 @@
 # Compiler
 CC = gcc
-CFLAGS = -Wall -g
-LDFLAGS = -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lm
+CFLAGS = -Wall -g -fprofile-arcs -ftest-coverage
+LDFLAGS = -lSDL2_ttf -lSDL2_mixer -lSDL2_image -lm -fprofile-arcs -ftest-coverage
 Q_LEARNING_PATH=../../ai/q_learning/src/
 NEAT_PATH=../../ai/neat/src
 

@@ -108,7 +108,7 @@ int main(int argc, char ** argv)
     Sprites sprites;
 
     /* if levelFromFile == 1, the game is run with predefined height of obstacles ; if not, they are generated randomly */
-    int levelFromFile = 1;
+    int levelFromFile = 0;
     /* if simplifiedMode == 1, the game is played in simplified mode ; if not, the normal game is run (with sprites) */
     int simplifiedMode = 0;
     /* if speedAcceleration == 1, the game is accelerated ; if not, the speed stay constant */
@@ -219,8 +219,9 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        //mode = IA2;
-        levelFromFile = 0;
+        /*
+        mode = IA2;
+        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -487,7 +488,8 @@ int main(int argc, char ** argv)
 
                         printf("alive: %d / %d, ", nb_alive, POPULATION);
                         printf("fitness: %f / %f, ", best_bird->genome->fitness, pool->max_fitness);
-                        printf("average: %f\n", pool->average_fitness);
+                        printf("average: %f, ", pool->average_fitness);
+                        printf("nb_species: %d\n", pool->nb_species);
                     }
 
                     hit_saved = hit;
@@ -562,7 +564,7 @@ int main(int argc, char ** argv)
             /* all birds are dead, and we're in AI2 mode */
 
             if (hit && mode == IA2)
-                newGeneration(pool, 0);
+                newGeneration(pool, 1);
         }
     }
 
