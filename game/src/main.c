@@ -520,6 +520,7 @@ int main(int argc, char ** argv)
 
             if (hit && mode == PLAY)
             {
+                ((Bird*)bird_list->first->data)->dead=0;
                 while (birdFall((Bird*)bird_list->first->data, simplifiedMode))
                 {
                     displayRealGame(renderer, bird_list, obstacle_list, &camera, max_score, big_font, &sprites);
