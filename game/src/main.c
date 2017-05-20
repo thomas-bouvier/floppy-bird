@@ -131,6 +131,7 @@ int main(int argc, char ** argv)
     /* Initialization IA2 */
     MatingPool * pool = NULL;
     Bird * best_bird = NULL;
+    int nb_alive;
 
     srand(time(NULL));
 
@@ -443,6 +444,17 @@ int main(int argc, char ** argv)
                     else {
                         learn(bird_list, &best_bird, pool, &hit, &ticks);
 
+                        nb_alive = 0;
+
+                        setOnFirstElement(bird_list);
+                        while (!outOfGenericList(bird_list)) {
+                            if (!((Bird *) getCurrent(bird_list))->dead)
+                                ++nb_alive;
+
+                            nextElement(bird_list);
+                        }
+
+                        printf("alive: %d / %d, ", nb_alive, POPULATION);
                         printf("fitness: %f / %f\n", best_bird->genome->fitness, pool->max_fitness);
                     }
 
