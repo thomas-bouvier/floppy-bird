@@ -257,18 +257,21 @@ int main(int argc, char ** argv)
         }
 
         while (running) {
-            bird_list = newGenericList(NULL, (FreeFunction)freeBird);
+            if (bird_list)
+                freeGenericList(bird_list);
+
+            bird_list = newGenericList(NULL, (FreeFunction) freeBird);
             initGenericList(bird_list);
 
             score = 0;
 
-            if (mode == IA2)
-            {
+            if (mode == IA2) {
                 startGameNeat(bird_list, &camera, &obstacle_list, level, levelFromFile, pool);
+
                 setOnFirstElement(bird_list);
-                while(!outOfGenericList(bird_list))
-                {
+                while(!outOfGenericList(bird_list)) {
                     addBirdSprite(config, &sprites, renderer);
+
                     nextElement(bird_list);
                 }
             }
@@ -293,7 +296,9 @@ int main(int argc, char ** argv)
             else
                 displayRealGame(renderer, bird_list, &obstacle_list, &camera, score, big_font, &sprites);
 
-            if (mode == PLAY) /* Wait the first jump to start the game*/
+            /* If we're in PLAY mode, wait the first jump to start the game */
+
+            if (mode == PLAY)
             {
                 emptyEvent();
                 init = NOTHING;
@@ -421,10 +426,11 @@ int main(int argc, char ** argv)
 
                     if (mode != IA2) {
                         setOnFirstElement(bird_list);
-                        while(!outOfGenericList(bird_list))
+                        while (!outOfGenericList(bird_list))
                         {
-                            if(((Bird*) bird_list->current->data)->dead == 0)
+                            if (((Bird*) bird_list->current->data)->dead == 0)
                                 hit = 0;
+
                             nextElement(bird_list);
                         }
                     }
@@ -449,6 +455,8 @@ int main(int argc, char ** argv)
                 }
                 saveScore(scoreFile, score);
             }
+
+            /* all birds are dead, and we're in PLAY mode */
 
             if (hit && mode == PLAY)
             {
@@ -493,10 +501,15 @@ int main(int argc, char ** argv)
                     menu_loop = 0;
             }
 
-            freeGenericList(bird_list);
+            /* all birds are dead, and we're in AI1 mode */
 
             if (hit && mode == IA1)
                 saveQMatrix(matrixQ, qmatrixPath);
+
+            /* all birds are dead, and we're in AI2 mode */
+
+            if (hit && mode == IA2)
+                newGeneration(pool, 0);
         }
     }
 
