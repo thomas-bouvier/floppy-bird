@@ -20,6 +20,7 @@
 
 #include "../../ai/neat/src/generic_list.h"
 #include "../../ai/neat/src/population.h"
+#include "../../ai/neat/src/neat_conf.h"
 
 int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
 {
@@ -412,7 +413,6 @@ int main(int argc, char ** argv)
                         number++;
 
                     setOnFirstElement(bird_list);
-
                     score = updateScore(score, (Bird*) bird_list->current->data, savedObstacle, &sound);
 
                     if (simplifiedMode == 0 && speedAcceleration == 1)
@@ -455,7 +455,8 @@ int main(int argc, char ** argv)
                         }
 
                         printf("alive: %d / %d, ", nb_alive, POPULATION);
-                        printf("fitness: %f / %f\n", best_bird->genome->fitness, pool->max_fitness);
+                        printf("fitness: %f / %f, ", best_bird->genome->fitness, pool->max_fitness);
+                        printf("average: %f\n", pool->average_fitness);
                     }
 
                     hit_saved = hit;
