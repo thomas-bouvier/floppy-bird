@@ -22,7 +22,8 @@ typedef struct{
     int dir_y;                  /*!< the speed of climb/fall of the bird */
     int dead;                   /*!< the state of the bird (1 for dead, 0 for alive) */
     int must_jump;              /*!< the action of the bird (1 it has to jump, 0 else) */
-    Genome * genome;
+    int flaps;                  /*!< the number of flaps done by this Bird */
+    Genome * genome;            /*!< the Genome element attached to this Bird */
 } Bird;
 
 Bird * initBird(Genome * genome);

@@ -21,6 +21,55 @@
 #include "../../ai/neat/src/generic_list.h"
 #include "../../ai/neat/src/population.h"
 
+int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
+{
+    double input[N_INPUTS];
+    double * output;
+    double res;
+
+    input[0] = ratioBirdHeight;
+    input[1] = ratioPipeWidth;
+    input[2] = ratioPipeHeight;
+    input[3] = 1.0;
+
+    output = evaluateGenome(genome, input);
+
+    res = *output;
+    free(output);
+
+    return res > 0.5;
+}
+
+void learn(GenericList * bird_list, Bird * best_bird, MatingPool * pool, int * hit, int * ticks) {
+    Bird * bird = NULL;
+    double fitness;
+
+    //check if all the birds are dead
+    setOnFirstElement(bird_list);
+    best_bird = (Bird *) getCurrent(bird_list);
+    while (!outOfGenericList(bird_list)) {
+
+        //current bird
+        bird = (Bird *) getCurrent(bird_list);
+
+        if (!bird->dead) {
+            *hit = 0;
+
+            fitness = (double) *ticks - (double) bird->flaps * 2;
+            if (fitness == 0.0) fitness = -1.0;
+
+            bird->genome->fitness = fitness;
+            if (fitness > pool->max_fitness) pool->max_fitness = fitness;
+
+            if (fitness > best_bird->genome->fitness) best_bird = bird;
+        }
+
+        nextElement(bird_list);
+    }
+
+    //writeGenome(best_bird->genome);
+}
+
 int main(int argc, char ** argv)
 {
     SDL_Window * window = NULL;
@@ -32,7 +81,8 @@ int main(int argc, char ** argv)
     int hit;
     int running = 1;
     int menu_loop = 1;
-    int ia1 = 0;
+    int ticks = 0;
+
     Action init;
     Sound sound;
     Mode mode;
@@ -66,6 +116,9 @@ int main(int argc, char ** argv)
 
     Obstacle * savedObstacle = NULL;
 
+    int ia1 = 0;
+    int ia2 = 0;
+
     /* Initialization IA1 */
     MatrixQ * matrixQ = NULL;
     int last_states[NB_SAVED_STATES];
@@ -73,13 +126,13 @@ int main(int argc, char ** argv)
     char qmatrixPath[100];
     int hit_saved = 0;
     int action_break = 0;
-    int nb_fps_before_next_action=NB_FPS_BEFORE_NEXT_ACTION_MIN;
-
-    srand(time(NULL));
+    int nb_fps_before_next_action = NB_FPS_BEFORE_NEXT_ACTION_MIN;
 
     /* Initialization IA2 */
     MatingPool * pool = NULL;
-    Bird * best = NULL;
+    Bird * best_bird = NULL;
+
+    srand(time(NULL));
 
     /* Open the configuration file (that contains the paths of level, sprites...),
     according to the parameter passed to main (or not) */
@@ -199,6 +252,8 @@ int main(int argc, char ** argv)
 
             if (!populateMatingPool(pool))
                 return EXIT_FAILURE;
+
+            ia2 = 1;
         }
 
         while (running) {
@@ -277,11 +332,14 @@ int main(int argc, char ** argv)
             if (mode == IA1)
                 action_break = 0;
 
+            ticks = 0;
+
             while(!hit && running)
             {
                 for (i = 0; i < (SDL_GetTicks() - lastFrame) / (1000 / FRAME_PER_SECOND); ++i)
                 {
-                    /*printf("%d\n", 1000/(SDL_GetTicks()-lastFrame));*/
+                    ++ticks;
+
                     Action event = detectTouch();
                     sound = NOSOUND;
                     if(event == PAUSE)
@@ -307,14 +365,13 @@ int main(int argc, char ** argv)
                             event = last_action[0];
                     }
 
-                    if(mode == IA1 && ++action_break >= nb_fps_before_next_action)
+                    if (mode == IA1 && ++action_break >= nb_fps_before_next_action)
                     {
                         action_break=0;
                         nb_fps_before_next_action=randomInRange(NB_FPS_BEFORE_NEXT_ACTION_MIN, NB_FPS_BEFORE_NEXT_ACTION_MAX);
                     }
 
                     /* Update of the model */
-
 
                     setOnFirstElement(bird_list);
                     if (mode == IA2)
@@ -323,7 +380,7 @@ int main(int argc, char ** argv)
                         {
                             Bird * bird = (Bird *) getCurrent(bird_list);
 
-                            if (evaluate(bird->genome, ratioBirdHeight(bird),ratioPipeWidth(bird, &camera, &obstacle_list), ratioPipeHeight(bird, &obstacle_list)))
+                            if (evaluate(bird->genome, ratioBirdHeight(bird), ratioPipeWidth(bird, &camera, &obstacle_list), ratioPipeHeight(bird, &obstacle_list)))
                                 updateBird(bird, JUMP, &sound);
                             else
                                 updateBird(bird, NOTHING, &sound);
@@ -335,7 +392,7 @@ int main(int argc, char ** argv)
                     {
                         while (!outOfGenericList(bird_list))
                         {
-                            updateBird((Bird*)bird_list->current->data, event, &sound);
+                            updateBird((Bird*) bird_list->current->data, event, &sound);
                             nextElement(bird_list);
                         }
                     }
@@ -345,7 +402,7 @@ int main(int argc, char ** argv)
                         number++;
 
                     setOnFirstElement(bird_list);
-                    score = updateScore(score, (Bird*)bird_list->current->data, savedObstacle, &sound);
+                    score = updateScore(score, (Bird*) bird_list->current->data, savedObstacle, &sound);
 
                     if (simplifiedMode == 0 && speedAcceleration == 1)
                         modifySpeed(score, &camera);
@@ -362,13 +419,19 @@ int main(int argc, char ** argv)
 
                     hit = 1;
 
-                    setOnFirstElement(bird_list);
-                    while(!outOfGenericList(bird_list))
-                    {
-                        if(((Bird*)bird_list->current->data)->dead == 0)
-                            hit = 0;
-                        nextElement(bird_list);
+                    if (mode != IA2) {
+                        setOnFirstElement(bird_list);
+                        while(!outOfGenericList(bird_list))
+                        {
+                            if(((Bird*) bird_list->current->data)->dead == 0)
+                                hit = 0;
+                            nextElement(bird_list);
+                        }
                     }
+                    else {
+                        learn(bird_list, best_bird, pool, &hit, &ticks);
+                    }
+
                     hit_saved = hit;
                     savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
 
@@ -440,6 +503,9 @@ int main(int argc, char ** argv)
     /* Quit the game */
     if (ia1 > 0)
         freeMatrixQ(matrixQ);
+
+    if (ia2 > 0)
+        freeMatingPool(pool);
 
     closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font);
     quitGame(window, renderer);

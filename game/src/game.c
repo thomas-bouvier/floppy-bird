@@ -53,25 +53,6 @@ void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * le
     initList(l, level, levelFromFile);
 }
 
-int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
-{
-    double input[N_INPUTS];
-    double * output;
-    double res;
-
-    input[0] = ratioBirdHeight;
-    input[1] = ratioPipeWidth;
-    input[2] = ratioPipeHeight;
-    input[3] = 1.0;
-
-    output = evaluateGenome(genome, input);
-
-    res = *output;
-    free(output);
-
-    return res > 0.5;
-}
-
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
