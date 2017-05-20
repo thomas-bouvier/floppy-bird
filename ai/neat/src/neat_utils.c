@@ -16,7 +16,7 @@ int randomLimit(long limit) {
 
     long x;
     do {
-        x = random();
+        x = rand();
     } while (num_rand - defect <= (unsigned long) x);
 
     return x / bin_size;
