@@ -322,8 +322,10 @@ int delete(GenericList * list, void * element) {
 int clearGenericList(GenericList * list) {
     setOnFirstElement(list);
     while (!outOfGenericList(list)) {
-        if (!delete(list, getCurrent(list)))
+        if (!delete(list, getCurrent(list))) {
+            fprintf(stderr, "Error while clearing GenericList\n");
             return 0;
+        }
 
         setOnFirstElement(list);
     }
