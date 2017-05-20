@@ -217,10 +217,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        /*
         mode = IA2;
         levelFromFile = 0;
-        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -242,6 +240,7 @@ int main(int argc, char ** argv)
             /* Open the file that contains qMatrix data */
             readConfig(config, qmatrixPath, "qMatrix :\n");
             matrixQ = loadQMatrix(qmatrixPath);
+
             init_array(last_states, NB_SAVED_STATES, -1);
             init_array(last_action, NB_SAVED_ACTIONS, -1);
 
@@ -291,7 +290,7 @@ int main(int argc, char ** argv)
             else
                 startGame(bird_list, &camera, &obstacle_list, level, levelFromFile);
 
-            savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
+            /* game render */
 
             if (simplifiedMode)
             {
@@ -309,7 +308,7 @@ int main(int argc, char ** argv)
             else
                 displayRealGame(renderer, bird_list, &obstacle_list, &camera, max_score, big_font, &sprites);
 
-            /* If we're in PLAY mode, wait the first jump to start the game */
+            /* if we're in PLAY mode, wait the first jump to start the game */
 
             if (mode == PLAY)
             {
@@ -322,9 +321,8 @@ int main(int argc, char ** argv)
                 {
                     init = detectTouch();
 
-                    if(init == JUMP)
+                    if (init == JUMP)
                     {
-                        /* Faire sauter toute la liste */
                         setOnFirstElement(bird_list);
                         while(!outOfGenericList(bird_list))
                         {
@@ -426,6 +424,16 @@ int main(int argc, char ** argv)
 
                     setOnFirstElement(bird_list);
                     while (!outOfGenericList(bird_list)) {
+                        if (!((Bird *) getCurrent(bird_list))->dead) {
+                            savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*) getCurrent(bird_list));
+                            break;
+                        }
+
+                        nextElement(bird_list);
+                    }
+
+                    setOnFirstElement(bird_list);
+                    while (!outOfGenericList(bird_list)) {
                         score = updateScore(((Bird *) getCurrent(bird_list))->score, (Bird *) getCurrent(bird_list), savedObstacle, &sound);
                         ((Bird *) getCurrent(bird_list))->score = score;
 
@@ -479,7 +487,6 @@ int main(int argc, char ** argv)
                     }
 
                     hit_saved = hit;
-                    savedObstacle = nextBirdObstacle(&obstacle_list, (Bird*)bird_list->first->data);
 
                     /* Update of the view */
 
