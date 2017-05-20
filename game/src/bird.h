@@ -5,6 +5,7 @@
 #ifndef BIRD_H
 #define BIRD_H
 
+#include "../../ai/neat/src/population.h"
 #include "constants.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,9 +22,11 @@ typedef struct{
     int dir_y;                  /*!< the speed of climb/fall of the bird */
     int dead;                   /*!< the state of the bird (1 for dead, 0 for alive) */
     int must_jump;              /*!< the action of the bird (1 it has to jump, 0 else) */
+    int flaps;                  /*!< the number of flaps done by this Bird */
+    Genome * genome;            /*!< the Genome element attached to this Bird */
 } Bird;
 
-Bird * initBird();
+Bird * initBird(Genome * genome);
 void updateBird(Bird * bird, int t, Sound * sound);
 void freeBird(Bird * bird);
 
