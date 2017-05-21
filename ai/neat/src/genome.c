@@ -1,5 +1,7 @@
 #include "genome.h"
 
+static int compareOutputs(const void * connection_gene_1, const void * connection_gene_2);
+
 /*!
 * \brief Create a Genome
 * \return Return a new Genome, or NULL if error
@@ -126,7 +128,11 @@ int generateGenome(Genome * genome) {
         }
     }
 
-    //TODO sort connection genes
+    /* sorting connection genes */
+
+    sort(genome->connection_genes, compareOutputs);
+
+    /* adding new neurons */
 
     setOnFirstElement(genome->connection_genes);
     while (!outOfGenericList(genome->connection_genes)) {
@@ -159,7 +165,7 @@ int generateGenome(Genome * genome) {
 
             found_neuron = 0;
 
-            // we're retrieving the Neuron with the appopriate id in new_neuron
+            /* we're retrieving the Neuron with the appopriate id in new_neuron */
 
             setOnFirstElement(genome->neurons);
             while (!outOfGenericList(genome->neurons)) {
@@ -183,7 +189,7 @@ int generateGenome(Genome * genome) {
                 nextElement(genome->neurons);
             }
 
-            // neuron not found, we're creating it
+            /* neuron not found, we're creating it */
 
             if (!found_neuron) {
                 new_neuron_2 = newNeuron(BASIC);
@@ -1011,4 +1017,15 @@ void printGenome(Genome * genome) {
         printf("%d ", genome->mutations_history[k]);
 
     printf("\n");
+}
+
+static int compareOutputs(const void * connection_gene_1, const void * connection_gene_2) {
+    int diff = ((ConnectionGene *) connection_gene_2)->neuron_out_id - ((ConnectionGene *) connection_gene_1)->neuron_out_id;
+
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
+
+    return 1;
 }
