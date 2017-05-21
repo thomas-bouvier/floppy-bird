@@ -8,16 +8,16 @@
 * \brief Allocate all the object of the game
 * \param[out] bird the list of bird to allocate
 * \param[out] camera the camera to allocate
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 */
-void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
+void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile)
 {
     Bird * new_bird = initBird(NULL);
     add(bird, new_bird);
     initCamera(camera, 0, LOW);
-    initList(l, level, levelFromFile);
+    fillObstacleList(obstacle_list, level, levelFromFile);
     setOnFirstElement(bird);
 }
 
@@ -25,12 +25,12 @@ void startGame(GenericList * bird, Camera * camera, List * l, FILE * level, int 
 * \brief Allocate all the object of the game in mode IA2 (neat).
 * \param[out] bird the list of bird to allocate
 * \param[out] camera the camera to allocate
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 * \param[out] pool the MatingPool
 */
-void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * level, int levelFromFile, MatingPool * pool)
+void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile, MatingPool * pool)
 {
     int i;
     Bird * bird = NULL;
@@ -50,7 +50,7 @@ void startGameNeat(GenericList * bird_list, Camera * camera, List * l, FILE * le
     }
 
     initCamera(camera, 0, LOW);
-    initList(l, level, levelFromFile);
+    fillObstacleList(obstacle_list, level, levelFromFile);
 }
 
 /*!
@@ -75,7 +75,7 @@ void cameraScrolling(Camera * camera, GenericList * bird)
 /*!
 * \brief Create an obstacle when the distance between two obstacle is reached
 * \param[in] camera the view of the game
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] number the obstacle number of the new obstacle
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
@@ -83,18 +83,18 @@ void cameraScrolling(Camera * camera, GenericList * bird)
 *
 * If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
-int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile)
+int createObstacle(Camera * camera, GenericList * obstacle_list, FILE * level, int number, int levelFromFile)
 {
-    if ((camera->x + SCREEN_WIDTH >= l->first->lower.x) && (l->nbObstacles < OBSTACLE_NUMBER))
+    if ((camera->x + SCREEN_WIDTH >= ((Obstacle *)obstacle_list->first->data)->lower.x) && (count(obstacle_list) < OBSTACLE_NUMBER))
     {
         if(levelFromFile)
         {
-            createObstacleFromFile(level, number, l);
+            createObstacleFromFile(level, number, obstacle_list);
             return 1;
         }
         else
         {
-            createObstacleRandomly(number, l);
+            createObstacleRandomly(number, obstacle_list);
             return 1;
         }
     }
@@ -104,13 +104,14 @@ int createObstacle(Camera * camera, List * l, FILE * level, int number, int leve
 /*!
 * \brief Delete an obstacle of the list when it leaves the camera
 * \param[in] camera the view of the game
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \return Return 1 if the function deleted an obstacle, 0 otherwise
 */
-int deleteObstacle(Camera * camera, List * l){
-    if ((l->first->lower.x + PIPE_WIDTH) < camera->x)
+int deleteObstacle(Camera * camera, GenericList * obstacle_list){
+    setOnFirstElement(obstacle_list);
+    if ((((Obstacle *)getCurrent(obstacle_list))->lower.x + PIPE_WIDTH) < camera->x)
     {
-        deleteFirst(l);
+        delete(obstacle_list, getCurrent(obstacle_list));
         return 1;
     }
     return 0;
@@ -199,24 +200,24 @@ int ratioBirdHeight(Bird * bird)
 /*!
 * \brief A function use to send the height of the next pipe to the IA
 * \param[in] bird the bird that determines the next obstacle
-* \param[in] l the list of obstacle
+* \param[in] obstacle_list the list of obstacle
 * \return return the ratio of the height of the next obstacle over the screen height
 */
-int ratioPipeHeight (Bird * bird, List * l)
+int ratioPipeHeight (Bird * bird, GenericList * obstacle_list)
 {
-    return nextBirdObstacle(l, bird)->lower.y;
+    return nextBirdObstacle(obstacle_list, bird)->lower.y;
 }
 
 /*!
 * \brief A function use to send the distance between the left side of the camera and the next pipe to the IA
 * \param[in] bird the bird current properties
 * \param[in] camera the display current properties
-* \param[in] l the list of obstacle
+* \param[in] obstacle_list the list of obstacle
 * \return return the distance between the left side of the camera and the ?pipe
 */
-int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
+int ratioPipeWidth (Bird * bird, Camera * camera, GenericList * obstacle_list)
 {
-    return nextBirdObstacle(l, bird)->lower.x - camera->x;
+    return nextBirdObstacle(obstacle_list, bird)->lower.x - camera->x;
 }
 
 /*!
@@ -229,4 +230,15 @@ void addBird(GenericList * bird)
 {
     Bird * new_bird = initBird(NULL);
     add(bird, new_bird);
+}
+
+/*!
+* \brief free the list of birds and the list of obstacles
+* \param[out] bird_list the list of birds
+* \param[out] obstacle_list the list of obstacles
+*/
+void freeLists(GenericList * bird_list, GenericList * obstacle_list)
+{
+    freeGenericList(bird_list);
+    freeGenericList(obstacle_list);
 }

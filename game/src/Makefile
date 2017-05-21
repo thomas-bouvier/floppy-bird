@@ -12,15 +12,15 @@ ifeq ($(OS),Windows_NT)
 	LDFLAGS += -L$(SDLPATH)\lib -lmingw32 -lSDL2main -lSDL2
 else
 	# SDL inclusion and link for Linux
-	CFLAGS += $(shell sdl2-config --cflags)
-	LDFLAGS += $(shell sdl2-config --libs)
+	CFLAGS += `sdl2-config --cflags`
+	LDFLAGS +=  `sdl2-config --libs`
 endif
 
 
 Release: main
 Debug: main
 
-main: main.o bird.o camera.o control.o file.o game.o list.o menu.o obstacle.o pipe.o sdl_files.o sound.o view.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o generic_list.o genome.o population.o network.o neat_utils.o
+main: main.o bird.o camera.o control.o file.o game.o menu.o obstacle.o pipe.o sdl_files.o sound.o view.o q_learning.o qmatrix.o game_state.o utils.o file_manager.o generic_list.o genome.o population.o network.o neat_utils.o
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 main.o: $(Q_LEARNING_PATH)q_learning.h $(Q_LEARNING_PATH)conf.h $(NEAT_PATH)/generic_list.h $(NEAT_PATH)/population.h $(NEAT_PATH)/neat_conf.h

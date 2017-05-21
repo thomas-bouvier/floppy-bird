@@ -56,7 +56,7 @@ int readConfig(FILE * f, char * config, char * type)
         }
         ++i;
     }
-    fprintf(stderr, "Reading the configuration file : %s failure\n", type);
+    fprintf(stderr, "Reading the configuration file failure : %s\n", type);
     return 0;
 }
 

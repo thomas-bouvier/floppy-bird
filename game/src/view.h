@@ -23,8 +23,8 @@ void drawSprite(SDL_Renderer * renderer, Camera * camera, SDL_Texture * texture,
 void drawBackground(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 void drawRealObstacle(SDL_Renderer * renderer, Obstacle * obstacle, Camera * camera, SDL_Texture * pipe1, SDL_Texture * pipe2);
 void drawRealBird(SDL_Renderer * renderer, Bird * bird, Camera * camera, SDL_Texture * bird1, SDL_Texture * bird2, SDL_Texture * bird3);
-void displayGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
-void displayRealGame(SDL_Renderer * renderer, GenericList * bird, List * l, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
+void displayGame(SDL_Renderer * renderer, GenericList * bird, GenericList * obstacle_list, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
+void displayRealGame(SDL_Renderer * renderer, GenericList * bird, GenericList * obstacle_list, Camera * camera, int score, TTF_Font * font, Sprites * sprites);
 void drawPause(SDL_Renderer * renderer, Camera * camera, Sprites * sprites);
 void drawForTI(SDL_Renderer * renderer, Camera * camera);
 void quitGame(SDL_Window * window, SDL_Renderer * renderer);

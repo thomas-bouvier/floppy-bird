@@ -31,11 +31,11 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
     	fprintf(stderr, "Obstacle created has a wrong value of height_lower\n");
         return NULL;
     }
-    /*if(obstacle_gap < OBSTACLE_GAP)
+    if(obstacle_gap < LITTLE)
     {
     	fprintf(stderr, "Obstacle created has a wrong value of gap\n");
         return NULL;
-    }*/
+    }
     Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
     if(new_obstacle == NULL)
     {
@@ -51,19 +51,19 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 
 /*!
 * \brief Indicate the next obstacle for the bird
-* \param[out] l the list of obstacle
+* \param[out] obstacle_list the list of obstacle
 * \param[in] bird the bird that determines the next obstacle
 * \return Return the next obstacle for the bird. If the bird is between two pipes of an obstacle, it returns this obstacle
 */
-Obstacle * nextBirdObstacle(List * l, Bird * bird)
+Obstacle * nextBirdObstacle(GenericList * obstacle_list, Bird * bird)
 {
     int i = 0;
-    setOnFirst(l);
+    setOnFirstElement(obstacle_list);
     while (i < PIPES_ON_SCREEN)
     {
-        if (l->current->lower.x + PIPE_WIDTH > bird->x - bird->w/2)
-            return l->current;
-        next(l);
+        if ((((Obstacle *)getCurrent(obstacle_list))->lower.x) + PIPE_WIDTH > bird->x - bird->w/2)
+            return getCurrent(obstacle_list);
+        nextElement(obstacle_list);
         ++i;
     }
     return NULL;
@@ -82,25 +82,25 @@ void freeObstacle(Obstacle * obstacle)
 * \brief Create an obstacle with the height indicated in the level file for its number
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] number the obstacle number
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 */
-void createObstacleFromFile(FILE * level, int number, List * l)
+void createObstacleFromFile(FILE * level, int number, GenericList * obstacle_list)
 {
     int heightPipe = readLevel(level, number);
     Obstacle * newObs = newObstacle(number, heightPipe, obstacle_gap, NULL);
-    insertLast(l, newObs);
+    add(obstacle_list, newObs);
 }
 
 /*!
 * \brief Create an obstacle with a random height
 * \param[in] number the obstacle number
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 */
-void createObstacleRandomly(int number, List * l)
+void createObstacleRandomly(int number, GenericList * obstacle_list)
 {
     int heightPipe = pipes_height[rand() % NUMBER_OF_OBSTACLE_SIZES];
     Obstacle * newObs = newObstacle(number, heightPipe, obstacle_gap, NULL);
-    insertLast(l, newObs);
+    add(obstacle_list, newObs);
 }
 
 /*!
@@ -131,4 +131,26 @@ void modifyGap(int score)
         obstacle_gap = gap[rand() % 2];
     else
         obstacle_gap = BIG;
+}
+
+/*!
+* \brief Initialize the list of obstacles, and fill it with OBSTACLE_NUMBER obstacles
+* \param[out] obstacle_list the list to initialize
+* \param[in] level the file that contains the height of the obstacles
+* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+*
+* If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
+*/
+void fillObstacleList(GenericList * obstacle_list, FILE * level, int level_from_file)
+{
+    int  i;
+	for (i=0 ; i<OBSTACLE_NUMBER ; ++i)
+    {
+        if(level_from_file)
+            createObstacleFromFile(level, i, obstacle_list);
+        else
+        {
+            createObstacleRandomly(i,obstacle_list);
+        }
+    }
 }
