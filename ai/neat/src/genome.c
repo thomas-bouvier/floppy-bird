@@ -113,13 +113,17 @@ int generateGenome(Genome * genome) {
     // populating neuron list
 
     for (i = 0; i < N_INPUTS; ++i) {
-        if (!addNeuronToGenome(genome, newNeuron(INPUT)))
+        if (!addNeuronToGenome(genome, newNeuron(INPUT))) {
+            fprintf(stderr, "Can't add new INPUT Neuron to Genome\n");
             return 0;
+        }
     }
 
     for (i = 0; i < N_OUTPUTS; ++i) {
-        if (!addNeuronToGenome(genome, newNeuron(OUTPUT)))
+        if (!addNeuronToGenome(genome, newNeuron(OUTPUT))) {
+            fprintf(stderr, "Can't add new OUTPUT Neuron to Genome\n");
             return 0;
+        }
     }
 
     //TODO sort connection genes
@@ -146,6 +150,7 @@ int generateGenome(Genome * genome) {
 
                 if (!addNeuronToGenome(genome, new_neuron_1)) {
                     /* the Neuron is properly freed */
+                    fprintf(stderr, "Can't add new BASIC Neuron to Genome\n");
                     return 0;
                 }
 
@@ -185,6 +190,7 @@ int generateGenome(Genome * genome) {
 
                 if (!addNeuronToGenome(genome, new_neuron_2)) {
                     /* the Neuron is properly freed */
+                    fprintf(stderr, "Can't add new BASIC Neuron to Genome\n");
                     return 0;
                 }
 
@@ -209,6 +215,7 @@ int generateGenome(Genome * genome) {
 int addNeuronToGenome(Genome * genome, Neuron * neuron) {
     if (!addNeuron(genome->neurons, neuron)) {
         freeNeuron(neuron);
+
         fprintf(stderr, "Couldn't add Neuron to Genome\n");
         return 0;
     }
@@ -365,7 +372,7 @@ int mutateLink(Genome * genome, int bias) {
 
     connection_gene = newConnectionGene(0, 1, 0);
 
-    if (connection_gene == NULL)
+    if (connection_gene == (ConnectionGene *) NULL)
         return 0;
 
     if (bias)
@@ -415,11 +422,11 @@ int mutateNode(Genome * genome) {
     ConnectionGene * connection_gene_2 = NULL;
 
     if (emptyGenericList(genome->connection_genes))
-        return 0;
+        return 1;
 
     connection_gene = getRandomConnectionGene(genome);
     if (!connection_gene->enabled)
-        return 0;
+        return 1;
 
     connection_gene->enabled = 0;
 
@@ -431,7 +438,11 @@ int mutateNode(Genome * genome) {
     connection_gene_1->weight = 1.0;
     connection_gene_1->enabled = 1;
     connection_gene_1->innovation = *genome->innovation;
-    add(genome->connection_genes, connection_gene_1);
+
+    if (!add(genome->connection_genes, connection_gene_1)) {
+        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        return 0;
+    }
 
     ++(*genome->innovation);
 
@@ -440,7 +451,11 @@ int mutateNode(Genome * genome) {
     connection_gene_2->weight = 1.0;
     connection_gene_2->enabled = 1;
     connection_gene_2->innovation = *genome->innovation;
-    add(genome->connection_genes, connection_gene_2);
+
+    if (!add(genome->connection_genes, connection_gene_2)) {
+        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        return 0;
+    }
 
     genome->mutations_history[genome->nb_mutations] = 3;
     ++genome->nb_mutations;

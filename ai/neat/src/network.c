@@ -45,7 +45,7 @@ void freeNeuron(void * neuron) {
 int addNeuron(GenericList * neurons, Neuron * neuron) {
     int nb_neurons = count(neurons);
     if (nb_neurons == N_MAX_NEURONS) {
-        fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
+        fprintf(stderr, "Can't add Neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
         return 0;
     }
 

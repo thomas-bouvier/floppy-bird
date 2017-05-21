@@ -220,8 +220,10 @@ int newGeneration(MatingPool * pool, int verbose) {
     }
 
     for (i = 0; i < count; ++i)
-        if (!addGenomeToProperSpecies(children[i], pool))
+        if (!addGenomeToProperSpecies(children[i], pool)) {
+            fprintf(stderr, "Can't add Genome to proper Species\n");
             return 0;
+        }
 
     ++pool->generation;
 
@@ -549,11 +551,15 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
     // no species matches the given genome
 
-    if (!addSpeciesToMatingPool(pool))
+    if (!addSpeciesToMatingPool(pool)) {
+        fprintf(stderr, "Can't add Species to MatingPool\n");
         return 0;
+    }
 
-    if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1]))
+    if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1])) {
+        fprintf(stderr, "Can't add Gennome to Species\n");
         return 0;
+    }
 
     return 1;
 }

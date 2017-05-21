@@ -219,8 +219,10 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
+        /*
         mode = IA2;
         levelFromFile = 0;
+        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
