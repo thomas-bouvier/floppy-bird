@@ -12,8 +12,8 @@ ifeq ($(OS),Windows_NT)
 	LDFLAGS += -L$(SDLPATH)\lib -lmingw32 -lSDL2main -lSDL2
 else
 	# SDL inclusion and link for Linux
-	CFLAGS += $(shell sdl2-config --cflags)
-	LDFLAGS += $(shell sdl2-config --libs)
+	CFLAGS += `sdl2-config --cflags`
+	LDFLAGS +=  `sdl2-config --libs`
 endif
 
 

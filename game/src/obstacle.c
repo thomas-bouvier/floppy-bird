@@ -31,11 +31,11 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
     	fprintf(stderr, "Obstacle created has a wrong value of height_lower\n");
         return NULL;
     }
-    /*if(obstacle_gap < OBSTACLE_GAP)
+    if(obstacle_gap < LITTLE)
     {
     	fprintf(stderr, "Obstacle created has a wrong value of gap\n");
         return NULL;
-    }*/
+    }
     Obstacle * new_obstacle = (Obstacle*) malloc(sizeof(Obstacle));
     if(new_obstacle == NULL)
     {
