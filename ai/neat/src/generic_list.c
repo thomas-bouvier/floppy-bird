@@ -387,15 +387,18 @@ int find(GenericList * list, void * element) {
 * \param[in] list the GenericList to scan
 */
 int count(GenericList * list) {
-  int count = 0;
+    Node * pos = list->current;
+    int count = 0;
 
-  setOnFirstElement(list);
-  while (!outOfGenericList(list)) {
-    ++count;
-    nextElement(list);
-  }
+    setOnFirstElement(list);
+    while (!outOfGenericList(list)) {
+        ++count;
+        nextElement(list);
+    }
 
-  return count;
+    list->current = pos;
+
+    return count;
 }
 
 /*!

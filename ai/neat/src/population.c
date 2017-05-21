@@ -83,7 +83,6 @@ int addSpeciesToMatingPool(MatingPool * pool) {
     pool->species[pool->nb_species].genomes = genomes;
 
     pool->species[pool->nb_species].id = pool->nb_species;
-    pool->species[pool->nb_species].nb_genomes = 0;
     pool->species[pool->nb_species].max_fitness = 0.0;
     pool->species[pool->nb_species].average_fitness = 0.0;
     pool->species[pool->nb_species].staleness = 0;
@@ -144,6 +143,11 @@ int newGeneration(MatingPool * pool, int verbose) {
     Genome * children[POPULATION];
     Genome * child;
 
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (emptyGenericList(pool->species[i].genomes))
+            printf("problem1\n");
+    }
+
     if (verbose) {
         printf("======================================================================================================\n");
         printf("======================================================================================================\n");
@@ -154,6 +158,11 @@ int newGeneration(MatingPool * pool, int verbose) {
     ret = cullGenomesOfSpecies(pool, 0, verbose);
     if (ret > 0 && verbose)
         printf("=> %d Species were culled!\n", ret);
+
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (emptyGenericList(pool->species[i].genomes))
+            printf("problem2\n");
+    }
 
     computeGlobalRanks(pool);
     ret = removeStaleSpecies(pool, verbose);
@@ -209,7 +218,7 @@ int newGeneration(MatingPool * pool, int verbose) {
         children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
         ++count;
     }
-    
+
     for (i = 0; i < count; ++i)
         if (!addGenomeToProperSpecies(children[i], pool))
             return 0;
@@ -230,6 +239,7 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     int i;
     double remaining;
     int culled_count = 0;
+    int temoin;
 
     if (verbose) {
         printf("====================================================================\n");
@@ -245,16 +255,21 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
         if (cut_to_one)
             remaining = 1.0;
         else
-            remaining = ceil(pool->species[i].nb_genomes / 2.0);
+            remaining = ceil(count(pool->species[i].genomes) / 2.0);
+
+        temoin = emptyGenericList(pool->species[i].genomes);
 
         setOnFirstElement(pool->species[i].genomes);
-        while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
-            delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
-            setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes) && count(pool->species[i].genomes) > remaining) {
+            if (delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes))) {
+                ++culled_count;
+            }
 
-            --pool->species[i].nb_genomes;
-            ++culled_count;
+            setOnFirstElement(pool->species[i].genomes);
         }
+
+        if (emptyGenericList(pool->species[i].genomes))
+            printf("---------------------------------------cest vide et avant %d\n", temoin);
     }
 
     if (verbose)
@@ -496,17 +511,12 @@ void computeGlobalAverageFitness(MatingPool * pool) {
 
 
 static int addGenomeToSpecies(Genome * genome, Species * species) {
-    if (species->nb_genomes == N_MAX_GENOMES) {
+    if (count(species->genomes) == N_MAX_GENOMES) {
         fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
         return 0;
     }
 
-    if (!add(species->genomes, genome))
-        return 0;
-
-    ++species->nb_genomes;
-
-    return 1;
+    return add(species->genomes, genome);
 }
 
 /*!
@@ -527,7 +537,7 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
     // we're looking for a species that matches the given genome
 
     for (i = 0; i < pool->nb_species; ++i) {
-        if (pool->species[i].nb_genomes > 0) {
+        if (count(pool->species[i].genomes) > 0) {
             setOnFirstElement(pool->species[i].genomes);
 
             if (sameSpecies(genome, (Genome *) getCurrent(pool->species[i].genomes))) {
@@ -562,7 +572,7 @@ void computeAverageFitness(Species * species) {
         nextElement(species->genomes);
     }
 
-    species->average_fitness = sum / species->nb_genomes;
+    species->average_fitness = sum / count(species->genomes);
 }
 
 /*!
@@ -571,7 +581,7 @@ void computeAverageFitness(Species * species) {
 * \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
-    setOn(species->genomes, randomLimit(species->nb_genomes - 1));
+    setOn(species->genomes, randomLimit(count(species->genomes) - 1));
     return (Genome *) getCurrent(species->genomes);
 }
 
@@ -582,7 +592,7 @@ Genome * getRandomGenome(Species * species) {
 void printSpecies(Species * species) {
     printf("==================================\n");
     printf("Species\n");
-    printf("\tnb_genomes: %d\n", species->nb_genomes);
+    printf("\tnb_genomes: %d\n", count(species->genomes));
     printf("\tmax_fitness: %f\n", species->max_fitness);
     printf("\taverage_fitness: %f\n", species->average_fitness);
     printf("\tstaleness: %d\n", species->staleness);

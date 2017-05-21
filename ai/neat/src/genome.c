@@ -144,8 +144,10 @@ int generateGenome(Genome * genome) {
             if (!found_neuron) {
                 new_neuron_1 = newNeuron(BASIC);
 
-                if (!addNeuronToGenome(genome, new_neuron_1))
+                if (!addNeuronToGenome(genome, new_neuron_1)) {
+                    /* the Neuron is properly freed */
                     return 0;
+                }
 
                 new_neuron_1->id = current_connection_gene->neuron_out_id;
             }
@@ -181,8 +183,10 @@ int generateGenome(Genome * genome) {
             if (!found_neuron) {
                 new_neuron_2 = newNeuron(BASIC);
 
-                if (!addNeuronToGenome(genome, new_neuron_2))
+                if (!addNeuronToGenome(genome, new_neuron_2)) {
+                    /* the Neuron is properly freed */
                     return 0;
+                }
 
                 new_neuron_2->id = current_connection_gene->neuron_in_id;
             }
@@ -250,7 +254,7 @@ int mutate(Genome * genome) {
         genome->mutation_rates[1] = LINK_MUTATION_RATE;
         genome->mutation_rates[2] = BIAS_MUTATION_RATE;
         genome->mutation_rates[3] = NODE_MUTATION_RATE;
-        genome->mutation_rates[5] = ENABLE_MUTATION_RATE;
+        genome->mutation_rates[4] = ENABLE_MUTATION_RATE;
         genome->mutation_rates[5] = DISABLE_MUTATION_RATE;
     */
 
@@ -369,7 +373,6 @@ int mutateLink(Genome * genome, int bias) {
     else
         connection_gene->neuron_in_id = neuron_1_id;
 
-
     connection_gene->neuron_out_id = neuron_2_id;
 
     if (linked(genome, neuron_1_id, neuron_2_id)) {
@@ -417,8 +420,8 @@ int mutateNode(Genome * genome) {
     connection_gene = getRandomConnectionGene(genome);
     if (!connection_gene->enabled)
         return 0;
-    connection_gene->enabled = 0;
 
+    connection_gene->enabled = 0;
 
     ++genome->max_neurons;
     ++(*genome->innovation);
@@ -894,7 +897,6 @@ int writeGraphVizGenome(Genome * genome, char * filename) {
             fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f];\n", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
         else
             fprintf(f, "\t%d -> %d [label=\"%.1f\\n%d\", weight=%.1f color=red];\n", current_connection_gene->neuron_in_id, current_connection_gene->neuron_out_id, current_connection_gene->weight, current_connection_gene->innovation, current_connection_gene->weight);
-
 
         nextElement(genome->connection_genes);
     }
