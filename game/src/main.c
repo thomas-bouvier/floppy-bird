@@ -219,10 +219,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        /*
         mode = IA2;
         levelFromFile = 0;
-        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -569,8 +567,10 @@ int main(int argc, char ** argv)
 
             /* all birds are dead, and we're in AI2 mode */
 
-            if (hit && mode == IA2)
+            if (hit && mode == IA2) {
                 newGeneration(pool, 0);
+                //printMatingPool(pool);
+            }
         }
     }
 

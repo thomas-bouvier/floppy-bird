@@ -1,7 +1,8 @@
 #include "population.h"
 
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2);
-static int compareFitnessCulling(const void * genome_1, const void * genome_2);
+static int compareFitnessCullingGenomes(const void * genome_1, const void * genome_2);
+static int compareFitnessRemovingStale(const void * genome_1, const void * genome_2);
 
 /*!
 * \brief Create a MatingPool.
@@ -241,7 +242,6 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     int i;
     double remaining;
     int culled_count = 0;
-    int temoin;
 
     if (verbose) {
         printf("====================================================================\n");
@@ -252,14 +252,12 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     }
 
     for (i = 0; i < pool->nb_species; ++i) {
-        sort(pool->species[i].genomes, compareFitnessCulling);
+        sort(pool->species[i].genomes, compareFitnessCullingGenomes);
 
         if (cut_to_one)
             remaining = 1.0;
         else
             remaining = ceil(count(pool->species[i].genomes) / 2.0);
-
-        temoin = emptyGenericList(pool->species[i].genomes);
 
         setOnFirstElement(pool->species[i].genomes);
         while (!outOfGenericList(pool->species[i].genomes) && count(pool->species[i].genomes) > remaining) {
@@ -269,9 +267,6 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
 
             setOnFirstElement(pool->species[i].genomes);
         }
-
-        if (emptyGenericList(pool->species[i].genomes))
-            printf("---------------------------------------cest vide et avant %d\n", temoin);
     }
 
     if (verbose)
@@ -358,7 +353,7 @@ int removeStaleSpecies(MatingPool * pool, int verbose) {
     if (pool->nb_species > 1) {
         for (i = 0; i < pool->nb_species; ++i) {
             if (!emptyGenericList(pool->species[i].genomes)) {
-                sort(pool->species[i].genomes, compareFitnessCulling);
+                sort(pool->species[i].genomes, compareFitnessRemovingStale);
 
                 setOnFirstElement(pool->species[i].genomes);
                 if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
@@ -636,22 +631,45 @@ void printMatingPool(MatingPool * pool) {
 }
 
 /*!
-* \brief Compare two Genome elements based on their fitness
+* \brief Compare two Genome elements based on their fitness, for the global ranking operation.
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
 * \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
+*
+* Worst will be returned first.
 */
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
     return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
 /*!
-* \brief Compare two Genome elements based on their fitness
+* \brief Compare two Genome elements based on their fitness, for the culling of weak Genomes.
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
 * \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+*
+* Worst fitness will be returned first.
 */
-static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
+static int compareFitnessCullingGenomes(const void * genome_1, const void * genome_2) {
+    int diff = ((Genome *) genome_2)->fitness - ((Genome *) genome_1)->fitness;
+
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
+
+    return 1;
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness, for the removal of stale Species.
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+*
+* Best fitness will be returned first.
+*/
+static int compareFitnessRemovingStale(const void * genome_1, const void * genome_2) {
     int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
 
     if (diff == 0.0)
