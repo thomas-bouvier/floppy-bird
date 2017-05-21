@@ -239,6 +239,9 @@ void addBird(GenericList * bird)
 */
 void freeLists(GenericList * bird_list, GenericList * obstacle_list)
 {
-    freeGenericList(bird_list);
-    freeGenericList(obstacle_list);
+    if (bird_list)
+        freeGenericList(bird_list);
+
+    if (obstacle_list)
+        freeGenericList(obstacle_list);
 }
