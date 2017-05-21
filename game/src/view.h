@@ -9,8 +9,8 @@
 #include "bird.h"
 #include "obstacle.h"
 #include "camera.h"
-#include "list.h"
 #include "file.h"
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
