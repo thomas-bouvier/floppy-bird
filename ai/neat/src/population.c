@@ -636,7 +636,7 @@ void printMatingPool(MatingPool * pool) {
 * \param[in] genome_2 the second Genome to compare
 * \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
 *
-* Worst will be returned first.
+* Worst fitness will be returned first.
 */
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
     return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
@@ -646,7 +646,7 @@ static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_
 * \brief Compare two Genome elements based on their fitness, for the culling of weak Genomes.
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
-* \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+* \return int 0 if the fitnesses are equal, 1 if the first Genome has a lower fitness than the second Genome, -1 otherwise
 *
 * Worst fitness will be returned first.
 */
