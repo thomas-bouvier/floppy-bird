@@ -266,12 +266,12 @@ int main(int argc, char ** argv)
         }
 
         while (running) {
-            if (bird_list)
-                freeGenericList(bird_list);
+            freeLists(bird_list, obstacle_list);
 
             bird_list = newGenericList(NULL, (FreeFunction) freeBird);
-            obstacle_list = newGenericList(NULL, (FreeFunction) freeObstacle);
             initGenericList(bird_list);
+
+            obstacle_list = newGenericList(NULL, (FreeFunction) freeObstacle);
             initGenericList(obstacle_list);
 
             /* reseting scores */
@@ -452,8 +452,10 @@ int main(int argc, char ** argv)
                         modifyGap(max_score);
 
                     cameraScrolling(&camera, bird_list);
-                    setOnFirstElement(bird_list);
 
+                    /* collision detection */
+
+                    setOnFirstElement(bird_list);
                     while (!outOfGenericList(bird_list))
                     {
                         if (detectHit((Bird*)bird_list->current->data, nextBirdObstacle(obstacle_list, (Bird*)bird_list->current->data), &sound))
@@ -486,6 +488,8 @@ int main(int argc, char ** argv)
 
                             nextElement(bird_list);
                         }
+
+                        /* NEAT console output */
 
                         int count = 0;
                         int k = 0;
