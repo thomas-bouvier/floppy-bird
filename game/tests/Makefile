@@ -33,5 +33,6 @@ generic_list.o: ../../ai/neat/src/generic_list.c ../../ai/neat/src/generic_list.
 
 
 clean:
+	rm -f *.o
 	rm -f *.~
 	rm -f main

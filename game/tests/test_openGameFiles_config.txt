@@ -1,0 +1,4 @@
+level :
+pathToLevelFile.txt
+score :
+pathToScoreFile.txt
