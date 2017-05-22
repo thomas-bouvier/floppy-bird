@@ -23,7 +23,6 @@ Bird * initBird(Genome * genome)
     new_bird->h = BIRD_SIZE;
     new_bird->dir_y = 0;
     new_bird->dead = 0;
-    new_bird->must_jump = 0;
     new_bird->flaps = 0;
     new_bird->score = 0;
     new_bird->genome = genome;
@@ -47,12 +46,11 @@ void updateBird(Bird * bird, int t, Sound * sound)
 {
     if (bird->dead == 0)
     {
-        if (t == JUMP || bird->must_jump == 1)
+        if (t == JUMP)
         {
             bird->dir_y = BIRD_JUMP;
             (*sound) = JUMPSOUND;
 
-            bird->must_jump = 0;
             ++bird->flaps;
         }
         else
