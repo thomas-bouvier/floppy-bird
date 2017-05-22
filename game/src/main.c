@@ -174,6 +174,7 @@ int main(int argc, char ** argv)
     }
 
     /* SDL_mixer initialization */
+
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) != 0)
     {
         fprintf(stderr, "SDL_mixer initialization failure\n");
@@ -181,6 +182,7 @@ int main(int argc, char ** argv)
     }
 
     /* Setup window */
+
     window = SDL_CreateWindow("Floppy Bird",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
@@ -194,21 +196,25 @@ int main(int argc, char ** argv)
     }
 
     /* Setup renderer */
+
     renderer =  SDL_CreateRenderer(window,
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
     /* Setup sounds */
+
     Mix_AllocateChannels(3);
     if (!openSoundFiles(config, &jump_sound, &obstacle_sound, &death_sound))
         return EXIT_FAILURE;
 
     /* Setup sprites */
+
     if (!openSpriteFiles(config, &sprites, renderer))
         return EXIT_FAILURE;
 
     /* Setup font */
+
     if (!openFontFiles(config, &big_font, &medium_font))
         return EXIT_FAILURE;
 
@@ -238,6 +244,7 @@ int main(int argc, char ** argv)
             running = 0;
 
         /* Setup IA1 */
+
         if (mode == IA1) {
             /* Open the file that contains qMatrix data */
             readConfig(config, qmatrixPath, "qMatrix :\n");
@@ -250,6 +257,7 @@ int main(int argc, char ** argv)
         }
 
         /* Setup IA2 */
+
         if (mode == IA2) {
             if (pool)
                 freeMatingPool(pool);
@@ -607,7 +615,7 @@ int main(int argc, char ** argv)
         freeMatingPool(pool);
 
     freeLists(bird_list, obstacle_list);
-    closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font);
+    closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font, medium_font);
     quitGame(window, renderer);
 
     return EXIT_SUCCESS;
