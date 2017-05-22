@@ -218,8 +218,11 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
             previous_node->next = new_node;
         }
     }
+    else {
+        add(list, element);
+    }
 
-    return 0;
+    return 1;
 }
 
 static int deleteFirst(GenericList * list, int retrieve_data, void ** data) {
@@ -352,7 +355,6 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
         setOnFirstElement(list);
         nextElement(list);
         while (!outOfGenericList(list)) {
-
             pos = list->current->next;
             deleteCurrent(list, 1, save);
 
@@ -360,7 +362,8 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
             while (list->current != pos && (*f)(*save, list->current->data) < 0)
                 nextElement(list);
 
-            insertBeforeCurrent(list, *save);
+            if (!insertBeforeCurrent(list, *save))
+                fprintf(stderr, "Element coudn't be inserted in GenericList\n");
 
             list->current = pos;
         }
