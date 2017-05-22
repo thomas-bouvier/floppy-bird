@@ -18,7 +18,7 @@
 #define N_OUTPUTS                       1
 
 #define DECREASE_PROBABILITY            0.50
-#define POINT_MUTATION_PERTURBATION     0.90
+#define POINT_MUTATION_PERTURBATION     0.75
 
 #define POINT_MUTATION_RATE             0.25
 #define LINK_MUTATION_RATE              2.00
@@ -29,7 +29,7 @@
 
 #define CROSSOVER_RATE                  0.75
 
-#define SPECIATION_THRESHOLD            1.00
+#define SPECIATION_THRESHOLD            6.00
 #define WEIGHT_COEFFICIENT              0.40
 #define DISJOINT_COEFFICIENT            2.00
 

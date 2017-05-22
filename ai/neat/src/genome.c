@@ -333,7 +333,7 @@ int mutate(Genome * genome) {
 }
 
 /*!
-* \brief Randomly update the weight of a randomly selected ConnectionGene from the given Genome
+* \brief Randomly update the weight of a randomly selected ConnectionGene from the given Genome.
 * \param[out] genome The Genome whose a random ConnectionGene has to be updated
 * \return int 1 if a ConnectionGene was successfully updated, 0 otherwise
 *
@@ -364,9 +364,10 @@ int mutatePoint(Genome * genome) {
 }
 
 /*!
-* \brief
-* \param[out] genome
-* \return int
+* \brief Perform a link mutation on the given Genome.
+* \param[out] genome the Genome to alter
+* \param[in] bias bool value indicating if the entry Neuron of the created ConnectionGene should be a bias Neuron
+* \return int 1 if the mutation was succesfull, 0 otherwise
 */
 int mutateLink(Genome * genome, int bias) {
     int neuron_1_id;
@@ -709,17 +710,18 @@ static double computeDisjoint(Genome * genome_1, Genome * genome_2, int verbose)
 * \return int 1 if the two Genome elements are from the same Species, 0 otherwise
 */
 double sameSpecies(Genome * genome_1, Genome * genome_2) {
-    double coef = WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 0) < SPECIATION_THRESHOLD;
-    return coef;
+    return WEIGHT_COEFFICIENT * computeWeights(genome_1, genome_2, 0) + DISJOINT_COEFFICIENT * computeDisjoint(genome_1, genome_2, 0) < SPECIATION_THRESHOLD;
 }
 
 /*!
-* \brief Check if the two given Neuron elements are linked by a ConnectionGene.
-* \param[out] neuron_in The first Neuron
-* \param[in] neuron_out The second Neuron
+* \brief Check if the two Neuron matching the given ids are linked by a ConnectionGene.
+- \param[in] genome the Genome where the Neuron to check are from
+* \param[in] neuron_in the first Neuron to check
+* \param[in] neuron_out the second Neuron to check
 * \return int 1 if the two Neuron elements are linked, 0 otherwise
 */
 int linked(Genome * genome, int neuron_in_id, int neuron_out_id) {
+    Node * pos = genome->connection_genes->current;
     ConnectionGene * current_connection_gene = NULL;
 
     setOnFirstElement(genome->connection_genes);
@@ -732,6 +734,8 @@ int linked(Genome * genome, int neuron_in_id, int neuron_out_id) {
 
         nextElement(genome->connection_genes);
     }
+
+    genome->connection_genes->current = pos;
 
     return 0;
 }
@@ -826,6 +830,8 @@ double * evaluateGenome(Genome * genome, double * input) {
 /*!
 * \brief Return a random Neuron id from the given Genome.
 * \param[in] genome the Genome to choose a Neuron from
+* \param[in] non_input bool value indicating if the returned id must be from a non-input Neuron
+* \param[in] non_output bool value indicating if the returned id must be from a non_output Neuron
 * \return Return a random Neuron
 */
 int getRandomNeuronId(Genome * genome, int non_input, int non_output) {

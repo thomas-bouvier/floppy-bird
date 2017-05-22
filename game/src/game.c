@@ -14,7 +14,7 @@
 */
 void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile)
 {
-    Bird * new_bird = initBird(NULL);
+    Bird * new_bird = initBird(NULL, NULL);
     add(bird, new_bird);
     initCamera(camera, 0, LOW);
     fillObstacleList(obstacle_list, level, levelFromFile);
@@ -40,7 +40,7 @@ void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obsta
         while (!outOfGenericList(pool->species[i].genomes)) {
             generateGenome(getCurrent(pool->species[i].genomes));
 
-            if ((bird = initBird(getCurrent(pool->species[i].genomes))) == NULL)
+            if ((bird = initBird(getCurrent(pool->species[i].genomes), &pool->species[i]), &pool->species[i]) == NULL)
                 return;
 
             add(bird_list, bird);
@@ -136,14 +136,18 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
         h = 1;              /* Collision with the ground */
         (*sound) = DEATH;
     }
-    if(bird->x + BIRD_SIZE/2 >= obstacle->lower.x)
+    else if (bird->y + BIRD_SIZE/2 < 0) {
+        h = 1;
+        (*sound) = DEATH;
+    }
+    else if(bird->x + BIRD_SIZE/2 >= obstacle->lower.x)
     {
         if(bird->y - BIRD_SIZE/2 <= obstacle->upper.y + obstacle->upper.h)
         {
             h = 1;          /* Collision with the upper pipe */
         	(*sound) = DEATH;
         }
-        if(bird->y + BIRD_SIZE/2 >= obstacle->lower.y)
+        else if(bird->y + BIRD_SIZE/2 >= obstacle->lower.y)
         {
             h = 1;          /* Collision with the lower pipe */
             (*sound) = DEATH;
@@ -228,7 +232,7 @@ int ratioPipeWidth (Bird * bird, Camera * camera, GenericList * obstacle_list)
 */
 void addBird(GenericList * bird)
 {
-    Bird * new_bird = initBird(NULL);
+    Bird * new_bird = initBird(NULL, NULL);
     add(bird, new_bird);
 }
 

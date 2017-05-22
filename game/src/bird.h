@@ -24,9 +24,10 @@ typedef struct{
     int flaps;                  /*!< the number of flaps done by this Bird */
     int score;                  /*!< the number of obstacles this Bird has passed */
     Genome * genome;            /*!< the Genome element attached to this Bird */
+    Species * species;          /*!< the Species of the Genome attached to this Bird */
 } Bird;
 
-Bird * initBird(Genome * genome);
+Bird * initBird(Genome * genome, Species * species);
 void updateBird(Bird * bird, int t, Sound * sound);
 void freeBird(Bird * bird);
 

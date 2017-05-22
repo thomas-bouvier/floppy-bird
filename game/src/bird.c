@@ -8,7 +8,7 @@
 * \brief Initialize the parameters of a given bird
 * \return the bird created
 */
-Bird * initBird(Genome * genome)
+Bird * initBird(Genome * genome, Species * species)
 {
     Bird * new_bird = (Bird*) malloc(sizeof(Bird));
 
@@ -26,6 +26,7 @@ Bird * initBird(Genome * genome)
     new_bird->flaps = 0;
     new_bird->score = 0;
     new_bird->genome = genome;
+    new_bird->species = species;
 
     return new_bird;
 }
@@ -63,8 +64,10 @@ void updateBird(Bird * bird, int t, Sound * sound)
 
         bird->y += bird->dir_y;
 
+        /*
         if(bird->y - BIRD_SIZE / 2 < 0)
             bird->y = BIRD_SIZE / 2;
+        */
 
         if(bird->y + BIRD_SIZE / 2 > SCREEN_HEIGHT)
             bird->y = SCREEN_HEIGHT - BIRD_SIZE / 2;
