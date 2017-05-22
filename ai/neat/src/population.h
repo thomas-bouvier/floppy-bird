@@ -24,7 +24,6 @@ typedef struct MatingPool MatingPool;
 struct Species {
     GenericList * genomes;            /*!< Genomes elements contained in this Species */
     short int id;                     /*!< the id of this Species */
-    short int nb_genomes;             /*!< the number of Genome elements contained in this Species */
     double max_fitness;               /*!< the maximum score of all Genome elements in this Species */
     double average_fitness;           /*!< the average score of Genome elements in this Species */
     int staleness;                    /*!< the staleness of this Species */

@@ -32,7 +32,7 @@ Neuron * newNeuron(NeuronType type) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(void * neuron) {
-    //freeGenericList(((Neuron *) neuron)->connection_genes);
+    /* freeGenericList(((Neuron *) neuron)->connection_genes_input); */
     free(neuron);
 }
 
@@ -45,7 +45,7 @@ void freeNeuron(void * neuron) {
 int addNeuron(GenericList * neurons, Neuron * neuron) {
     int nb_neurons = count(neurons);
     if (nb_neurons == N_MAX_NEURONS) {
-        fprintf(stderr, "Can't add neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
+        fprintf(stderr, "Can't add Neuron to network : reached limit (max=%d)\n", N_MAX_NEURONS);
         return 0;
     }
 

@@ -13,7 +13,7 @@ ifeq ($(OS),Windows_NT)
 else
 	# SDL inclusion and link for Linux
 	CFLAGS += `sdl2-config --cflags`
-	LDFLAGS +=  `sdl2-config --libs`
+	LDFLAGS += `sdl2-config --libs`
 endif
 
 
@@ -50,5 +50,5 @@ cleanDebug:
 
 # Clean command in command line
 clean:
-	rm -f *.o *~
+	rm -f *.o *~ *.gcno *.gcda *.gcov vgcore.*
 	rm -f main

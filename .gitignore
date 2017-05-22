@@ -15,6 +15,7 @@ vgcore.*
 
 *.gcda
 *.gcno
+*.gcov
 
 # Code::Blocks
 *.depend

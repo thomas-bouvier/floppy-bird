@@ -1,7 +1,8 @@
 #include "population.h"
 
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2);
-static int compareFitnessCulling(const void * genome_1, const void * genome_2);
+static int compareFitnessCullingGenomes(const void * genome_1, const void * genome_2);
+static int compareFitnessRemovingStale(const void * genome_1, const void * genome_2);
 
 /*!
 * \brief Create a MatingPool.
@@ -83,7 +84,6 @@ int addSpeciesToMatingPool(MatingPool * pool) {
     pool->species[pool->nb_species].genomes = genomes;
 
     pool->species[pool->nb_species].id = pool->nb_species;
-    pool->species[pool->nb_species].nb_genomes = 0;
     pool->species[pool->nb_species].max_fitness = 0.0;
     pool->species[pool->nb_species].average_fitness = 0.0;
     pool->species[pool->nb_species].staleness = 0;
@@ -144,6 +144,11 @@ int newGeneration(MatingPool * pool, int verbose) {
     Genome * children[POPULATION];
     Genome * child;
 
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (emptyGenericList(pool->species[i].genomes))
+            printf("problem1\n");
+    }
+
     if (verbose) {
         printf("======================================================================================================\n");
         printf("======================================================================================================\n");
@@ -154,6 +159,11 @@ int newGeneration(MatingPool * pool, int verbose) {
     ret = cullGenomesOfSpecies(pool, 0, verbose);
     if (ret > 0 && verbose)
         printf("=> %d Species were culled!\n", ret);
+
+    for (i = 0; i < pool->nb_species; ++i) {
+        if (emptyGenericList(pool->species[i].genomes))
+            printf("problem2\n");
+    }
 
     computeGlobalRanks(pool);
     ret = removeStaleSpecies(pool, verbose);
@@ -209,12 +219,18 @@ int newGeneration(MatingPool * pool, int verbose) {
         children[count] = breedGenome(&pool->species[randomLimit(pool->nb_species - 1)], verbose);
         ++count;
     }
-    
+
+    //printf("bp1\n");
+
     for (i = 0; i < count; ++i)
-        if (!addGenomeToProperSpecies(children[i], pool))
+        if (!addGenomeToProperSpecies(children[i], pool)) {
+            fprintf(stderr, "Can't add Genome to proper Species\n");
             return 0;
+        }
 
     ++pool->generation;
+
+    //printf("bp2\n");
 
     return 1;
 }
@@ -240,20 +256,20 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
     }
 
     for (i = 0; i < pool->nb_species; ++i) {
-        sort(pool->species[i].genomes, compareFitnessCulling);
+        sort(pool->species[i].genomes, compareFitnessCullingGenomes);
 
         if (cut_to_one)
             remaining = 1.0;
         else
-            remaining = ceil(pool->species[i].nb_genomes / 2.0);
+            remaining = ceil(count(pool->species[i].genomes) / 2.0);
 
         setOnFirstElement(pool->species[i].genomes);
-        while (!outOfGenericList(pool->species[i].genomes) && pool->species[i].nb_genomes > remaining) {
-            delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes));
-            setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes) && count(pool->species[i].genomes) > remaining) {
+            if (delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes))) {
+                ++culled_count;
+            }
 
-            --pool->species[i].nb_genomes;
-            ++culled_count;
+            setOnFirstElement(pool->species[i].genomes);
         }
     }
 
@@ -341,7 +357,7 @@ int removeStaleSpecies(MatingPool * pool, int verbose) {
     if (pool->nb_species > 1) {
         for (i = 0; i < pool->nb_species; ++i) {
             if (!emptyGenericList(pool->species[i].genomes)) {
-                sort(pool->species[i].genomes, compareFitnessCulling);
+                sort(pool->species[i].genomes, compareFitnessRemovingStale);
 
                 setOnFirstElement(pool->species[i].genomes);
                 if (((Genome *) getCurrent(pool->species[i].genomes))->fitness > pool->species[i].max_fitness) {
@@ -496,17 +512,12 @@ void computeGlobalAverageFitness(MatingPool * pool) {
 
 
 static int addGenomeToSpecies(Genome * genome, Species * species) {
-    if (species->nb_genomes == N_MAX_GENOMES) {
+    if (count(species->genomes) == N_MAX_GENOMES) {
         fprintf(stderr, "Can't add Genome to Species : reached limit (max=%d)\n", N_MAX_GENOMES);
         return 0;
     }
 
-    if (!add(species->genomes, genome))
-        return 0;
-
-    ++species->nb_genomes;
-
-    return 1;
+    return add(species->genomes, genome);
 }
 
 /*!
@@ -527,7 +538,7 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
     // we're looking for a species that matches the given genome
 
     for (i = 0; i < pool->nb_species; ++i) {
-        if (pool->species[i].nb_genomes > 0) {
+        if (count(pool->species[i].genomes) > 0) {
             setOnFirstElement(pool->species[i].genomes);
 
             if (sameSpecies(genome, (Genome *) getCurrent(pool->species[i].genomes))) {
@@ -539,11 +550,15 @@ int addGenomeToProperSpecies(Genome * genome, MatingPool * pool) {
 
     // no species matches the given genome
 
-    if (!addSpeciesToMatingPool(pool))
+    if (!addSpeciesToMatingPool(pool)) {
+        fprintf(stderr, "Can't add Species to MatingPool\n");
         return 0;
+    }
 
-    if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1]))
+    if (!addGenomeToSpecies(genome, &pool->species[pool->nb_species - 1])) {
+        fprintf(stderr, "Can't add Gennome to Species\n");
         return 0;
+    }
 
     return 1;
 }
@@ -562,7 +577,7 @@ void computeAverageFitness(Species * species) {
         nextElement(species->genomes);
     }
 
-    species->average_fitness = sum / species->nb_genomes;
+    species->average_fitness = sum / count(species->genomes);
 }
 
 /*!
@@ -571,7 +586,7 @@ void computeAverageFitness(Species * species) {
 * \return a random Genome element
 */
 Genome * getRandomGenome(Species * species) {
-    setOn(species->genomes, randomLimit(species->nb_genomes - 1));
+    setOn(species->genomes, randomLimit(count(species->genomes) - 1));
     return (Genome *) getCurrent(species->genomes);
 }
 
@@ -582,7 +597,7 @@ Genome * getRandomGenome(Species * species) {
 void printSpecies(Species * species) {
     printf("==================================\n");
     printf("Species\n");
-    printf("\tnb_genomes: %d\n", species->nb_genomes);
+    printf("\tnb_genomes: %d\n", count(species->genomes));
     printf("\tmax_fitness: %f\n", species->max_fitness);
     printf("\taverage_fitness: %f\n", species->average_fitness);
     printf("\tstaleness: %d\n", species->staleness);
@@ -620,22 +635,45 @@ void printMatingPool(MatingPool * pool) {
 }
 
 /*!
-* \brief Compare two Genome elements based on their fitness
+* \brief Compare two Genome elements based on their fitness, for the global ranking operation.
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
 * \return int a positive integer if the first Genome has a greater fitness, a negative number otherwise
+*
+* Worst fitness will be returned first.
 */
 static int compareFitnessGlobalRanks(const void * genome_1, const void * genome_2) {
     return (*(Genome **) genome_1)->fitness - (*(Genome **) genome_2)->fitness;
 }
 
 /*!
-* \brief Compare two Genome elements based on their fitness
+* \brief Compare two Genome elements based on their fitness, for the culling of weak Genomes.
+* \param[in] genome_1 the first Genome to compare
+* \param[in] genome_2 the second Genome to compare
+* \return int 0 if the fitnesses are equal, 1 if the first Genome has a lower fitness than the second Genome, -1 otherwise
+*
+* Worst fitness will be returned first.
+*/
+static int compareFitnessCullingGenomes(const void * genome_1, const void * genome_2) {
+    int diff = ((Genome *) genome_2)->fitness - ((Genome *) genome_1)->fitness;
+
+    if (diff == 0.0)
+        return 0;
+    else if (diff < 0.0)
+        return -1;
+
+    return 1;
+}
+
+/*!
+* \brief Compare two Genome elements based on their fitness, for the removal of stale Species.
 * \param[in] genome_1 the first Genome to compare
 * \param[in] genome_2 the second Genome to compare
 * \return int 0 if the fitnesses are equal, 1 if the first Genome has a greater fitness than the second Genome, -1 otherwise
+*
+* Best fitness will be returned first.
 */
-static int compareFitnessCulling(const void * genome_1, const void * genome_2) {
+static int compareFitnessRemovingStale(const void * genome_1, const void * genome_2) {
     int diff = ((Genome *) genome_1)->fitness - ((Genome *) genome_2)->fitness;
 
     if (diff == 0.0)

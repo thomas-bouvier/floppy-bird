@@ -162,27 +162,27 @@ void * getCurrent(GenericList * list) {
 * \return int 1 if the element was successfully inserted, 0 otherwise
 */
 int add(GenericList * list, void * element) {
-  Node * new_node = NULL;
+    Node * new_node = NULL;
 
-  if (!element)
-    return 0;
+    if (!element)
+        return 0;
 
-  if ((new_node = newNode(list->clone_function)) == (Node *) NULL) {
-    fprintf(stderr, "Error while allocating memory for new Node\n");
-    return 0;
-  }
+    if ((new_node = newNode(list->clone_function)) == (Node *) NULL) {
+        fprintf(stderr, "Error while allocating memory for new Node\n");
+        return 0;
+    }
 
-  new_node->data = element;
-  new_node->next = NULL;
+    new_node->data = element;
+    new_node->next = NULL;
 
-  if (emptyGenericList(list))
-    list->first = new_node;
-  else
-    list->last->next = new_node;
+    if (emptyGenericList(list))
+        list->first = new_node;
+    else
+        list->last->next = new_node;
 
-  list->current = list->last = new_node;
+    list->current = list->last = new_node;
 
-  return 1;
+    return 1;
 }
 
 /*!
@@ -196,25 +196,30 @@ static int insertBeforeCurrent(GenericList * list, void * element) {
     Node * previous_node = NULL;
     Node * stop = list->current;
 
-    setOnFirstElement(list);
-    while (list->current != stop) {
-        previous_node = list->current;
-        nextElement(list);
+    if (!outOfGenericList(list)) {
+        setOnFirstElement(list);
+        while (list->current != stop) {
+            previous_node = list->current;
+            nextElement(list);
+        }
+
+        if ((new_node = newNode()) == (Node *) NULL) {
+            fprintf(stderr, "Error while allocating memory for new Node\n");
+            return 0;
+        }
+
+        new_node->data = element;
+
+        if (list->current == list->first) {
+            new_node->next = list->first;
+            list->first = new_node;
+        } else {
+            new_node->next = list->current;
+            previous_node->next = new_node;
+        }
     }
-
-    if ((new_node = newNode()) == (Node *) NULL) {
-        fprintf(stderr, "Error while allocating memory for new Node\n");
-        return 0;
-    }
-
-    new_node->data = element;
-
-    if (list->current == list->first) {
-        new_node->next = list->first;
-        list->first = new_node;
-    } else {
-        new_node->next = list->current;
-        previous_node->next = new_node;
+    else {
+        add(list, element);
     }
 
     return 1;
@@ -267,30 +272,30 @@ static int deleteCurrent(GenericList * list, int retrieve_data, void ** data) {
     Node * stop = NULL;
 
     if (list->current == list->first)
-      return deleteFirst(list, retrieve_data, data);
+        return deleteFirst(list, retrieve_data, data);
 
     else if (list->current == list->last)
-      return deleteLast(list, retrieve_data, data);
+        return deleteLast(list, retrieve_data, data);
 
     else {
-      stop = list->current;
+        stop = list->current;
 
-      setOnFirstElement(list);
-      while (list->current != stop) {
-        previous_element = list->current;
-        nextElement(list);
-      }
+        setOnFirstElement(list);
+        while (list->current != stop) {
+            previous_element = list->current;
+            nextElement(list);
+        }
 
-      previous_element->next = list->current->next;
+        previous_element->next = list->current->next;
 
-      if (retrieve_data)
-        *data = list->current->data;
-      else if (list->free_function)
-        list->free_function(list->current->data);
+        if (retrieve_data)
+            *data = list->current->data;
+        else if (list->free_function)
+            list->free_function(list->current->data);
 
-      free(list->current);
+        free(list->current);
 
-      return 1;
+        return 1;
     }
 }
 
@@ -342,6 +347,8 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
     Node * pos = NULL;
     void ** save;
 
+    int c = count(list);
+
     if (count(list) > 1) {
         save = malloc(sizeof(void *));
 
@@ -355,13 +362,17 @@ void sort(GenericList * list, int (*f) (const void *, const void *)) {
             while (list->current != pos && (*f)(*save, list->current->data) < 0)
                 nextElement(list);
 
-            insertBeforeCurrent(list, *save);
+            if (!insertBeforeCurrent(list, *save))
+                fprintf(stderr, "Element coudn't be inserted in GenericList\n");
 
             list->current = pos;
         }
 
         free(save);
     }
+
+    if (c != count(list))
+        printf("====================================================\n");
 }
 
 /*!
@@ -387,15 +398,18 @@ int find(GenericList * list, void * element) {
 * \param[in] list the GenericList to scan
 */
 int count(GenericList * list) {
-  int count = 0;
+    Node * pos = list->current;
+    int count = 0;
 
-  setOnFirstElement(list);
-  while (!outOfGenericList(list)) {
-    ++count;
-    nextElement(list);
-  }
+    setOnFirstElement(list);
+    while (!outOfGenericList(list)) {
+        ++count;
+        nextElement(list);
+    }
 
-  return count;
+    list->current = pos;
+
+    return count;
 }
 
 /*!

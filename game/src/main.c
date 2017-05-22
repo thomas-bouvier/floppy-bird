@@ -219,10 +219,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        /*
         mode = IA2;
         levelFromFile = 0;
-        */
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -489,12 +487,10 @@ int main(int argc, char ** argv)
                             nextElement(bird_list);
                         }
 
-                        /*
-                        printf("alive: %d / %d, ", nb_alive, POPULATION);
-                        printf("fitness: %f / %f, ", best_bird->genome->fitness, pool->max_fitness);
-                        printf("average: %f, ", pool->average_fitness);
-                        printf("nb_species: %d\n", pool->nb_species);
-                        */
+                        printf("alive: %d / %d\t\t", nb_alive, POPULATION);
+                        printf("fitness: %f / %f ~ %f\t\t", best_bird->genome->fitness, pool->max_fitness, pool->average_fitness);
+                        printf("nb_species: %d\t\t", pool->nb_species);
+                        printf("generation: %d\n", pool->generation);
                     }
 
                     hit_saved = hit;
@@ -539,6 +535,7 @@ int main(int argc, char ** argv)
                     SDL_RenderPresent(renderer);
                     SDL_Delay(1000);
                 }
+
                 emptyEvent();
 
                 Action end_of_game = NOTHING;
@@ -569,8 +566,10 @@ int main(int argc, char ** argv)
 
             /* all birds are dead, and we're in AI2 mode */
 
-            if (hit && mode == IA2)
+            if (hit && mode == IA2) {
                 newGeneration(pool, 0);
+                //printMatingPool(pool);
+            }
         }
     }
 
@@ -582,7 +581,6 @@ int main(int argc, char ** argv)
         freeMatingPool(pool);
 
     freeLists(bird_list, obstacle_list);
-
     closeFiles(config, level, scoreFile, jump_sound, obstacle_sound, death_sound, &sprites, big_font);
     quitGame(window, renderer);
 
