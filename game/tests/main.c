@@ -16,96 +16,117 @@
 
 /* initBird */
 
-/*static int setup_initBird(void ** state) {
-  Bird * bird = malloc(sizeof(Bird));
+static int setup_initBird(void ** state) {
+  Genome * genome = malloc(sizeof(Genome));
 
-  if (bird == (Bird *) NULL)
+  if (genome == (Genome *) NULL)
     return -1;
 
-  *state = bird;
+  *state = genome;
 
   return 0;
 }
 
 static void test_initBird(void ** state) {
-  Bird * bird = (Bird *) (* state);
-  initBird(bird);
+  Genome * genome = (Genome *) (* state);
+  Bird * bird = initBird(genome);
 
   assert_int_equal(bird->x, BIRD_X_OFFSET);
   assert_int_equal(bird->y, SCREEN_HEIGHT / 2);
   assert_int_equal(bird->w, BIRD_SIZE);
   assert_int_equal(bird->h, BIRD_SIZE);
   assert_int_equal(bird->dir_y, 0);
+  assert_int_equal(bird->dead, 0);
+  assert_int_equal(bird->flaps, 0);
+  assert_int_equal(bird->score, 0);
+  assert_int_equal(bird->genome, genome);
 }
 
 static int teardown_initBird(void ** state) {
   free(*state);
   return 0;
-}*/
+}
 
 /* updateBird */
 
-/*static int setup_updateBird(void ** state) {
-  Bird * bird = malloc(sizeof(Bird));
+typedef struct{
+    Bird * bird;
+    Sound * sound;
+}UpdateBirdStruct;
 
-  if (bird == (Bird *) NULL)
+static int setup_updateBird(void ** state) {
+    UpdateBirdStruct * structure = malloc(sizeof(UpdateBirdStruct));
+    structure->bird = initBird(NULL);
+    structure->sound = malloc(sizeof(Sound));
+
+  if (structure->bird == (Bird *) NULL || structure->sound == NULL)
     return -1;
 
-  *state = bird;
-  initBird(*state);
+  *state = structure;
 
   return 0;
 }
 
 static void test_updateBirdNothing(void ** state) {
-  Bird * bird = (Bird *) (* state);
+    UpdateBirdStruct * structure = (UpdateBirdStruct *)(* state);
 
-  int y = bird->y;
-  int dir_y = bird->dir_y;
+  int y = structure->bird->y;
+  int dir_y = structure->bird->dir_y;
 
-  updateBird(*state, NOTHING);
+  updateBird((Bird *)((UpdateBirdStruct *)*state)->bird, NOTHING, (Sound *)((UpdateBirdStruct *)*state)->sound);
 
-  assert_int_equal(bird->dir_y, dir_y + GRAVITY);
-  assert_int_equal(bird->y, y + dir_y + GRAVITY);
+  assert_int_equal(structure->bird->dir_y, dir_y + GRAVITY);
+  assert_int_equal(structure->bird->y, y + dir_y + GRAVITY);
 }
 
 static void test_updateBirdNothingMaxFallSpeed(void ** state) {
   int i;
-  Bird * bird = (Bird *) (* state);
+  Bird * bird = (Bird *) ((UpdateBirdStruct *)* state)->bird;
+
 
   for (i = 0; i < 100; ++i)
-    updateBird(*state, NOTHING);
+    updateBird(bird, NOTHING, (Sound *)((UpdateBirdStruct *)*state)->sound);
 
   assert_int_equal(bird->dir_y, BIRD_MAX_FALL_SPEED);
   assert_int_equal(bird->y, SCREEN_HEIGHT - BIRD_SIZE / 2);
 }
 
 static void test_updateBirdJump(void ** state) {
-  Bird * bird = (Bird *) (* state);
+  Bird * bird = (Bird *) ((UpdateBirdStruct *)* state)->bird;
+  Sound * sound = (Sound *)((UpdateBirdStruct *)* state)->sound;
+  int flaps = bird->flaps;
 
   int y = bird->y;
 
-  updateBird(*state, JUMP);
+  updateBird(bird, JUMP, (Sound *)((UpdateBirdStruct *)*state)->sound);
 
   assert_int_equal(bird->dir_y, BIRD_JUMP);
   assert_int_equal(bird->y, y + BIRD_JUMP);
+  assert_int_equal(bird->flaps, flaps + 1);
+  assert_int_equal(*sound, JUMPSOUND);
 }
 
 static void test_updateBirdJumpMaxHeight(void ** state) {
   int i;
-  Bird * bird = (Bird *) (* state);
+  Bird * bird = (Bird *) ((UpdateBirdStruct *)* state)->bird;
+  Sound * sound = (Sound *)((UpdateBirdStruct *)* state)->sound;
+  int flaps = bird->flaps;
 
   for (i = 0; i < 100; ++i)
-    updateBird(*state, JUMP);
+    updateBird(bird, JUMP, (Sound *)((UpdateBirdStruct *)*state)->sound);
 
   assert_int_equal(bird->dir_y, BIRD_JUMP);
   assert_int_equal(bird->y, BIRD_SIZE / 2);
+  assert_int_equal(bird->flaps, flaps + 100);
+  assert_int_equal(*sound, JUMPSOUND);
 }
 
 static int teardown_updateBird(void ** state) {
-  free(*state);
+  free(((UpdateBirdStruct *)*state)->bird);
+  free(((UpdateBirdStruct *)*state)->sound);
+  free((*state));
   return 0;
-}*/
+}
 
 
 /* FILE */
@@ -553,11 +574,12 @@ int main() {
   const struct CMUnitTest tests[] = {
 	/* Bird */
     /*cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),*/
+    cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     /*cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
-    cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),*/
+    cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
 
 	/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),

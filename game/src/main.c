@@ -56,7 +56,7 @@ void learn(GenericList * bird_list, Bird ** best_bird, MatingPool * pool, int * 
         if (!bird->dead) {
             *hit = 0;
 
-            fitness = (double) *ticks - (double) bird->flaps * 2;
+            fitness = (double) *ticks;
             if (fitness == 0.0) fitness = -1.0;
 
             bird->genome->fitness = fitness;
@@ -487,9 +487,31 @@ int main(int argc, char ** argv)
                             nextElement(bird_list);
                         }
 
+                        int count = 0;
+                        int k = 0;
+                        int found = 0;
+                        Species * species[POPULATION];
+
+                        setOnFirstElement(bird_list);
+                        while (!outOfGenericList(bird_list)) {
+                            if (!((Bird *) getCurrent(bird_list))->dead) {
+                                for (k = 0; k < count; ++k) {
+                                    if (species[k] == ((Bird *) getCurrent(bird_list))->species)
+                                        found = 1;
+                                }
+
+                                if (!found)
+                                    species[count++] = ((Bird *) getCurrent(bird_list))->species;
+
+                                found = 0;
+                            }
+
+                            nextElement(bird_list);
+                        }
+
                         printf("alive: %d / %d\t\t", nb_alive, POPULATION);
+                        printf("nb_species: %d / %d\t\t", count, pool->nb_species);
                         printf("fitness: %f / %f ~ %f\t\t", best_bird->genome->fitness, pool->max_fitness, pool->average_fitness);
-                        printf("nb_species: %d\t\t", pool->nb_species);
                         printf("generation: %d\n", pool->generation);
                     }
 

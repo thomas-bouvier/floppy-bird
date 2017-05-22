@@ -265,10 +265,12 @@ int cullGenomesOfSpecies(MatingPool * pool, int cut_to_one, int verbose) {
 
         setOnFirstElement(pool->species[i].genomes);
         while (!outOfGenericList(pool->species[i].genomes) && count(pool->species[i].genomes) > remaining) {
-            if (delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes))) {
-                ++culled_count;
+            if (!delete(pool->species[i].genomes, (Genome *) getCurrent(pool->species[i].genomes))) {
+                fprintf(stderr, "Can't delete Genome from Species\n");
+                return -1;
             }
 
+            ++culled_count;
             setOnFirstElement(pool->species[i].genomes);
         }
     }
