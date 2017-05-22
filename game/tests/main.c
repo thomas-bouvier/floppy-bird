@@ -41,7 +41,7 @@ static void test_initBird(void ** state) {
 static int teardown_initBird(void ** state) {
   free(*state);
   return 0;
-}
+}*/
 
 /* updateBird */
 
@@ -105,36 +105,11 @@ static void test_updateBirdJumpMaxHeight(void ** state) {
 static int teardown_updateBird(void ** state) {
   free(*state);
   return 0;
-}
+}*/
 
-/* initCamera */
 
-static int setup_initCamera(void ** state) {
-  Camera * camera = malloc(sizeof(Camera));
+/* FILE */
 
-  if (camera == (Camera *) NULL)
-    return -1;
-
-  *state = camera;
-
-  return 0;
-}
-
-static void test_initCamera(void ** state) {
-  Camera * camera = (Camera *) (* state);
-  initCamera(camera, 0, 15000);
-
-  assert_int_equal(camera->x, 0);
-  assert_int_equal(camera->y, 0);
-  assert_int_equal(camera->w, SCREEN_WIDTH);
-  assert_int_equal(camera->h, SCREEN_HEIGHT);
-  assert_int_equal(camera->speed, 15000);
-}
-
-static int teardown_initCamera(void ** state) {
-  free(*state);
-  return 0;
-}
 
 /* readLevel */
 
@@ -308,10 +283,82 @@ static int teardown_saveScore(void ** state) {
   return remove("test_saveScore.txt");
 }
 
+/* readBestScore */
+
+static int setup_readBestScoreEmpty(void ** state) {
+  FILE * file = NULL;
+
+  *state = file;
+
+  return 0;
+}
+
+static int setup_readBestScore(void ** state) {
+  FILE * file = fopen("test_readBestScore.txt", "w+");
+
+  if (file == (FILE *) NULL)
+    return -1;
+
+  fputs("69", file);
+
+  *state = file;
+
+  return 0;
+}
+
+static void test_readBestScoreEmpty(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(readBestScore(file), -1);
+}
+
+static void test_readBestScore(void ** state) {
+  FILE * file = (FILE *) (* state);
+
+  assert_int_equal(readBestScore(file), 69);
+}
+
+static int teardown_readBestScore(void ** state) {
+  free(*state);
+  return remove("test_readBestScore.txt");
+}
+
+
+/* CAMERA */
+
+
+/* initCamera */
+
+static int setup_initCamera(void ** state) {
+  Camera * camera = malloc(sizeof(Camera));
+
+  if (camera == (Camera *) NULL)
+    return -1;
+
+  *state = camera;
+
+  return 0;
+}
+
+static void test_initCamera(void ** state) {
+  Camera * camera = (Camera *) (* state);
+  initCamera(camera, 0, 15000);
+
+  assert_int_equal(camera->x, 0);
+  assert_int_equal(camera->y, 0);
+  assert_int_equal(camera->w, SCREEN_WIDTH);
+  assert_int_equal(camera->h, SCREEN_HEIGHT);
+  assert_int_equal(camera->speed, 15000);
+}
+
+static int teardown_initCamera(void ** state) {
+  free(*state);
+  return 0;
+}
+
 /* cameraScrolling */
 
-/*
-static int setup_cameraScrolling(void ** state_1, void ** state_2) {
+/*static int setup_cameraScrolling(void ** state_1, void ** state_2) {
   Camera * camera = NULL;
   Bird * bird = NULL;
 
@@ -349,8 +396,11 @@ static int teardown_cameraScrolling(void ** state_1, void ** state_2) {
   free(*state_1);
   free(*state_2);
   return 0;
-}
-*/
+}*/
+
+
+/* OBSTACLE */
+
 
 /* newObstacle */
 
@@ -396,6 +446,9 @@ static void test_newObstacleMaxHeight(void ** state) {
 }
 
 
+/* PIPE */
+
+
 /* initPipe */
 
 static int setup_initPipe(void ** state) {
@@ -427,6 +480,7 @@ static int teardown_initPipe(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
+	/* Bird */
     /*cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
@@ -434,8 +488,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),*/
 
-    cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
-
+	/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevelOut, setup_readLevel, teardown_readLevel),
@@ -447,10 +500,20 @@ int main() {
     cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScoreLowScore, teardown_saveScore),
     cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
+	cmocka_unit_test_setup_teardown(test_readBestScoreEmpty, setup_readBestScoreEmpty, teardown_readBestScore),
+	cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),
+
+	/* Camera */
+	cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
+
+	/*cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),*/
+
+	/* Obstacle */
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
 
+	/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
   };
 

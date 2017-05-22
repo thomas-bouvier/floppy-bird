@@ -56,7 +56,7 @@ int readConfig(FILE * f, char * config, char * type)
         }
         ++i;
     }
-    fprintf(stderr, "Reading the configuration file failure : %s\n", type);
+    fprintf(stderr, "Reading the configuration file failure : %s", type);
     return 0;
 }
 
@@ -65,6 +65,9 @@ int readConfig(FILE * f, char * config, char * type)
 * \param[out] f the file that contains the score
 * \param[in] score the score to be saved (or not)
 * \return Return 1 if the score was saved, ie if it is biggest than the previous score, 0 otherwise
+*
+* The best score file only contains the score (an int) at the first line of the file
+*
 */
 int saveScore(FILE * f, int score)
 {
@@ -87,7 +90,7 @@ int readBestScore(FILE * f)
 {
     if (f == NULL)
     {
-        fprintf(stderr, "Reading best score failure");
+        fprintf(stderr, "Reading best score failure\n");
         return -1;
     }
     int best_score = 0;
