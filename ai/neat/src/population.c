@@ -220,6 +220,8 @@ int newGeneration(MatingPool * pool, int verbose) {
         ++count;
     }
 
+    //printf("bp1\n");
+
     for (i = 0; i < count; ++i)
         if (!addGenomeToProperSpecies(children[i], pool)) {
             fprintf(stderr, "Can't add Genome to proper Species\n");
@@ -227,6 +229,8 @@ int newGeneration(MatingPool * pool, int verbose) {
         }
 
     ++pool->generation;
+
+    //printf("bp2\n");
 
     return 1;
 }

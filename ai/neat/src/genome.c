@@ -398,7 +398,10 @@ int mutateLink(Genome * genome, int bias) {
     connection_gene->weight = 4.0 * random01() - 2.0;
     connection_gene->innovation = *genome->innovation;
 
-    add(genome->connection_genes, connection_gene);
+    if (!add(genome->connection_genes, connection_gene)) {
+        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        return 0;
+    }
 
     if (bias)
         genome->mutations_history[genome->nb_mutations] = 2;
@@ -555,7 +558,11 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
                 if (randomBool() && current_connection_gene_2->enabled) {
 
                     new_connection_gene = cloneConnectionGene(current_connection_gene_2);
-                    add(child_genome->connection_genes, new_connection_gene);
+
+                    if (!add(child_genome->connection_genes, new_connection_gene)) {
+                        fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
+                        return NULL;
+                    }
 
                     skip_continue_instruction = 1;
                 }
@@ -575,7 +582,10 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
         if (!skip_continue_instruction) {
             new_connection_gene = cloneConnectionGene(current_connection_gene_1);
-            add(child_genome->connection_genes, new_connection_gene);
+
+            if (!add(child_genome->connection_genes, new_connection_gene)) {
+                fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
+            }
         }
 
         skip_continue_instruction = 0;
