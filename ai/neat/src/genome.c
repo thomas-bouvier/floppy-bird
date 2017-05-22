@@ -716,8 +716,8 @@ double sameSpecies(Genome * genome_1, Genome * genome_2) {
 /*!
 * \brief Check if the two Neuron matching the given ids are linked by a ConnectionGene.
 - \param[in] genome the Genome where the Neuron to check are from
-* \param[in] neuron_in the first Neuron to check
-* \param[in] neuron_out the second Neuron to check
+* \param[in] neuron_in_id the first Neuron to check
+* \param[in] neuron_out_id the second Neuron to check
 * \return int 1 if the two Neuron elements are linked, 0 otherwise
 */
 int linked(Genome * genome, int neuron_in_id, int neuron_out_id) {

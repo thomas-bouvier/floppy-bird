@@ -23,7 +23,7 @@ void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list,
 
 /*!
 * \brief Allocate all the object of the game in mode IA2 (neat).
-* \param[out] bird the list of bird to allocate
+* \param[out] bird_list the list of bird to allocate
 * \param[out] camera the camera to allocate
 * \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles

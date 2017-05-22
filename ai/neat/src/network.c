@@ -37,8 +37,8 @@ void freeNeuron(void * neuron) {
 }
 
 /*!
-* \brief Add a Neuron to the Network.
-* \param[out] network the Network
+* \brief Add a Neuron to the given GenericList.
+* \param[out] neurons the GenericList containing Genome elements
 * \param[out] neuron the Neuron to add
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
