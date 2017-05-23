@@ -17,7 +17,6 @@
 #include <stdio.h>
 
 void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile);
-void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile, MatingPool * pool);
 int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight);
 void cameraScrolling(Camera * camera, GenericList * bird);
 int createObstacle(Camera * camera, GenericList * obstacle_list, FILE * level, int number, int levelFromFile);
