@@ -495,8 +495,7 @@ static int teardown_modifySpeed(void ** state) {
 }
 
 
-
-
+/* GAME */
 
 
 /* cameraScrolling */
@@ -647,6 +646,63 @@ static int teardown_nextBirdObstacle(void ** state) {
   return 0;
 }
 
+/* createObstacleFromFile */
+
+typedef struct{
+	GenericList * list;
+	FILE * file;
+} createObstacleFromFileStruct;
+
+static int setup_createObstacleFromFile(void ** state){
+	FILE * level_file = fopen("level.txt", "w+");
+  if (level_file == (FILE *) NULL)
+    return -1;
+
+	fputs("200\n", level_file);
+	fputs("300\n", level_file);
+	fputs("400\n", level_file);
+	fputs("500\n", level_file);
+	
+	GenericList * list = newGenericList(NULL, freeObstacle);
+  if (list == (GenericList *) NULL)
+    return -1;
+	
+	initGenericList(list);
+	
+	Obstacle * obstacle2 = newObstacle(1, 300, MEDIUM, NULL);
+	Obstacle * obstacle1 = newObstacle(0, 200, MEDIUM, obstacle2);
+	
+	add(list, (Obstacle *)obstacle1);
+	add(list, (Obstacle *)obstacle2);
+		
+	createObstacleFromFileStruct * structure = malloc(sizeof(createObstacleFromFileStruct));
+	if (structure == (createObstacleFromFileStruct *) NULL)
+    return -1;
+   
+  structure->file = level_file;
+  structure->list = list;
+   
+  *state = structure;
+
+  return 0;
+}
+
+static void test_createObstacleFromFile(void ** state){
+	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
+	createObstacleFromFile(structure->file, 2, structure->list);
+	setOn(structure->list, 2);
+	assert_int_equal(((Obstacle *)getCurrent(structure->list))->lower.h, 400);
+}
+
+static int teardown_createObstacleFromFile(void ** state){
+	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
+	freeGenericList(structure->list);
+	fclose(structure->file);
+  free(*state);
+  remove("level.txt");
+  return 0;
+}
+
 
 /* PIPE */
 
@@ -714,6 +770,7 @@ int main() {
 
 		cmocka_unit_test_setup_teardown(test_modifySpeed, setup_modifySpeed, teardown_modifySpeed),
 
+		/* Game */
 		//cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
 
 		/* Obstacle */
@@ -722,6 +779,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
     
     cmocka_unit_test_setup_teardown(test_nextBirdObstacle, setup_nextBirdObstacle, teardown_nextBirdObstacle),
+    
+    cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
 
 		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
