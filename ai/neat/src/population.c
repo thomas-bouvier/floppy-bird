@@ -34,7 +34,7 @@ void freeMatingPool(MatingPool * pool) {
     int i;
 
     for (i = 0; i < pool->nb_species; ++i)
-        freeGenericList(pool->species[i].genomes);
+        freeGenericList(pool->species[i].genomes, 1);
 
     free(pool);
 }
@@ -116,7 +116,7 @@ int removeSpecies(MatingPool * pool, short int id) {
         return 0;
     }
 
-    freeGenericList(pool->species[index].genomes);
+    freeGenericList(pool->species[index].genomes, 1);
 
     for (i = index; i < pool->nb_species - 1; ++i)
         pool->species[i] = pool->species[i + 1];

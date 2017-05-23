@@ -257,8 +257,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        /*mode = IA2;
-        levelFromFile = 0;*/
+        mode = IA2;
+        levelFromFile = 0;
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
@@ -553,10 +553,12 @@ int main(int argc, char ** argv)
                             nextElement(bird_list);
                         }
 
+                        /*
                         printf("alive: %d / %d\t\t", nb_alive, POPULATION);
                         printf("nb_species: %d / %d\t\t", count, pool->nb_species);
                         printf("fitness: %f / %f ~ %f\t\t", best_bird->genome->fitness, pool->max_fitness, pool->average_fitness);
                         printf("generation: %d\n", pool->generation);
+                        */
                     }
 
                     hit_saved = hit;

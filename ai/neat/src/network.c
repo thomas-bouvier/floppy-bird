@@ -32,7 +32,7 @@ Neuron * newNeuron(NeuronType type) {
 * \param[out] neuron the Neuron to be freed
 */
 void freeNeuron(void * neuron) {
-    /* freeGenericList(((Neuron *) neuron)->connection_genes_input); */
+    freeGenericList(((Neuron *) neuron)->connection_genes_input, 0);
     free(neuron);
 }
 

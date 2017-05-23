@@ -92,8 +92,8 @@ void * cloneGenome(void * genome) {
 * \brief Free the given Genome
 */
 void freeGenome(void * genome) {
-    freeGenericList(((Genome *) genome)->neurons);
-    freeGenericList(((Genome *) genome)->connection_genes);
+    freeGenericList(((Genome *) genome)->neurons, 1);
+    freeGenericList(((Genome *) genome)->connection_genes, 1);
     free(genome);
 }
 

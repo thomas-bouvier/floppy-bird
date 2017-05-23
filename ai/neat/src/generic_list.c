@@ -76,8 +76,9 @@ GenericList * cloneGenericList(GenericList * list) {
 /*!
 * \brief Suppress all elements from the GenericList.
 * \param[out] list the GenericList to be emptied
+* \param[in] apply_free_function bool value indicating if the stored data should also be freed
 */
-void freeGenericList(GenericList * list) {
+void freeGenericList(GenericList * list, int apply_free_function) {
   Node * element_to_delete = NULL;
 
   setOnFirstElement(list);
@@ -85,7 +86,8 @@ void freeGenericList(GenericList * list) {
     element_to_delete = list->current;
     nextElement(list);
 
-    list->free_function(element_to_delete->data);
+    if (apply_free_function)
+        list->free_function(element_to_delete->data);
 
     free(element_to_delete);
   }

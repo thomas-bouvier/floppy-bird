@@ -191,11 +191,11 @@ int openFontFiles(FILE * config, TTF_Font ** big_font, TTF_Font ** medium_font)
 void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
                Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font, TTF_Font * medium_font)
 {
-    freeGenericList(sprites->bird1);
-    freeGenericList(sprites->bird2);
-    freeGenericList(sprites->bird3);
-    freeGenericList(sprites->pipe1);
-    freeGenericList(sprites->pipe2);
+    freeGenericList(sprites->bird1, 1);
+    freeGenericList(sprites->bird2, 1);
+    freeGenericList(sprites->bird3, 1);
+    freeGenericList(sprites->pipe1, 1);
+    freeGenericList(sprites->pipe2, 1);
 
     SDL_DestroyTexture(sprites->background);
     SDL_DestroyTexture(sprites->ground);

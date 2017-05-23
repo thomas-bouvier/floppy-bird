@@ -35,7 +35,7 @@ Node * newNode();
 GenericList * newGenericList(CloneFunction clone_function, FreeFunction free_function);
 void initGenericList(GenericList * list);
 GenericList * cloneGenericList(GenericList * list);
-void freeGenericList(GenericList * list);
+void freeGenericList(GenericList * list, int apply_free_function);
 
 int emptyGenericList(GenericList * list);
 int outOfGenericList(GenericList * list);
