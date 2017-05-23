@@ -56,14 +56,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../game.h" />
-		<Unit filename="../generic_list.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../generic_list.h" />
-		<Unit filename="../list.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../list.h" />
 		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
