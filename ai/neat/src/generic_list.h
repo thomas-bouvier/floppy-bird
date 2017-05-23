@@ -26,8 +26,8 @@ struct GenericList {
     Node * first;                   /*<! the address of the first element of the GenericList */
     Node * current;                 /*<! the address of the current element of the GenericList */
     Node * last;                    /*<! the address of the last element of the GenericList */
-    CloneFunction clone_function;
-    FreeFunction free_function;
+    CloneFunction clone_function;   /*<! the clone function pointer of the stored element */
+    FreeFunction free_function;	    /*<! the free function pointer of the stored element */
 };
 
 Node * newNode();

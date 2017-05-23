@@ -36,7 +36,7 @@ struct Obstacle{
 
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle);
 Obstacle * nextBirdObstacle(GenericList * obstacle_list, Bird * bird);
-void freeObstacle(Obstacle * obstacle);
+void freeObstacle(void * obstacle);
 void createObstacleFromFile(FILE * level, int number, GenericList * obstacle_list);
 void createObstacleRandomly(int number, GenericList * obstacle_list);
 int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound);

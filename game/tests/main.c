@@ -241,6 +241,8 @@ static void test_readConfigEmpty(void ** state) {
   char * path = malloc(sizeof(char) * 100);
 
   assert_int_equal(readConfig(file, path, "level :\n"), 0);
+  
+  free(path);
 }
 
 static void test_readConfig(void ** state) {
@@ -250,6 +252,8 @@ static void test_readConfig(void ** state) {
 
   assert_int_equal(readConfig(file, path, "level :\n"), 1);
   assert_string_equal(path, "../../res/files/level.txt");
+  
+  free(path);
 }
 
 static int teardown_readConfig(void ** state) {
@@ -344,6 +348,7 @@ static void test_readBestScoreEmpty(void ** state) {
 
 static void test_readBestScore(void ** state) {
   FILE * file = (FILE *) (* state);
+  remove("test_readBestScore.txt");
 
   assert_int_equal(readBestScore(file), 69);
 }
@@ -414,6 +419,9 @@ static int teardown_openGameFiles(void ** state) {
   fclose(files->config);
   fclose(files->level);
   fclose(files->score);
+  remove("pathToLevelFile.txt");
+  remove("pathToScoreFile.txt");
+  remove("test_openGameFiles_config.txt");
   free(*state);
 
   return 0;
@@ -559,11 +567,6 @@ static void test_newObstacle(void ** state) {
   assert_null(obstacle->next);
 }
 
-static int teardown_newObstacle(void ** state) {
-  free(*state);
-  return 0;
-}
-
 static void test_newObstacleNegativeGap(void ** state) {
   Obstacle * obstacle = (Obstacle *) (* state);
 
@@ -578,6 +581,70 @@ static void test_newObstacleMaxHeight(void ** state) {
   obstacle = newObstacle(14, SCREEN_HEIGHT, 250, NULL);
 
 	assert_int_equal(obstacle, NULL);
+}
+
+static int teardown_newObstacle(void ** state) {
+  free(*state);
+  return 0;
+}
+
+/* nextBirdObstacle */
+
+typedef struct{
+	GenericList * list;
+	Bird * bird1;
+	Bird * bird2;
+}NextBirdObstacleStruct;
+
+static int setup_nextBirdObstacle(void ** state){
+	Obstacle * obstacle4 = newObstacle(4, 400, MEDIUM, NULL);
+	Obstacle * obstacle3 = newObstacle(3, 100, MEDIUM, obstacle4);
+	Obstacle * obstacle2 = newObstacle(2, 300, MEDIUM, obstacle3);
+	Obstacle * obstacle1 = newObstacle(1, 200, MEDIUM, obstacle2);
+	
+	GenericList * list = newGenericList(NULL, freeObstacle);
+  if (list == (GenericList *) NULL)
+    return -1;
+	
+	initGenericList(list);
+	
+	add(list, (Obstacle *)obstacle1);
+	add(list, (Obstacle *)obstacle2);
+	add(list, (Obstacle *)obstacle3);
+	add(list, (Obstacle *)obstacle4);	
+	
+	Bird * bird1 = initBird(NULL, NULL);
+	bird1->x = 2000;													/* Bird between two obstacles */
+	Bird * bird2 = initBird(NULL, NULL);
+	bird2->x = 5000;													/* Bird after all the obstacles of the list */
+		
+	NextBirdObstacleStruct * structure = malloc(sizeof(NextBirdObstacleStruct));
+	structure->list = list;
+	structure->bird1 = bird1;
+	structure->bird2 = bird2;
+	
+	*state = structure;
+	
+	return 0;
+}
+
+static void test_nextBirdObstacle(void ** state){
+	NextBirdObstacleStruct * structure = (NextBirdObstacleStruct *) (* state);
+	
+	Obstacle * next_bird_obstacle = nextBirdObstacle(structure->list, structure->bird1);
+	setOn(structure->list, 2);
+	assert_ptr_equal(next_bird_obstacle, getCurrent(structure->list));
+	
+	Obstacle * null_obstacle = nextBirdObstacle(structure->list, structure->bird2);
+	assert_ptr_equal(null_obstacle, NULL);
+}
+
+static int teardown_nextBirdObstacle(void ** state) {
+	freeGenericList(((NextBirdObstacleStruct *)(*state))->list);
+	freeBird(((NextBirdObstacleStruct *)(*state))->bird1);
+	freeBird(((NextBirdObstacleStruct *)(*state))->bird2);
+  free(*state);
+  return 0;
 }
 
 
@@ -653,6 +720,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
+    
+    cmocka_unit_test_setup_teardown(test_nextBirdObstacle, setup_nextBirdObstacle, teardown_nextBirdObstacle),
 
 		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),

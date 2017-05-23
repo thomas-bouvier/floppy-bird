@@ -53,7 +53,7 @@ Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle 
 * \brief Indicate the next obstacle for the bird
 * \param[out] obstacle_list the list of obstacle
 * \param[in] bird the bird that determines the next obstacle
-* \return Return the next obstacle for the bird. If the bird is between two pipes of an obstacle, it returns this obstacle
+* \return Return the next obstacle for the bird. If the bird is between two pipes of an obstacle, it returns this obstacle. Return NULL if error
 */
 Obstacle * nextBirdObstacle(GenericList * obstacle_list, Bird * bird)
 {
@@ -73,9 +73,9 @@ Obstacle * nextBirdObstacle(GenericList * obstacle_list, Bird * bird)
 * \brief Deallocate memory of the obstacle and his pipes
 * \param[out] obstacle the obstacle to deallocate
 */
-void freeObstacle(Obstacle * obstacle)
+void freeObstacle(void * obstacle)
 {
-    free(obstacle);
+    free((Obstacle *)obstacle);
 }
 
 /*!
@@ -139,7 +139,7 @@ void modifyGap(int score)
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 *
-* If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
+* If level_from_file = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
 void fillObstacleList(GenericList * obstacle_list, FILE * level, int level_from_file)
 {
@@ -149,8 +149,6 @@ void fillObstacleList(GenericList * obstacle_list, FILE * level, int level_from_
         if(level_from_file)
             createObstacleFromFile(level, i, obstacle_list);
         else
-        {
             createObstacleRandomly(i,obstacle_list);
-        }
     }
 }
