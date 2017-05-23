@@ -23,6 +23,9 @@ void initCamera(Camera * new_camera, int x, int camera_speed)
 * \brief Modify the speed of game if it is run in normal mode
 * \param[in] score the score of the player
 * \param[out] camera the camera whose speed is changed
+*
+* If the score is < 20, game is run in LOW speed ; score < 40 : NORMAL speed ; score < 60 : HIGH speed ; score > 60 : EXTREME speed
+*
 */
 void modifySpeed(int score, Camera * camera)
 {

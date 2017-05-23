@@ -16,7 +16,7 @@
 
 /* initBird */
 
-static int setup_initBird(void ** state) {
+/*static int setup_initBird(void ** state) {
   Genome * genome = malloc(sizeof(Genome));
 
   if (genome == (Genome *) NULL)
@@ -45,11 +45,11 @@ static void test_initBird(void ** state) {
 static int teardown_initBird(void ** state) {
   free(*state);
   return 0;
-}
+}*/
 
 /* updateBird */
 
-typedef struct{
+/*typedef struct{
     Bird * bird;
     Sound * sound;
 }UpdateBirdStruct;
@@ -126,7 +126,7 @@ static int teardown_updateBird(void ** state) {
   free(((UpdateBirdStruct *)*state)->sound);
   free((*state));
   return 0;
-}
+}*/
 
 
 /* FILE */
@@ -300,7 +300,7 @@ static void test_saveScoreHighScore(void ** state) {
 }
 
 static int teardown_saveScore(void ** state) {
-  free(*state);
+  fclose(*state);
   return remove("test_saveScore.txt");
 }
 
@@ -340,7 +340,7 @@ static void test_readBestScore(void ** state) {
 }
 
 static int teardown_readBestScore(void ** state) {
-  free(*state);
+  fclose(*state);
   return remove("test_readBestScore.txt");
 }
 
@@ -360,7 +360,6 @@ static int setup_openGameFiles(void ** state) {
   if (config == (FILE *) NULL){
     fprintf(stderr, "error1\n");
     return -1;
-    
   }
   if (score == (FILE *) NULL){
     fprintf(stderr, "error2\n");
@@ -399,10 +398,6 @@ static void test_openGameFiles(void ** state) {
   FILE * test_level = NULL;
   
   assert_int_equal(openGameFiles(files->config, &test_level, &test_score), 1);
-
-	/*assert_ptr_equal(test_score, files->score);
-	assert_ptr_equal(test_level, files->level);*/
-	
 }
 
 static int teardown_openGameFiles(void ** state) {
@@ -411,8 +406,8 @@ static int teardown_openGameFiles(void ** state) {
   fclose(files->level);
   fclose(files->score);
   free(*state);
+  
   return 0;
-  //return remove("test_openGameFiles.txt");
 }
 
 
@@ -447,6 +442,45 @@ static int teardown_initCamera(void ** state) {
   free(*state);
   return 0;
 }
+
+/* modifySpeed */
+
+static int setup_modifySpeed(void ** state) {
+  Camera * camera = malloc(sizeof(Camera));
+
+  if (camera == (Camera *) NULL)
+    return -1;
+
+  *state = camera;
+
+  return 0;
+}
+
+static void test_modifySpeed(void ** state) {
+  Camera * camera = (Camera *) (* state);
+
+	modifySpeed(10, camera);
+  assert_int_equal(camera->speed, LOW);
+  
+ 	modifySpeed(30, camera);
+	assert_int_equal(camera->speed, NORMAL);
+	
+	modifySpeed(50, camera);
+	assert_int_equal(camera->speed, HIGH);
+	
+	modifySpeed(70, camera);
+	assert_int_equal(camera->speed, EXTREME);
+}
+
+static int teardown_modifySpeed(void ** state) {
+  free(*state);
+  return 0;
+}
+
+
+
+
+
 
 /* cameraScrolling */
 
@@ -572,16 +606,15 @@ static int teardown_initPipe(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
-	/* Bird */
+		/* Bird */
     /*cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),*/
-    cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     /*cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
-    cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
+    cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),*/
 
-	/* File */
+		/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevel, setup_readLevel, teardown_readLevel),
     cmocka_unit_test_setup_teardown(test_readLevelOut, setup_readLevel, teardown_readLevel),
@@ -589,19 +622,20 @@ int main() {
     cmocka_unit_test_setup_teardown(test_readConfigEmpty, setup_readConfigEmpty, teardown_readConfig),
     cmocka_unit_test_setup_teardown(test_readConfig, setup_readConfig, teardown_readConfig),
 
-		/* Fatal error: glibc detected an invalid stdio handle */
-    /*cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScore, teardown_saveScore),
+    cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScore, teardown_saveScore),
     cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScoreLowScore, teardown_saveScore),
-    cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),*/
+    cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
-		/* Fatal error: glibc detected an invalid stdio handle */
-		/*cmocka_unit_test_setup_teardown(test_readBestScoreEmpty, setup_readBestScoreEmpty, teardown_readBestScore),
-		cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),*/
+		//Could not run the test - check test fixtures
+		//cmocka_unit_test_setup_teardown(test_readBestScoreEmpty, setup_readBestScoreEmpty, teardown_readBestScore),
+		cmocka_unit_test_setup(test_readBestScore, setup_readBestScore),
 	
-		//cmocka_unit_test_setup_teardown(test_openGameFiles, setup_openGameFiles, teardown_openGameFiles),
+		cmocka_unit_test_setup_teardown(test_openGameFiles, setup_openGameFiles, teardown_openGameFiles),
 
 		/* Camera */
 		cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),
+		
+		cmocka_unit_test_setup_teardown(test_modifySpeed, setup_modifySpeed, teardown_modifySpeed),
 
 		//cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
 
@@ -610,7 +644,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
 
-	/* Pipe */
+		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
   };
 

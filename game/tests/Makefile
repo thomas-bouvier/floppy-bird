@@ -1,6 +1,6 @@
 CC=gcc -g
-CFLAGS=-Wall
-LDFLAGS=-lcmocka
+CFLAGS=-Wall -fprofile-arcs -ftest-coverage
+LDFLAGS=-lcmocka -fprofile-arcs -ftest-coverage
 
 main: main.o file.o bird.o camera.o obstacle.o pipe.o generic_list.o 
 #game.o
@@ -33,6 +33,9 @@ generic_list.o: ../../ai/neat/src/generic_list.c ../../ai/neat/src/generic_list.
 
 
 clean:
-	rm -f *.o
-	rm -f *.~
+	rm -f *.o *.~ ../tests/*.gcno ../tests/*.gcda
 	rm -f main
+
+move:
+	mv *.gcno ../src
+	mv *.gcda ../src
