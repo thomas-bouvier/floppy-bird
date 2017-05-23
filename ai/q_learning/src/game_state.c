@@ -13,6 +13,8 @@ void freeState(State * state)
 * \brief Get the current state if the bird is alive else the state is not saved
 * \param[in] delta_x the distance between the left side of the camera and the left side of the next pipe
 * \param[in] delta_y the distance between the bird's upper side and the top of the next pipe
+* \param[in] pipe_height the height of the next pipe
+* \param[in] velocity the velocity of the bird
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
 * \return Return a state, distances=-1 if the bird is dead, NULL if error
 */
@@ -47,30 +49,11 @@ State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity,
 * \param[in] last_actions array of last actions performed
 * \return Return a velocity, a high negative value is linked to a fast falling bird
 */
-int getCurrentVelocity(int * last_states)
+int getCurrentVelocity(int * last_actions)
 {
     int i=0;
-
-    while(i<7 && last_states[i] != 1) i++; /* Recuperation du dernier saut */
-    switch(i)
-    {
-        case 0:
-            return +2;
-        case 1:
-            return +1;
-        case 2:
-            return +0;
-        case 3:
-            return -1;
-        case 4:
-            return -2;
-		case 5:
-            return -3;
-		case 6:
-            return -4;
-        default:
-            return -5;
-    }
+    while(i<7 && last_actions[i] != 1) i++; /* Recuperation du dernier saut */
+	return 2-1*i; /* Velocité de +2 à -5 */
 }
 
 /*!

@@ -12,18 +12,6 @@ void freeMatrixQ(MatrixQ * matrixQ)
 }
 
 /*!
-* \brief Print the Q matrix in the terminal (for debug purpose)
-* \param[in] matrixQ matrix of every known state
-*/
-/*void show_matrixQ(MatrixQ * matrixQ)
-{
-	clearScreen();
-	int i;
-	printf("	| Action 0		| Action 1\n");
-	for(i=0; i<matrixQ->nb_states; ++i) printf("idx %d	| %f		| %f	\n", i, matrixQ->reward[i*2+0], matrixQ->reward[i*2+1]);
-}*/
-
-/*!
 * \brief Search and return the index of the current state in the MatrixQ, create if not found
 * \param[in] cur_state current state to search or add in the matrix
 * \param[in] matrixQ matrix of every known state
@@ -121,7 +109,7 @@ int findBestAction(int state_index, MatrixQ * matrixQ)
 /*!
 * \brief Update each Q-value for every state_index given
 * \param[in] matrixQ matrix of every known state
-* \param[in] state_index state index from the last state to the older one to find them in the Q matrix
+* \param[in] last_states_index state index from the last state to the older one to find them in the Q matrix
 * \param[in] last_action last actions performed
 */
 void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action)
@@ -146,6 +134,7 @@ void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action
 * \param[in] action action performed when the bird was in the state corresponding to index_state
 * \param[in] increment position of the state to modify relative to the current state
 * \param[in] reward_value 1 to compute with a positive reward, -1 with a negative
+* \return Return the new Q-value
 */
 float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int action, int increment, int reward_value)
 {

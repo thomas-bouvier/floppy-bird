@@ -7,7 +7,9 @@
 * \param[in] last_action action from the last one to the older one, linked to the last_states array
 * \param[in] dx the distance between the left side of the camera and the left side of the next pipe
 * \param[in] dy the distance between the bird's upper side and the top of the next pipe
+* \param[in] pipe_height the height of the next pipe
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
+* \return Return 1, otherwise -1 if error
 */
 int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int dx, int dy, int pipe_height, int bird_state)
 {

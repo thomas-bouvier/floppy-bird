@@ -9,7 +9,7 @@
 #include "utils.h"
 
 /*!
-* \struct MatrixQ qlearning.h
+* \struct MatrixQ
 * \brief MatrixQ linked a state with an action to a reward
 */
 typedef struct{

@@ -10,7 +10,7 @@
 #include "conf.h"
 
 /*!
-* \struct State qlearning.h
+* \struct State
 * \brief A State contains every information needed to know exactly the state of the game
 */
 typedef struct {
@@ -24,7 +24,7 @@ State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity,
 void freeState(State * state);
 int getCurrentReward(int bird_state);
 
-int getCurrentVelocity(int * last_states);
+int getCurrentVelocity(int * last_actions);
 
 int processing_dxdy(int initial_d);
 int processing_birdstate(int initial_bird_state);

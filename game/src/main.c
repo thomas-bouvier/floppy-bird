@@ -388,7 +388,7 @@ int main(int argc, char ** argv)
 
                     /* IA1 */
 
-                    if (mode == IA1 && (action_break == 0 || hit_saved == 1))
+                    if(mode == IA1 && (action_break == 0 || hit_saved == 1))
                     {
                         q_learning_loop(matrixQ, last_states, last_action, ratioPipeWidth((Bird*)bird_list->first->data, &camera, obstacle_list), ratioPipeHeight((Bird*)bird_list->first->data, obstacle_list)-ratioBirdHeight((Bird*)bird_list->first->data), ratioPipeHeight((Bird*)bird_list->first->data, obstacle_list), hit_saved);
 
