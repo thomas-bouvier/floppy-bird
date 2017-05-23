@@ -11,7 +11,7 @@
 
 /*!
 * \struct State qlearning.h
-* \brief A State contains every informations needed to know exactly the state of the game
+* \brief A State contains every information needed to know exactly the state of the game
 */
 typedef struct {
   short int delta_x;    /*!< delta_x is the horizontal distance from the left side of the camera to the next left side of the lower pipe */

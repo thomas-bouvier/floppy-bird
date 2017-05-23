@@ -1,18 +1,19 @@
 #include "file_manager.h"
-#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /*!
 * \brief Load the Q matrix from a text file
 * \param[in] filename the filename where data are stored
-* \return Return the Q matrix filled, NULL if error
+* \return Return the Q matrix created and filled, NULL if error
 */
 MatrixQ * loadQMatrix(char * filename)
 {
 	MatrixQ * matrixQ = NULL;
 	matrixQ = (MatrixQ *) malloc(sizeof(MatrixQ));
 	FILE * fp = NULL;
+
 	int i, j;
 	matrixQ->nb_states = 0;
 
@@ -65,11 +66,11 @@ MatrixQ * loadQMatrix(char * filename)
 * \brief Save the Q matrix in a text file
 * \param[in] matrixQ the matrix to be saved
 * \param[in] filename the filename where data have to be stored
-* \return Return -1 if error, otherwise 1
+* \return Return 1, -1 if error
 */
 int saveQMatrix(MatrixQ * matrixQ, char * filename)
 {
-	int i,j;
+	int i, j;
 	FILE * fp = NULL;
 
 	if((fp = fopen(filename, "w+")) == NULL)

@@ -36,14 +36,14 @@ State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity,
 				new_state->velocity = velocity;
 				return new_state;
 		default:
-			freeState(new_state);
+				freeState(new_state);
 			break;
 	}
 	return NULL;
 }
 
 /*!
-* \brief Get the current velocity thanks to the last actions known
+* \brief Get the current velocity thanks to the last known actions
 * \param[in] last_actions array of last actions performed
 * \return Return a velocity, a high negative value is linked to a fast falling bird
 */
@@ -51,7 +51,7 @@ int getCurrentVelocity(int * last_states)
 {
     int i=0;
 
-    while(i<7 && last_states[i] != 1) i++;
+    while(i<7 && last_states[i] != 1) i++; /* Recuperation du dernier saut */
     switch(i)
     {
         case 0:

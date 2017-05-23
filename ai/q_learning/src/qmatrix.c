@@ -96,7 +96,7 @@ int addState(State * cur_state, MatrixQ * matrixQ)
 		}
 	}
 	
-	for(i=0; i<NB_ACTIONS; ++i) matrixQ->reward[matrixQ->nb_states*2+i] = randomAtMost(RANDOM_INIT_REWARD);
+	for(i=0; i<NB_ACTIONS; ++i) matrixQ->reward[matrixQ->nb_states*2+i] = randomInRange(0, RANDOM_INIT_REWARD);
 	matrixQ->state[matrixQ->nb_states].delta_x = cur_state->delta_x;
 	matrixQ->state[matrixQ->nb_states].delta_y = cur_state->delta_y;
 	matrixQ->state[matrixQ->nb_states].pipe_height = cur_state->pipe_height;
@@ -114,7 +114,7 @@ int addState(State * cur_state, MatrixQ * matrixQ)
 */
 int findBestAction(int state_index, MatrixQ * matrixQ)
 {
-	if(matrixQ->reward[state_index*2] == matrixQ->reward[state_index*2+1]) return randomAtMost(1);
+	if(matrixQ->reward[state_index*2] == matrixQ->reward[state_index*2+1]) return randomInRange(0, 1);
 	return (matrixQ->reward[state_index*2] < matrixQ->reward[state_index*2+1])? 1:0;
 }
 

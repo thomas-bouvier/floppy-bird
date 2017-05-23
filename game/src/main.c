@@ -246,9 +246,9 @@ int main(int argc, char ** argv)
         /* Setup IA1 */
 
         if (mode == IA1) {
-            /* Open the file that contains qMatrix data */
             readConfig(config, qmatrixPath, "qMatrix :\n");
-            matrixQ = loadQMatrix(qmatrixPath);
+            if((matrixQ = loadQMatrix(qmatrixPath)) == NULL)
+        		return EXIT_FAILURE;
 
             init_array(last_states, NB_SAVED_STATES, -1);
             init_array(last_action, NB_SAVED_ACTIONS, -1);
@@ -596,7 +596,8 @@ int main(int argc, char ** argv)
             /* all birds are dead, and we're in AI1 mode */
 
             if (hit && mode == IA1)
-                saveQMatrix(matrixQ, qmatrixPath);
+                if(saveQMatrix(matrixQ, qmatrixPath) == -1)
+					return EXIT_FAILURE;
 
             /* all birds are dead, and we're in AI2 mode */
 
