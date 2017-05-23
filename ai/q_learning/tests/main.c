@@ -130,7 +130,7 @@ typedef struct {
 	int dy;
 	int bird_state;
 }MyCurrentState;
-
+/*
 static int setup_getCurrentState(void ** state)
 {
 	MyCurrentState * state_data = (MyCurrentState*) malloc(sizeof(MyCurrentState));
@@ -186,7 +186,7 @@ static int teardown_getCurrentState(void ** state)
 {
 	free(*state);
 	return 0;
-}
+}*/
 
 /* getCurrentReward */
 static void test_getCurrentRewardDeathReward(void ** state)
@@ -433,7 +433,7 @@ static void test_updateQRewardNegative(void ** state)
 
 	updateQReward(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action);
 
-	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
+	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, LOWER_QREWARD_LIMIT);
 }
 
 static int teardown_updateQReward(void ** state)
@@ -446,7 +446,7 @@ static int teardown_updateQReward(void ** state)
 
 /** q_learning.c **/
 /* q_learning_loop */
-static int setup_q_learning_loop(void ** state)
+/*static int setup_q_learning_loop(void ** state)
 {
 	int i;
 
@@ -499,7 +499,7 @@ static int teardown_q_learning_loop(void ** state)
 	free(((UpdateQValues*)*state)->matrixq->reward);
 	free(*state);
 	return 0;
-}
+}*/
 
 /** file_manager.c **/
 /* loadQMatrix */
@@ -591,9 +591,9 @@ int main() {
 	cmocka_unit_test(test_powerOfzero),
 	cmocka_unit_test_setup_teardown(test_shift_array, setup_shift_array, teardown_shift_array),
 	cmocka_unit_test_setup_teardown(test_init_array, setup_init_array, teardown_init_array),
-	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdDied, setup_getCurrentState, teardown_getCurrentState),
+	/*cmocka_unit_test_setup_teardown(test_getCurrentStateBirdDied, setup_getCurrentState, teardown_getCurrentState),
 	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdAlive, setup_getCurrentState, teardown_getCurrentState),
-	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdUnknownState, setup_getCurrentState, teardown_getCurrentState),
+	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdUnknownState, setup_getCurrentState, teardown_getCurrentState),*/
 	cmocka_unit_test(test_getCurrentRewardDeathReward),
 	cmocka_unit_test(test_getCurrentRewardLifeReward),
 	cmocka_unit_test(test_processing_dxdy),
@@ -609,8 +609,8 @@ int main() {
 	cmocka_unit_test_setup_teardown(test_findBestActionEqual, setup_findBestAction, teardown_findBestAction),
 	cmocka_unit_test_setup_teardown(test_updateQRewardPositive, setup_updateQReward, teardown_updateQReward),
 	cmocka_unit_test_setup_teardown(test_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
-	cmocka_unit_test_setup_teardown(test_q_learning_loop, setup_q_learning_loop, teardown_q_learning_loop),
-	cmocka_unit_test_setup_teardown(test_q_learning_loopReset, setup_q_learning_loop, teardown_q_learning_loop),
+	/*cmocka_unit_test_setup_teardown(test_q_learning_loop, setup_q_learning_loop, teardown_q_learning_loop),
+	cmocka_unit_test_setup_teardown(test_q_learning_loopReset, setup_q_learning_loop, teardown_q_learning_loop),*/
 	cmocka_unit_test_setup_teardown(test_loadQMatrix, setup_loadQMatrix, teardown_loadQMatrix),
 	cmocka_unit_test_setup_teardown(test_loadQMatrixEmpty, setup_loadQMatrixEmpty, teardown_loadQMatrix),
 	cmocka_unit_test_setup_teardown(test_saveQMatrix, setup_saveQMatrix, teardown_saveQMatrix),
