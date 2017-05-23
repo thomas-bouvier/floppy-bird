@@ -13,7 +13,7 @@
 */
 unsigned int randomInRange(unsigned int limit_min, unsigned int limit_max) {
   	
-	if((limit_min<0) || (limit_max<limit_min) || (limit_max>UINT_MAX))
+	if((limit_max<limit_min) || (limit_max>UINT_MAX))
 	{
 		printf("Error due to the random function in the qlearning/utils.c file.\n");
 		return 0;

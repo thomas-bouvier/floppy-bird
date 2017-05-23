@@ -22,19 +22,13 @@ Now you can compile and run the project with the custom Makefile provided.
 
 Install the SDL2 :
 
-	apt-get install libsdl2-dev
-
-Extract the archive and cd to the folder that got extracted. Then :
-
-	./configure
-	make
-	sudo make install
+	sudo apt-get install libsdl2-dev
 	
 Also install the complementary libraries SDL2_mixer, SDL2_ttf and SDL2_image
 
-	apt-get install libsdl2-ttf-dev
-	apt-get install libsdl2-mixer-dev
-	apt-get install libsdl2-image-dev
+	sudo apt-get install libsdl2-ttf-dev
+	sudo apt-get install libsdl2-mixer-dev
+	sudo apt-get install libsdl2-image-dev
 
 Now you can compile and run the project with the Makefile provided with the sources.
 

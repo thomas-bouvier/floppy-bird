@@ -22,38 +22,6 @@ void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list,
 }
 
 /*!
-* \brief Allocate all the object of the game in mode IA2 (neat).
-* \param[out] bird_list the list of bird to allocate
-* \param[out] camera the camera to allocate
-* \param[out] obstacle_list the list of obstacles
-* \param[in] level the file that contains the height of the obstacles
-* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
-* \param[out] pool the MatingPool
-*/
-void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile, MatingPool * pool)
-{
-    int i;
-    Bird * bird = NULL;
-
-    for (i = 0; i < pool->nb_species; ++i) {
-        setOnFirstElement(pool->species[i].genomes);
-        while (!outOfGenericList(pool->species[i].genomes)) {
-            generateGenome(getCurrent(pool->species[i].genomes));
-
-            if ((bird = initBird(getCurrent(pool->species[i].genomes), &pool->species[i]), &pool->species[i]) == NULL)
-                return;
-
-            add(bird_list, bird);
-
-            nextElement(pool->species[i].genomes);
-        }
-    }
-
-    initCamera(camera, 0, LOW);
-    fillObstacleList(obstacle_list, level, levelFromFile);
-}
-
-/*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
 * \param[out] bird the list of bird that moves with the camera

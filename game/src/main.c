@@ -22,6 +22,38 @@
 #include "../../ai/neat/src/population.h"
 #include "../../ai/neat/src/neat_conf.h"
 
+/*!
+* \brief Allocate all the object of the game in mode IA2 (neat).
+* \param[out] bird_list the list of bird to allocate
+* \param[out] camera the camera to allocate
+* \param[out] obstacle_list the list of obstacles
+* \param[in] level the file that contains the height of the obstacles
+* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+* \param[out] pool the MatingPool
+*/
+void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile, MatingPool * pool)
+{
+    int i;
+    Bird * bird = NULL;
+
+    for (i = 0; i < pool->nb_species; ++i) {
+        setOnFirstElement(pool->species[i].genomes);
+        while (!outOfGenericList(pool->species[i].genomes)) {
+            generateGenome(getCurrent(pool->species[i].genomes));
+
+            if ((bird = initBird(getCurrent(pool->species[i].genomes), &pool->species[i]), &pool->species[i]) == NULL)
+                return;
+
+            add(bird_list, bird);
+
+            nextElement(pool->species[i].genomes);
+        }
+    }
+
+    initCamera(camera, 0, LOW);
+    fillObstacleList(obstacle_list, level, levelFromFile);
+}
+
 int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
 {
     double input[N_INPUTS];
@@ -225,8 +257,8 @@ int main(int argc, char ** argv)
         init = NOTHING;
         running = 1;
 
-        mode = IA2;
-        levelFromFile = 0;
+        /*mode = IA2;
+        levelFromFile = 0;*/
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
