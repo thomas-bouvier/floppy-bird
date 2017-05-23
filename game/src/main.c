@@ -157,7 +157,7 @@ int main(int argc, char ** argv)
     if (!openGameFiles(config, &level, &scoreFile))
         return EXIT_FAILURE;
 
-    SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");
+    /*SDL_SetHint(SDL_HINT_WINDOWS_DISABLE_THREAD_NAMING, "1");*/
 
     /* SDL initialization */
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
