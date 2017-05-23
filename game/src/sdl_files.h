@@ -18,7 +18,7 @@ int openSpriteFiles(FILE * config, Sprites * sprites, SDL_Renderer * renderer);
 int addBirdSprite(FILE * config, Sprites * sprites, SDL_Renderer * renderer);
 int openFontFiles(FILE * config, TTF_Font ** font, TTF_Font ** medium);
 void closeFiles(FILE * config, FILE * level, FILE * scoreFile, Mix_Chunk * jump_sound, Mix_Chunk * obstacle_sound,
-               Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font);
+               Mix_Chunk * death_sound, Sprites * sprites, TTF_Font * font, TTF_Font * medium_font);
 
 
 #endif // SDL_FILES_H
