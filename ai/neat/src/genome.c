@@ -401,6 +401,7 @@ int mutateLink(Genome * genome, int bias) {
 
     if (!add(genome->connection_genes, connection_gene)) {
         fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        freeConnectionGene(connection_gene);
         return 0;
     }
 
@@ -451,6 +452,7 @@ int mutateNode(Genome * genome) {
 
     if (!add(genome->connection_genes, connection_gene_1)) {
         fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        freeConnectionGene(connection_gene_1);
         return 0;
     }
 
@@ -464,6 +466,7 @@ int mutateNode(Genome * genome) {
 
     if (!add(genome->connection_genes, connection_gene_2)) {
         fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
+        freeConnectionGene(connection_gene_2);
         return 0;
     }
 
@@ -562,6 +565,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
                     if (!add(child_genome->connection_genes, new_connection_gene)) {
                         fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
+                        freeConnectionGene(new_connection_gene);
                         return NULL;
                     }
 
@@ -586,6 +590,7 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
             if (!add(child_genome->connection_genes, new_connection_gene)) {
                 fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
+                return NULL;
             }
         }
 
@@ -848,6 +853,8 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
         for (i = 0; i < N_OUTPUTS; ++i)
             candidates[count++] = N_INPUTS + i;
 
+    printf("---------------------------------------------\n");
+
     setOnFirstElement(genome->connection_genes);
     while (!outOfGenericList(genome->connection_genes)) {
 
@@ -856,6 +863,8 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
         if (!non_input || current_connection_gene->neuron_in_id >= N_INPUTS)
             if (!non_output || current_connection_gene->neuron_in_id >= N_INPUTS + N_OUTPUTS)
                 candidates[count++] = current_connection_gene->neuron_in_id;
+
+        printf("avant: %p\n", current_connection_gene);
 
         if (!non_input || current_connection_gene->neuron_out_id >= N_INPUTS)
             if (!non_output || current_connection_gene->neuron_out_id >= N_INPUTS + N_OUTPUTS)

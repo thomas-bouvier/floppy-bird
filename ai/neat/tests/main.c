@@ -12,7 +12,7 @@
 
 /*========================================================================
     newNode
-=========================================================================*/
+========================================================================*/
 
 static void test_newNode(void ** state) {
     Node * node = newNode();
@@ -53,11 +53,11 @@ static void test_newGenericListMissingCloneFunction(void ** state) {
 }
 
 static void test_newGenericList(void ** state) {
-    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+    GenericList * list = newGenericList(NULL, freeNeuron);
 
     assert_non_null(list);
 
-    assert_ptr_equal(list->clone_function, cloneNeuron);
+    assert_ptr_equal(list->clone_function, NULL);
     assert_ptr_equal(list->free_function, freeNeuron);
 
     initGenericList(list);
@@ -67,7 +67,7 @@ static void test_newGenericList(void ** state) {
 
 static int teardown_newGenericList(void ** state) {
     if (*state != NULL)
-        freeGenericList(*state);
+        freeGenericList(*state, 1);
 
     return 0;
 }
@@ -97,7 +97,7 @@ static void test_initGenericList(void ** state) {
 }
 
 static int teardown_initGenericList(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -112,7 +112,7 @@ typedef struct {
 
 static int setup_cloneGenericList(void ** state) {
     CloneGenericListStruct * helper = NULL;
-    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+    GenericList * list = newGenericList(cloneConnectionGene, freeConnectionGene);
 
     if (list == NULL)
         return -1;
@@ -122,12 +122,12 @@ static int setup_cloneGenericList(void ** state) {
     if ((helper = (CloneGenericListStruct *) malloc(sizeof(CloneGenericListStruct))) == (CloneGenericListStruct *) NULL)
         return -1;
 
-    add(list, newNeuron(INPUT));
-    add(list, newNeuron(OUTPUT));
-    add(list, newNeuron(INPUT));
-    add(list, newNeuron(OUTPUT));
-    add(list, newNeuron(INPUT));
-    add(list, newNeuron(OUTPUT));
+    add(list, newConnectionGene(0, 1, 1));
+    add(list, newConnectionGene(0, 1, 2));
+    add(list, newConnectionGene(0, 1, 3));
+    add(list, newConnectionGene(0, 1, 4));
+    add(list, newConnectionGene(0, 1, 5));
+    add(list, newConnectionGene(0, 1, 6));
     helper->base_list = list;
 
     *state = helper;
@@ -149,21 +149,21 @@ static void test_cloneGenericList(void ** state) {
     setOnFirstElement(base_list);
     setOnFirstElement(clone_list);
 
-    assert_int_equal(((Neuron *) base_list->current->data)->type, INPUT);
-    assert_int_equal(((Neuron *) clone_list->current->data)->type, INPUT);
+    assert_int_equal(((ConnectionGene *) base_list->current->data)->innovation, 1);
+    assert_int_equal(((ConnectionGene *) clone_list->current->data)->innovation, 1);
     assert_ptr_not_equal(base_list->current, clone_list->current);
 
     nextElement(base_list);
     nextElement(clone_list);
 
-    assert_int_equal(((Neuron *) base_list->current->data)->type, OUTPUT);
-    assert_int_equal(((Neuron *) clone_list->current->data)->type, OUTPUT);
+    assert_int_equal(((ConnectionGene *) base_list->current->data)->innovation, 2);
+    assert_int_equal(((ConnectionGene *) clone_list->current->data)->innovation, 2);
     assert_ptr_not_equal(base_list->current, clone_list->current);
 }
 
 static int teardown_cloneGenericList(void ** state) {
-    freeGenericList(((CloneGenericListStruct *) *state)->base_list);
-    freeGenericList(((CloneGenericListStruct *) *state)->clone_list);
+    freeGenericList(((CloneGenericListStruct *) *state)->base_list, 1);
+    freeGenericList(((CloneGenericListStruct *) *state)->clone_list, 1);
     free(*state);
     return 0;
 }
@@ -213,7 +213,7 @@ static void test_emptyGenericListOneElementRemoved(void ** state) {
 }
 
 static int teardown_emptyGenericList(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -282,7 +282,7 @@ static void test_outOfGenericListOneElementNext(void ** state) {
 }
 
 static int teardown_outOfGenericList(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -362,7 +362,7 @@ static void test_setOnFirstElement(void ** state) {
 }
 
 static int teardown_setOnFirstElement(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -424,7 +424,7 @@ static void test_setOn(void ** state) {
 }
 
 static int teardown_setOn(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -471,7 +471,7 @@ static void test_nextElement(void ** state) {
 }
 
 static int teardown_nextElement(void ** state) {
-  freeGenericList(*state);
+  freeGenericList(*state, 1);
   return 0;
 }
 
@@ -522,7 +522,7 @@ static void test_getCurrent(void ** state) {
 }
 
 static int teardown_getCurrent(void ** state) {
-    freeGenericList(*state);
+    freeGenericList(*state, 1);
     return 0;
 }
 
@@ -561,7 +561,7 @@ static void test_add(void ** state) {
 }
 
 static int teardown_add(void ** state) {
-    freeGenericList(*state);
+    freeGenericList(*state, 1);
     return 0;
 }
 
@@ -674,7 +674,7 @@ static void test_deleteOneElement(void ** state) {
 }
 
 static int teardown_delete(void ** state) {
-    freeGenericList(*state);
+    freeGenericList(*state, 1);
     return 0;
 }
 
@@ -683,7 +683,7 @@ static int teardown_delete(void ** state) {
 ========================================================================*/
 
 static int setup_clearGenericList(void ** state) {
-    GenericList * list = newGenericList(cloneNeuron, freeNeuron);
+    GenericList * list = newGenericList(NULL, freeNeuron);
 
     if (list == NULL)
         return -1;
@@ -717,7 +717,7 @@ static void test_clearGenericList(void ** state) {
 }
 
 static int teardown_clearGenericList(void ** state) {
-    freeGenericList(*state);
+    freeGenericList(*state, 1);
     return 0;
 }
 
@@ -839,7 +839,7 @@ static void test_sort(void ** state) {
 }
 
 static int teardown_sort(void ** state) {
-    freeGenericList(((SortStruct *) *state)->list);
+    freeGenericList(((SortStruct *) *state)->list, 1);
     free(*state);
     return 0;
 }
@@ -899,7 +899,7 @@ static void test_find(void ** state) {
 }
 
 static int teardown_find(void ** state) {
-    freeGenericList(((FindStruct *) *state)->list);
+    freeGenericList(((FindStruct *) *state)->list, 1);
     freeNeuron(((FindStruct *) *state)->to_be_freed);
     free(*state);
     return 0;
@@ -954,7 +954,7 @@ static void test_count(void ** state) {
 }
 
 static int teardown_count(void ** state) {
-    freeGenericList(*state);
+    freeGenericList(*state, 1);
     return 0;
 }
 
@@ -1007,8 +1007,10 @@ static void test_newGenome(void ** state) {
     assert_true(genome->fitness == 0.0);
     assert_int_equal(genome->mutation_rates[0], POINT_MUTATION_RATE),
     assert_int_equal(genome->mutation_rates[1], LINK_MUTATION_RATE),
-    assert_int_equal(genome->mutation_rates[2], NODE_MUTATION_RATE),
-    assert_int_equal(genome->mutation_rates[3], ENABLE_DISABLE_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[2], BIAS_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[3], NODE_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[4], ENABLE_MUTATION_RATE),
+    assert_int_equal(genome->mutation_rates[5], DISABLE_MUTATION_RATE),
     assert_int_equal(genome->global_rank, 0);
     assert_ptr_equal(genome->innovation, &innovation);
     assert_int_equal(genome->nb_mutations, 0);
