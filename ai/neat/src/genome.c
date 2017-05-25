@@ -84,11 +84,8 @@ void * cloneGenome(void * genome) {
 
         new_connection_gene = cloneConnectionGene((ConnectionGene *) getCurrent(((Genome *) genome)->connection_genes));
 
-        if (!add(new_genome->connection_genes, new_connection_gene)) {
-            fprintf(stderr, "Can't add new ConnectionGene to cloned Genome\n");
-            freeConnectionGene(new_connection_gene);
+        if (!addConnectionGeneToGenome(new_genome, new_connection_gene))
             return NULL;
-        }
 
         nextElement(((Genome *) genome)->connection_genes);
     }
@@ -246,6 +243,23 @@ int addNeuronToGenome(Genome * genome, Neuron * neuron) {
         freeNeuron(neuron);
 
         fprintf(stderr, "Couldn't add Neuron to Genome\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+/*!
+* \brief Add the given ConnectionGene to the given Genome.
+* \param[out] genome the Genome to alter
+* \param[in] connection_gene the ConnectionGene to insert
+* \return int 1 if the ConnectionGene was successfully inserted, 0 otherwise
+*/
+int addConnectionGeneToGenome(Genome * genome, ConnectionGene * connection_gene) {
+    if (!addConnectionGene(genome->connection_genes, connection_gene)) {
+        freeConnectionGene(connection_gene);
+
+        fprintf(stderr, "Couldn't add ConnectionGene to Genome\n");
         return 0;
     }
 
@@ -422,11 +436,8 @@ int mutateLink(Genome * genome, int bias) {
     connection_gene->weight = 4.0 * random01() - 2.0;
     connection_gene->innovation = *genome->innovation;
 
-    if (!add(genome->connection_genes, connection_gene)) {
-        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
-        freeConnectionGene(connection_gene);
+    if (!addConnectionGeneToGenome(genome, connection_gene))
         return 0;
-    }
 
     if (bias)
         genome->mutations_history[genome->nb_mutations] = 2;
@@ -473,11 +484,8 @@ int mutateNode(Genome * genome) {
     connection_gene_1->enabled = 1;
     connection_gene_1->innovation = *genome->innovation;
 
-    if (!add(genome->connection_genes, connection_gene_1)) {
-        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
-        freeConnectionGene(connection_gene_1);
+    if (!addConnectionGeneToGenome(genome, connection_gene_1))
         return 0;
-    }
 
     ++(*genome->innovation);
 
@@ -487,11 +495,8 @@ int mutateNode(Genome * genome) {
     connection_gene_2->enabled = 1;
     connection_gene_2->innovation = *genome->innovation;
 
-    if (!add(genome->connection_genes, connection_gene_2)) {
-        fprintf(stderr, "Can't add new ConnectionGene to Genome\n");
-        freeConnectionGene(connection_gene_2);
+    if (!addConnectionGeneToGenome(genome, connection_gene_2))
         return 0;
-    }
 
     genome->mutations_history[genome->nb_mutations] = 3;
     ++genome->nb_mutations;
@@ -586,11 +591,8 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
 
                     new_connection_gene = cloneConnectionGene(current_connection_gene_2);
 
-                    if (!add(child_genome->connection_genes, new_connection_gene)) {
-                        fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
-                        freeConnectionGene(new_connection_gene);
+                    if (!addConnectionGeneToGenome(child_genome, new_connection_gene))
                         return NULL;
-                    }
 
                     skip_continue_instruction = 1;
                 }
@@ -611,11 +613,8 @@ Genome * crossover(Genome * genome_1, Genome * genome_2) {
         if (!skip_continue_instruction) {
             new_connection_gene = cloneConnectionGene(current_connection_gene_1);
 
-            if (!add(child_genome->connection_genes, new_connection_gene)) {
-                fprintf(stderr, "Can't add new ConnectionGene to child Genome\n");
-                freeConnectionGene(new_connection_gene);
+            if (!addConnectionGeneToGenome(child_genome, new_connection_gene))
                 return NULL;
-            }
         }
 
         skip_continue_instruction = 0;
@@ -867,7 +866,7 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
     int i;
     ConnectionGene * current_connection_gene = NULL;
     int count = 0;
-    int candidates[N_MAX_NEURONS];
+    int candidates[N_INPUTS + N_OUTPUTS + 2 * N_MAX_CONNECTION_GENES];
 
     if (!non_input)
         for (i = 0; i < N_INPUTS; ++i)
@@ -876,11 +875,6 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
     if (!non_output)
         for (i = 0; i < N_OUTPUTS; ++i)
             candidates[count++] = N_INPUTS + i;
-
-    /*
-    printf("===================================================\n");
-    printGenericList(genome->connection_genes);
-    */
 
     setOnFirstElement(genome->connection_genes);
     while (!outOfGenericList(genome->connection_genes)) {
@@ -891,11 +885,6 @@ int getRandomNeuronId(Genome * genome, int non_input, int non_output) {
             if (!non_output || current_connection_gene->neuron_in_id >= N_INPUTS + N_OUTPUTS)
                 candidates[count++] = current_connection_gene->neuron_in_id;
         }
-
-        /*
-        printf("address: %p\n", current_connection_gene);
-        printf("neuron_out_id: %d\n", current_connection_gene->neuron_out_id);
-        */
 
         if (!non_input || current_connection_gene->neuron_out_id >= N_INPUTS) {
             if (!non_output || current_connection_gene->neuron_out_id >= N_INPUTS + N_OUTPUTS)
