@@ -33,7 +33,7 @@
 /*! \def N_MAX_CONNECTION_GENES
 * \brief The max number of ConnectionGene elements allowed in a Genome.
 */
-#define N_MAX_CONNECTION_GENES          50
+#define N_MAX_CONNECTION_GENES          100
 
 /*! \def N_MAX_NEURONS
 * \brief The max number of Neuron elements allowed in a Genome.
