@@ -52,28 +52,6 @@ void initGenericList(GenericList * list) {
 }
 
 /*!
-* \brief Clone the given GenericList.
-* \param[out] list the GenericList to clone
-* \return Return a new GenericList, NULL if error
-*/
-GenericList * cloneGenericList(GenericList * list) {
-    GenericList * new_list = newGenericList(list->clone_function, list->free_function);
-
-    initGenericList(new_list);
-
-    setOnFirstElement(list);
-    while(!outOfGenericList(list)) {
-        add(new_list, new_list->clone_function(getCurrent(list)));
-
-        nextElement(list);
-    }
-
-    new_list->current = new_list->first;
-
-    return new_list;
-}
-
-/*!
 * \brief Suppress all elements from the GenericList.
 * \param[out] list the GenericList to be emptied
 * \param[in] apply_free_function bool value indicating if the stored data should also be freed
@@ -141,8 +119,8 @@ void setOn(GenericList * list, int index) {
 * \param[out] list the GenericList to be modified
 */
 void nextElement(GenericList * list) {
-  if (!outOfGenericList(list))
-    list->current = list->current->next;
+    if (!outOfGenericList(list))
+        list->current = list->current->next;
 }
 
 /*!
@@ -151,10 +129,11 @@ void nextElement(GenericList * list) {
 * \return the element of the current element if valid, NULL otherwise
 */
 void * getCurrent(GenericList * list) {
-  if (!outOfGenericList(list))
-    return list->current->data;
+    if (!outOfGenericList(list))
+        return list->current->data;
 
-  return NULL;
+    fprintf(stderr, "Current pointer is out of GenericList\n");
+    return NULL;
 }
 
 /*!
@@ -424,15 +403,27 @@ void printGenericList(GenericList * list) {
     printf("list address: %p\n", list);
     printf("%d elements\n\n", count(list));
 
+    printf("first node address: %p\n", list->first);
+
+    if (list->first)
+        printf("first data address: %p\n", list->first->data);
+
+    printf("last node address: %p\n", list->last);
+
+    if (list->last)
+        printf("last data address: %p\n", list->last->data);
+
+    printf("\n");
+
     setOnFirstElement(list);
     while (!outOfGenericList(list)) {
         printf("%d.\n", index);
         ++index;
 
         printf("node address: %p\n", list->current);
-        printf("next node address: %p\n", list->current->next);
-        printf("data address: %p\n", list->current->data);
+        printf("data address: %p (%p)\n", list->current->data, getCurrent(list));
 
+        printf("next node address: %p\n", list->current->next);
         if (list->current->next)
             printf("next data address: %p\n", list->current->next->data);
 

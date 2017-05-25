@@ -88,7 +88,7 @@
 /*! \def CROSSOVER_RATE
 * \brief The probability of performing a crossover instead of a mutation when breeding a child Genome.
 */
-#define CROSSOVER_RATE                  0.75
+#define CROSSOVER_RATE                  0.50
 
 /*! \def SPECIATION_THRESHOLD
 * \brief The threshold used to determine if two Genome elements are from the same Species.
