@@ -704,6 +704,42 @@ static int teardown_createObstacleFromFile(void ** state){
   return 0;
 }
 
+/* createObstacleRandomly */
+
+LargestIntegralType test_pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450};
+
+static int setup_createObstacleRandomly(void ** state){
+
+	GenericList * list = newGenericList(NULL, freeObstacle);
+  if (list == (GenericList *) NULL)
+    return -1;
+	
+	initGenericList(list);
+	
+	*state = list;
+
+  return 0;
+}
+
+static void test_createObstacleRandomly(void ** state){
+	GenericList * list = (GenericList *) (* state);
+	setOn(list, 0);
+	int i = 0;
+	
+	for(i=0 ; i<1 ; i++){
+		createObstacleRandomly(i, list);
+		assert_in_set(((Obstacle *)getCurrent(list))->lower.h, test_pipes_height, 7);
+		nextElement(list);
+	}
+}
+
+static int teardown_createObstacleRandomly(void ** state){
+	GenericList * list = (GenericList *) (* state);
+	freeGenericList(list, 1);
+  return 0;
+}
+
+
 /* modifyGap */
 
 /*int obstacle_gap = MEDIUM;
@@ -778,7 +814,6 @@ int main() {
     cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScoreLowScore, teardown_saveScore),
     cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
-		//Could not run the test - check test fixtures
 		cmocka_unit_test_setup(test_readBestScoreEmpty, setup_readBestScoreEmpty),
 		cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),
 
@@ -801,7 +836,9 @@ int main() {
     
     cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
     
-    //Erreur de compilation : problème avec les variables globales
+    cmocka_unit_test_setup_teardown(test_createObstacleRandomly, setup_createObstacleRandomly, teardown_createObstacleRandomly),
+    
+    //Compilation failure : problem with global variables
     //cmocka_unit_test(test_modifyGap),
 
 		/* Pipe */
