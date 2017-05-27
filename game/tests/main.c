@@ -802,6 +802,97 @@ static void test_modifyGap(void ** state) {
 	assert_int_equal(obstacle_gap, BIG | MEDIUM | LITTLE);
 }*/
 
+/* fillObstacleList */
+
+typedef struct {
+	FILE * file;
+	GenericList * list;
+}FillObstacleListWithFileStruct;
+
+static int setup_fillObstacleList(void ** state) {
+  GenericList * list = malloc(sizeof(GenericList));
+
+  if (list == (GenericList *) NULL)
+    return -1;
+   
+  initGenericList(list);
+
+  *state = list;
+
+  return 0;
+}
+
+static int setup_fillObstacleListWithFile(void ** state) {
+  GenericList * list = malloc(sizeof(GenericList));
+  if (list == (GenericList *) NULL)
+    return -1;
+  initGenericList(list);
+  
+  FILE * level_file = fopen("level.txt", "w+");
+  if (level_file == (FILE *) NULL)
+    return -1;
+	fputs("200\n", level_file);
+	fputs("300\n", level_file);
+	fputs("400\n", level_file);
+	fputs("500\n", level_file);
+	fputs("600\n", level_file);
+	fputs("700\n", level_file);
+	fputs("800\n", level_file);
+
+	FillObstacleListWithFileStruct * structure = malloc(sizeof(FillObstacleListWithFileStruct));
+	structure->list = list;
+	structure->file = level_file;
+
+  *state = structure;
+
+  return 0;
+}
+
+static void test_fillObstacleList(void ** state) {
+	GenericList * list = (GenericList *) (* state);
+	FILE * file = NULL;
+	fillObstacleList(list, file, 0);
+	int i = 0;
+	setOn(list, 0);
+	
+	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
+		assert_non_null((Obstacle *)getCurrent(list));
+		nextElement(list);
+	}
+}
+
+static void test_fillObstacleListWithFile(void ** state) {
+	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
+	FILE * file = structure->file;
+	GenericList * list = structure->list;
+	
+	fillObstacleList(list, file, 1);
+	int i = 0;
+	setOn(list, 0);
+	
+	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
+		assert_non_null((Obstacle *)getCurrent(list));
+		nextElement(list);
+	}
+}
+
+static int teardown_fillObstacleList(void ** state) {
+	freeGenericList((*state), 1);
+  return 0;
+}
+
+static int teardown_fillObstacleListWithFile(void ** state) {
+	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
+	FILE * file = structure->file;
+	GenericList * list = structure->list;
+	
+	freeGenericList((list), 1);
+	fclose(file);
+	remove("level.txt");
+	free(*state);
+  return 0;
+}
+
 
 /* PIPE */
 
@@ -886,6 +977,9 @@ int main() {
     
     //Compilation failure : problem with global variables
     //cmocka_unit_test(test_modifyGap),
+    
+    cmocka_unit_test_setup_teardown(test_fillObstacleList, setup_fillObstacleList, teardown_fillObstacleList),
+    cmocka_unit_test_setup_teardown(test_fillObstacleListWithFile, setup_fillObstacleListWithFile, teardown_fillObstacleListWithFile),
 
 		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
