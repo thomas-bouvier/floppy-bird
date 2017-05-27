@@ -726,7 +726,7 @@ static void test_createObstacleRandomly(void ** state){
 	setOn(list, 0);
 	int i = 0;
 	
-	for(i=0 ; i<1 ; i++){
+	for(i=0 ; i<100 ; i++){
 		createObstacleRandomly(i, list);
 		assert_in_set(((Obstacle *)getCurrent(list))->lower.h, test_pipes_height, 7);
 		nextElement(list);
@@ -739,6 +739,50 @@ static int teardown_createObstacleRandomly(void ** state){
   return 0;
 }
 
+
+/* obstaclePassed */
+
+typedef struct{
+	Obstacle * savedObstacle;
+	Bird * bird1;
+	Bird * bird2;
+}ObstaclePassedStruct;
+
+static int setup_obstaclePassed(void ** state){
+	Obstacle * obstacle = newObstacle(0, 200, MEDIUM, NULL);
+	
+	Bird * bird1 = initBird(NULL, NULL);
+	bird1->x = 100;														/* Bird before the savedObstacle */
+	Bird * bird2 = initBird(NULL, NULL);
+	bird2->x = 5000;													/* Bird after te savedObstacle */
+		
+	ObstaclePassedStruct * structure = malloc(sizeof(ObstaclePassedStruct));
+	structure->savedObstacle = obstacle;
+	structure->bird1 = bird1;
+	structure->bird2 = bird2;
+	
+	*state = structure;
+	
+	return 0;
+}
+
+static void test_obstaclePassed(void ** state){
+	ObstaclePassedStruct * structure = (ObstaclePassedStruct *) (* state);
+	
+	Sound sound = NOSOUND;
+	
+	assert_int_equal(obstaclePassed(structure->bird1, structure->savedObstacle, &sound), 0);
+	
+	assert_int_equal(obstaclePassed(structure->bird2, structure->savedObstacle, &sound), 1);
+}
+
+static int teardown_obstaclePassed(void ** state) {
+	freeObstacle(((ObstaclePassedStruct *)(*state))->savedObstacle);
+	freeBird(((ObstaclePassedStruct *)(*state))->bird1);
+	freeBird(((ObstaclePassedStruct *)(*state))->bird2);
+  free(*state);
+  return 0;
+}
 
 /* modifyGap */
 
@@ -837,6 +881,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
     
     cmocka_unit_test_setup_teardown(test_createObstacleRandomly, setup_createObstacleRandomly, teardown_createObstacleRandomly),
+    
+    cmocka_unit_test_setup_teardown(test_obstaclePassed, setup_obstaclePassed, teardown_obstaclePassed),
     
     //Compilation failure : problem with global variables
     //cmocka_unit_test(test_modifyGap),
