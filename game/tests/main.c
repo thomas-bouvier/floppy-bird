@@ -355,7 +355,7 @@ static void test_readBestScore(void ** state) {
 
 static int teardown_readBestScore(void ** state) {
   fclose(*state);
-  return remove("test_readBestScore.txt");
+  return 0;
 }
 
 /* openGameFiles */
@@ -639,7 +639,7 @@ static void test_nextBirdObstacle(void ** state){
 }
 
 static int teardown_nextBirdObstacle(void ** state) {
-	freeGenericList(((NextBirdObstacleStruct *)(*state))->list);
+	freeGenericList(((NextBirdObstacleStruct *)(*state))->list, 1);
 	freeBird(((NextBirdObstacleStruct *)(*state))->bird1);
 	freeBird(((NextBirdObstacleStruct *)(*state))->bird2);
   free(*state);
@@ -691,17 +691,36 @@ static void test_createObstacleFromFile(void ** state){
 	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
 	createObstacleFromFile(structure->file, 2, structure->list);
 	setOn(structure->list, 2);
+	
 	assert_int_equal(((Obstacle *)getCurrent(structure->list))->lower.h, 400);
 }
 
 static int teardown_createObstacleFromFile(void ** state){
 	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
-	freeGenericList(structure->list);
+	freeGenericList(structure->list, 1);
 	fclose(structure->file);
   free(*state);
   remove("level.txt");
   return 0;
 }
+
+/* modifyGap */
+
+/*int obstacle_gap = MEDIUM;
+const int gap[3] = {BIG, MEDIUM, LITTLE};
+
+static void test_modifyGap(void ** state) {
+  assert_int_equal(obstacle_gap, MEDIUM);
+
+ 	modifyGap(10);
+	assert_int_equal(obstacle_gap, BIG);
+
+	modifyGap(30);
+	assert_int_equal(obstacle_gap, BIG | MEDIUM);
+
+	modifyGap(50);
+	assert_int_equal(obstacle_gap, BIG | MEDIUM | LITTLE);
+}*/
 
 
 /* PIPE */
@@ -738,14 +757,14 @@ static int teardown_initPipe(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
+		
 		/* Bird */
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
-    /*cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),*/
-
+    //cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
 
 		/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
@@ -760,8 +779,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
 		//Could not run the test - check test fixtures
-		//cmocka_unit_test_setup_teardown(test_readBestScoreEmpty, setup_readBestScoreEmpty, teardown_readBestScore),
-		cmocka_unit_test_setup(test_readBestScore, setup_readBestScore),
+		cmocka_unit_test_setup(test_readBestScoreEmpty, setup_readBestScoreEmpty),
+		cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),
 
 		cmocka_unit_test_setup_teardown(test_openGameFiles, setup_openGameFiles, teardown_openGameFiles),
 
@@ -781,6 +800,9 @@ int main() {
     cmocka_unit_test_setup_teardown(test_nextBirdObstacle, setup_nextBirdObstacle, teardown_nextBirdObstacle),
     
     cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
+    
+    //Erreur de compilation : problème avec les variables globales
+    //cmocka_unit_test(test_modifyGap),
 
 		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),
