@@ -638,7 +638,7 @@ static int teardown_startGame(void ** state){
     return 0;
 }
 
-/* create obstacle */
+/* createObstacle */
 
 typedef struct{
     Camera * camera;
@@ -703,6 +703,74 @@ static int teardown_createObstacle(void ** state){
     free(*state);
     remove("level.txt");
     return 0;
+}
+
+
+/* updateScore */
+
+typedef struct{
+	Obstacle * savedObstacle;
+	Bird * bird;
+	int score;
+}UpdateScoreStruct;
+
+static int setup_updateScore_NoUpdate(void ** state){
+	Obstacle * obstacle = newObstacle(0, 200, MEDIUM, NULL);
+
+	Bird * bird = initBird(NULL, NULL);
+	bird->x = 100;														/* Bird before the savedObstacle */
+
+	int score = 10;
+
+	UpdateScoreStruct * structure = malloc(sizeof(UpdateScoreStruct));
+	structure->savedObstacle = obstacle;
+	structure->bird = bird;
+	structure->score = score;
+
+	*state = structure;
+
+	return 0;
+}
+
+static int setup_updateScore_Update(void ** state){
+	Obstacle * obstacle = newObstacle(0, 200, MEDIUM, NULL);
+
+	Bird * bird = initBird(NULL, NULL);
+	bird->x = 5000;														/* Bird after the savedObstacle */
+
+	int score = 10;
+
+	UpdateScoreStruct * structure = malloc(sizeof(UpdateScoreStruct));
+	structure->savedObstacle = obstacle;
+	structure->bird = bird;
+	structure->score = score;
+
+	*state = structure;
+
+	return 0;
+}
+
+static void test_updateScore_NoUpdate(void ** state){
+	UpdateScoreStruct * structure = (UpdateScoreStruct *) (* state);
+
+	Sound sound = NOSOUND;
+
+	assert_int_equal(updateScore(structure->score, structure->bird, structure->savedObstacle, &sound), 10);
+}
+
+static void test_updateScore_Update(void ** state){
+	UpdateScoreStruct * structure = (UpdateScoreStruct *) (* state);
+
+	Sound sound = NOSOUND;
+
+	assert_int_equal(updateScore(structure->score, structure->bird, structure->savedObstacle, &sound), 11);
+}
+
+static int teardown_updateScore(void ** state) {
+	freeObstacle(((UpdateScoreStruct *)(*state))->savedObstacle);
+	freeBird(((UpdateScoreStruct *)(*state))->bird);
+  free(*state);
+  return 0;
 }
 
 /* OBSTACLE */
@@ -1131,6 +1199,9 @@ int main() {
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelFromFile, setup_createObstacle, teardown_createObstacle),
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelRandom, setup_createObstacle, teardown_createObstacle),
 		cmocka_unit_test_setup_teardown(test_createObstacleNothing, setup_createObstacle, teardown_createObstacle),
+		
+		cmocka_unit_test_setup_teardown(test_updateScore_NoUpdate, setup_updateScore_NoUpdate, teardown_updateScore),
+		cmocka_unit_test_setup_teardown(test_updateScore_Update, setup_updateScore_Update, teardown_updateScore),
 
 		/* Obstacle */
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
