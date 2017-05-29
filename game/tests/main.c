@@ -550,7 +550,7 @@ static int setup_cameraScrolling(void ** state) {
     structure->bird = newGenericList(NULL, (FreeFunction)freeBird);
     initGenericList(structure->bird);
     if (structure->bird == (GenericList *) NULL)
-    return -1;
+    	return -1;
 
     add(structure->bird, initBird(NULL,NULL));
 
@@ -958,10 +958,54 @@ static int setup_ratioBirdHeight(void ** state){
 static void test_ratioBirdHeight(void ** state) {
   Bird * bird = (Bird *) (* state);
 
-  assert_int_equal(bird->y, 200);
+  assert_int_equal(ratioBirdHeight(bird), 200);
 }
 
 static int teardown_ratioBirdHeight(void ** state) {
+  free(*state);
+  return 0;
+}
+
+/* ratioPipeHeight */
+
+typedef struct{
+	GenericList * list;
+	Bird * bird;
+}RatioPipeHeightStruct;
+
+static int setup_ratioPipeHeight(void ** state){
+  Bird * bird = initBird(NULL,NULL);
+  if(bird == (Bird *)NULL)
+      return -1;
+
+	GenericList * list = newGenericList(NULL, freeObstacle);
+  if (list == (GenericList *) NULL)
+    return -1;
+
+	initGenericList(list);
+
+	Obstacle * obstacle = newObstacle(0, 300, MEDIUM, NULL);
+	add(list, (Obstacle *)obstacle);
+
+	RatioPipeHeightStruct * structure = malloc(sizeof(RatioPipeHeightStruct));
+	structure->list = list;
+	structure->bird = bird;
+
+	*state = structure;
+	
+	return 0;
+}
+
+static void test_ratioPipeHeight(void ** state) {
+  RatioPipeHeightStruct * structure = (RatioPipeHeightStruct *) (* state);
+
+  assert_int_equal(ratioPipeHeight(structure->bird, structure->list), SCREEN_HEIGHT - 300);
+}
+
+static int teardown_ratioPipeHeight(void ** state) {
+	RatioPipeHeightStruct * structure = (RatioPipeHeightStruct *) (* state);
+	freeBird(structure->bird);
+	freeGenericList(structure->list, 1);
   free(*state);
   return 0;
 }
@@ -1402,10 +1446,12 @@ int main() {
     cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
 
     cmocka_unit_test_setup_teardown(test_ratioBirdHeight, setup_ratioBirdHeight, teardown_ratioBirdHeight),
+    
+    cmocka_unit_test_setup_teardown(test_ratioPipeHeight, setup_ratioPipeHeight, teardown_ratioPipeHeight),
 
-        cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
-        cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
-        cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
+    cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
+    cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
+    cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
 
 
 		/* Obstacle */

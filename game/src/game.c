@@ -159,7 +159,7 @@ int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 /*!
 * \brief A function use to send the height of the bird to the IA
 * \param[in] bird the bird that we seek the informations
-* \return return the ratio of the bird height over the screen height
+* \return return the heigth of the bird
 */
 int ratioBirdHeight(Bird * bird)
 {
@@ -170,7 +170,7 @@ int ratioBirdHeight(Bird * bird)
 * \brief A function use to send the height of the next pipe to the IA
 * \param[in] bird the bird that determines the next obstacle
 * \param[in] obstacle_list the list of obstacle
-* \return return the ratio of the height of the next obstacle over the screen height
+* \return return the height of the next obstacle
 */
 int ratioPipeHeight (Bird * bird, GenericList * obstacle_list)
 {
@@ -182,7 +182,7 @@ int ratioPipeHeight (Bird * bird, GenericList * obstacle_list)
 * \param[in] bird the bird current properties
 * \param[in] camera the display current properties
 * \param[in] obstacle_list the list of obstacle
-* \return return the distance between the left side of the camera and the ?pipe
+* \return return the distance between the left side of the camera and the pipe
 */
 int ratioPipeWidth (Bird * bird, Camera * camera, GenericList * obstacle_list)
 {
