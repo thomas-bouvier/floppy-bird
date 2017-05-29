@@ -355,7 +355,7 @@ static void test_readBestScore(void ** state) {
 
 static int teardown_readBestScore(void ** state) {
   fclose(*state);
-  return remove("test_readBestScore.txt");
+  return 0;
 }
 
 /* openGameFiles */
@@ -639,7 +639,7 @@ static void test_nextBirdObstacle(void ** state){
 }
 
 static int teardown_nextBirdObstacle(void ** state) {
-	freeGenericList(((NextBirdObstacleStruct *)(*state))->list);
+	freeGenericList(((NextBirdObstacleStruct *)(*state))->list, 1);
 	freeBird(((NextBirdObstacleStruct *)(*state))->bird1);
 	freeBird(((NextBirdObstacleStruct *)(*state))->bird2);
   free(*state);
@@ -691,15 +691,205 @@ static void test_createObstacleFromFile(void ** state){
 	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
 	createObstacleFromFile(structure->file, 2, structure->list);
 	setOn(structure->list, 2);
+	
 	assert_int_equal(((Obstacle *)getCurrent(structure->list))->lower.h, 400);
 }
 
 static int teardown_createObstacleFromFile(void ** state){
 	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
-	freeGenericList(structure->list);
+	freeGenericList(structure->list, 1);
 	fclose(structure->file);
   free(*state);
   remove("level.txt");
+  return 0;
+}
+
+/* createObstacleRandomly */
+
+LargestIntegralType test_pipes_height[NUMBER_OF_OBSTACLE_SIZES] = {150, 200, 250, 300, 350, 400, 450};
+
+static int setup_createObstacleRandomly(void ** state){
+
+	GenericList * list = newGenericList(NULL, freeObstacle);
+  if (list == (GenericList *) NULL)
+    return -1;
+	
+	initGenericList(list);
+	
+	*state = list;
+
+  return 0;
+}
+
+static void test_createObstacleRandomly(void ** state){
+	GenericList * list = (GenericList *) (* state);
+	setOn(list, 0);
+	int i = 0;
+	
+	for(i=0 ; i<100 ; i++){
+		createObstacleRandomly(i, list);
+		assert_in_set(((Obstacle *)getCurrent(list))->lower.h, test_pipes_height, 7);
+		nextElement(list);
+	}
+}
+
+static int teardown_createObstacleRandomly(void ** state){
+	GenericList * list = (GenericList *) (* state);
+	freeGenericList(list, 1);
+  return 0;
+}
+
+
+/* obstaclePassed */
+
+typedef struct{
+	Obstacle * savedObstacle;
+	Bird * bird1;
+	Bird * bird2;
+}ObstaclePassedStruct;
+
+static int setup_obstaclePassed(void ** state){
+	Obstacle * obstacle = newObstacle(0, 200, MEDIUM, NULL);
+	
+	Bird * bird1 = initBird(NULL, NULL);
+	bird1->x = 100;														/* Bird before the savedObstacle */
+	Bird * bird2 = initBird(NULL, NULL);
+	bird2->x = 5000;													/* Bird after te savedObstacle */
+		
+	ObstaclePassedStruct * structure = malloc(sizeof(ObstaclePassedStruct));
+	structure->savedObstacle = obstacle;
+	structure->bird1 = bird1;
+	structure->bird2 = bird2;
+	
+	*state = structure;
+	
+	return 0;
+}
+
+static void test_obstaclePassed(void ** state){
+	ObstaclePassedStruct * structure = (ObstaclePassedStruct *) (* state);
+	
+	Sound sound = NOSOUND;
+	
+	assert_int_equal(obstaclePassed(structure->bird1, structure->savedObstacle, &sound), 0);
+	
+	assert_int_equal(obstaclePassed(structure->bird2, structure->savedObstacle, &sound), 1);
+}
+
+static int teardown_obstaclePassed(void ** state) {
+	freeObstacle(((ObstaclePassedStruct *)(*state))->savedObstacle);
+	freeBird(((ObstaclePassedStruct *)(*state))->bird1);
+	freeBird(((ObstaclePassedStruct *)(*state))->bird2);
+  free(*state);
+  return 0;
+}
+
+/* modifyGap */
+
+/*int obstacle_gap = MEDIUM;
+const int gap[3] = {BIG, MEDIUM, LITTLE};
+
+static void test_modifyGap(void ** state) {
+  assert_int_equal(obstacle_gap, MEDIUM);
+
+ 	modifyGap(10);
+	assert_int_equal(obstacle_gap, BIG);
+
+	modifyGap(30);
+	assert_int_equal(obstacle_gap, BIG | MEDIUM);
+
+	modifyGap(50);
+	assert_int_equal(obstacle_gap, BIG | MEDIUM | LITTLE);
+}*/
+
+/* fillObstacleList */
+
+typedef struct {
+	FILE * file;
+	GenericList * list;
+}FillObstacleListWithFileStruct;
+
+static int setup_fillObstacleList(void ** state) {
+  GenericList * list = malloc(sizeof(GenericList));
+
+  if (list == (GenericList *) NULL)
+    return -1;
+   
+  initGenericList(list);
+
+  *state = list;
+
+  return 0;
+}
+
+static int setup_fillObstacleListWithFile(void ** state) {
+  GenericList * list = malloc(sizeof(GenericList));
+  if (list == (GenericList *) NULL)
+    return -1;
+  initGenericList(list);
+  
+  FILE * level_file = fopen("level.txt", "w+");
+  if (level_file == (FILE *) NULL)
+    return -1;
+	fputs("200\n", level_file);
+	fputs("300\n", level_file);
+	fputs("400\n", level_file);
+	fputs("500\n", level_file);
+	fputs("600\n", level_file);
+	fputs("700\n", level_file);
+	fputs("800\n", level_file);
+
+	FillObstacleListWithFileStruct * structure = malloc(sizeof(FillObstacleListWithFileStruct));
+	structure->list = list;
+	structure->file = level_file;
+
+  *state = structure;
+
+  return 0;
+}
+
+static void test_fillObstacleList(void ** state) {
+	GenericList * list = (GenericList *) (* state);
+	FILE * file = NULL;
+	fillObstacleList(list, file, 0);
+	int i = 0;
+	setOn(list, 0);
+	
+	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
+		assert_non_null((Obstacle *)getCurrent(list));
+		nextElement(list);
+	}
+}
+
+static void test_fillObstacleListWithFile(void ** state) {
+	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
+	FILE * file = structure->file;
+	GenericList * list = structure->list;
+	
+	fillObstacleList(list, file, 1);
+	int i = 0;
+	setOn(list, 0);
+	
+	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
+		assert_non_null((Obstacle *)getCurrent(list));
+		nextElement(list);
+	}
+}
+
+static int teardown_fillObstacleList(void ** state) {
+	freeGenericList((*state), 1);
+  return 0;
+}
+
+static int teardown_fillObstacleListWithFile(void ** state) {
+	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
+	FILE * file = structure->file;
+	GenericList * list = structure->list;
+	
+	freeGenericList((list), 1);
+	fclose(file);
+	remove("level.txt");
+	free(*state);
   return 0;
 }
 
@@ -738,14 +928,14 @@ static int teardown_initPipe(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
+		
 		/* Bird */
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
-    /*cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),*/
-
+    //cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
 
 		/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
@@ -759,9 +949,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_saveScore, setup_saveScoreLowScore, teardown_saveScore),
     cmocka_unit_test_setup_teardown(test_saveScoreHighScore, setup_saveScoreHighScore, teardown_saveScore),
 
-		//Could not run the test - check test fixtures
-		//cmocka_unit_test_setup_teardown(test_readBestScoreEmpty, setup_readBestScoreEmpty, teardown_readBestScore),
-		cmocka_unit_test_setup(test_readBestScore, setup_readBestScore),
+		cmocka_unit_test_setup(test_readBestScoreEmpty, setup_readBestScoreEmpty),
+		cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),
 
 		cmocka_unit_test_setup_teardown(test_openGameFiles, setup_openGameFiles, teardown_openGameFiles),
 
@@ -781,6 +970,16 @@ int main() {
     cmocka_unit_test_setup_teardown(test_nextBirdObstacle, setup_nextBirdObstacle, teardown_nextBirdObstacle),
     
     cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
+    
+    cmocka_unit_test_setup_teardown(test_createObstacleRandomly, setup_createObstacleRandomly, teardown_createObstacleRandomly),
+    
+    cmocka_unit_test_setup_teardown(test_obstaclePassed, setup_obstaclePassed, teardown_obstaclePassed),
+    
+    //Compilation failure : problem with global variables
+    //cmocka_unit_test(test_modifyGap),
+    
+    cmocka_unit_test_setup_teardown(test_fillObstacleList, setup_fillObstacleList, teardown_fillObstacleList),
+    cmocka_unit_test_setup_teardown(test_fillObstacleListWithFile, setup_fillObstacleListWithFile, teardown_fillObstacleListWithFile),
 
 		/* Pipe */
     cmocka_unit_test_setup_teardown(test_initPipe, setup_initPipe, teardown_initPipe),

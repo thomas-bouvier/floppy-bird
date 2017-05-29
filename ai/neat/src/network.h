@@ -58,5 +58,6 @@ int addNeuron(GenericList * neurons, Neuron * neuron);
 ConnectionGene * newConnectionGene(double weight, unsigned char enabled, int innovation);
 void * cloneConnectionGene(void * connection_gene);
 void freeConnectionGene(void * connection_gene);
+int addConnectionGene(GenericList * connection_genes, ConnectionGene * connection_gene);
 
 #endif // NETWORK_H

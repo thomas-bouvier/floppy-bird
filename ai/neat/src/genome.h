@@ -40,7 +40,9 @@ void * cloneGenome(void * genome);
 void freeGenome(void * genome);
 
 int generateGenome(Genome * genome);
+
 int addNeuronToGenome(Genome * genome, Neuron * neuron);
+int addConnectionGeneToGenome(Genome * genome, ConnectionGene * connection_gene);
 
 int mutate(Genome * genome);
 int mutatePoint(Genome * genome);

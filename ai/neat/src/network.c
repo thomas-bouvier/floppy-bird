@@ -38,7 +38,7 @@ void freeNeuron(void * neuron) {
 
 /*!
 * \brief Add a Neuron to the given GenericList.
-* \param[out] neurons the GenericList containing Genome elements
+* \param[out] neurons the GenericList containing Neuron elements
 * \param[out] neuron the Neuron to add
 * \return int 1 if the Neuron was successfully added, 0 otherwise
 */
@@ -110,4 +110,20 @@ void * cloneConnectionGene(void * connection_gene) {
 */
 void freeConnectionGene(void * connection_gene) {
     free(connection_gene);
+}
+
+/*!
+* \brief Add a ConnectionGene to the given GenericList.
+* \param[out] connection_genes the GenericList containing ConnectionGene elements
+* \param[out] connection_gene the ConnectionGene to add
+* \return int 1 if the ConnectionGene successfully added, 0 otherwise
+*/
+int addConnectionGene(GenericList * connection_genes, ConnectionGene * connection_gene) {
+    int nb_connection_genes = count(connection_genes);
+    if (nb_connection_genes == N_MAX_CONNECTION_GENES) {
+        fprintf(stderr, "Can't add ConnectionGene to network : reached limit (max=%d)\n", N_MAX_CONNECTION_GENES);
+        return 0;
+    }
+
+    return add(connection_genes, connection_gene);
 }
