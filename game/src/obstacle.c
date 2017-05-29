@@ -122,9 +122,9 @@ int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
 /*!
 * \brief Modify the gap between two pipes of an obstacle
 * \param[in] score the score of the player
-* \return 
+* \return
 *
-* The modified varirable in this function is a global variable, obstacle_gap. A table of 3 possible gaps is used to fill obstacle_gap. 
+* The modified varirable in this function is a global variable, obstacle_gap. A table of 3 possible gaps is used to fill obstacle_gap.
 *
 */
 int modifyGap(int score)
@@ -142,7 +142,7 @@ int modifyGap(int score)
 * \brief Initialize the list of obstacles, and fill it with OBSTACLE_NUMBER obstacles
 * \param[out] obstacle_list the list to initialize
 * \param[in] level the file that contains the height of the obstacles
-* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
+* \param[in] level_from_file 1 if the level is read from a file and 0 if the level is generate randomly
 *
 * If level_from_file = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
