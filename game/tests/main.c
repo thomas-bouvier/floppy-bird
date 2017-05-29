@@ -205,7 +205,8 @@ static void test_readLevelEmpty(void ** state) {
 
 static int teardown_readLevel(void ** state) {
   fclose(*state);
-  return remove("test_readLevel.txt");
+  remove("test_readLevel.txt");
+	return 0;
 }
 
 /* readConfig */
@@ -405,6 +406,42 @@ static int setup_openGameFiles(void ** state) {
   return 0;
 }
 
+static int setup_openGameFilesNoScoreFile(void ** state) {
+  FILE * config = fopen("test_openGameFiles_config.txt", "w+");
+	FILE * level = fopen("pathToLevelFile.txt", "w+");
+	FILE * score = NULL;
+
+  if (config == (FILE *) NULL){
+    fprintf(stderr, "error1\n");
+    return -1;
+  }
+  if (level == (FILE *) NULL){
+    fprintf(stderr, "error3\n");
+    return -1;
+  }
+
+  fputs("level :\n", config);
+	fputs("pathToLevelFile.txt", config);
+	fputs("\n", config);
+	fputs("score :\n", config);
+	fputs("pathToScoreFile.txt", config);
+	fputs("\n", config);
+
+	Files * files = NULL;
+  if ((files = (Files *) malloc(sizeof(Files))) == (Files *) NULL){
+  	fprintf(stderr, "error4\n");
+    return -1;
+  }
+	files->config = config;
+	files->score = score;
+	files->level = level;
+
+  *state = files;
+
+  return 0;
+}
+
+
 static void test_openGameFiles(void ** state) {
   Files * files = (Files *) (* state);
 
@@ -412,6 +449,16 @@ static void test_openGameFiles(void ** state) {
   FILE * test_level = NULL;
 
   assert_int_equal(openGameFiles(files->config, &test_level, &test_score), 1);
+}
+
+static void test_openGameFilesNoScoreFile(void ** state) {
+  Files * files = (Files *) (* state);
+
+  FILE * test_level = NULL;
+
+  openGameFiles(files->config, &test_level, &(files->score));
+  
+  assert_non_null(files->score);
 }
 
 static int teardown_openGameFiles(void ** state) {
@@ -953,6 +1000,7 @@ int main() {
 		cmocka_unit_test_setup_teardown(test_readBestScore, setup_readBestScore, teardown_readBestScore),
 
 		cmocka_unit_test_setup_teardown(test_openGameFiles, setup_openGameFiles, teardown_openGameFiles),
+		cmocka_unit_test_setup_teardown(test_openGameFilesNoScoreFile, setup_openGameFilesNoScoreFile, teardown_openGameFiles),
 
 		/* Camera */
 		cmocka_unit_test_setup_teardown(test_initCamera, setup_initCamera, teardown_initCamera),

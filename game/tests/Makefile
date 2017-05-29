@@ -33,7 +33,7 @@ generic_list.o: ../../ai/neat/src/generic_list.c ../../ai/neat/src/generic_list.
 
 
 clean:
-	rm -f *.o *.~ ../tests/*.gcno ../tests/*.gcda
+	rm -f *.o *.~ ../tests/*.gcno ../tests/*.gcda *.gcov
 	rm -f main
 
 move:
