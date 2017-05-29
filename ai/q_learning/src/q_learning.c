@@ -28,12 +28,12 @@ int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int
 	/* Compute the new action */ /* Reset the last actions/states when the bird dies */
 	if(last_states[0] != -1) 
 	{	
-		last_action[0] = findBestAction(last_states[0], matrixQ); /* ACTION GAME */
+		last_action[0] = findBestAction(last_states[0], matrixQ); /* Compute next game action */
 	}
 	else
 	{
-		init_array(last_states, NB_SAVED_STATES, -1); /* RESET GAME */
-		init_array(last_action, NB_SAVED_ACTIONS, -1); /* RESET GAME */
+		init_array(last_states, NB_SAVED_STATES, -1); /* game reset */
+		init_array(last_action, NB_SAVED_ACTIONS, -1); /* game reset */
 	}
 	return 1;
 }

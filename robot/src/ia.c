@@ -6,9 +6,9 @@
 #include "../../ai/q_learning/src/q_learning.h"
 #include "../../ai/q_learning/src/game_state.h"
 
-#define JUMP_OFFSET 0.3
-#define JUMP_HEIGHT 0.5
-#define SENSIBILITY 0.9
+#define JUMP_OFFSET 0.3	/*!< Simplified IA parameter : Jump offset */
+#define JUMP_HEIGHT 0.5	/*!< Simplified IA parameter : Jump height */
+#define SENSIBILITY 0.9	/*!< Simplified IA parameter : sensibility */
 
 /*!
 * \brief the main function for the basic IA

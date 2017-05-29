@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
 	FILE* logFile = NULL;		/* The log File pointer */
 	boolean verbose = false;	/* Tells if we want to display informations on the console */
 	
-	while((c = getopt(argc,argv,"l:s:d:iv")) != -1)
+	while((c = getopt(argc,argv,"l:s:d:iqnv")) != -1)
 		switch(c){
 			case 'l':		/* -l loadFileName : load working space and structures (trackers...) from the load File*/
 				loadFile = fopen(optarg,"rb");
