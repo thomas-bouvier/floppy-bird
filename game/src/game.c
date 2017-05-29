@@ -152,10 +152,7 @@ int birdFall(Bird * bird, int simplifiedMode)
 int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 {
     if (obstaclePassed(bird, savedObstacle, sound))
-    {
         score++;
-        return score;
-    }
     return score;
 }
 
