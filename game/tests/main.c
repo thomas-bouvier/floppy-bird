@@ -821,6 +821,95 @@ static int teardown_deleteObstacle(void ** state){
     free(str);
     return 0;
 }
+
+/* detectHit */
+
+typedef struct{
+    Bird * bird;
+    Obstacle * obstacle;
+    Sound * sound;
+}DetectHitStructure;
+
+static int setup_detectHit(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)malloc(sizeof(DetectHitStructure));
+    if(str == (DetectHitStructure *)NULL)
+        return -1;
+
+    str->bird = initBird(NULL,NULL);
+    if(str->bird == (Bird *)NULL)
+        return -1;
+
+    str->obstacle = newObstacle(14, 200, 250, NULL);
+    if(str->obstacle == (Obstacle*)NULL)
+        return -1;
+
+    str->sound = (Sound *)malloc(sizeof(Sound));
+    if(str->sound == (Sound *)NULL)
+        return -1;
+
+    (*state) = str;
+    return 0;
+}
+
+static void test_detectHitNothing(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+
+    int result = detectHit(str->bird, str->obstacle, str->sound);
+
+    assert_int_equal(result, 0);
+}
+
+static void test_detectHitGround(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+
+    str->bird->y = SCREEN_HEIGHT;
+
+    int result = detectHit(str->bird, str->obstacle, str->sound);
+
+    assert_int_equal(result, 1);
+}
+
+static void test_detectHitTop(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+
+    str->bird->y = -10000;
+
+    int result = detectHit(str->bird, str->obstacle, str->sound);
+
+    assert_int_equal(result, 1);
+}
+
+static void test_detectHitLower(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+
+    str->bird->x = str->obstacle->lower.x;
+    str->bird->y = str->obstacle->lower.y + BIRD_SIZE;
+
+    int result = detectHit(str->bird, str->obstacle, str->sound);
+
+    assert_int_equal(result, 1);
+}
+
+static void test_detectHitUpper(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+
+    str->bird->x = str->obstacle->lower.x;
+    str->bird->y = str->obstacle->upper.y + str->obstacle->upper.h - BIRD_SIZE;
+
+    int result = detectHit(str->bird, str->obstacle, str->sound);
+
+    assert_int_equal(result, 1);
+}
+
+static int teardown_detectHit(void ** state){
+    DetectHitStructure * str = (DetectHitStructure *)(*state);
+    freeBird(str->bird);
+    freeObstacle(str->obstacle);
+    free(str->sound);
+    free(str);
+    return 0;
+}
+
 /* OBSTACLE */
 
 
@@ -1248,6 +1337,13 @@ int main() {
 
 		cmocka_unit_test_setup_teardown(test_deleteObstacleDel, setup_deleteObstacle, teardown_deleteObstacle),
 		cmocka_unit_test_setup_teardown(test_deleteObstacleNothing, setup_deleteObstacle, teardown_deleteObstacle),
+
+        cmocka_unit_test_setup_teardown(test_detectHitGround, setup_detectHit, teardown_detectHit),
+        cmocka_unit_test_setup_teardown(test_detectHitLower, setup_detectHit, teardown_detectHit),
+        cmocka_unit_test_setup_teardown(test_detectHitNothing, setup_detectHit, teardown_detectHit),
+        cmocka_unit_test_setup_teardown(test_detectHitTop, setup_detectHit, teardown_detectHit),
+        cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
+
 
 		/* Obstacle */
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
