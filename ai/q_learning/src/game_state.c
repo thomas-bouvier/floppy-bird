@@ -52,8 +52,8 @@ State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity,
 int getCurrentVelocity(int * last_actions)
 {
     int i=0;
-    while(i<7 && last_actions[i] != 1) i++; /* Recuperation du dernier saut */
-	return 2-1*i; /* Velocité de +2 à -5 */
+    while(i<7 && last_actions[i] != 1) i++; /* Search for the last jump */
+	return 2-1*i; /* Return the distance since the last jump from +2 to -6 */
 }
 
 /*!

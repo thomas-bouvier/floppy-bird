@@ -632,8 +632,8 @@ int main(int argc, char ** argv)
             /* all birds are dead, and we're in AI1 mode */
 
             if (hit && mode == IA1)
-                if(saveQMatrix(matrixQ, qmatrixPath) == -1)
-					return EXIT_FAILURE;
+               /* if(saveQMatrix(matrixQ, qmatrixPath) == -1)
+					return EXIT_FAILURE;*/
 
             /* all birds are dead, and we're in AI2 mode */
 
@@ -646,6 +646,8 @@ int main(int argc, char ** argv)
 
     /* Quit the game */
     if (ia1 > 0)
+		if(saveQMatrix(matrixQ, qmatrixPath) == -1)
+			return EXIT_FAILURE;
         freeMatrixQ(matrixQ);
 
     if (ia2 > 0)
