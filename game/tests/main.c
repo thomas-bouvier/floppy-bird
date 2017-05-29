@@ -910,6 +910,38 @@ static int teardown_detectHit(void ** state){
     return 0;
 }
 
+static int setup_birdFall(void ** state){
+    (*state) = initBird(NULL, NULL);
+    if ((*state) == NULL)
+        return -1;
+    return 0;
+}
+
+static void test_birdFallSimplified(void ** state){
+    assert_int_equal(birdFall((Bird *)(*state), 1), 0);
+}
+
+static void test_birdFall(void ** state){
+    Bird * bird = (Bird *)(*state);
+
+    int bird_y = bird->y;
+
+    assert_int_equal(birdFall(bird, 0), 1);
+    assert_int_equal(bird_y + 10, bird->y);
+}
+
+static void test_birdFallMax(void ** state){
+    Bird * bird = (Bird *)(*state);
+
+    bird->y = SCREEN_HEIGHT +100;
+
+    assert_int_equal(birdFall(bird, 0), 0);
+}
+
+static int teardown_birdFall(void ** state){
+    freeBird((Bird *)(*state));
+    return 0;
+}
 /* OBSTACLE */
 
 
@@ -1343,6 +1375,10 @@ int main() {
         cmocka_unit_test_setup_teardown(test_detectHitNothing, setup_detectHit, teardown_detectHit),
         cmocka_unit_test_setup_teardown(test_detectHitTop, setup_detectHit, teardown_detectHit),
         cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
+
+        cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
+        cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
+        cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
 
 
 		/* Obstacle */
