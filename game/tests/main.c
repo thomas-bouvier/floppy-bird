@@ -994,6 +994,59 @@ static int teardown_addBird(void ** state){
     return 0;
 }
 
+/* ratioPipeWidth */
+
+typedef struct{
+    Bird * bird;
+    Camera * camera;
+    GenericList * obstacle_list;
+}RatioPipeWidthStructure;
+
+static int setup_ratioPipeWidth(void ** state){
+    RatioPipeWidthStructure * str = (RatioPipeWidthStructure *)malloc(sizeof(RatioPipeWidthStructure));
+    if(str == (RatioPipeWidthStructure *)NULL)
+        return -1;
+
+    str->bird = initBird(NULL,NULL);
+    if(str->bird == (Bird *)NULL)
+        return -1;
+
+    str->camera = (Camera *)malloc(sizeof(Camera));
+    if(str->camera == (Camera *)NULL)
+        return -1;
+    initCamera(str->camera, 0, LOW);
+
+    str->obstacle_list = newGenericList(NULL, (FreeFunction)freeObstacle);
+    if(str->obstacle_list == (GenericList *)NULL)
+        return -1;
+    initGenericList(str->obstacle_list);
+    fillObstacleList(str->obstacle_list, NULL, 0);
+    setOnFirstElement(str->obstacle_list);
+    ((Obstacle *)getCurrent(str->obstacle_list))->lower.x = 1000;
+
+    (*state) = str;
+    return 0;
+
+}
+
+static void test_ratioPipeWidth(void ** state){
+    RatioPipeWidthStructure * str = (RatioPipeWidthStructure *)(*state);
+
+    int result = ratioPipeWidth(str->bird, str->camera, str->obstacle_list);
+    setOnFirstElement(str->obstacle_list);
+
+    assert_int_equal(result, 1000);
+}
+
+static int teardown_ratioPipeWidth(void ** state){
+    RatioPipeWidthStructure * str = (RatioPipeWidthStructure *)(*state);
+    freeBird(str->bird);
+    free(str->camera);
+    freeGenericList(str->obstacle_list, 1);
+    free(str);
+    return 0;
+}
+
 /* OBSTACLE */
 
 
@@ -1429,6 +1482,8 @@ int main() {
     cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
 
     cmocka_unit_test_setup_teardown(test_ratioBirdHeight, setup_ratioBirdHeight, teardown_ratioBirdHeight),
+
+    cmocka_unit_test_setup_teardown(test_ratioPipeWidth, setup_ratioPipeWidth, teardown_ratioPipeWidth),
 
         cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
         cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
