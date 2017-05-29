@@ -2,8 +2,7 @@ CC=gcc -g
 CFLAGS=-Wall -fprofile-arcs -ftest-coverage
 LDFLAGS=-lcmocka -fprofile-arcs -ftest-coverage
 
-main: main.o file.o bird.o camera.o obstacle.o pipe.o generic_list.o 
-#game.o
+main: main.o file.o bird.o camera.o obstacle.o pipe.o generic_list.o game.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 main.o: main.c

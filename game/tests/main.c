@@ -9,7 +9,7 @@
 #include "../src/bird.h"
 #include "../src/camera.h"
 #include "../src/file.h"
-//#include "../src/game.h"
+#include "../src/game.h"
 #include "../src/obstacle.h"
 #include "../src/pipe.h"
 #include "../../ai/neat/src/generic_list.h"
@@ -115,20 +115,6 @@ static void test_updateBirdJump(void ** state) {
   assert_int_equal(*sound, JUMPSOUND);
 }
 
-/*static void test_updateBirdJumpMaxHeight(void ** state) {
-  int i;
-  Bird * bird = (Bird *) ((UpdateBirdStruct *)* state)->bird;
-  Sound * sound = (Sound *)((UpdateBirdStruct *)* state)->sound;
-  int flaps = bird->flaps;
-
-  for (i = 0; i < 100; ++i)
-    updateBird(bird, JUMP, (Sound *)((UpdateBirdStruct *)*state)->sound);
-
-  assert_int_equal(bird->dir_y, BIRD_JUMP);
-  assert_int_equal(bird->y, BIRD_SIZE / 2);
-  assert_int_equal(bird->flaps, flaps + 100);
-  assert_int_equal(*sound, JUMPSOUND);
-}*/
 
 static int teardown_updateBird(void ** state) {
   free(((UpdateBirdStruct *)*state)->bird);
@@ -241,7 +227,7 @@ static void test_readConfigEmpty(void ** state) {
   char * path = malloc(sizeof(char) * 100);
 
   assert_int_equal(readConfig(file, path, "level :\n"), 0);
-  
+
   free(path);
 }
 
@@ -252,7 +238,7 @@ static void test_readConfig(void ** state) {
 
   assert_int_equal(readConfig(file, path, "level :\n"), 1);
   assert_string_equal(path, "../../res/files/level.txt");
-  
+
   free(path);
 }
 
@@ -500,46 +486,173 @@ static int teardown_modifySpeed(void ** state) {
 
 /* cameraScrolling */
 
-/*static int setup_cameraScrolling(void ** state_1, void ** state_2) {
-  Camera * camera = NULL;
-  Bird * bird = NULL;
+/*typedef struct {
+    Camera * camera;
+    GenericList * bird;
+}CameraScrollingStructure;
 
-  if ((camera = malloc(sizeof(Camera))) == (Camera *) NULL)
+static int setup_cameraScrolling(void ** state) {
+    CameraScrollingStructure * structure = (CameraScrollingStructure *)malloc(sizeof(CameraScrollingStructure));
+
+    if ((structure->camera = (Camera *)malloc(sizeof(Camera))) == (Camera *) NULL)
     return -1;
 
-  initCamera(camera, 0, 100);
 
-  *state_1 = camera;
+    initCamera(structure->camera, 0, 100);
 
-  if ((bird = malloc(sizeof(Bird))) == (Bird *) NULL)
+    structure->bird = newGenericList(NULL, (FreeFunction)freeBird);
+    initGenericList(structure->bird);
+    if (structure->bird == (GenericList *) NULL)
     return -1;
 
-  initBird(bird);
+    setOnFirstElement(structure->bird);
+    add(structure->bird, initBird(NULL,NULL));
 
-  *state_2 = bird;
+
+
+    *state = structure;
 
   return 0;
 }
 
-static void test_cameraScrolling(void ** state_1, void ** state_2) {
-  Camera * camera = (Camera *) (* state_1);
-  Bird * bird = (Bird *) (* state_2);
+static void test_cameraScrolling(void ** state) {
+  CameraScrollingStructure * structure = (CameraScrollingStructure *) (*state);
 
-  int camera_x = camera->x;
-  int bird_x = bird->x;
+  setOnFirstElement(structure->bird);
+  int camera_x = structure->camera->x;
+  int bird_x = ((Bird *)getCurrent(structure->bird))->x;
 
-  cameraScrolling(camera, bird);
+  cameraScrolling(structure->camera, structure->bird);
 
-  assert_int_equal(camera->x, camera_x + 100);
-  assert_int_equal(bird->x, bird_x + 100);
+  assert_int_equal(structure->camera->x, camera_x + structure->camera->speed);
+  assert_int_equal(((Bird *)getCurrent(structure->bird))->x, bird_x + structure->camera->speed);
 }
 
-static int teardown_cameraScrolling(void ** state_1, void ** state_2) {
-  free(*state_1);
-  free(*state_2);
+static int teardown_cameraScrolling(void ** state) {
+  CameraScrollingStructure * structure = (CameraScrollingStructure *)(*state);
+  free(structure->camera);
+  freeGenericList(structure->bird, 1);
+  free(structure);
   return 0;
 }*/
 
+/* startGame */
+
+/*typedef struct{
+    GenericList * bird;
+    Camera * camera;
+    GenericList * obstacle_list;
+    FILE * level;
+}StartGameStructure;
+
+static int setup_startGame(void ** state){
+    StartGameStructure * str = (StartGameStructure *)malloc(sizeof(StartGameStructure));
+    if(str == (StartGameStructure*)NULL)
+        return -1;
+
+    str->bird = newGenericList(NULL, (FreeFunction)freeBird);
+    if(str->bird == (GenericList *)NULL)
+        return -1;
+
+    str->obstacle_list = newGenericList(NULL, (FreeFunction)freeObstacle);
+    if(str->obstacle_list == (GenericList *)NULL)
+        return -1;
+
+    str->level = fopen("level.txt", "w+");
+    if (str->level == (FILE *) NULL)
+        return -1;
+
+    (*state) = str;
+    return 0;
+}
+
+static void test_startGame(void ** state){
+    StartGameStructure * str = (StartGameStructure *)(*state);
+
+    startGame(str->bird, str->camera, str->obstacle_list, str->level, 1);
+
+    assert_int_equal(emptyGenericList(str->bird), 0);
+    assert_int_equal(emptyGenericList(str->obstacle_list), 0);
+}
+
+static int teardown_startGame(void ** state){
+    StartGameStructure * str = (StartGameStructure *)(*state);
+    freeGenericList(str->bird, 1);
+    freeGenericList(str->obstacle_list, 1);
+    fclose(str->level);
+    free(str->camera);
+    free(*state);
+    remove("level.txt");
+    return 0;
+}*/
+
+/* create obstacle */
+
+typedef struct{
+    Camera * camera;
+    GenericList * obstacle_list;
+    FILE * level;
+}CreateObstacleStructure;
+
+static int setup_createObstacle(void ** state){
+    CreateObstacleStructure * str = (CreateObstacleStructure *)malloc(sizeof(CreateObstacleStructure));
+    if(str == (CreateObstacleStructure *)NULL)
+        return -1;
+
+    str->camera = (Camera *)malloc(sizeof(Camera));
+    if(str->camera == (Camera *)NULL)
+        return -1;
+
+    str->obstacle_list = newGenericList(NULL, (FreeFunction)freeObstacle);
+    if(str->obstacle_list == (GenericList *)NULL)
+        return -1;
+
+    initGenericList(str->obstacle_list);
+    createObstacleRandomly(0, str->obstacle_list);
+    //fillObstacleList(str->obstacle_list, str->level, 1);
+
+
+    str->level = fopen("level.txt", "w+");
+    if (str->level == (FILE *) NULL)
+        return -1;
+
+    (*state) = str;
+    return 0;
+}
+
+static void test_createObstacleLevelFromFile(void ** state){
+    CreateObstacleStructure * str = (CreateObstacleStructure *) (*state);
+
+    int r = createObstacle(str->camera, str->obstacle_list, str->level, 0, 1);
+    assert_int_equal(r, 1);
+}
+
+static void test_createObstacleLevelRandom(void ** state){
+    CreateObstacleStructure * str = (CreateObstacleStructure *) (*state);
+
+    int r = createObstacle(str->camera, str->obstacle_list, str->level,0,0);
+    assert_int_equal(r, 1);
+}
+
+static void test_createObstacleNothing(void ** state){
+    CreateObstacleStructure * str = (CreateObstacleStructure *) (*state);
+
+    ((Obstacle *)str->obstacle_list->first->data)->lower.x = str->camera->x + SCREEN_WIDTH +10;
+
+    int r = createObstacle(str->camera, str->obstacle_list, str->level,0,0);
+
+    assert_int_equal(r, 0);
+}
+
+static int teardown_createObstacle(void ** state){
+    CreateObstacleStructure * str = (CreateObstacleStructure *)(*state);
+    freeGenericList(str->obstacle_list, 1);
+    fclose(str->level);
+    free(str->camera);
+    free(*state);
+    remove("level.txt");
+    return 0;
+}
 
 /* OBSTACLE */
 
@@ -600,40 +713,40 @@ static int setup_nextBirdObstacle(void ** state){
 	Obstacle * obstacle3 = newObstacle(3, 100, MEDIUM, obstacle4);
 	Obstacle * obstacle2 = newObstacle(2, 300, MEDIUM, obstacle3);
 	Obstacle * obstacle1 = newObstacle(1, 200, MEDIUM, obstacle2);
-	
+
 	GenericList * list = newGenericList(NULL, freeObstacle);
   if (list == (GenericList *) NULL)
     return -1;
-	
+
 	initGenericList(list);
-	
+
 	add(list, (Obstacle *)obstacle1);
 	add(list, (Obstacle *)obstacle2);
 	add(list, (Obstacle *)obstacle3);
-	add(list, (Obstacle *)obstacle4);	
-	
+	add(list, (Obstacle *)obstacle4);
+
 	Bird * bird1 = initBird(NULL, NULL);
 	bird1->x = 2000;													/* Bird between two obstacles */
 	Bird * bird2 = initBird(NULL, NULL);
 	bird2->x = 5000;													/* Bird after all the obstacles of the list */
-		
+
 	NextBirdObstacleStruct * structure = malloc(sizeof(NextBirdObstacleStruct));
 	structure->list = list;
 	structure->bird1 = bird1;
 	structure->bird2 = bird2;
-	
+
 	*state = structure;
-	
+
 	return 0;
 }
 
 static void test_nextBirdObstacle(void ** state){
 	NextBirdObstacleStruct * structure = (NextBirdObstacleStruct *) (* state);
-	
+
 	Obstacle * next_bird_obstacle = nextBirdObstacle(structure->list, structure->bird1);
 	setOn(structure->list, 2);
 	assert_ptr_equal(next_bird_obstacle, getCurrent(structure->list));
-	
+
 	Obstacle * null_obstacle = nextBirdObstacle(structure->list, structure->bird2);
 	assert_ptr_equal(null_obstacle, NULL);
 }
@@ -662,26 +775,26 @@ static int setup_createObstacleFromFile(void ** state){
 	fputs("300\n", level_file);
 	fputs("400\n", level_file);
 	fputs("500\n", level_file);
-	
+
 	GenericList * list = newGenericList(NULL, freeObstacle);
   if (list == (GenericList *) NULL)
     return -1;
-	
+
 	initGenericList(list);
-	
+
 	Obstacle * obstacle2 = newObstacle(1, 300, MEDIUM, NULL);
 	Obstacle * obstacle1 = newObstacle(0, 200, MEDIUM, obstacle2);
-	
+
 	add(list, (Obstacle *)obstacle1);
 	add(list, (Obstacle *)obstacle2);
-		
+
 	createObstacleFromFileStruct * structure = malloc(sizeof(createObstacleFromFileStruct));
 	if (structure == (createObstacleFromFileStruct *) NULL)
     return -1;
-   
+
   structure->file = level_file;
   structure->list = list;
-   
+
   *state = structure;
 
   return 0;
@@ -691,7 +804,7 @@ static void test_createObstacleFromFile(void ** state){
 	createObstacleFromFileStruct * structure = (createObstacleFromFileStruct *) (* state);
 	createObstacleFromFile(structure->file, 2, structure->list);
 	setOn(structure->list, 2);
-	
+
 	assert_int_equal(((Obstacle *)getCurrent(structure->list))->lower.h, 400);
 }
 
@@ -713,9 +826,9 @@ static int setup_createObstacleRandomly(void ** state){
 	GenericList * list = newGenericList(NULL, freeObstacle);
   if (list == (GenericList *) NULL)
     return -1;
-	
+
 	initGenericList(list);
-	
+
 	*state = list;
 
   return 0;
@@ -725,7 +838,7 @@ static void test_createObstacleRandomly(void ** state){
 	GenericList * list = (GenericList *) (* state);
 	setOn(list, 0);
 	int i = 0;
-	
+
 	for(i=0 ; i<100 ; i++){
 		createObstacleRandomly(i, list);
 		assert_in_set(((Obstacle *)getCurrent(list))->lower.h, test_pipes_height, 7);
@@ -750,29 +863,29 @@ typedef struct{
 
 static int setup_obstaclePassed(void ** state){
 	Obstacle * obstacle = newObstacle(0, 200, MEDIUM, NULL);
-	
+
 	Bird * bird1 = initBird(NULL, NULL);
 	bird1->x = 100;														/* Bird before the savedObstacle */
 	Bird * bird2 = initBird(NULL, NULL);
 	bird2->x = 5000;													/* Bird after te savedObstacle */
-		
+
 	ObstaclePassedStruct * structure = malloc(sizeof(ObstaclePassedStruct));
 	structure->savedObstacle = obstacle;
 	structure->bird1 = bird1;
 	structure->bird2 = bird2;
-	
+
 	*state = structure;
-	
+
 	return 0;
 }
 
 static void test_obstaclePassed(void ** state){
 	ObstaclePassedStruct * structure = (ObstaclePassedStruct *) (* state);
-	
+
 	Sound sound = NOSOUND;
-	
+
 	assert_int_equal(obstaclePassed(structure->bird1, structure->savedObstacle, &sound), 0);
-	
+
 	assert_int_equal(obstaclePassed(structure->bird2, structure->savedObstacle, &sound), 1);
 }
 
@@ -814,7 +927,7 @@ static int setup_fillObstacleList(void ** state) {
 
   if (list == (GenericList *) NULL)
     return -1;
-   
+
   initGenericList(list);
 
   *state = list;
@@ -827,7 +940,7 @@ static int setup_fillObstacleListWithFile(void ** state) {
   if (list == (GenericList *) NULL)
     return -1;
   initGenericList(list);
-  
+
   FILE * level_file = fopen("level.txt", "w+");
   if (level_file == (FILE *) NULL)
     return -1;
@@ -854,7 +967,7 @@ static void test_fillObstacleList(void ** state) {
 	fillObstacleList(list, file, 0);
 	int i = 0;
 	setOn(list, 0);
-	
+
 	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
 		assert_non_null((Obstacle *)getCurrent(list));
 		nextElement(list);
@@ -865,11 +978,11 @@ static void test_fillObstacleListWithFile(void ** state) {
 	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
 	FILE * file = structure->file;
 	GenericList * list = structure->list;
-	
+
 	fillObstacleList(list, file, 1);
 	int i = 0;
 	setOn(list, 0);
-	
+
 	for(i=0 ; i<OBSTACLE_NUMBER ; i++){
 		assert_non_null((Obstacle *)getCurrent(list));
 		nextElement(list);
@@ -885,7 +998,7 @@ static int teardown_fillObstacleListWithFile(void ** state) {
 	FillObstacleListWithFileStruct * structure = (FillObstacleListWithFileStruct *) (* state);
 	FILE * file = structure->file;
 	GenericList * list = structure->list;
-	
+
 	freeGenericList((list), 1);
 	fclose(file);
 	remove("level.txt");
@@ -928,14 +1041,13 @@ static int teardown_initPipe(void ** state) {
 
 int main() {
   const struct CMUnitTest tests[] = {
-		
+
 		/* Bird */
     cmocka_unit_test_setup_teardown(test_initBird, setup_initBird, teardown_initBird),
 
     cmocka_unit_test_setup_teardown(test_updateBirdNothing, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdNothingMaxFallSpeed, setup_updateBird, teardown_updateBird),
     cmocka_unit_test_setup_teardown(test_updateBirdJump, setup_updateBird, teardown_updateBird),
-    //cmocka_unit_test_setup_teardown(test_updateBirdJumpMaxHeight, setup_updateBird, teardown_updateBird),
 
 		/* File */
     cmocka_unit_test_setup_teardown(test_readLevelEmpty, setup_readLevelEmpty, teardown_readLevel),
@@ -962,22 +1074,28 @@ int main() {
 		/* Game */
 		//cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
 
+		//cmocka_unit_test_setup_teardown(test_startGame, setup_startGame, teardown_startGame),
+
+		cmocka_unit_test_setup_teardown(test_createObstacleLevelFromFile, setup_createObstacle, teardown_createObstacle),
+		cmocka_unit_test_setup_teardown(test_createObstacleLevelRandom, setup_createObstacle, teardown_createObstacle),
+		cmocka_unit_test_setup_teardown(test_createObstacleNothing, setup_createObstacle, teardown_createObstacle),
+
 		/* Obstacle */
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleNegativeGap, setup_newObstacle, teardown_newObstacle),
     cmocka_unit_test_setup_teardown(test_newObstacleMaxHeight, setup_newObstacle, teardown_newObstacle),
-    
+
     cmocka_unit_test_setup_teardown(test_nextBirdObstacle, setup_nextBirdObstacle, teardown_nextBirdObstacle),
-    
+
     cmocka_unit_test_setup_teardown(test_createObstacleFromFile, setup_createObstacleFromFile, teardown_createObstacleFromFile),
-    
+
     cmocka_unit_test_setup_teardown(test_createObstacleRandomly, setup_createObstacleRandomly, teardown_createObstacleRandomly),
-    
+
     cmocka_unit_test_setup_teardown(test_obstaclePassed, setup_obstaclePassed, teardown_obstaclePassed),
-    
+
     //Compilation failure : problem with global variables
     //cmocka_unit_test(test_modifyGap),
-    
+
     cmocka_unit_test_setup_teardown(test_fillObstacleList, setup_fillObstacleList, teardown_fillObstacleList),
     cmocka_unit_test_setup_teardown(test_fillObstacleListWithFile, setup_fillObstacleListWithFile, teardown_fillObstacleListWithFile),
 
