@@ -966,6 +966,33 @@ static int teardown_ratioBirdHeight(void ** state) {
   return 0;
 }
 
+/* addBird */
+
+static int setup_addBird(void ** state){
+    GenericList * bird_list =  newGenericList(NULL, (FreeFunction)freeBird);
+    if(bird_list == (GenericList *)NULL)
+        return -1;
+
+    initGenericList(bird_list);
+
+    (*state) = bird_list;
+    return 0;
+}
+
+static void test_addBird(void ** state){
+    GenericList * bird_list = (GenericList *)(*state);
+
+    int nbBird = count(bird_list);
+
+    addBird(bird_list);
+
+    assert_int_equal(nbBird +1, count(bird_list));
+}
+
+static int teardown_addBird(void ** state){
+    freeGenericList((GenericList *)(*state), 1);
+    return 0;
+}
 
 /* OBSTACLE */
 
@@ -1406,6 +1433,8 @@ int main() {
         cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
         cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
         cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
+
+        cmocka_unit_test_setup_teardown(test_addBird, setup_addBird, teardown_addBird),
 
 
 		/* Obstacle */
