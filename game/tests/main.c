@@ -910,6 +910,30 @@ static int teardown_detectHit(void ** state){
     return 0;
 }
 
+/* ratioBirdHeight */
+
+static int setup_ratioBirdHeight(void ** state){
+  Bird * bird = initBird(NULL,NULL);
+  if(bird == (Bird *)NULL)
+      return -1;
+	bird->y = 200;
+
+  (*state) = bird;
+  return 0;
+}
+
+static void test_ratioBirdHeight(void ** state) {
+  Bird * bird = (Bird *) (* state);
+
+  assert_int_equal(bird->y, 200);
+}
+
+static int teardown_ratioBirdHeight(void ** state) {
+  free(*state);
+  return 0;
+}
+
+
 /* OBSTACLE */
 
 
@@ -1338,11 +1362,13 @@ int main() {
 		cmocka_unit_test_setup_teardown(test_deleteObstacleDel, setup_deleteObstacle, teardown_deleteObstacle),
 		cmocka_unit_test_setup_teardown(test_deleteObstacleNothing, setup_deleteObstacle, teardown_deleteObstacle),
 
-        cmocka_unit_test_setup_teardown(test_detectHitGround, setup_detectHit, teardown_detectHit),
-        cmocka_unit_test_setup_teardown(test_detectHitLower, setup_detectHit, teardown_detectHit),
-        cmocka_unit_test_setup_teardown(test_detectHitNothing, setup_detectHit, teardown_detectHit),
-        cmocka_unit_test_setup_teardown(test_detectHitTop, setup_detectHit, teardown_detectHit),
-        cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
+    cmocka_unit_test_setup_teardown(test_detectHitGround, setup_detectHit, teardown_detectHit),
+    cmocka_unit_test_setup_teardown(test_detectHitLower, setup_detectHit, teardown_detectHit),
+    cmocka_unit_test_setup_teardown(test_detectHitNothing, setup_detectHit, teardown_detectHit),
+    cmocka_unit_test_setup_teardown(test_detectHitTop, setup_detectHit, teardown_detectHit),
+    cmocka_unit_test_setup_teardown(test_detectHitUpper, setup_detectHit, teardown_detectHit),
+    
+    cmocka_unit_test_setup_teardown(test_ratioBirdHeight, setup_ratioBirdHeight, teardown_ratioBirdHeight),
 
 
 		/* Obstacle */
@@ -1358,7 +1384,6 @@ int main() {
 
     cmocka_unit_test_setup_teardown(test_obstaclePassed, setup_obstaclePassed, teardown_obstaclePassed),
 
-    //Compilation failure : problem with global variables
     cmocka_unit_test(test_modifyGap),
 
     cmocka_unit_test_setup_teardown(test_fillObstacleList, setup_fillObstacleList, teardown_fillObstacleList),
