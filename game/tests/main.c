@@ -1529,17 +1529,11 @@ int main() {
 
     cmocka_unit_test_setup_teardown(test_ratioPipeHeight, setup_ratioPipeHeight, teardown_ratioPipeHeight),
 
-<<<<<<< HEAD
     cmocka_unit_test_setup_teardown(test_ratioPipeWidth, setup_ratioPipeWidth, teardown_ratioPipeWidth),
 
         cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
         cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
         cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
-=======
-    cmocka_unit_test_setup_teardown(test_birdFall, setup_birdFall, teardown_birdFall),
-    cmocka_unit_test_setup_teardown(test_birdFallMax, setup_birdFall, teardown_birdFall),
-    cmocka_unit_test_setup_teardown(test_birdFallSimplified, setup_birdFall, teardown_birdFall),
->>>>>>> 69b6efd9ca372ac7ce63ef64fc8ace6e5549d4fb
 
     cmocka_unit_test_setup_teardown(test_addBird, setup_addBird, teardown_addBird),
 
