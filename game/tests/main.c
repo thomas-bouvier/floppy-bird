@@ -586,7 +586,7 @@ static int teardown_cameraScrolling(void ** state) {
 
 /* startGame */
 
-/*typedef struct{
+typedef struct{
     GenericList * bird;
     Camera * camera;
     GenericList * obstacle_list;
@@ -601,10 +601,14 @@ static int setup_startGame(void ** state){
     str->bird = newGenericList(NULL, (FreeFunction)freeBird);
     if(str->bird == (GenericList *)NULL)
         return -1;
+    initGenericList(str->bird);
 
     str->obstacle_list = newGenericList(NULL, (FreeFunction)freeObstacle);
     if(str->obstacle_list == (GenericList *)NULL)
         return -1;
+    initGenericList(str->obstacle_list);
+
+    str->camera = (Camera *)malloc(sizeof(Camera));
 
     str->level = fopen("level.txt", "w+");
     if (str->level == (FILE *) NULL)
@@ -632,7 +636,7 @@ static int teardown_startGame(void ** state){
     free(*state);
     remove("level.txt");
     return 0;
-}*/
+}
 
 /* create obstacle */
 
@@ -657,7 +661,6 @@ static int setup_createObstacle(void ** state){
 
     initGenericList(str->obstacle_list);
     createObstacleRandomly(0, str->obstacle_list);
-    //fillObstacleList(str->obstacle_list, str->level, 1);
 
 
     str->level = fopen("level.txt", "w+");
@@ -1123,7 +1126,7 @@ int main() {
 		/* Game */
 		cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
 
-		//cmocka_unit_test_setup_teardown(test_startGame, setup_startGame, teardown_startGame),
+		cmocka_unit_test_setup_teardown(test_startGame, setup_startGame, teardown_startGame),
 
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelFromFile, setup_createObstacle, teardown_createObstacle),
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelRandom, setup_createObstacle, teardown_createObstacle),
