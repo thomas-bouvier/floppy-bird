@@ -84,7 +84,7 @@ int addState(State * cur_state, MatrixQ * matrixQ)
 		}
 	}
 	
-	for(i=0; i<NB_ACTIONS; ++i) matrixQ->reward[matrixQ->nb_states*2+i] = randomInRange(0, RANDOM_INIT_REWARD);
+	for(i=0; i<NB_ACTIONS; ++i) matrixQ->reward[matrixQ->nb_states*2+i] = NB_ACTIONS-i; /*randomInRange(0, RANDOM_INIT_REWARD);*/
 	matrixQ->state[matrixQ->nb_states].delta_x = cur_state->delta_x;
 	matrixQ->state[matrixQ->nb_states].delta_y = cur_state->delta_y;
 	matrixQ->state[matrixQ->nb_states].pipe_height = cur_state->pipe_height;
