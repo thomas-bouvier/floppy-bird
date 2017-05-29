@@ -1066,21 +1066,16 @@ static int teardown_obstaclePassed(void ** state) {
 
 /* modifyGap */
 
-/*int obstacle_gap = MEDIUM;
-const int gap[3] = {BIG, MEDIUM, LITTLE};
+LargestIntegralType test_gap1[] = {BIG, MEDIUM};
+LargestIntegralType test_gap2[] = {BIG, MEDIUM, LITTLE};
 
 static void test_modifyGap(void ** state) {
-  assert_int_equal(obstacle_gap, MEDIUM);
+	assert_int_equal(modifyGap(10), BIG);
 
- 	modifyGap(10);
-	assert_int_equal(obstacle_gap, BIG);
+	assert_in_set(modifyGap(30), test_gap1, 2);
 
-	modifyGap(30);
-	assert_int_equal(obstacle_gap, BIG | MEDIUM);
-
-	modifyGap(50);
-	assert_int_equal(obstacle_gap, BIG | MEDIUM | LITTLE);
-}*/
+	assert_in_set(modifyGap(50), test_gap2, 3);
+}
 
 /* fillObstacleList */
 
@@ -1268,7 +1263,7 @@ int main() {
     cmocka_unit_test_setup_teardown(test_obstaclePassed, setup_obstaclePassed, teardown_obstaclePassed),
 
     //Compilation failure : problem with global variables
-    //cmocka_unit_test(test_modifyGap),
+    cmocka_unit_test(test_modifyGap),
 
     cmocka_unit_test_setup_teardown(test_fillObstacleList, setup_fillObstacleList, teardown_fillObstacleList),
     cmocka_unit_test_setup_teardown(test_fillObstacleListWithFile, setup_fillObstacleListWithFile, teardown_fillObstacleListWithFile),

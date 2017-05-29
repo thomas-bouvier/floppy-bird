@@ -122,11 +122,12 @@ int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound)
 /*!
 * \brief Modify the gap between two pipes of an obstacle
 * \param[in] score the score of the player
+* \return 
 *
 * The modified varirable in this function is a global variable, obstacle_gap. A table of 3 possible gaps is used to fill obstacle_gap. 
 *
 */
-void modifyGap(int score)
+int modifyGap(int score)
 {
     if(score > 40)
         obstacle_gap = gap[rand() % 3];
@@ -134,6 +135,7 @@ void modifyGap(int score)
         obstacle_gap = gap[rand() % 2];
     else
         obstacle_gap = BIG;
+		return obstacle_gap;
 }
 
 /*!

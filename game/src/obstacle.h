@@ -40,7 +40,7 @@ void freeObstacle(void * obstacle);
 void createObstacleFromFile(FILE * level, int number, GenericList * obstacle_list);
 void createObstacleRandomly(int number, GenericList * obstacle_list);
 int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound);
-void modifyGap(int score);
+int modifyGap(int score);
 void fillObstacleList(GenericList * obstacle_list, FILE * level, int level_from_file);
 
 #endif // OBSTACLE_H
