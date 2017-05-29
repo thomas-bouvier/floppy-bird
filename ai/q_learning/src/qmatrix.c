@@ -118,10 +118,10 @@ void updateQReward(MatrixQ * matrixQ, int * last_states_index, int * last_action
 
 	for(i=0;i<NB_SAVED_STATES-1;++i)
 	{
-		if(last_states_index[i+1] != -1)
+		if(last_states_index[i+1] != -1) /* if the state exists */
 		{
-			if(last_states_index[0] != -1) matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[0], last_states_index[i+1], last_action[i], i+1, 1);
-			else matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[1], last_states_index[i+1], last_action[i], i, -1);
+			if(last_states_index[0] != -1) matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[0], last_states_index[i+1], last_action[i], i+1, 1); /* if bird is alive */
+			else matrixQ->reward[last_states_index[i+1]*2+last_action[i]] = computeQReward(matrixQ, last_states_index[1], last_states_index[i+1], last_action[i], i, -1); /* if bird is dead */
 		}
 	}
 }
@@ -145,7 +145,8 @@ float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int a
 	old_value = (float) matrixQ->reward[state_index*2+action];
 
 	new_value = old_value + powerOf(LEARNING_RATE, increment) * (getCurrentReward(reward_value) + powerOf(DISCOUNT, increment) * optimal_nextvalue - old_value);
-			if(new_value < LOWER_QREWARD_LIMIT) return LOWER_QREWARD_LIMIT;
-			if(new_value > HIGHER_QREWARD_LIMIT) return HIGHER_QREWARD_LIMIT;
-			else return new_value;
+
+	if(new_value < LOWER_QREWARD_LIMIT) return LOWER_QREWARD_LIMIT;
+	if(new_value > HIGHER_QREWARD_LIMIT) return HIGHER_QREWARD_LIMIT;
+	else return new_value;
 }
