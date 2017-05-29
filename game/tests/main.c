@@ -773,6 +773,54 @@ static int teardown_updateScore(void ** state) {
   return 0;
 }
 
+/* deleteObstacle */
+
+typedef struct {
+    Camera * camera;
+    GenericList * obstacle_list;
+}DeleteObstacleStructure;
+
+static int setup_deleteObstacle(void ** state){
+    DeleteObstacleStructure * str = (DeleteObstacleStructure *)malloc(sizeof(DeleteObstacleStructure));
+    if(str == (DeleteObstacleStructure *)NULL)
+        return -1;
+
+    str->camera = (Camera *)malloc(sizeof(Camera));
+    if(str->camera == (Camera*)NULL)
+        return -1;
+    initCamera(str->camera, 0, LOW);
+
+    str->obstacle_list = newGenericList(NULL, (FreeFunction)freeObstacle);
+    if(str->obstacle_list == (GenericList *)NULL)
+        return -1;
+    initGenericList(str->obstacle_list);
+    createObstacleRandomly(0, str->obstacle_list);
+
+    (*state) = str;
+    return 0;
+
+}
+
+static void test_deleteObstacleDel(void ** state){
+    DeleteObstacleStructure * str = (DeleteObstacleStructure *)(*state);
+    str->camera->x = 10000;
+
+    assert_int_equal(deleteObstacle(str->camera, str->obstacle_list), 1);
+}
+
+static void test_deleteObstacleNothing(void ** state){
+    DeleteObstacleStructure * str = (DeleteObstacleStructure *)(*state);
+
+    assert_int_equal(deleteObstacle(str->camera, str->obstacle_list), 0);
+}
+
+static int teardown_deleteObstacle(void ** state){
+    DeleteObstacleStructure * str = (DeleteObstacleStructure *)(*state);
+    freeGenericList(str->obstacle_list,1);
+    free(str->camera);
+    free(str);
+    return 0;
+}
 /* OBSTACLE */
 
 
@@ -1199,9 +1247,12 @@ int main() {
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelFromFile, setup_createObstacle, teardown_createObstacle),
 		cmocka_unit_test_setup_teardown(test_createObstacleLevelRandom, setup_createObstacle, teardown_createObstacle),
 		cmocka_unit_test_setup_teardown(test_createObstacleNothing, setup_createObstacle, teardown_createObstacle),
-		
+
 		cmocka_unit_test_setup_teardown(test_updateScore_NoUpdate, setup_updateScore_NoUpdate, teardown_updateScore),
 		cmocka_unit_test_setup_teardown(test_updateScore_Update, setup_updateScore_Update, teardown_updateScore),
+
+		cmocka_unit_test_setup_teardown(test_deleteObstacleDel, setup_deleteObstacle, teardown_deleteObstacle),
+		cmocka_unit_test_setup_teardown(test_deleteObstacleNothing, setup_deleteObstacle, teardown_deleteObstacle),
 
 		/* Obstacle */
     cmocka_unit_test_setup_teardown(test_newObstacle, setup_newObstacle, teardown_newObstacle),
