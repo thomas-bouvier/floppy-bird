@@ -443,7 +443,7 @@ static void test_openGameFilesNoScoreFile(void ** state) {
   FILE * test_level = NULL;
 
   openGameFiles(files->config, &test_level, &(files->score));
-  
+
   assert_non_null(files->score);
 }
 
@@ -533,7 +533,7 @@ static int teardown_modifySpeed(void ** state) {
 
 /* cameraScrolling */
 
-/*typedef struct {
+typedef struct {
     Camera * camera;
     GenericList * bird;
 }CameraScrollingStructure;
@@ -552,7 +552,6 @@ static int setup_cameraScrolling(void ** state) {
     if (structure->bird == (GenericList *) NULL)
     return -1;
 
-    setOnFirstElement(structure->bird);
     add(structure->bird, initBird(NULL,NULL));
 
 
@@ -571,8 +570,10 @@ static void test_cameraScrolling(void ** state) {
 
   cameraScrolling(structure->camera, structure->bird);
 
-  assert_int_equal(structure->camera->x, camera_x + structure->camera->speed);
+  setOnFirstElement(structure->bird);
+
   assert_int_equal(((Bird *)getCurrent(structure->bird))->x, bird_x + structure->camera->speed);
+  assert_int_equal(structure->camera->x, camera_x + structure->camera->speed);
 }
 
 static int teardown_cameraScrolling(void ** state) {
@@ -581,7 +582,7 @@ static int teardown_cameraScrolling(void ** state) {
   freeGenericList(structure->bird, 1);
   free(structure);
   return 0;
-}*/
+}
 
 /* startGame */
 
@@ -1188,7 +1189,7 @@ int main() {
 		cmocka_unit_test_setup_teardown(test_modifySpeed, setup_modifySpeed, teardown_modifySpeed),
 
 		/* Game */
-		//cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
+		cmocka_unit_test_setup_teardown(test_cameraScrolling, setup_cameraScrolling, teardown_cameraScrolling),
 
 		//cmocka_unit_test_setup_teardown(test_startGame, setup_startGame, teardown_startGame),
 
