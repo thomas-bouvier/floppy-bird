@@ -23,8 +23,8 @@
 #include "../../ai/neat/src/neat_conf.h"
 
 /*!
-* \brief Allocate all the object of the game in mode IA2 (neat).
-* \param[out] bird_list the list of bird to allocate
+* \brief Allocate all the objects of the game in mode IA2 (neat).
+* \param[out] bird_list the list of Bird elements to allocate
 * \param[out] camera the camera to allocate
 * \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
@@ -54,6 +54,16 @@ void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obsta
     fillObstacleList(obstacle_list, level, levelFromFile);
 }
 
+/*!
+* \brief Evaluate the given Genome, to obtain an output value.
+* \param[in] genome the Genome to evaluate
+* \param[in] ratioBirdHeight the current height of the Bird, divided by SCREEN_HEIGHT
+* \param[in] ratioPipeWidth the distance (x axis) of the next obstacle, divided by SCREEN_WIDTH
+* \param[in] ratioPipeHeight the height of the next obstacle, divied by SCREEN_HEIGHT
+* \param[in] int the result of the evaluation
+*
+* If the output is greater than 0.5, the Bird attached to the given Genome should jump.
+*/
 int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, double ratioPipeHeight)
 {
     double input[N_INPUTS];
@@ -63,6 +73,8 @@ int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, dou
     input[0] = ratioBirdHeight;
     input[1] = ratioPipeWidth;
     input[2] = ratioPipeHeight;
+
+    /* bias value */
     input[3] = 1.0;
 
     output = evaluateGenome(genome, input);
@@ -70,19 +82,28 @@ int evaluate(Genome * genome, double ratioBirdHeight, double ratioPipeWidth, dou
     res = *output;
     free(output);
 
+    /* if > 50, the bird should jump */
     return res > 0.5;
 }
 
+/*!
+* \brief Update the best Bird i.e. the Bird with the greatest fitness.
+* \param[out] bird_list the list of Bird elements to scan
+* \param[out] best_bird the address of the current best Bird
+* \param[out] pool the MatingPool to update
+* \param[out] hit bool value indicating if all Bird elements are dead
+* \param[out] ticks the current number of ticks
+*/
 void learn(GenericList * bird_list, Bird ** best_bird, MatingPool * pool, int * hit, int * ticks) {
     Bird * bird = NULL;
     double fitness;
 
-    //check if all the birds are dead
+    /* check if all the birds are dead */
     setOnFirstElement(bird_list);
     *best_bird = (Bird *) getCurrent(bird_list);
     while (!outOfGenericList(bird_list)) {
 
-        //current bird
+        /* current bird */
         bird = (Bird *) getCurrent(bird_list);
 
         if (!bird->dead) {
@@ -99,8 +120,6 @@ void learn(GenericList * bird_list, Bird ** best_bird, MatingPool * pool, int * 
 
         nextElement(bird_list);
     }
-
-    //writeGenome(best_bird->genome);
 }
 
 int main(int argc, char ** argv)
@@ -256,9 +275,6 @@ int main(int argc, char ** argv)
         mode = WAIT;
         init = NOTHING;
         running = 1;
-
-        mode = IA2;
-        levelFromFile = 0;
 
         while (mode != PLAY && mode != IA1 && mode != IA2 && init != QUIT)
         {
