@@ -2,6 +2,7 @@ Floppy_Bird/
 html/
 
 score.txt
+qmatrix_data_robot.txt
 *.dot
 
 .DS_Store
@@ -10,11 +11,15 @@ Desktop.ini
 
 Makefile
 main
+vgcore.*
+
+*.gcda
+*.gcno
+*.gcov
 
 # Code::Blocks
 *.depend
 *.layout
-
 # Prerequisites
 *.d
 
@@ -32,7 +37,6 @@ main
 # Precompiled Headers
 *.gch
 *.pch
-
 # Libraries
 *.lib
 *.a

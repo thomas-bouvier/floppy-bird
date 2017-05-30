@@ -5,6 +5,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <SDL2/SDL.h>
+#include "../../ai/neat/src/generic_list.h"
+
 
 /*! \def SCREEN_WIDTH
 * \brief The width of the screen in pixels
@@ -20,7 +23,6 @@
 * \brief The speed of the camera
 */
 #define CAMERA_SPEED 5
-
 
 /*! \def GRAVITY
 * \brief The gravity of the bird
@@ -47,7 +49,6 @@
 */
 #define BIRD_JUMP -15
 
-
 /*! \def PIPE_WIDTH
 * \brief The width of a pipe in pixels
 */
@@ -58,11 +59,6 @@
 */
 #define PIPE_X_OFFSET 400
 
-/*! \def OBSTACLE_GAP
-* \brief The distance in pixels between the two pipes of an obstacle
-*/
-#define OBSTACLE_GAP 200
-
 /*! \def MIN_HEIGHT_LOWER
 * \brief The minimum height of the lower pipe of an obstacle
 */
@@ -72,6 +68,11 @@
 * \brief The maximum height of the lower pipe of an obstacle
 */
 #define MAX_HEIGHT_LOWER 500
+
+/*! \def NUMBER_OF_OBSTACLE_SIZES
+* \brief The number of heights possible for an obstacle
+*/
+#define NUMBER_OF_OBSTACLE_SIZES 7
 
 /*! \def PIPES_ON_SCREEN
 * \brief The number of obstacles displayed on screen
@@ -102,7 +103,9 @@ enum Action
     NOTHING,            /*! nothing to be done */
     JUMP,               /*! make the bird jump */
     QUIT,               /*! quit the game */
-    PAUSE               /*! pause the game */
+    PAUSE,              /*! pause the game */
+    RESUME,             /*! resume game when it was paused */
+    MENU                /*! return to menu */
 };
 
 /*!
@@ -156,5 +159,39 @@ enum Speed
     HIGH = 7,           /*! high speed */
     EXTREME = 8         /*! extreme speed */
 };
+
+/*!
+* The different gap possible between the two pipes of an obstacle
+*/
+typedef enum  Pipe_Gap Pipe_Gap;
+
+/*!
+* \enum Pipe_Gap
+* \brief The different gap possible between the two pipes of an obstacle
+*/
+enum Pipe_Gap
+{
+    LITTLE = 175,           /*! little gap */
+    MEDIUM = 200,           /*! medium gap */
+    BIG = 225,              /*! big gap */
+};
+
+/*!
+* \struct Sprites constants.h
+* \brief The structure containing all the image useful to the game
+*/
+typedef struct{
+    GenericList * bird1;        /*!< The list of first image of the bird */
+    GenericList * bird2;        /*!< The list of second image of the bird */
+    GenericList * bird3;        /*!< The list of third image of the bird */
+    GenericList * pipe1;        /*!< The list of image of the upper pipe */
+    GenericList * pipe2;        /*!< The list of image of the lower pipe */
+    SDL_Texture * background;   /*!< The image of the background */
+    SDL_Texture * ground;       /*!< The image of the ground */
+    SDL_Texture * tap_to_play;  /*!< The image to explain how to play */
+    SDL_Texture * play;         /*!< The image in menu to resume game */
+    SDL_Texture * quit;         /*!< The image in menu to quit game */
+    SDL_Texture * pause;        /*!< The image to display pause menu in the game */
+}Sprites;
 
 #endif // CONSTANTS_H

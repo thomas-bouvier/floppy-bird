@@ -6,53 +6,44 @@
 
 /*!
 * \brief Allocate all the object of the game
-* \param[out] bird the bird to allocate
+* \param[out] bird the list of bird to allocate
 * \param[out] camera the camera to allocate
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
 */
-void startGame(Bird * bird, Camera * camera, List * l, FILE * level, int levelFromFile)
+void startGame(GenericList * bird, Camera * camera, GenericList * obstacle_list, FILE * level, int levelFromFile)
 {
-    initBird(bird);
+    Bird * new_bird = initBird(NULL, NULL);
+    add(bird, new_bird);
     initCamera(camera, 0, LOW);
-    initList(l, level, levelFromFile);
+    fillObstacleList(obstacle_list, level, levelFromFile);
+    setOnFirstElement(bird);
 }
 
 /*!
 * \brief Allow to scroll the camera in the right direction
 * \param[out] camera the camera that follows the bird
-* \param[out] bird the bird that moves with the camera
+* \param[out] bird the list of bird that moves with the camera
 *
 * Add 1 to the abscissa of camera and bird in order to move them at the same speed
 */
-void cameraScrolling(Camera * camera, Bird * bird)
+void cameraScrolling(Camera * camera, GenericList * bird)
 {
     camera->x += camera->speed;
-    bird->x += camera->speed;
-}
-
-/*!
-* \brief Modifiy the speed of game if it is run in normal mode
-* \param[in] score the score of the player
-* \param[out] camera the camera whose speed is changed
-*/
-void modifySpeed(int score, Camera * camera)
-{
-    if(score > 60)
-        camera->speed = EXTREME;
-    else if(score > 40)
-        camera->speed = HIGH;
-    else if(score > 20)
-        camera->speed = NORMAL;
-    else
-        camera->speed = LOW;
+    setOnFirstElement(bird);
+    while(!outOfGenericList(bird))
+    {
+        if(((Bird*)bird->current->data)->dead == 0)
+            (((Bird*)bird->current->data)->x) = (((Bird*)bird->current->data)->x) + camera->speed;
+        nextElement(bird);
+    }
 }
 
 /*!
 * \brief Create an obstacle when the distance between two obstacle is reached
 * \param[in] camera the view of the game
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \param[in] level the file that contains the height of the obstacles
 * \param[in] number the obstacle number of the new obstacle
 * \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
@@ -60,18 +51,18 @@ void modifySpeed(int score, Camera * camera)
 *
 * If LEVEL_FROM_FILE = 1, the obstacles will be generated from the predefined level file, if not, they will be generated randomly
 */
-int createObstacle(Camera * camera, List * l, FILE * level, int number, int levelFromFile)
+int createObstacle(Camera * camera, GenericList * obstacle_list, FILE * level, int number, int levelFromFile)
 {
-    if ((camera->x + SCREEN_WIDTH >= l->first->lower.x) && (l->nbObstacles < OBSTACLE_NUMBER))
+    if ((camera->x + SCREEN_WIDTH >= ((Obstacle *)obstacle_list->first->data)->lower.x) && (count(obstacle_list) < OBSTACLE_NUMBER))
     {
         if(levelFromFile)
         {
-            createObstacleFromFile(level, number, l);
+            createObstacleFromFile(level, number, obstacle_list);
             return 1;
         }
         else
         {
-            createObstacleRandomly(number, l);
+            createObstacleRandomly(number, obstacle_list);
             return 1;
         }
     }
@@ -81,13 +72,14 @@ int createObstacle(Camera * camera, List * l, FILE * level, int number, int leve
 /*!
 * \brief Delete an obstacle of the list when it leaves the camera
 * \param[in] camera the view of the game
-* \param[out] l the list of obstacles
+* \param[out] obstacle_list the list of obstacles
 * \return Return 1 if the function deleted an obstacle, 0 otherwise
 */
-int deleteObstacle(Camera * camera, List * l){
-    if ((l->first->lower.x + PIPE_WIDTH) < camera->x)
+int deleteObstacle(Camera * camera, GenericList * obstacle_list){
+    setOnFirstElement(obstacle_list);
+    if ((((Obstacle *)getCurrent(obstacle_list))->lower.x + PIPE_WIDTH) < camera->x)
     {
-        deleteFirst(l);
+        delete(obstacle_list, getCurrent(obstacle_list));
         return 1;
     }
     return 0;
@@ -112,14 +104,18 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
         h = 1;              /* Collision with the ground */
         (*sound) = DEATH;
     }
-    if(bird->x + BIRD_SIZE/2 >= obstacle->lower.x)
+    else if (bird->y + BIRD_SIZE/2 < 0) {
+        h = 1;
+        (*sound) = DEATH;
+    }
+    else if(bird->x + BIRD_SIZE/2 >= obstacle->lower.x)
     {
         if(bird->y - BIRD_SIZE/2 <= obstacle->upper.y + obstacle->upper.h)
         {
             h = 1;          /* Collision with the upper pipe */
         	(*sound) = DEATH;
         }
-        if(bird->y + BIRD_SIZE/2 >= obstacle->lower.y)
+        else if(bird->y + BIRD_SIZE/2 >= obstacle->lower.y)
         {
             h = 1;          /* Collision with the lower pipe */
             (*sound) = DEATH;
@@ -127,7 +123,24 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
     }
     return h;
 }
-
+/*!
+* \brief if we're in normal mode the function make the bird fall of of value
+* \param[out] bird the bird that will fall
+* \param[in] simplifiedMode the variable that indicate if we're in simplified (1) or normal (0) mode
+* \return 0 if in simplified mode or if the bird can't fall anymore and 1 in others cases
+*/
+int birdFall(Bird * bird, int simplifiedMode)
+{
+    if(simplifiedMode)
+        return 0;
+    else
+    {
+        bird->y+=10;
+        if(bird->y > SCREEN_HEIGHT)
+            bird->y = SCREEN_HEIGHT - BIRD_SIZE;
+        return (bird->y + BIRD_SIZE != SCREEN_HEIGHT);
+    }
+}
 /*!
 * \brief The function update the score if an obstacle is passed
 * \param[in] score the current score
@@ -139,17 +152,14 @@ int detectHit(Bird * bird, Obstacle * obstacle, Sound * sound)
 int updateScore(int score, Bird * bird, Obstacle * savedObstacle, Sound * sound)
 {
     if (obstaclePassed(bird, savedObstacle, sound))
-    {
         score++;
-        return score;
-    }
     return score;
 }
 
 /*!
 * \brief A function use to send the height of the bird to the IA
 * \param[in] bird the bird that we seek the informations
-* \return return the ratio of the bird height over the screen height
+* \return return the heigth of the bird
 */
 int ratioBirdHeight(Bird * bird)
 {
@@ -159,50 +169,48 @@ int ratioBirdHeight(Bird * bird)
 /*!
 * \brief A function use to send the height of the next pipe to the IA
 * \param[in] bird the bird that determines the next obstacle
-* \param[in] l the list of obstacle
-* \return return the ratio of the height of the next obstacle over the screen height
+* \param[in] obstacle_list the list of obstacle
+* \return return the height of the next obstacle
 */
-int ratioPipeHeight (Bird * bird, List * l)
+int ratioPipeHeight (Bird * bird, GenericList * obstacle_list)
 {
-    return nextBirdObstacle(l, bird)->lower.y;
+    return nextBirdObstacle(obstacle_list, bird)->lower.y;
 }
 
 /*!
 * \brief A function use to send the distance between the left side of the camera and the next pipe to the IA
 * \param[in] bird the bird current properties
 * \param[in] camera the display current properties
-* \param[in] l the list of obstacle
-* \return return the distance between the left side of the camera and the ?pipe
+* \param[in] obstacle_list the list of obstacle
+* \return return the distance between the left side of the camera and the pipe
 */
-int ratioPipeWidth (Bird * bird, Camera * camera, List * l)
+int ratioPipeWidth (Bird * bird, Camera * camera, GenericList * obstacle_list)
 {
-    return nextBirdObstacle(l, bird)->lower.x - camera->x;
+    return nextBirdObstacle(obstacle_list, bird)->lower.x - camera->x;
 }
 
 /*!
-* \brief The function called every frame of the running game to update all objects
-* \param[out] bird the bird linked to the running game
-* \param[out] camera the camera linked to the running game
-* \param[out] l the list of obstacles linked to the running game
-* \param[in] level the file that contains the height of the obstacles
-* \param[in] event the value that indicate if the bird must jump(1) or not(0 or 2)
-* \param[in] number the number of the new obstacle
-* \param[in] savedObstacle the obstacle saved to compare with the next obstacle
-* \param[out] score the score of the player to be updated
-* \param[out] sound the sound played according to the current action
-* \param[in] levelFromFile 1 if the level is read from a file and 0 if the level is generate randomly
-* \param[in] simplifiedMode if simplifiedMode == 1, the game is played in simplified mode, so it does not accelerate
-* \return Return 1 in case of game over, 0 in the other cases
+* \brief Add a bird in the list of bird
+* \param[out] bird the list of bird
+*
+* The new bird added is placed at the beginning of the game
 */
-int game(Bird * bird, Camera * camera, List * l, FILE * level, int event, int * number, Obstacle * savedObstacle, int * score, Sound * sound, int levelFromFile, int simplifiedMode)
+void addBird(GenericList * bird)
 {
-    updateBird(bird, event, sound);
-    deleteObstacle(camera, l);
-    if (createObstacle(camera, l, level, *number, levelFromFile))
-        (*number)++;
-    *score = updateScore(*score, bird, savedObstacle, sound);
-    if(simplifiedMode == 0)
-        modifySpeed(*score, camera);
-    cameraScrolling(camera, bird);
-    return detectHit(bird, nextBirdObstacle(l, bird), sound);
+    Bird * new_bird = initBird(NULL, NULL);
+    add(bird, new_bird);
+}
+
+/*!
+* \brief free the list of birds and the list of obstacles
+* \param[out] bird_list the list of birds
+* \param[out] obstacle_list the list of obstacles
+*/
+void freeLists(GenericList * bird_list, GenericList * obstacle_list)
+{
+    if (bird_list)
+        freeGenericList(bird_list, 1);
+
+    if (obstacle_list)
+        freeGenericList(obstacle_list, 1);
 }

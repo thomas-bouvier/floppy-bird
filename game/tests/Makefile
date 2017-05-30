@@ -1,8 +1,8 @@
 CC=gcc -g
-CFLAGS=-Wall
-LDFLAGS=-lcmocka
+CFLAGS=-Wall -fprofile-arcs -ftest-coverage
+LDFLAGS=-lcmocka -fprofile-arcs -ftest-coverage
 
-main: main.o game.o file.o bird.o camera.o obstacle.o pipe.o list.o
+main: main.o file.o bird.o camera.o obstacle.o pipe.o generic_list.o game.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 main.o: main.c
@@ -26,9 +26,15 @@ obstacle.o : ../src/obstacle.c ../src/obstacle.h ../src/constants.h ../src/pipe.
 pipe.o: ../src/pipe.c ../src/pipe.h ../src/constants.h
 	$(CC) $(CFLAGS) $< -c
 
-list.o: ../src/list.c ../src/list.h ../src/constants.h ../src/obstacle.h
+generic_list.o: ../../ai/neat/src/generic_list.c ../../ai/neat/src/generic_list.h
 	$(CC) $(CFLAGS) $< -c
 
+
+
 clean:
-	rm -f *.~
+	rm -f *.o *.~ ../tests/*.gcno ../tests/*.gcda *.gcov
 	rm -f main
+
+move:
+	mv *.gcno ../src
+	mv *.gcda ../src

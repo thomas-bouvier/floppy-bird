@@ -7,30 +7,33 @@
 * \param[in] last_action action from the last one to the older one, linked to the last_states array
 * \param[in] dx the distance between the left side of the camera and the left side of the next pipe
 * \param[in] dy the distance between the bird's upper side and the top of the next pipe
+* \param[in] pipe_height the height of the next pipe
 * \param[in] bird_state 0 if the bird is dead, 1 otherwise
+* \return Return 1, otherwise -1 if error
 */
-int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int dx, int dy, int bird_state)
+int q_learning_loop(MatrixQ * matrixQ, int * last_states, int * last_action, int dx, int dy, int pipe_height, int bird_state)
 {
 	/* Shift for the new state */
-	shift_array(last_states, NB_SAVED_STATES);
+	rightShift_array(last_states, NB_SAVED_STATES);
 
 	/* Update the new state */
-	last_states[0] = findStateIndex(getCurrentState(processing_dxdy(dx), processing_dxdy(dy), processing_birdstate(bird_state)), matrixQ);
+	last_states[0] = findStateIndex(getCurrentState(processing_dxdy(dx), processing_dxdy(dy), pipe_height, getCurrentVelocity(last_action), processing_birdstate(bird_state)), matrixQ);
 
 	/* Update the Q matrix */
 	updateQReward(matrixQ, last_states, last_action);
 
-	shift_array(last_action, NB_SAVED_ACTIONS);
+	/* Shift for the new action */
+	rightShift_array(last_action, NB_SAVED_ACTIONS);
 
-	/* Compute the new action */ /* Reset when the bird dies */
+	/* Compute the new action */ /* Reset the last actions/states when the bird dies */
 	if(last_states[0] != -1) 
 	{	
-		last_action[0] = findBestAction(last_states[0], matrixQ); /* ACTION GAME */
+		last_action[0] = findBestAction(last_states[0], matrixQ); /* Compute next game action */
 	}
 	else
 	{
-		init_array(last_states, NB_SAVED_STATES, -1); /* RESET GAME */
-		init_array(last_action, NB_SAVED_ACTIONS, -1); /* RESET GAME */
+		init_array(last_states, NB_SAVED_STATES, -1); /* game reset */
+		init_array(last_action, NB_SAVED_ACTIONS, -1); /* game reset */
 	}
 	return 1;
 }

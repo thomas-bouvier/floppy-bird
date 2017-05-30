@@ -8,7 +8,7 @@
 #include "constants.h"
 #include "pipe.h"
 #include "bird.h"
-#include "list.h"
+#include "../../ai/neat/src/generic_list.h"
 #include "file.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,10 +35,12 @@ struct Obstacle{
 };
 
 Obstacle * newObstacle(int number, int height_lower, int obstacle_gap, Obstacle * next_obstacle);
-Obstacle * nextBirdObstacle(List * l, Bird * bird);
-void freeObstacle(Obstacle * obstacle);
-void createObstacleFromFile(FILE * level, int number, List * l);
-void createObstacleRandomly(int number, List * l);
+Obstacle * nextBirdObstacle(GenericList * obstacle_list, Bird * bird);
+void freeObstacle(void * obstacle);
+void createObstacleFromFile(FILE * level, int number, GenericList * obstacle_list);
+void createObstacleRandomly(int number, GenericList * obstacle_list);
 int obstaclePassed(Bird * bird, Obstacle * savedObstacle, Sound * sound);
+int modifyGap(int score);
+void fillObstacleList(GenericList * obstacle_list, FILE * level, int level_from_file);
 
 #endif // OBSTACLE_H

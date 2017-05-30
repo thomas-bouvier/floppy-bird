@@ -7,195 +7,16 @@
 #include <highgui.h>
 #include <sys/time.h>
 #include <time.h>
-
+#include <pthread.h>
 #include "RaspiCamCV.h"
+
 #include "configuration.h"
 #include "stylus.h"
-
-// Maths methods
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#define abs(x) ((x) > 0 ? (x) : -(x))
-#define sign(x) ((x) > 0 ? 1 : -1)
-
-// Color tracked and our tolerance towards it
-int h = 0, s = 0, v = 0, Htolerance = 5, Stolerance = 30;
-IplImage* image;
-
-
-enum {CIRCLE,RECTANGLE};
-
-struct VolatileRect{
-	CvRect rect;
-	int origineDefined;
-	int rectDefined;
-};
-
-/*
- * Transform the image into a two colored image, one color for the color we want to track, another color for the others colors
- * From this image, we get two datas : the number of pixel detected, and the center of gravity of these pixel
- */
-CvPoint binarisation(IplImage* image, int *nbPixels, char* window) {
-
-    int x, y;
-    IplImage *hsv, *mask;
-    IplConvKernel *kernel;
-    int sommeX = 0, sommeY = 0;
-    *nbPixels = 0;
-
-	int zoneWidth = 50;		// The zone width in wich the colour will be tracked
-	CvRect roi = cvRect(((image->roi->width/3) - (zoneWidth/2)),0,zoneWidth,image->roi->height);
-
-    // Create the mask &initialize it to white (no color detected)
-    mask = cvCreateImage(cvGetSize(image), image->depth, 1);
-
-    // Create the hsv image
-    hsv = cvCloneImage(image);
-    cvCvtColor(image, hsv, CV_BGR2HSV);
-
-
-
-    // We create the mask
-    cvInRangeS(hsv, cvScalar(h - Htolerance -1, s - Stolerance, 0,0), cvScalar(h + Htolerance -1, s + Stolerance, 255,0), mask);
-
-    // Create kernels for the morphological operation
-    kernel = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_RECT,NULL);
-
-    // Morphological opening (inverse because we have white pixels on black background)
-    cvDilate(mask, mask, kernel, 2);
-    cvErode(mask, mask, kernel, 2);
-    cvSetImageROI(mask,roi);
-
-    // We go through the mask to look for the tracked object and get its gravity center
-    for(x = mask->roi->xOffset; x < mask->roi->width + mask->roi->xOffset; x++) {
-        for(y = mask->roi->yOffset; y < mask->roi->height + mask->roi->yOffset ; y++) {
-
-            // If its a tracked pixel, count it to the center of gravity's calcul
-            if((mask->imageData[x+ y*mask->widthStep]) == 255) {
-                sommeX += x;
-                sommeY += y;
-                (*nbPixels)++;
-            }
-        }
-    }
-
-
-
-      for(x = mask->roi->xOffset; x < mask->roi->width - mask->roi->xOffset; x++) {
-        for(y = mask->roi->yOffset; y < mask->roi->height - mask->roi->yOffset ; y++) {
-
-            // If its a tracked pixel, count it to the center of gravity's calcul
-            if(((uchar *)(mask->imageData + y*mask->widthStep))[x] == 255) {
-                sommeX += x;
-                sommeY += y;
-                (*nbPixels)++;
-            }
-        }
-    }
-
-	cvResetImageROI(mask);
-    // Show the result of the mask image
-    if(window != NULL)
-		cvShowImage(window, mask);
-
-	cvRectangleR(image,roi,cvScalar(0,0,255,0),1,8,0);
-    // We release the memory of kernels
-    cvReleaseStructuringElement(&kernel);
-
-    // We release the memory of the mask
-    cvReleaseImage(&mask);
-    // We release the memory of the hsv image
-    cvReleaseImage(&hsv);
-
-    // If there is no pixel, we return a center outside the image, else we return the center of gravity
-    if(*nbPixels > 0)
-        return cvPoint((int)(sommeX / (*nbPixels)), (int)(sommeY / (*nbPixels)));
-    else
-        return cvPoint(-1, -1);
-}
-
-/*
- * Add a circle on the video that fellow your colored object
- */
-void addObjectToVideo(char* window, IplImage* image, int shape, CvPoint position, int nbPixels) {
-
-    // Draw an object (circle) centered on the calculated center of gravity
-    if (nbPixels > NB_PIXEL_THRESHOLD){
-		switch (shape){
-			case CIRCLE:
-				cvDrawCircle(image, position, BIRD_CIRCLE_DIAMETER, CV_RGB(255, 0, 0), 1,8,0);
-				break;
-			case RECTANGLE:
-				break;
-		}
-		cvShowImage(window, image);
-	}
-
-
-    // We show the image on the window
-
-
-}
-
-/*
- * Get the color of the pixel where the mouse has clicked
- * We put this color as model color (the color we want to tracked)
- */
-void getObjectColor(int event, int x, int y, int flags, void *param) {
-
-    // Vars
-    CvScalar pixel;
-    IplImage *hsv;
-    param = NULL;
-
-    if(event == CV_EVENT_LBUTTONUP) {
-
-        // Get the hsv image
-        hsv = cvCloneImage(image);
-        cvCvtColor(image, hsv, CV_BGR2HSV);
-
-        // Get the selected pixel
-        pixel = cvGet2D(hsv, y, x);
-
-        // Change the value of the tracked color with the color of the selected pixel
-        h = (int)pixel.val[0];
-        s = (int)pixel.val[1];
-        v = (int)pixel.val[2];
-
-        // Release the memory of the hsv image
-            cvReleaseImage(&hsv);
-
-    }
-
-}
-
-void getCurrentPointCoordinates(int event, int x, int y, int flags, void *param){
-	struct VolatileRect * workingSpace = (struct VolatileRect *)param;
-	if(workingSpace->origineDefined == 1 && event == CV_EVENT_MOUSEMOVE){
-		CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-		workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
-	}
-
-	if(event == CV_EVENT_LBUTTONUP){
-		printf("click at x=%d \ty=%d\n",x,y);
-		if(workingSpace->origineDefined){
-			CvPoint origin = cvPoint(workingSpace->rect.x,workingSpace->rect.y);
-//			printf("Working area : \nx :\t%d\t%d\ny :\t%d\t%d\n",point1.x,point2.x,point1.y,point2.y);
-			workingSpace->rect = cvRect(min(x,origin.x),min(y,origin.y),abs(x-origin.x),abs(y-origin.y));
-			workingSpace->rectDefined = 1;
-		} else {
-			workingSpace->rect.x = x;
-			workingSpace->rect.y = y;
-			workingSpace->origineDefined = 1;
-		}
-	}
-}
-
-=======
 #include "imageBroadcast.h"
 #include "tracking.h"
 #include "imageProcessing.h"
 #include "pipeTracking.h"
+#include "ia.h"
 
 /*!
 * \brief init capture function : init and configure the capture
@@ -214,158 +35,205 @@ RaspiCamCvCapture * initCapture(){
 	return capture;
 }
 
-void initFont(CvFont * font){
-	double hScale=0.4;
-	double vScale=0.4;
-	int    lineWidth=1;
-
-	cvInitFont(font, CV_FONT_HERSHEY_SIMPLEX|CV_FONT_ITALIC, hScale, vScale, 0, lineWidth, 8);
-}
-
-CvRect initWorkSpace(RaspiCamCvCapture * capture, char* window){
-	struct VolatileRect workingSpace;
-	workingSpace.origineDefined = 0;
-	workingSpace.rectDefined = 0;
-
-	cvNamedWindow(window, CV_WINDOW_AUTOSIZE);
-	cvMoveWindow(window, 0, 100);
-	cvSetMouseCallback(window, getCurrentPointCoordinates, &workingSpace);
-	printf("Definition of the working space \n");
-	while(workingSpace.rectDefined == 0) {			// wait for the definition of the workspace
-		image = raspiCamCvQueryFrame(capture);
-		if(workingSpace.origineDefined) {
-			cvRectangleR(image,workingSpace.rect,cvScalar(0,0,255,0),1,8,0);
-		}
-			cvShowImage(window, image);
-		char keyPressed = cvWaitKey(30);
-		switch (keyPressed){
-			case 27:				//ESC to reset the rectangle origin
-				workingSpace.origineDefined = 0;
-				break;
-		}
-	}
-	printf("Working space defined\n");
-	cvDestroyWindow(window);
-	return workingSpace.rect;
-}
-
-
 int main(int argc, char *argv[]){
-	/* Variables*/
-	RaspiCamCvCapture * capture = initCapture();
-	struct TrackedObject birdTracker;
-	struct TrackedObject* pipeTracker = (struct TrackedObject *)malloc(NB_PIPE_TRACKER*sizeof(struct TrackedObject));
-	struct PipeDynamicTracker pipeDynTracker;
-	struct ImageBroadcast cameraFlux;
-	struct ImageBroadcast birdBinFlux;
-	struct ImageBroadcast pipeBinFlux;
-	//CvFont * font = (CvFont *)malloc(sizeof(CvFont));
-	CvRect workingSpace;
-	Stylus stylus;
-	char colourTrackingWindow[] = "Color Tracking";
-	char birdWindow[] = "Bird tracking";
-	char pipeWindow[] = "Pipe tracking";
-	char workSpaceDefWindow[] = "WorkingSpaceDefinition";
 
-	int c;
-	FILE* loadFile = NULL;
-	FILE* saveFile = NULL;
-	FILE* logFile = NULL;
+	/* Image */
+	RaspiCamCvCapture * capture = initCapture();			/* The capture = video from the camera */
+	struct ImageBroadcast cameraFlux;				/* The raw image from the camera */
+	struct ImageBroadcast birdBinFlux;				/* The binairy images resulting from the bird tracking */
+	struct ImageBroadcast pipeBinFlux;				/* The binary images resulting from the pipe dynamic tracking */
+	struct ImageBroadcast statusFlux;				/* The binairy images resulting from the bird status tracking */
+	CvRect workingSpace;							/* The area defining the limits of the screen */
 
-	while((c = getopt(argc,argv,"l:s:d:")) != -1)
+	/* trackers*/
+	struct TrackedObject birdTracker;						/* The tracker for te bird */
+	struct TrackedObject pipeTracker[NB_PIPE_TRACKER];		/* An array of pipe trackers used to compute the dynamic tracking */
+	struct PipeDynamicTracker pipeDynTracker;				/* The pipe dynamic tracker */
+	struct TrackedObject statusTracker;						/* track the status of the game (bird alive / dead) */
+
+	/* Mecanic */
+	Stylus stylus;			/* The stylus actuated by the servo */
+	Robot robot;			/* The robot gathers everything needed to interface the IA with the tracking */
+
+	/* Thread */
+	pthread_t iaThread;				/* the thread for the ia */
+	int retIaThread = -1;			/* the return value when creating the ia thread */
+
+	/* Files */
+	int c;		/* Used to test which options are passed through argv */
+	FILE* loadFile = NULL;		/* The load File pointer */
+	FILE* saveFile = NULL;		/* The save File pointer */
+	FILE* logFile = NULL;		/* The log File pointer */
+	boolean verbose = false;	/* Tells if we want to display informations on the console */
+
+	while((c = getopt(argc,argv,"l:s:d:iqnv")) != -1)
 		switch(c){
-			case 'l':
+			case 'l':		/* -l loadFileName : load working space and structures (trackers...) from the load File*/
 				loadFile = fopen(optarg,"rb");
 				if(saveFile!=NULL){
 					fprintf(stderr,"cannot load and save a file at the same time");
 					return 1;
 				}
 				break;
-			case 's':
+			case 's':		/* -s saveFileName : save working space and structures (trackers...) into the save File */
 				saveFile = fopen(optarg,"wb");
 				if(loadFile!=NULL){
 					fprintf(stderr,"cannot load and save a file at the same time");
 					return 1;
 				}
 				break;
-			case 'd':		/* Save data into a log file */
+			case 'd':		/* -d logFileName : Save data into a log file */
 				logFile = fopen(optarg,"w");
 				if(logFile==NULL){
 					fprintf(stderr,"cannot open logfile %s\n",optarg);
 					return 1;
 				}
 				break;
+			case 'i':		/* -i : run the basic IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the basic IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaBasic,&robot);
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
+				break;
+			case 'q':		/* -q : run the q-learning IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the q-learning IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaQLearning,&robot);
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
+				break;
+			case 'n':		/* -n : run the neat IA */
+				if(retIaThread==-1){
+					printf("Creating a thread for the neat IA\n");
+					retIaThread = pthread_create (&iaThread, NULL, mainIaNeat,&robot);
+					if(retIaThread == 0)
+						printf("Thread created\n");
+					else
+						fprintf (stderr, "%s", strerror (retIaThread));
+				} else {
+					fprintf(stderr,"Cannot run two IA at the same Time\n");
+				}
+				break;
+			case 'v':		/* -v : verbose mode */
+				verbose = true;
+				break;
 			default:
-				printf("Unknown option :\nUsage : -l loadFileName OR -s saveFileName\n");
+				printf("Unknown option :\nUsage : \n\t-l loadFileName\n\t-s saveFileName\n\t-d logFileName\n");
 				return 1;
 		}
 
 
 	/* Setup */
+
+	/* init the stylus */
 	wiringPiSetup();	/* Setup the GPIO */
 	attach(&stylus,PWM_PIN,STYLUS_CLICK_POSITION,STYLUS_REST_POSITION,PRESS_DELAY,REST_DELAY);
 	enable(&stylus);
-	//initFont(font);
-	workingSpace = initWorkSpace(capture, workSpaceDefWindow,loadFile);
 
-	initImageBroadcast(&cameraFlux, NULL, &workingSpace, colourTrackingWindow, NULL);
+	/* init working space and flux */
+	workingSpace = initWorkSpace(capture, "Working Space Definition",loadFile);
+	initImageBroadcast(&cameraFlux, NULL, &workingSpace, "Color Tracking", NULL);
 	loadImage(&cameraFlux,capture);
-	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, birdWindow, NULL);
-	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, pipeWindow, NULL);
+	initImageBroadcast(&birdBinFlux, NULL, &workingSpace, "Bird tracking", NULL);
+	initImageBroadcast(&pipeBinFlux, NULL, &workingSpace, "Pipe tracking", NULL);
+	initImageBroadcast(&statusFlux, NULL, &workingSpace, "Game status", NULL);
+	printf("init trackers\n");
+	/* init trackers */
+	int width = cameraFlux.img->roi->width;
+	int height = cameraFlux.img->roi->height;
 	int i;
-	if(loadFile == NULL){
-		int width = cameraFlux.img->roi->width;
-		int height = cameraFlux.img->roi->height;
+	if(loadFile == NULL){	/* init trackers with default parameters */
 		initTrackedObject(&birdTracker,0,0,0,&cameraFlux,&birdBinFlux,cvRect(((width/3) - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE/2)),0,width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE,height),RECTANGLE);
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
-			initTrackedObject(&pipeTracker[0]+i*sizeof(TrackedObject*),0,0,0,&cameraFlux,&pipeBinFlux,cvRect(width - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE) -1,0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
+			initTrackedObject(&pipeTracker[i],0,0,0,&cameraFlux,&pipeBinFlux,cvRect(width - (width*RELATIVE_WIDTH_BIRD_TRACKING_ZONE) -1,0,width*RELATIVE_WIDTH_PIPE_TRACKING_ZONE,height),RECTANGLE);
 		}
-		initPipeDynamicTracker(&pipeDynTracker, &pipeTracker);
-    } else {		/* We load data form the file */
+		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
+		initTrackedObject(&statusTracker,0,0,0,&cameraFlux,&statusFlux,cvRect(0,0,width,height),NONE);
+    } else {		/* init trackers from the load File */
 		loadTrackedObject(&birdTracker,&cameraFlux,&birdBinFlux,loadFile);
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
-			loadTrackedObject(&pipeTracker[0]+i*sizeof(TrackedObject*),&cameraFlux,&pipeBinFlux,loadFile);
+			loadTrackedObject(&pipeTracker[i],&cameraFlux,&pipeBinFlux,loadFile);
 		}
-		initPipeDynamicTracker(&pipeDynTracker, &pipeTracker);
+		initPipeDynamicTracker(&pipeDynTracker, pipeTracker);
+		loadTrackedObject(&statusTracker,&cameraFlux,&statusFlux,loadFile);
 	}
+	printf("init robot\n");
+	/* init the robot */
+    initRobot(&robot, &stylus);
 
+    /* init var used in the main loop */
     if(logFile != NULL){
 		fprintf(logFile,"Time (us);Bird height;Pipe height;Bird - Pipe relative distance\n");
 	}
+
 	int exit =0;
 	struct timeval startTime, lastTime, currentTime;
 	gettimeofday(&startTime,NULL);
 	gettimeofday(&lastTime,NULL);
-	printf("initOK\n");
+	printf("loop\n");
+	/* main loop */
 	do {
+		/* Update tracking */
 		loadImage(&cameraFlux,capture);
 		updateTracking(&birdTracker);
 		updatePipeDynamicTracker(&pipeDynTracker);
-		/* Time computing */
-		gettimeofday(&currentTime,NULL);		/* update the time */
-		long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
-		gettimeofday(&lastTime,NULL);
-		float frameRate = 1000000.0/frameTime;
-		printf("FPS : %f \t",frameRate);
+		updateTracking(&statusTracker);
 		showImage(&cameraFlux);
+
+		/* Time computing */
+		if(verbose){
+			gettimeofday(&currentTime,NULL);		/* update the time */
+			long int frameTime = (currentTime.tv_sec - lastTime.tv_sec)*1000000+currentTime.tv_usec- lastTime.tv_usec;
+			gettimeofday(&lastTime,NULL);
+			float frameRate = 1000000.0/frameTime;
+			printf("FPS : %f \t",frameRate);
+		}
+
+		/* Data processing */
 		CvPoint pipe = nextPipe(&pipeDynTracker,birdTracker.origin.x - birdTracker.width/2);
 		float birdHeight = getRelativeDistance(&birdTracker,UP);
 		float pipeHeight = 1-((float)pipe.y/(pipeBinFlux.img->height));
-		float pipeBirdDist = (float)pipe.x/birdTracker.origin.x;
-		printf("pipe : h%f w%f ; bird : h%f\n",pipeHeight,pipeBirdDist,birdHeight);
+		float pipePosition = (float)pipe.x/birdTracker.origin.x;
+		int birdStatus = statusTracker.nbPixels >= (int)(width * height / 1.3);
+		setGameStatus(&robot, birdStatus);
+		//printf("birdStatus : %d\n",birdStatus);
+		if(birdHeight >= 0)
+			setBirdHeight(&robot, birdHeight);
+		if(pipeHeight >= 0)
+			setNextPipeHeight(&robot, pipeHeight);
+		if(pipePosition >= 0)
+			setNextPipePosition(&robot, pipePosition);
+		setDataUpdated(&robot, true);
+		if(verbose)
+			printf("pipe : h%f w%f ; bird : h%f ; STATUS : %s\n",getNextPipeHeight(&robot),getNextPipePosition(&robot),getBirdHeight(&robot),birdStatus ? "dead" : "running");
 		if(logFile != NULL){
-			fprintf(logFile,"%ld;%f;%f;%f\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),birdHeight,pipeHeight,pipeBirdDist);
+			fprintf(logFile,"%ld;%f;%f;%f;%d\n",(long int)((currentTime.tv_sec - startTime.tv_sec)*1000000+currentTime.tv_usec- startTime.tv_usec),getBirdHeight(&robot),getNextPipeHeight(&robot),getNextPipePosition(&robot), birdStatus);
 		}
 
+		/* keyboard functions */
 		char key = cvWaitKey(1);
 
 		switch(key)
 		{
 			case 'b':		/* b to select the color of the bird */
-				cvSetMouseCallback(colourTrackingWindow, getObjectColor,&birdTracker);
+				cvSetMouseCallback("Color Tracking", getObjectColor,&birdTracker);
 				break;
 			case 'p':		/* p to select the color of the pipe */
-				cvSetMouseCallback(colourTrackingWindow, getPipeColor,&pipeDynTracker);
+				cvSetMouseCallback("Color Tracking", getPipeColor,&pipeDynTracker);
+				break;
+			case 's' :
+				cvSetMouseCallback("Color Tracking", getObjectColor,&statusTracker);
 				break;
 			case 32:		/* space to click */
 				click(&stylus);
@@ -375,32 +243,42 @@ int main(int argc, char *argv[]){
 				exit = 1;
 				break;
 		}
+
+		/* update servo */
 		update(&stylus);
 
 	} while (!exit);
 
+	/* Thread cancel */
+	pthread_cancel (iaThread);
+
+	/* close and /  or save files */
 	if(loadFile != NULL)
 		fclose(loadFile);
+
 	if(saveFile != NULL){
 		saveWorkingSpace(&workingSpace,saveFile);
 		saveTrackedObject(&birdTracker,saveFile);
 		for(i = 0; i < NB_PIPE_TRACKER; i++){
-			saveTrackedObject(&pipeTracker[0]+i*sizeof(TrackedObject*),saveFile);
+			saveTrackedObject(&pipeTracker[i],saveFile);
 		}
+		saveTrackedObject(&statusTracker,saveFile);
 		fclose(saveFile);
 	}
+
 	if(logFile != NULL)
 		fclose(logFile);
-    cvDestroyAllWindows();
+
     /* Release memory */
     releaseTrackingImageMemory(&birdTracker);
     for(i = 0; i < NB_PIPE_TRACKER; i++){
-		releaseTrackingImageMemory(&pipeTracker[0]+i*sizeof(TrackedObject*));
+		releaseTrackingImageMemory(&pipeTracker[i]);
 	}
-	free(pipeTracker);
+	releaseTrackingImageMemory(&statusTracker);
 	raspiCamCvReleaseCapture(&capture);
+	cvDestroyAllWindows();
 
-	/* disabling servomotor */
+	/* disable servo */
 	disable(&stylus);
 
 	return 0;

@@ -36,7 +36,7 @@ boolean intersectRect(CvRect rect1, CvRect rect2)
 * \param[in] pipeDynamicTracker : the addrss of the struct to initialise
 * \param[in] pipeTracker : an array of TrackedObject (size = NB_PIPE_TRACKER)
 */
-void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObject* pipeTracker[NB_PIPE_TRACKER])
+void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, struct TrackedObject* pipeTracker)
 {
 	int i;
 	pipeDynamicTracker->pipeTracker = pipeTracker;
@@ -52,9 +52,9 @@ void initPipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker, TrackedObjec
 */
 void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 	int i, j;	
-	binarisation(pipeDynamicTracker->pipeTracker[0]);
+	binarisation(&(pipeDynamicTracker->pipeTracker[0]));
 	for(i = 0; i < NB_PIPE_TRACKER;i++){
-		TrackedObject* obj = pipeDynamicTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
+		TrackedObject* obj = &(pipeDynamicTracker->pipeTracker[i]);
 		if(pipeDynamicTracker->trackingRunning[i]){
 			if(obj->computeTracking){
 				findObject(obj,true);
@@ -65,14 +65,14 @@ void updatePipeDynamicTracker(PipeDynamicTracker* pipeDynamicTracker){
 			boolean beginTrack = true;
 			for(j = 0; j < NB_PIPE_TRACKER;j++){	/* Search if a tracker is running in the the same zone */
 				if(j != i){
-					TrackedObject* obj2 = pipeDynamicTracker->pipeTracker[0] + j*sizeof(TrackedObject*);
+					TrackedObject* obj2 = &(pipeDynamicTracker->pipeTracker[j]);
 					beginTrack &= !(pipeDynamicTracker->trackingRunning[j] && intersectRect(obj->trackingZone,obj2->trackingZone));
 				}
 			}
 			pipeDynamicTracker->trackingRunning[i] = beginTrack;
 		}
 	}
-	showImage(pipeDynamicTracker->pipeTracker[0]->binFlux);
+	showImage(pipeDynamicTracker->pipeTracker[0].binFlux);
 }
 
 /*!
@@ -105,10 +105,10 @@ boolean centerTrackingZoneOnTracker(TrackedObject* obj)
 CvPoint nextPipe(PipeDynamicTracker* pipeDynamicTracker, int minPosition)
 {
 	int i;
-	int minX = pipeDynamicTracker->pipeTracker[0]->binFlux->img->width;
+	int minX = pipeDynamicTracker->pipeTracker[0].binFlux->img->width;
 	int y = 0;
 	for(i = 0; i < NB_PIPE_TRACKER;i++){
-		TrackedObject* obj = pipeDynamicTracker->pipeTracker[0] + i*sizeof(TrackedObject*);
+		TrackedObject* obj = &(pipeDynamicTracker->pipeTracker[i]);
 		int x = obj->origin.x-(obj->width/2);
 		if(x > minPosition && x < minX){
 			minX = x;

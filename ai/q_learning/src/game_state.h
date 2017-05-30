@@ -10,17 +10,21 @@
 #include "conf.h"
 
 /*!
-* \struct State qlearning.h
-* \brief A State contains every informations needed to know exactly the state of the game
+* \struct State
+* \brief A State contains every information needed to know exactly the state of the game
 */
 typedef struct {
-  short int delta_x;    /*!< X is the horizontal distance from the left side of the camera to the next left side of the lower pipe */
-  short int delta_y;    /*!< Y is the vertical distance from the bird to the next upper side of the lower pipe */
+  short int delta_x;    /*!< delta_x is the horizontal distance from the left side of the camera to the next left side of the lower pipe */
+  short int delta_y;    /*!< delta_y is the vertical distance from the bird to the next upper side of the lower pipe */
+  short int pipe_height;    /*!< pipe_height is the height of the next pipe */
+  short int velocity;    /*!< velocity define the falling speed of the bird */
 } State;
 
-State * getCurrentState(int delta_x, int delta_y, int bird_state);
+State * getCurrentState(int delta_x, int delta_y, int pipe_height, int velocity, int bird_state);
 void freeState(State * state);
 int getCurrentReward(int bird_state);
+
+int getCurrentVelocity(int * last_actions);
 
 int processing_dxdy(int initial_d);
 int processing_birdstate(int initial_bird_state);

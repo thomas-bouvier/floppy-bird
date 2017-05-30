@@ -22,25 +22,19 @@ Now you can compile and run the project with the custom Makefile provided.
 
 Install the SDL2 :
 
-	apt-get install libsdl2-dev
-
-Extract the archive and cd to the folder that got extracted. Then :
-
-	./configure
-	make
-	sudo make install
+	sudo apt-get install libsdl2-dev
 
 Also install the complementary libraries SDL2_mixer, SDL2_ttf and SDL2_image
 
-	apt-get install libsdl2-ttf-dev
-	apt-get install libsdl2-mixer-dev
-	apt-get install libsdl2-image-dev
+	sudo apt-get install libsdl2-ttf-dev
+	sudo apt-get install libsdl2-mixer-dev
+	sudo apt-get install libsdl2-image-dev
 
 Now you can compile and run the project with the Makefile provided with the sources.
 
 ### Configuration
 
-Two configuration file is provided in game/src/conf.
+Two configuration files are provided in game/src/conf.
 
 One is made for Windows with Codeblocks, the other for Linux, but feel free to modify these paths if you change anything.
 
@@ -95,3 +89,28 @@ The raspberry pi needs some libraries to get all the programs running properly. 
     cd robidouille/raspicam_cv
     mkdir objs
     make
+
+### Usage
+
+To run the project :
+
+    sudo ./colourTrack
+
+note : Super user is needed because of the access to the hardware PWM
+
+
+Some options are available :
+
+    -l loadFileName : load working space and structures (trackers...) from the load File
+    -s saveFileName : save working space and structures (trackers...) into the save File
+    -d logFileName : Save data into a log file
+    -i : run the basic IA
+    -q : run the q-learning IA
+    -n : run the neat IA
+    -v : verbose mode
+
+
+Example :
+
+    sudo ./colourTrack -l config -i
+    # run the program loading the config file and start the basic IA

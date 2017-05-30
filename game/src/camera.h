@@ -22,6 +22,7 @@ typedef struct{
 } Camera;
 
 void initCamera(Camera * new_camera, int x, int camera_speed);
+void modifySpeed(int score, Camera * camera);
 
 #endif // CAMERA_H
 

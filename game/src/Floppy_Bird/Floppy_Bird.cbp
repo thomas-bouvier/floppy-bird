@@ -49,7 +49,11 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+<<<<<<< HEAD
 				<Option parameters="../conf/config.txt" />
+>>>>>>> develop
+=======
+				<Option parameters="../conf/configWindows.txt" />
 >>>>>>> develop
 				<Compiler>
 					<Add option="-O2" />
@@ -83,10 +87,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../game.h" />
-		<Unit filename="../list.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../list.h" />
 		<Unit filename="../main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -106,7 +106,14 @@
 		</Unit>
 		<Unit filename="../pipe.h" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+		<Unit filename="../sdl_files.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../sdl_files.h" />
+>>>>>>> develop
 		<Unit filename="../sound.c">
 			<Option compilerVar="CC" />
 		</Unit>

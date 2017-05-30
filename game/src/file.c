@@ -56,7 +56,7 @@ int readConfig(FILE * f, char * config, char * type)
         }
         ++i;
     }
-    fprintf(stderr, "Reading the configuration file : failure\n");
+    fprintf(stderr, "Reading the configuration file failure : %s\n", type);
     return 0;
 }
 
@@ -65,6 +65,9 @@ int readConfig(FILE * f, char * config, char * type)
 * \param[out] f the file that contains the score
 * \param[in] score the score to be saved (or not)
 * \return Return 1 if the score was saved, ie if it is biggest than the previous score, 0 otherwise
+*
+* The best score file only contains the score (an int) at the first line of the file
+*
 */
 int saveScore(FILE * f, int score)
 {
@@ -87,12 +90,46 @@ int readBestScore(FILE * f)
 {
     if (f == NULL)
     {
-        fprintf(stderr, "Reading best score failure");
+        fprintf(stderr, "Reading best score failure\n");
         return -1;
     }
     int best_score = 0;
     fseek(f, 0, SEEK_SET);
     fscanf(f, "%d", &best_score);
     return best_score;
+}
 
+/*!
+* \brief Open the files necessary for the game (predefined level and score file)
+* \param[in] config the file that contains the configuration paths
+* \param[out] level the file that contains predefined obstacles
+* \param[out] scoreFile the file that contains the score
+* \return Return 1 if files were well opened, 0 if failure
+*/
+int openGameFiles(FILE * config, FILE ** level, FILE ** scoreFile)
+{
+    char path[100];
+    /* Open the file that contains the save of the level */
+    if (readConfig(config, path, "level :\n"))
+        *level = fopen(path, "r");
+    if(*level == NULL)
+    {
+        fprintf(stderr,"Opening level file failure :\n");
+        printf("%s\n", path);
+        return 0;
+    }
+    /* Open the file that contains the save of the best score : create it if it does not exist yet */
+    if (readConfig(config, path, "score :\n"))
+    {
+        *scoreFile = fopen(path, "r+");
+        if (*scoreFile == NULL)
+            *scoreFile = fopen(path, "w+");
+    }
+    if(*scoreFile == NULL)
+    {
+        fprintf(stderr,"Opening score file failure :\n");
+        printf("%s\n", path);
+        return 0;
+    }
+    return 1;
 }

@@ -13,15 +13,15 @@
 #include "../src/conf.h"
 
 /** utils.c **/
-/* randomAtMost */
+/* randomInRange */
 static void test_randomAtMostpositiveLimit(void ** state)
 {
-	assert_in_range(randomAtMost(20), 0, 20);
+	assert_in_range(randomInRange(0, 20), 0, 20);
 }
 
 static void test_randomAtMostzeroLimit(void ** state)
 {
-	assert_int_equal(0, randomAtMost(0));
+	assert_int_equal(0, randomInRange(0, 0));
 }
 
 /* powerOf */
@@ -40,7 +40,7 @@ static void test_powerOfzero(void ** state)
 	assert_int_equal(1, powerOf(3, 0));
 }
 
-/* shift_array */
+/* rightShift_array */
 typedef struct {
 	int * data;
 	int length;
@@ -66,7 +66,7 @@ static int setup_shift_array(void ** state)
 static void test_shift_array(void ** state)
 {
 	MyShiftArray * array = (MyShiftArray*) (*state);
-	shift_array(array->data, array->length);
+	rightShift_array(array->data, array->length);
 	
 	assert_int_equal(0, array->data[0]);
 	assert_int_equal(1, array->data[1]);
@@ -124,70 +124,6 @@ static int teardown_init_array(void ** state)
 }
 
 /** game_state.c **/
-/* getCurrentState */
-typedef struct {
-	int dx;
-	int dy;
-	int bird_state;
-}MyCurrentState;
-
-static int setup_getCurrentState(void ** state)
-{
-	MyCurrentState * state_data = (MyCurrentState*) malloc(sizeof(MyCurrentState));
-	if(state_data == NULL)
-		return -1;
-	state_data->dx = 0;
-	state_data->dy = 0;
-	state_data->bird_state = 0;
-
-	*state = state_data;
-	return 0;
-}
-
-static void test_getCurrentStateBirdDied(void ** state)
-{
-	MyCurrentState * state_data = (MyCurrentState*) (*state);
-	State * new_state_created = malloc(sizeof(State));
-
-	state_data->dx = 150;
-	state_data->dy = 151;
-	state_data->bird_state = 0;
-	new_state_created = getCurrentState(state_data->dx, state_data->dy, state_data->bird_state);
-	assert_int_equal(-1, new_state_created->delta_x);
-	assert_int_equal(-1, new_state_created->delta_y);
-}
-
-static void test_getCurrentStateBirdAlive(void ** state)
-{
-	MyCurrentState * state_data = (MyCurrentState*) (*state);
-	State * new_state_created = malloc(sizeof(State));
-
-	state_data->dx = 150;
-	state_data->dy = 151;
-	state_data->bird_state = 1;
-	new_state_created = getCurrentState(state_data->dx, state_data->dy, state_data->bird_state);
-	assert_int_equal(150, new_state_created->delta_x);
-	assert_int_equal(151, new_state_created->delta_y);
-}
-
-static void test_getCurrentStateBirdUnknownState(void ** state)
-{
-	MyCurrentState * state_data = (MyCurrentState*) (*state);
-	State * new_state_created = malloc(sizeof(State));
-
-	state_data->dx = 150;
-	state_data->dy = 151;
-	state_data->bird_state = 2;
-	new_state_created = getCurrentState(state_data->dx, state_data->dy, state_data->bird_state);
-	assert_null(new_state_created);
-}
-
-static int teardown_getCurrentState(void ** state)
-{
-	free(*state);
-	return 0;
-}
-
 /* getCurrentReward */
 static void test_getCurrentRewardDeathReward(void ** state)
 {
@@ -425,161 +361,12 @@ static void test_updateQRewardPositive(void ** state)
 	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
 }
 
-static void test_updateQRewardNegative(void ** state)
-{
-	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
-
-	upd_qvalues->last_index[0] = -1;
-
-	updateQReward(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action);
-
-	assert_in_range((upd_qvalues->matrixq->reward[1]<0)? -(upd_qvalues->matrixq->reward[0]):upd_qvalues->matrixq->reward[0] , 0, HIGHER_QREWARD_LIMIT);
-}
-
 static int teardown_updateQReward(void ** state)
 {
 	free(((UpdateQValues*)*state)->matrixq->state);
 	free(((UpdateQValues*)*state)->matrixq->reward);
 	free(*state);
 	return 0;
-}
-
-/** q_learning.c **/
-/* q_learning_loop */
-static int setup_q_learning_loop(void ** state)
-{
-	int i;
-
-	UpdateQValues * upd_qvalues = (UpdateQValues*) malloc(sizeof(UpdateQValues));
-	if(upd_qvalues == NULL)
-		return -1;
-	upd_qvalues->matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
-	if(upd_qvalues->matrixq == NULL)
-		return -1;
-	
-	upd_qvalues->matrixq->nb_states = 1;
-	upd_qvalues->matrixq->state = (State*) malloc(upd_qvalues->matrixq->nb_states * sizeof(State));
-	upd_qvalues->matrixq->reward = (float*) malloc(upd_qvalues->matrixq->nb_states * NB_ACTIONS * sizeof(float));
-
-	upd_qvalues->matrixq->state[0].delta_x = 10;
-	upd_qvalues->matrixq->state[0].delta_y = 10;
-	upd_qvalues->matrixq->reward[0*NB_ACTIONS] = 100;
-	upd_qvalues->matrixq->reward[0*NB_ACTIONS+1] = 100;
-
-	upd_qvalues->last_index = (int*) malloc(NB_SAVED_STATES * sizeof(int));
-	upd_qvalues->last_action = (int*) malloc(NB_SAVED_ACTIONS * sizeof(int));
-	for(i=0; i<NB_SAVED_STATES; ++i) upd_qvalues->last_index[i] = 0;
-	for(i=0; i<NB_SAVED_ACTIONS; ++i) upd_qvalues->last_action[i] = 1;
-
-	*state = upd_qvalues;
-	return 0;
-}
-
-static void test_q_learning_loop(void ** state)
-{
-	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
-
-	upd_qvalues->last_index[0] = 0;
-
-	assert_int_equal(1, q_learning_loop(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action, 101, 102, 1));
-}
-
-static void test_q_learning_loopReset(void ** state)
-{
-	UpdateQValues * upd_qvalues = (UpdateQValues*) (*state);
-
-	upd_qvalues->last_index[0] = -1;
-
-	assert_int_equal(1, q_learning_loop(upd_qvalues->matrixq, upd_qvalues->last_index, upd_qvalues->last_action, 101, 102, 0));
-}
-
-static int teardown_q_learning_loop(void ** state)
-{
-	free(((UpdateQValues*)*state)->matrixq->state);
-	free(((UpdateQValues*)*state)->matrixq->reward);
-	free(*state);
-	return 0;
-}
-
-/** file_manager.c **/
-/* loadQMatrix */
-static int setup_loadQMatrixEmpty(void ** state) {
-
-	char * filename = "test_qmatrixdata.txt";
-	*state = filename;
-	return 0;
-}
-
-static int setup_loadQMatrix(void ** state) {
-	
-	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
-	char * filename = "test_qmatrixdata.txt";
-	if(matrixq == NULL)
-		return -1;
-
-	matrixq->nb_states = 1;
-	matrixq->state = (State*) malloc(matrixq->nb_states * sizeof(State));
-	matrixq->reward = (float*) malloc(matrixq->nb_states * NB_ACTIONS * sizeof(float));
-
-	matrixq->state[0].delta_x = 10;
-	matrixq->state[0].delta_y = 10;
-	matrixq->reward[0*NB_ACTIONS] = 100;
-	matrixq->reward[0*NB_ACTIONS+1] = 100;
-
-	saveQMatrix(matrixq, filename);	
-	
-	*state = filename;
-	return 0;
-}
-
-static void test_loadQMatrixEmpty(void ** state) {
-
-	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
-	matrixq = loadQMatrix((*state));
-	assert_int_equal(0, matrixq->nb_states);
-}
-
-static void test_loadQMatrix(void ** state) {
-
-	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
-	matrixq = loadQMatrix((*state));
-	assert_int_equal(1, matrixq->nb_states);
-}
-
-static int teardown_loadQMatrix(void ** state) {
-
-  return remove("test_qmatrixdata.txt");
-}
-
-/* saveQMatrix */
-static int setup_saveQMatrix(void ** state) {
-
-	MatrixQ * matrixq = (MatrixQ*) malloc(sizeof(MatrixQ));
-	if(matrixq == NULL)
-		return -1;
-
-	matrixq->nb_states = 1;
-	matrixq->state = (State*) malloc(matrixq->nb_states * sizeof(State));
-	matrixq->reward = (float*) malloc(matrixq->nb_states * NB_ACTIONS * sizeof(float));
-
-	matrixq->state[0].delta_x = 10;
-	matrixq->state[0].delta_y = 10;
-	matrixq->reward[0*NB_ACTIONS] = 100;
-	matrixq->reward[0*NB_ACTIONS+1] = 100;
-
-	*state = matrixq;
-	return 0;
-}
-
-static void test_saveQMatrix(void ** state) {
-
-	MatrixQ * matrixq = (MatrixQ*) (*state);
-	assert_int_equal(1, saveQMatrix(matrixq, "test_qmatrixdata.txt"));
-}
-
-static int teardown_saveQMatrix(void ** state) {
-
-  return remove("test_qmatrixdata.txt");
 }
 
 int main() {
@@ -591,9 +378,6 @@ int main() {
 	cmocka_unit_test(test_powerOfzero),
 	cmocka_unit_test_setup_teardown(test_shift_array, setup_shift_array, teardown_shift_array),
 	cmocka_unit_test_setup_teardown(test_init_array, setup_init_array, teardown_init_array),
-	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdDied, setup_getCurrentState, teardown_getCurrentState),
-	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdAlive, setup_getCurrentState, teardown_getCurrentState),
-	cmocka_unit_test_setup_teardown(test_getCurrentStateBirdUnknownState, setup_getCurrentState, teardown_getCurrentState),
 	cmocka_unit_test(test_getCurrentRewardDeathReward),
 	cmocka_unit_test(test_getCurrentRewardLifeReward),
 	cmocka_unit_test(test_processing_dxdy),
@@ -608,12 +392,6 @@ int main() {
 	cmocka_unit_test_setup_teardown(test_findBestActionJump, setup_findBestAction, teardown_findBestAction),
 	cmocka_unit_test_setup_teardown(test_findBestActionEqual, setup_findBestAction, teardown_findBestAction),
 	cmocka_unit_test_setup_teardown(test_updateQRewardPositive, setup_updateQReward, teardown_updateQReward),
-	cmocka_unit_test_setup_teardown(test_updateQRewardNegative, setup_updateQReward, teardown_updateQReward),
-	cmocka_unit_test_setup_teardown(test_q_learning_loop, setup_q_learning_loop, teardown_q_learning_loop),
-	cmocka_unit_test_setup_teardown(test_q_learning_loopReset, setup_q_learning_loop, teardown_q_learning_loop),
-	cmocka_unit_test_setup_teardown(test_loadQMatrix, setup_loadQMatrix, teardown_loadQMatrix),
-	cmocka_unit_test_setup_teardown(test_loadQMatrixEmpty, setup_loadQMatrixEmpty, teardown_loadQMatrix),
-	cmocka_unit_test_setup_teardown(test_saveQMatrix, setup_saveQMatrix, teardown_saveQMatrix),
   };
 
   return cmocka_run_group_tests_name("Q-Learning Tests", tests_q_learning, NULL, NULL);

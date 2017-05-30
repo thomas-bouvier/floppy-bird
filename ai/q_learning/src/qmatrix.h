@@ -9,7 +9,7 @@
 #include "utils.h"
 
 /*!
-* \struct MatrixQ qlearning.h
+* \struct MatrixQ
 * \brief MatrixQ linked a state with an action to a reward
 */
 typedef struct{
@@ -26,7 +26,5 @@ float computeQReward(MatrixQ *matrixQ, int current_index, int state_index, int a
 int findBestAction(int state_index, MatrixQ * matrixQ);
 
 void freeMatrixQ(MatrixQ * matrixQ);
-
-/*void show_matrixQ(MatrixQ * matrixQ);*/
 
 #endif

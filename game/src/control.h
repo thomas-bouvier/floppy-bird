@@ -11,7 +11,10 @@
 Action detectTouch();
 void emptyEvent();
 Action waiting();
-int waitForTI();
+int waitClick();
+int actionOnMainMenu(SDL_Event event, int * levelFromFile, int * simplifiedMode, int * speedAcceleration, int * gapModification);
+int actionOnPauseMenu();
+int actionAtEnd(SDL_Event event);
 
 
 #endif // CONTROL_H
