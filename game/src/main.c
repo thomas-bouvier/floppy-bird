@@ -60,7 +60,7 @@ void startGameNeat(GenericList * bird_list, Camera * camera, GenericList * obsta
 * \param[in] ratioBirdHeight the current height of the Bird, divided by SCREEN_HEIGHT
 * \param[in] ratioPipeWidth the distance (x axis) of the next obstacle, divided by SCREEN_WIDTH
 * \param[in] ratioPipeHeight the height of the next obstacle, divied by SCREEN_HEIGHT
-* \param[in] int the result of the evaluation
+* \return int the result of the evaluation
 *
 * If the output is greater than 0.5, the Bird attached to the given Genome should jump.
 */
